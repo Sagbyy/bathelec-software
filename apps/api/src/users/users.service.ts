@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 
@@ -16,17 +16,24 @@ export class UsersService {
     email: string,
     username: string,
     password: string,
-    first_name: string,
-    last_name: string
+    firstName: string,
+    lastName: string
   ) {
+    if (!email || !username || !password || !firstName || !lastName) {
+      throw new HttpException(
+        'You should to fill : email, username, password, firstName, lastName',
+        400
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     return this.prisma.user.create({
       data: {
         email,
         username,
         password: hashedPassword,
-        first_name,
-        last_name,
+        firstName,
+        lastName,
         role: 'technician',
       },
     });

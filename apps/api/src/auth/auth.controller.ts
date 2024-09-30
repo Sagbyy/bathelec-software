@@ -12,8 +12,8 @@ export class AuthController {
       createUserDto.email,
       createUserDto.username,
       createUserDto.password,
-      createUserDto.first_name,
-      createUserDto.last_name
+      createUserDto.firstName,
+      createUserDto.lastName
     );
   }
 }
