@@ -1,0 +1,14 @@
+{
+  "name": "@repo/types",
+  "type": "module",
+  "exports": {
+    "./index": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "latest"
+  }
+}
