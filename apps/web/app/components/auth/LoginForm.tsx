@@ -1,15 +1,18 @@
 'use client';
 
 import Image from 'next/image';
+import { Icon } from '@iconify/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useAuth } from '@/contexts/AuthContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { useRouter } from 'next/navigation';
+import useAuth from '@/hooks/useAuth';
+import Loader from '../shared/Loader';
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import clsx from 'clsx';
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
@@ -38,8 +41,7 @@ const formSchema = z.object({
 });
 
 export default function LoginForm() {
-  const { login } = useAuth();
-  const router = useRouter();
+  const { login, loading, error } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,75 +52,81 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await login(values.username, values.password)
-      router.push('/technicians')
-    }
-    catch(error) {
-      console.log("Here error: ", error);
-      
-    }
+    login(values.username, values.password);
   };
 
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-4 shadow-sm rounded-lg">
-      <Image
-        src="/bathelec-brand-logo.png"
-        className="mx-auto"
-        alt="Bathelec Logo"
-        width={200}
-        height={100}
-      />
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="Votre nom d'utilisateur" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Votre mot de passe"
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <Button type="submit" className="w-full">
-            Submit
-          </Button>
-        </form>
-      </Form>
-      {/* <form onSubmit={handleSubmit(onSubmit)}>
-        <input
-          {...register('username')}
-          placeholder="Username"
-          type="text"
-          required
+    <div className="flex h-screen items-center justify-center">
+      <div className="w-full max-w-72 mx-3 bg-white p-4 shadow-sm rounded-lg">
+        <Image
+          src="/bathelec-brand-logo.png"
+          className="mx-auto"
+          alt="Bathelec Logo"
+          width={200}
+          height={100}
         />
-        <input
-          {...register('password')}
-          placeholder="Password"
-          type="password"
-          required
-        />
-        <button type="submit">Login</button>
-      </form> */}
+        {error && (
+          <Alert variant="destructive" className="my-3">
+            <Icon className="h-4 w-4" icon="octicon:alert-24" />
+            <AlertTitle>Erreur</AlertTitle>
+            <AlertDescription>
+              Votre nom d'utilisateur ou mot de passe est incorrect.
+            </AlertDescription>
+          </Alert>
+        )}
+        {loading ? (
+          <div className="flex items-center justify-center m-5">
+            <Loader />
+          </div>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className={clsx(error && 'text-red-500')}>
+                      Nom d'utilisateur
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className={clsx(error && 'border-red-500')}
+                        required
+                        placeholder="Votre nom d'utilisateur"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className={clsx(error && 'text-red-500')}>
+                      Mot de passe
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className={clsx(error && 'border-red-500')}
+                        required
+                        placeholder="Votre mot de passe"
+                        type="password"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full bg-[#037BCA] hover:bg">
+                Se connecter
+              </Button>
+            </form>
+          </Form>
+        )}
+      </div>
     </div>
   );
 }

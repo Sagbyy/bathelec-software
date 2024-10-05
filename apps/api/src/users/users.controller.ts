@@ -1,12 +1,11 @@
 import {
-  Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
+  Request,
   UseGuards,
 } from '@nestjs/common';
-import { UsernameDto } from './dto/username.dto';
 import { JwtAuthGuard } from 'src/jwt-auth/jwt-auth.guard';
 import { UsersService } from './users.service';
 
@@ -15,9 +14,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.FOUND)
+  @HttpCode(HttpStatus.OK)
   @Get('informations')
-  async user(@Body() usernameDto: UsernameDto) {
-    return this.usersService.findOneByUsername(usernameDto.username);
+  async user(@Request() req) {
+    return this.usersService.findOneById(req.user.userId);
   }
 }

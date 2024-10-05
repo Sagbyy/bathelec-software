@@ -15,15 +15,21 @@ export class UsersService {
   async findOneByUsername(username: string) {
     if (!username) throw new BadRequestException('username must be a string');
 
-    return this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { username },
     });
+
+    return user;
   }
 
   async findOneById(id: number) {
-    return this.prisma.user.findUnique({
+    if (!id) throw new BadRequestException('No ID specified');
+
+    const user = await this.prisma.user.findUnique({
       where: { id },
     });
+
+    return user;
   }
 
   async createUser(
