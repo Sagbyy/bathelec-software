@@ -2,16 +2,62 @@
 
 import Image from 'next/image';
 import React from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { LoginUser } from '@repo/types/index';
+import { useForm } from 'react-hook-form';
 import { useAuth } from '@/contexts/AuthContext';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { useRouter } from 'next/navigation';
+
+const formSchema = z.object({
+  username: z.string().min(2).max(50),
+  password: z.string(),
+  // password: z
+  //   .string()
+  //   .min(8, {
+  //     message: 'Le mot de passe doit contenir au moins 8 caractères.',
+  //   })
+  //   .max(32, {
+  //     message: 'Le mot de passe ne doit pas dépasser 32 caractères.',
+  //   })
+  //   .regex(/[a-z]/, {
+  //     message: 'Le mot de passe doit contenir au moins une lettre minuscule.',
+  //   })
+  //   .regex(/[A-Z]/, {
+  //     message: 'Le mot de passe doit contenir au moins une lettre majuscule.',
+  //   })
+  //   .regex(/[0-9]/, {
+  //     message: 'Le mot de passe doit contenir au moins un chiffre.',
+  //   })
+  //   .regex(/[@$!%*?&]/, {
+  //     message:
+  //       'Le mot de passe doit contenir au moins un caractère spécial (ex: @$!%*?&).',
+  //   }),
+});
 
 export default function LoginForm() {
   const { login } = useAuth();
-  const { register, handleSubmit } = useForm<LoginUser>();
+  const router = useRouter();
 
-  const onSubmit: SubmitHandler<LoginUser> = (data) => {
-    login(data);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: '',
+      password: '',
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await login(values.username, values.password)
+      router.push('/technicians')
+    }
+    catch(error) {
+      console.log("Here error: ", error);
+      
+    }
   };
 
   return (
@@ -23,7 +69,42 @@ export default function LoginForm() {
         width={200}
         height={100}
       />
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input placeholder="Votre nom d'utilisateur" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Votre mot de passe"
+                    type="password"
+                    {...field}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <Button type="submit" className="w-full">
+            Submit
+          </Button>
+        </form>
+      </Form>
+      {/* <form onSubmit={handleSubmit(onSubmit)}>
         <input
           {...register('username')}
           placeholder="Username"
@@ -37,7 +118,7 @@ export default function LoginForm() {
           required
         />
         <button type="submit">Login</button>
-      </form>
+      </form> */}
     </div>
   );
 }

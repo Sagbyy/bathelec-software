@@ -3,29 +3,25 @@
 import {
   createContext,
   useContext,
-  useState,
   useEffect,
+  useState,
   ReactNode,
 } from 'react';
-import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-}
-
-interface LoginCredentials {
+  sub: number;
   username: string;
-  password: string;
+  role: string; // Défini le rôle de l'utilisateur ici
 }
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
-  login: (credentials: LoginCredentials) => Promise<void>;
+  loading: boolean;
+  login: (username: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -33,64 +29,58 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const savedToken = Cookies.get('token');
-    if (savedToken) {
-      setToken(savedToken);
-      // fetchUser(savedToken);
+    const token = Cookies.get('token');
+
+    if (token) {
+      // Décode le token pour obtenir les informations de l'utilisateur
+      const decodedToken = jwtDecode(token) as User;
+      console.log('Decoded token : ' + JSON.stringify(decodedToken));
+
+      setUser(decodedToken);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     }
+
+    setLoading(false);
   }, []);
 
-  // const fetchUser = async (token: string) => {
-  //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-  //     headers: { Authorization: `Bearer ${token}` },
-  //   });
-  //   if (res.ok) {
-  //     const data: User = await res.json();
-  //     setUser(data);
-  //   } else {
-  //     setUser(null);
-  //     setToken(null);
-  //   }
-  // };
+  const login = async (username: string, password: string) => {
+    try {
+      const response = await axios.post<{ accessToken: string }>(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        { username, password }
+      ); // Remplace par ton endpoint
+      const { accessToken } = response.data;
 
-  const login = async (credentials: LoginCredentials) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials),
-    });
-
-    const data = await res.json();
-    console.log(data);
-    if (data.access_token) {
-      setToken(data.access_token);
-      Cookies.set('token', data.access_token);
-      // await fetchUser(data.access_token);
-      setUser(data.access_token);
-      router.push('/protected');
+      Cookies.set('token', accessToken);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      setUser(user);
+      console.log(accessToken);
+    } catch (error) {
+      console.error('Login failed', error);
+      throw error;
     }
   };
 
   const logout = () => {
+    localStorage.removeItem('token');
     setUser(null);
-    setToken(null);
-    Cookies.remove('token');
-    router.push('/');
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = (): AuthContextType => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
   return context;
 };

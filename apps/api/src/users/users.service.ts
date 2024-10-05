@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 
@@ -13,6 +13,8 @@ export class UsersService {
   }
 
   async findOneByUsername(username: string) {
+    if (!username) throw new BadRequestException('username must be a string');
+
     return this.prisma.user.findUnique({
       where: { username },
     });
