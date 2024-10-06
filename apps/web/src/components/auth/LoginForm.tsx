@@ -6,13 +6,19 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import useAuth from '@/hooks/useAuth';
-import Loader from '../shared/Loader';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import clsx from 'clsx';
+import useAuth from '@/hooks/useAuth';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import Loader from '@/components/shared/Loader';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),

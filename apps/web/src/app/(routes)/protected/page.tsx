@@ -1,8 +1,9 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import useAuth from '@/hooks/useAuth';
-import { useUserStore } from '@/hooks/useUserStore';
+import { Button } from "@/components/ui/button";
+import useAuth from "@/hooks/useAuth";
+import { useUserStore } from "@/hooks/useUserStore";
+
 
 export default function Protected() {
   const { logout } = useAuth();
