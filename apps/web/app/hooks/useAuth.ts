@@ -3,12 +3,10 @@
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
-import { useUserStore } from './useUserStore';
 import { useState } from 'react';
 
 const useAuth = () => {
   const router = useRouter();
-  const { setUser } = useUserStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
@@ -28,21 +26,7 @@ const useAuth = () => {
 
       Cookies.set('token', accessToken);
 
-      const userResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/informations`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      console.log('user info', userResponse);
-
-      setUser(userResponse.data);
-
       router.push('/protected');
-      setLoading(false);
     } catch (error) {
       setError(true);
       setLoading(false);

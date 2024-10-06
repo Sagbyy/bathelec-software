@@ -2,11 +2,11 @@ import { User } from '@repo/types/index';
 import { create } from 'zustand';
 
 interface UserStoreState {
-  user: User | null;
+  user: User | undefined;
   setUser: (user: User) => void;
 }
 
 export const useUserStore = create<UserStoreState>((set) => ({
-  user: null,
+  user: undefined,
   setUser: (user) => set({ user }),
 }));
