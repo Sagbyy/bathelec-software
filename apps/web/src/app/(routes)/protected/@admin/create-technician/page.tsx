@@ -81,14 +81,14 @@ export default function CreateTechnician() {
       toast({
         title: `Technicien ${data.username} créé`,
         description: 'Le technicien a été créé avec succès',
+        variant: 'success',
       });
-      
     } catch (error) {
       toast({
         title: 'Erreur lors de la création du technicien',
         description:
           'Une erreur est survenue lors de la création du technicien',
-        variant: 'destructive',
+        variant: 'success',
       });
 
       console.error(error);
