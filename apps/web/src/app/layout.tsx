@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import QueryProvider from '@/contexts/QueryProvider';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -15,7 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`bg-gray-100`}>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <main>{children}</main>
+        </QueryProvider>
+        <Toaster />
       </body>
     </html>
   );

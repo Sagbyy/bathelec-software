@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import { User } from '@repo/types/index';
 import { useUserStore } from '@/hooks/useUserStore';
 import getUsernameByToken from '@/lib/decodeJwt';
+import { NavigationBar } from '@/components/protected/navigation-bar/NavigationBar';
 
 const fetchUserData = async (): Promise<User> => {
   const response = await axios.get(
