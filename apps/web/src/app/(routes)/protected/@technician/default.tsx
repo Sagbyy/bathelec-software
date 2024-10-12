@@ -1,5 +1,5 @@
-import React from "react";
+import React from 'react';
 
 export default function DefaultPage() {
-  return <div>default</div>;
+  return <div>No access !</div>;
 }

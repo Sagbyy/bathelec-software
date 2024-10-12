@@ -7,7 +7,6 @@ export function middleware(request: NextRequest) {
   console.log(request);
   const token = request.cookies.get('token')?.value;
 
-
   if (!token && protectedRoutes.includes(request.nextUrl.pathname)) {
     return NextResponse.redirect(new URL('/auth', request.url));
   }

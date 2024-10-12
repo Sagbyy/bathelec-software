@@ -88,7 +88,7 @@ export default function CreateTechnician() {
         title: 'Erreur lors de la création du technicien',
         description:
           'Une erreur est survenue lors de la création du technicien',
-        variant: 'success',
+        variant: 'destructive',
       });
 
       console.error(error);
@@ -101,58 +101,56 @@ export default function CreateTechnician() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="flex items-center justify-center w-full gap-4">
-            <div className="w-full">
-              <FormField
-                control={form.control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel
+            <FormField
+              control={form.control}
+              name="firstName"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel
+                    className={clsx(
+                      form.formState.errors.firstName && 'text-red-500'
+                    )}
+                  >
+                    Prénom
+                  </FormLabel>
+                  <FormControl>
+                    <Input
                       className={clsx(
-                        form.formState.errors.firstName && 'text-red-500'
+                        form.formState.errors.firstName && 'border-red-500'
                       )}
-                    >
-                      Prénom
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        className={clsx(
-                          form.formState.errors.firstName && 'border-red-500'
-                        )}
-                        placeholder="Prénom du technicien"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="w-full">
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel
+                      required
+                      placeholder="Prénom du technicien"
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel
+                    className={clsx(
+                      form.formState.errors.lastName && 'text-red-500'
+                    )}
+                  >
+                    Nom
+                  </FormLabel>
+                  <FormControl>
+                    <Input
                       className={clsx(
-                        form.formState.errors.lastName && 'text-red-500'
+                        form.formState.errors.lastName && 'border-red-500'
                       )}
-                    >
-                      Nom
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        className={clsx(
-                          form.formState.errors.lastName && 'border-red-500'
-                        )}
-                        placeholder="Nom du technicien"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
+                      required
+                      placeholder="Nom du technicien"
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
           </div>
 
           <FormField
@@ -172,6 +170,7 @@ export default function CreateTechnician() {
                     className={clsx(
                       form.formState.errors.email && 'border-red-500'
                     )}
+                    required
                     placeholder="Email du technicien"
                     {...field}
                   />
@@ -204,58 +203,61 @@ export default function CreateTechnician() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel
-                  className={clsx(
-                    form.formState.errors.password && 'text-red-500'
-                  )}
-                >
-                  Mot de passe
-                </FormLabel>
-                <FormControl>
-                  <Input
+          <div className="flex gap-5 items-center justify-center">
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel
                     className={clsx(
-                      form.formState.errors.password && 'border-red-500'
+                      form.formState.errors.password && 'text-red-500'
                     )}
-                    required
-                    placeholder="Mot de passe du technicien"
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel
-                  className={clsx(
-                    form.formState.errors.confirmPassword && 'text-red-500'
-                  )}
-                >
-                  Confirmation du mot de passe
-                </FormLabel>
-                <FormControl>
-                  <Input
+                  >
+                    Mot de passe
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      className={clsx(
+                        form.formState.errors.password && 'border-red-500'
+                      )}
+                      required
+                      placeholder="Mot de passe du technicien"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel
                     className={clsx(
-                      form.formState.errors.confirmPassword && 'border-red-500'
+                      form.formState.errors.confirmPassword && 'text-red-500'
                     )}
-                    required
-                    placeholder="Confirmer le mot de passe"
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+                  >
+                    Confirmation du mot de passe
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      className={clsx(
+                        form.formState.errors.confirmPassword &&
+                          'border-red-500'
+                      )}
+                      required
+                      placeholder="Confirmer le mot de passe"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
           <Button type="submit" className="w-full bg-[#037BCA] hover:bg">
             Créer
           </Button>
