@@ -43,7 +43,7 @@ export function Navbar() {
         </SheetTrigger>
         <SheetContent side="left">
           <Link
-            href="/protected"
+            href="/dashboard"
             className="mr-6 flex"
             prefetch={false}
             onClick={() => setIsOpen(false)}
@@ -103,7 +103,7 @@ export function Navbar() {
           </div>
         </SheetContent>
       </Sheet>
-      <Link href="/protected" className="mr-6 hidden lg:flex" prefetch={false}>
+      <Link href="/dashboard" className="mr-6 hidden lg:flex" prefetch={false}>
         <BathelecLogo />
         <span className="sr-only">Acme Inc</span>
       </Link>

@@ -26,7 +26,7 @@ const useAuth = () => {
 
       Cookies.set('token', accessToken);
 
-      router.push('/protected');
+      router.push('/dashboard');
     } catch (error) {
       setError(true);
       setLoading(false);

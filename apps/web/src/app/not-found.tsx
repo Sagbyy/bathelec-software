@@ -22,6 +22,9 @@ export default function NotFound() {
           ou revenir à la page d'accueil.
         </p>
         <div className="pt-4">
+          <Button asChild className="mr-2" variant="outline">
+            <Link href="/dashboard">Retour à l'accueil</Link>
+          </Button>
           <Button asChild className="bg-primary hover:bg-primary/90">
             <Link href="/auth">Se connecter</Link>
           </Button>
