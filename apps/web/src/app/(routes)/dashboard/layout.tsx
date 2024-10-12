@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 import { User } from '@repo/types/index';
 import { useUserStore } from '@/hooks/useUserStore';
 import getUsernameByToken from '@/lib/decodeJwt';
-import { NavigationBar } from '@/components/protected/navigation-bar/NavigationBar';
+import { Navbar } from '@/components/protected/Navbar';
 
 const fetchUserData = async (): Promise<User> => {
   const response = await axios.get(
@@ -68,6 +68,10 @@ export default function LayoutProtected({
         <p>Loading...</p>
       ) : (
         <>
+          <Navbar />
+          <p>
+            Welcome {user?.firstName} {user?.lastName}
+          </p>
           {children}
           {user?.role === 'admin' ? admin : technician}
         </>
