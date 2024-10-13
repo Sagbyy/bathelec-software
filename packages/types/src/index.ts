@@ -12,3 +12,10 @@ export interface User {
   role: string;
   createdAt: string;
 }
+
+export interface Technician {
+  id: number;
+  username: string;
+  firstName: string;
+  lastName: string;
+}

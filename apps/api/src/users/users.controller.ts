@@ -21,7 +21,7 @@ export class UsersController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Get()
+  @Get('technicians')
   async allTechniciansInfo() {
     return this.usersService.findAllTechnicians();
   }

@@ -67,6 +67,9 @@ export class UsersService {
         firstName: true,
         lastName: true,
       },
+      where: {
+        role: 'technician',
+      },
     });
   }
 }

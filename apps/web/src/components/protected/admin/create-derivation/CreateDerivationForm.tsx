@@ -29,17 +29,42 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import clsx from 'clsx';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { Technician } from '@repo/types/index';
+import Cookies from 'js-cookie';
 
-const users = [
-  { value: 'alice', label: 'Alice Johnson' },
-  { value: 'bob', label: 'Bob Smith' },
-  { value: 'charlie', label: 'Charlie Brown' },
-  { value: 'david', label: 'David Lee' },
-  { value: 'emma', label: 'Emma Watson' },
-];
+// const users = [
+//   { value: 'alice', label: 'Alice Johnson' },
+//   { value: 'bob', label: 'Bob Smith' },
+//   { value: 'charlie', label: 'Charlie Brown' },
+//   { value: 'david', label: 'David Lee' },
+//   { value: 'emma', label: 'Emma Watson' },
+// ];
+
+const fetchTechnicians = async () => {
+  const response = await axios
+    .get(`${process.env.NEXT_PUBLIC_API_URL}/users/technicians`, {
+      headers: {
+        Authorization: `Bearer ${Cookies.get('token')}`,
+      },
+    })
+    .then((res) => res.data);
+
+  return response;
+};
 
 export default function CreateDerivationForm() {
   const [open, setOpen] = useState(false);
+
+  const {
+    data: technicians,
+    isLoading,
+    isError,
+  } = useQuery<Technician[]>({
+    queryKey: ['technicians'],
+    queryFn: fetchTechnicians,
+  });
 
   const formSchema = z.object({
     user: z
@@ -117,27 +142,44 @@ export default function CreateDerivationForm() {
                           <CommandInput placeholder="Rechercher un technicien..." />
                           <CommandEmpty>Aucun technicien trouvé !</CommandEmpty>
                           <CommandGroup>
-                            {users.map((user) => (
-                              <CommandItem
-                                key={user.value}
-                                onSelect={(currentValue) => {
-                                  onChange(
-                                    currentValue === value ? '' : currentValue
-                                  );
-                                  setOpen(false);
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    'mr-2 h-4 w-4',
-                                    value === user.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                                {user.label}
-                              </CommandItem>
-                            ))}
+                            {isLoading && (
+                              <CommandEmpty>Chargement...</CommandEmpty>
+                            )}
+                            {isError && (
+                              <CommandEmpty>Erreur de chargement</CommandEmpty>
+                            )}
+                            {technicians?.length === 0 ||
+                            technicians === undefined ? (
+                              <CommandEmpty>
+                                Aucun technicien trouvé
+                              </CommandEmpty>
+                            ) : (
+                              <>
+                                {technicians.map((technician: Technician) => (
+                                  <CommandItem
+                                    key={technician.username}
+                                    onSelect={(currentValue) => {
+                                      onChange(
+                                        currentValue === value
+                                          ? ''
+                                          : currentValue
+                                      );
+                                      setOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        'mr-2 h-4 w-4',
+                                        value === technician.username
+                                          ? 'opacity-100'
+                                          : 'opacity-0'
+                                      )}
+                                    />
+                                    {technician.firstName} {technician.lastName}
+                                  </CommandItem>
+                                ))}
+                              </>
+                            )}
                           </CommandGroup>
                         </CommandList>
                       </Command>
