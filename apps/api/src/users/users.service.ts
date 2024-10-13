@@ -58,4 +58,15 @@ export class UsersService {
       },
     });
   }
+
+  async findAllTechnicians() {
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        username: true,
+        firstName: true,
+        lastName: true,
+      },
+    });
+  }
 }

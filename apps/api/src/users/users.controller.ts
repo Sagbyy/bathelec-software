@@ -9,14 +9,20 @@ import {
 import { JwtAuthGuard } from 'src/jwt-auth/jwt-auth.guard';
 import { UsersService } from './users.service';
 
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Get('informations')
   async user(@Request() req) {
     return this.usersService.findOneById(req.user.userId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get()
+  async allTechniciansInfo() {
+    return this.usersService.findAllTechnicians();
   }
 }
