@@ -16,6 +16,10 @@ export function Navbar() {
       label: 'Créez un technicien',
       href: '/dashboard/create-technician',
     },
+    {
+      label: 'Créez un relevé de dérivation',
+      href: '/dashboard/create-derivation',
+    },
   ];
 
   const technicianLinks = [

@@ -4,7 +4,6 @@ import type { NextRequest } from 'next/server';
 const protectedRoutes = ['/protected', '/dashboard', '/profile'];
 
 export function middleware(request: NextRequest) {
-  console.log(request);
   const token = request.cookies.get('token')?.value;
 
   if (!token && protectedRoutes.includes(request.nextUrl.pathname)) {
