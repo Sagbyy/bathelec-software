@@ -34,14 +34,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Technician } from '@repo/types/index';
 import Cookies from 'js-cookie';
 
-// const users = [
-//   { value: 'alice', label: 'Alice Johnson' },
-//   { value: 'bob', label: 'Bob Smith' },
-//   { value: 'charlie', label: 'Charlie Brown' },
-//   { value: 'david', label: 'David Lee' },
-//   { value: 'emma', label: 'Emma Watson' },
-// ];
-
 const fetchTechnicians = async () => {
   const response = await axios
     .get(`${process.env.NEXT_PUBLIC_API_URL}/users/technicians`, {

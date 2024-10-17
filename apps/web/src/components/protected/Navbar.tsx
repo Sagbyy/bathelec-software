@@ -24,14 +24,14 @@ export function Navbar() {
 
   const technicianLinks = [
     {
-      label: 'Créez une intervention',
-      href: '/dashboard/create-intervention',
+      label: 'Completer un relevé de dérivation',
+      href: '/dashboard/complete-derivation',
     },
   ];
 
   const commonLinks = [
     {
-      label: 'Dashboard',
+      label: 'Tableau de bord',
       href: '/dashboard',
     },
   ];
