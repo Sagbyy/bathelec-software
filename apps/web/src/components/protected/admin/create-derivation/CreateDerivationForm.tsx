@@ -33,6 +33,7 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { Technician } from '@repo/types/index';
 import Cookies from 'js-cookie';
+import { toast } from '@/hooks/use-toast';
 
 const fetchTechnicians = async () => {
   const response = await axios
@@ -73,8 +74,8 @@ export default function CreateDerivationForm() {
       .min(5, { message: "L'adresse doit comporter au moins 5 caractères" })
       .max(100, { message: "L'adresse ne peut pas dépasser 100 caractères" }),
 
-    postalCode: z.string().min(2, {
-      message: 'Le code postal doit comporter au moins 2 caractères',
+    postalCode: z.string().regex(/^\d+$/, {
+      message: 'Le code postal doit être un nombre',
     }),
 
     city: z
@@ -98,7 +99,49 @@ export default function CreateDerivationForm() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+    const userId: number | undefined = technicians?.find(
+      (technician) =>
+        `${technician.firstName} ${technician.lastName}` === data.user
+    )?.id;
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/derivations`,
+        {
+          userId,
+          address: data.address,
+          postalCode: Number(data.postalCode),
+          city: data.city,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${Cookies.get('token')}`,
+          },
+        }
+      );
+
+      if (response.status !== 201) {
+        throw new Error('Erreur lors de la création de la dérivation');
+      }
+
+      // Reset form
+      form.reset();
+
+      toast({
+        title: 'Dérivation créée',
+        description: 'La dérivation a été créée avec succès',
+        variant: 'success',
+      });
+    } catch (error) {
+      toast({
+        title: 'Erreur lors de la création de la dérivation',
+        description: "La dérivation n'a pas pu être créée",
+        variant: 'destructive',
+      });
+
+      console.error(error);
+    }
   };
 
   return (
@@ -214,7 +257,11 @@ export default function CreateDerivationForm() {
                 <FormItem>
                   <FormLabel>Code postal</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Entrer le code postal" />
+                    <Input
+                      {...field}
+                      type="number"
+                      placeholder="Entrer le code postal"
+                    />
                   </FormControl>
                   <FormMessage>
                     {form.formState.errors.postalCode?.message}
