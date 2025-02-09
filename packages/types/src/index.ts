@@ -19,3 +19,12 @@ export interface Technician {
   firstName: string;
   lastName: string;
 }
+
+export interface CompleteToDerivation {
+  id: number;
+  userId: number;
+  address: string;
+  city: string;
+  postalCode: string;
+  createdAt: string;
+}

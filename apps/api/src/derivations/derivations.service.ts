@@ -21,4 +21,12 @@ export class DerivationsService {
       data: createDerivationDto,
     });
   }
+
+  async findDerivationByUserId(userId: number) {
+    return this.prisma.derivationToComplete.findMany({
+      where: {
+        userId,
+      },
+    });
+  }
 }

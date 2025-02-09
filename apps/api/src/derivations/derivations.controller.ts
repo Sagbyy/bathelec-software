@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
   Post,
   UseGuards,
   ValidationPipe,
@@ -21,5 +23,10 @@ export class DerivationsController {
     @Body(new ValidationPipe()) createDerivationDto: CreateDerivationDto
   ) {
     return this.derivationsService.createDerivation(createDerivationDto);
+  }
+
+  @Get(':userId')
+  findDerivationByUserId(@Param('userId') userId: number) {
+    return this.derivationsService.findDerivationByUserId(userId);
   }
 }
