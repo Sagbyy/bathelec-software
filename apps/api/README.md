@@ -22,6 +22,35 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
+## Database MCD
+
+```mermaid
+---
+title: Database MCD
+---
+
+erDiagram
+    USER {
+        INT id PK
+        STRING email
+        STRING username
+        STRING password
+        STRING role
+        DATETIME createdAt
+        STRING firstName
+        STRING lastName
+    }
+    DERIVATION {
+        INT id PK
+        INT userId FK
+        DATETIME createdAt
+        STRING address
+        STRING city
+        INT postalCode
+    }
+    USER ||--o{ DERIVATION : "has many"
+```
+
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.

@@ -1,10 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateDerivationDto } from './dto/create-derivation.dto';
+import { CreateDerivationDto } from './dto/request/create-derivation.dto';
+import { DerivationStatus } from '@repo/types';
 
 @Injectable()
 export class DerivationsService {
   constructor(private readonly prisma: PrismaService) {}
+  private readonly logger = new Logger(DerivationsService.name);
 
   async createDerivation(createDerivationDto: CreateDerivationDto) {
     const isUserExist = await this.prisma.user.findUnique({
@@ -17,16 +19,57 @@ export class DerivationsService {
       throw new NotFoundException('User not found');
     }
 
-    return this.prisma.derivationToComplete.create({
-      data: createDerivationDto,
+    this.logger.log(
+      `Creating derivation with data: ${JSON.stringify(createDerivationDto)}`
+    );
+
+    return this.prisma.derivation.create({
+      data: {
+        ...createDerivationDto,
+        status: DerivationStatus.PENDING,
+      },
     });
   }
 
   async findDerivationByUserId(userId: number) {
-    return this.prisma.derivationToComplete.findMany({
+    const parsedUserId = Number(userId);
+    if (isNaN(parsedUserId)) {
+      throw new NotFoundException('Invalid user ID');
+    }
+
+    const derivations = await this.prisma.derivation.findMany({
       where: {
-        userId,
+        userId: parsedUserId,
       },
     });
+
+    this.logger.log(
+      `Found ${derivations.length} derivations for user ID: ${parsedUserId}`
+    );
+    this.logger.log(`Derivations: ${JSON.stringify(derivations, null, 2)}`);
+
+    return derivations;
+  }
+
+  async findDerivationById(derivationId: number) {
+    const parsedDerivationId = Number(derivationId);
+    if (isNaN(parsedDerivationId)) {
+      throw new NotFoundException('Invalid derivation ID');
+    }
+
+    this.logger.log(`Finding derivation with ID: ${parsedDerivationId}`);
+
+    const derivation = await this.prisma.derivation.findUnique({
+      where: {
+        id: parsedDerivationId,
+      },
+    });
+
+    if (!derivation) {
+      this.logger.error(`Derivation with ID ${parsedDerivationId} not found`);
+      throw new NotFoundException('Derivation not found');
+    }
+
+    return derivation;
   }
 }

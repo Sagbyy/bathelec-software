@@ -2,12 +2,38 @@
 
 This is an official starter Turborepo.
 
-## Using this example
+## Environment
 
-Run the following command:
+You can find the environment variables in the `apps/web/.env.example` and `apps/api/.env.example` files.
 
-```sh
-npx create-turbo@latest
+```bash
+cp apps/web/.env.example apps/web/.env
+cp apps/api/.env.example apps/api/.env
+```
+
+## Run the project
+
+```bash
+pnpm install
+turbo dev
+```
+
+### Prisma
+
+```bash
+npx prisma migrate dev
+```
+
+### Generate Prisma client
+
+```bash
+npx prisma generate
+```
+
+### Run Prisma Studio
+
+```bash
+npx prisma studio
 ```
 
 ## What's inside?

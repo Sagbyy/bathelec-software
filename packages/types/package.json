@@ -1,14 +1,45 @@
 {
   "name": "@repo/types",
-  "type": "module",
-  "exports": {
-    "./index": {
-      "types": "./src/index.ts",
-      "default": "./dist/index.js"
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist/**"
+  ],
+  "typesVersions": {
+    "*": {
+      "*": [
+        "src/*"
+      ]
     }
   },
-  "devDependencies": {
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.js"
+    },
+    "./technician": {
+      "require": "./dist/technician.js",
+      "import": "./dist/technician.js"
+    },
+    "./user": {
+      "require": "./dist/user.js",
+      "import": "./dist/user.js"
+    },
+    "./derivation": {
+      "require": "./dist/derivation.js",
+      "import": "./dist/derivation.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist node_modules",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
+  },
+  "dependencies": {
     "@repo/typescript-config": "workspace:*",
-    "typescript": "latest"
+    "typescript": "^5.7.3"
   }
 }

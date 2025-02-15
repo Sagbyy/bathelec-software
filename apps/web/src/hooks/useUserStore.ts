@@ -1,4 +1,4 @@
-import { User } from '@repo/types/index';
+import { User } from '@repo/types';
 import { create } from 'zustand';
 
 interface UserStoreState {

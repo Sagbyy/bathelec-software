@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { ReactNode, useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
-import { User } from '@repo/types/index';
+import { User } from '@repo/types';
 import { useUserStore } from '@/hooks/useUserStore';
 import getUsernameByToken from '@/lib/decodeJwt';
 import { Navbar } from '@/components/protected/Navbar';

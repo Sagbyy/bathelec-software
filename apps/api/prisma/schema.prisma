@@ -8,23 +8,24 @@ datasource db {
 }
 
 model User {
-  id                   Int                    @id @default(autoincrement())
-  email                String                 @unique
-  username             String                 @unique
-  password             String
-  role                 String
-  createdAt            DateTime               @default(now())
-  firstName            String
-  lastName             String
-  DerivationToComplete DerivationToComplete[]
+  id         Int          @id @default(autoincrement())
+  email      String       @unique
+  username   String       @unique
+  password   String
+  role       String
+  createdAt  DateTime     @default(now())
+  firstName  String
+  lastName   String
+  Derivation Derivation[]
 }
 
-model DerivationToComplete {
+model Derivation {
   id         Int      @id @default(autoincrement())
   userId     Int
   createdAt  DateTime @default(now())
   address    String
   city       String
   postalCode Int
+  status     String
   user       User     @relation(fields: [userId], references: [id])
 }

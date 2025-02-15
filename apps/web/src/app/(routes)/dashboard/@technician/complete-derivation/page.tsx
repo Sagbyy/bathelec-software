@@ -10,62 +10,63 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useQuery } from '@tanstack/react-query';
-import { CompleteToDerivation } from '@repo/types/index';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import getUsernameByToken from '@/lib/decodeJwt';
-import { useEffect } from 'react';
+import { useDerivationByUser } from '@/hooks/services/useDerivation';
+import { useUserStore } from '@/hooks/useUserStore';
+import { DerivationStatus } from '@repo/types';
+import { Icon } from '@iconify/react/dist/iconify.js';
 
-const fetchCompleteToDerivation = async (): Promise<CompleteToDerivation[]> => {
-  const response = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/users/informations`,
-    {
-      headers: {
-        Authorization: `Bearer ${Cookies.get('token')}`,
-      },
-    }
-  );
+function getStatusAction(status: DerivationStatus) {
+  switch (status) {
+    case DerivationStatus.PENDING:
+      return 'Compléter';
+    case DerivationStatus.INCORRECT:
+      return 'Corriger';
+    case DerivationStatus.COMPLETED:
+      return 'Afficher';
+  }
+}
 
-  return response.data;
-};
+function getStatusColor(status: DerivationStatus) {
+  switch (status) {
+    case DerivationStatus.PENDING:
+      return (
+        <div className="flex items-center gap-2 text-yellow-500">
+          <Icon icon="mdi:clock-outline" />
+          <span className="font-semibold">En cours</span>
+        </div>
+      );
+    case DerivationStatus.INCORRECT:
+      return (
+        <div className="flex items-center gap-2 text-red-500">
+          <Icon icon="mdi:close-circle-outline" />
+          <span className="font-semibold">Corrigé</span>
+        </div>
+      );
+    case DerivationStatus.COMPLETED:
+      return (
+        <div className="flex items-center gap-2 text-green-500">
+          <Icon icon="mdi:check-circle-outline" />
+          <span className="font-semibold">Terminé</span>
+        </div>
+      );
+  }
+}
 
 export default function CompleteDerivationPage() {
-  // const {
-  //   data: completeToDerivations = [],
-  //   isLoading,
-  //   error,
-  // } = useQuery<CompleteToDerivation[]>({
-  //   queryFn: fetchCompleteToDerivation,
-  //   queryKey: [
-  //     'completeToDerivations',
-  //     getUsernameByToken(Cookies.get('token') || ''),
-  //   ],
-  // });
+  const { user } = useUserStore();
+  const {
+    data: completeToDerivations,
+    isLoading,
+    error,
+  } = useDerivationByUser(user?.id ?? -1);
 
-  const completeToDerivations = [
-    {
-      id: 1,
-      address: '1 rue de la paix',
-      city: 'Paris',
-      postalCode: '75000',
-      createdAt: '2022-01-01T00:00:00.000Z',
-    },
-    {
-      id: 2,
-      address: '2 rue de la paix',
-      city: 'Paris',
-      postalCode: '75000',
-      createdAt: '2022-01-01T00:00:00.000Z',
-    },
-    {
-      id: 3,
-      address: '3 rue de la paix',
-      city: 'Paris',
-      postalCode: '75000',
-      createdAt: '2022-01-01T00:00:00.000Z',
-    },
-  ];
+  if (isLoading) {
+    return <div>Chargement...</div>;
+  }
+
+  if (error) {
+    return <div>Une erreur est survenue</div>;
+  }
 
   return (
     <div className="container mx-auto py-10">
@@ -78,32 +79,29 @@ export default function CompleteDerivationPage() {
             <TableHead>Adresse</TableHead>
             <TableHead>Ville</TableHead>
             <TableHead>Code postal</TableHead>
+            <TableHead>Statut</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {/* {isLoading ? (
-            <TableRow>
-              <TableCell colSpan={4}>Chargement...</TableCell>
-            </TableRow>
-          ) : error ? (
-            <TableRow>
-              <TableCell colSpan={4}>Une erreur est survenue</TableCell>
-            </TableRow>
-          ) : */}{' '}
-          {completeToDerivations.length === 0 ? (
+          {completeToDerivations?.length === 0 ? (
             <TableRow>
               <TableCell colSpan={4}>Aucun relevé de dérivation</TableCell>
             </TableRow>
           ) : (
-            completeToDerivations.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.address}</TableCell>
-                <TableCell>{item.city}</TableCell>
-                <TableCell>{item.postalCode}</TableCell>
+            completeToDerivations?.map((derivation) => (
+              <TableRow key={derivation.id}>
+                <TableCell>{derivation.address}</TableCell>
+                <TableCell>{derivation.city}</TableCell>
+                <TableCell>{derivation.postalCode}</TableCell>
+                <TableCell>{getStatusColor(derivation.status)}</TableCell>
                 <TableCell>
-                  <Link href={`/todo/${item.id}`}>
-                    <Button variant="outline">Modifier</Button>
+                  <Link
+                    href={`/dashboard/complete-derivation/${derivation.id}`}
+                  >
+                    <Button variant="outline">
+                      {getStatusAction(derivation.status)}
+                    </Button>
                   </Link>
                 </TableCell>
               </TableRow>
