@@ -15,6 +15,14 @@ cp apps/api/.env.example apps/api/.env
 
 ```bash
 pnpm install
+```
+
+```bash
+cd packages/types
+npm run build
+```
+
+```bash
 turbo dev
 ```
 
