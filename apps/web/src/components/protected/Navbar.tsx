@@ -1,9 +1,16 @@
-import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetTitle,
+  SheetDescription,
+} from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useUserStore } from '@/hooks/useUserStore';
 import { useState } from 'react';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import useAuth from '@/hooks/useAuth';
 
 export function Navbar() {
@@ -27,6 +34,10 @@ export function Navbar() {
       label: 'Completer un relevé de dérivation',
       href: '/dashboard/complete-derivation',
     },
+    {
+      label: 'Mon profil',
+      href: '/dashboard/profile',
+    },
   ];
 
   const commonLinks = [
@@ -37,7 +48,7 @@ export function Navbar() {
   ];
 
   return (
-    <header className="flex h-20 w-full shrink-0 items-center shadow-sm px-4 md:px-6">
+    <header className="flex h-20 w-full shrink-0 items-center px-4 shadow-sm md:px-6">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="lg:hidden">
@@ -45,7 +56,10 @@ export function Navbar() {
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left">
+        <SheetContent side="left" aria-describedby={undefined}>
+          <VisuallyHidden>
+            <SheetTitle>Bathelec</SheetTitle>
+          </VisuallyHidden>
           <Link
             href="/dashboard"
             className="mr-6 flex"
@@ -111,7 +125,7 @@ export function Navbar() {
         <BathelecLogo />
         <span className="sr-only">Acme Inc</span>
       </Link>
-      <nav className="ml-auto hidden lg:flex gap-6">
+      <nav className="ml-auto hidden gap-6 lg:flex">
         {commonLinks.map((link) => (
           <Link
             key={link.href}
@@ -162,6 +176,7 @@ function BathelecLogo() {
       alt="Bathelec Software logo"
       width={100}
       height={100}
+      className="h-auto w-auto"
     />
   );
 }

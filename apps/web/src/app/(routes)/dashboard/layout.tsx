@@ -69,9 +69,6 @@ export default function LayoutProtected({
       ) : (
         <>
           <Navbar />
-          <p>
-            Welcome {user?.firstName} {user?.lastName}
-          </p>
           {children}
           {user?.role === 'admin' ? admin : technician}
         </>
