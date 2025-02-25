@@ -3,15 +3,15 @@ import {
   SheetTrigger,
   SheetContent,
   SheetTitle,
-  SheetDescription,
 } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useUserStore } from '@/hooks/useUserStore';
 import { useState } from 'react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import useAuth from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { DropdownMenuProfile } from './DropDownProfile';
 
 export function Navbar() {
   const { user } = useUserStore();
@@ -21,22 +21,18 @@ export function Navbar() {
   const adminLinks = [
     {
       label: 'Créez un technicien',
-      href: '/dashboard/create-technician',
+      href: '/dashboard/admin/create-technician',
     },
     {
       label: 'Créez un relevé de dérivation',
-      href: '/dashboard/create-derivation',
+      href: '/dashboard/admin/create-derivation',
     },
   ];
 
   const technicianLinks = [
     {
       label: 'Completer un relevé de dérivation',
-      href: '/dashboard/complete-derivation',
-    },
-    {
-      label: 'Mon profil',
-      href: '/dashboard/profile',
+      href: '/dashboard/technician/complete-derivation',
     },
   ];
 
@@ -46,6 +42,8 @@ export function Navbar() {
       href: '/dashboard',
     },
   ];
+
+  if (!user) return;
 
   return (
     <header className="flex h-20 w-full shrink-0 items-center px-4 shadow-sm md:px-6">
@@ -66,7 +64,7 @@ export function Navbar() {
             prefetch={false}
             onClick={() => setIsOpen(false)}
           >
-            <span className="sr-only">Acme Inc</span>
+            <span className="sr-only">Bathelec Software</span>
             <BathelecLogo />
           </Link>
           <div className="grid gap-2 py-6">
@@ -123,7 +121,7 @@ export function Navbar() {
       </Sheet>
       <Link href="/dashboard" className="mr-6 hidden lg:flex" prefetch={false}>
         <BathelecLogo />
-        <span className="sr-only">Acme Inc</span>
+        <span className="sr-only">Bathelec Software</span>
       </Link>
       <nav className="ml-auto hidden gap-6 lg:flex">
         {commonLinks.map((link) => (
@@ -160,11 +158,8 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
-
-        <Button onClick={logout} variant="default">
-          Se déconnecter
-        </Button>
       </nav>
+      <DropdownMenuProfile logout={logout} username={user?.username} />
     </header>
   );
 }

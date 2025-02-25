@@ -11,27 +11,29 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useUserStore } from '@/hooks/useUserStore';
-import { LockKeyhole, User2 } from 'lucide-react';
+import { LockKeyhole } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function ProfilePage() {
-  // const user = {
-  //   firstName: 'John',
-  //   lastName: 'Doe',
-  //   email: 'john.doe@example.com',
-  //   username: 'johndoe',
-  //   createdAt: new Date('2024-01-01'),
-  // };
-
   const { user } = useUserStore();
 
+  if (!user) return null;
+
   return (
-    <div className="py-12 sm:bg-slate-50 dark:bg-slate-900">
+    <div className="py-12">
       <div className="mx-auto max-w-2xl">
         <Card className="rounded-none border-none shadow-none sm:rounded-xl sm:shadow-lg">
           <CardHeader className="text-center">
             <div className="bg-primary/10 mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full">
-              <User2 className="text-primary h-10 w-10" />
+              <Image
+                src={`https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=${user.username}`}
+                alt="Profile Avatar"
+                width={80}
+                height={80}
+                className="rounded-full"
+                typeof="svg"
+              />
             </div>
             <CardTitle className="text-2xl font-bold">Profil</CardTitle>
             <CardDescription>
@@ -74,7 +76,10 @@ export default function ProfilePage() {
               />
             </div>
             <div className="pt-4">
-              <Link href="/change-password" className="w-full">
+              <Link
+                href="/dashboard/profile/change-password"
+                className="w-full"
+              >
                 <Button className="w-full space-x-2">
                   <LockKeyhole className="h-4 w-4" />
                   <span>Changer le mot de passe</span>

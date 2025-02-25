@@ -97,7 +97,7 @@ export default function CompleteDerivationPage() {
                 <TableCell>{getStatusColor(derivation.status)}</TableCell>
                 <TableCell>
                   <Link
-                    href={`/dashboard/complete-derivation/${derivation.id}`}
+                    href={`/dashboard/technician/complete-derivation/${derivation.id}`}
                   >
                     <Button variant="outline">
                       {getStatusAction(derivation.status)}

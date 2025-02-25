@@ -8,6 +8,7 @@ import { User } from '@repo/types';
 import { useUserStore } from '@/hooks/useUserStore';
 import getUsernameByToken from '@/lib/decodeJwt';
 import { Navbar } from '@/components/protected/Navbar';
+import { usePathname, useRouter } from 'next/navigation';
 
 const fetchUserData = async (): Promise<User> => {
   const response = await axios.get(
@@ -22,17 +23,11 @@ const fetchUserData = async (): Promise<User> => {
   return response.data;
 };
 
-export default function LayoutProtected({
-  children,
-  technician,
-  admin,
-}: {
-  children: ReactNode;
-  technician: ReactNode;
-  admin: ReactNode;
-}) {
+export default function LayoutProtected({ children }: { children: ReactNode }) {
   const [isClient, setIsClient] = useState(false);
   const { setUser } = useUserStore();
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     setIsClient(true);
@@ -51,8 +46,20 @@ export default function LayoutProtected({
   useEffect(() => {
     if (user) {
       setUser(user);
+      // Rediriger en fonction du rôle de l'utilisateur
+      if (
+        user.role === 'admin' &&
+        pathname.startsWith('/dashboard/technician')
+      ) {
+        router.push('/dashboard/admin/create-derivation');
+      } else if (
+        user.role === 'technician' &&
+        pathname.startsWith('/dashboard/admin')
+      ) {
+        router.push('/dashboard/technician/complete-derivation');
+      }
     }
-  }, [user]);
+  }, [user, router]);
 
   if (!isClient) {
     return null;
@@ -70,7 +77,6 @@ export default function LayoutProtected({
         <>
           <Navbar />
           {children}
-          {user?.role === 'admin' ? admin : technician}
         </>
       )}
     </>

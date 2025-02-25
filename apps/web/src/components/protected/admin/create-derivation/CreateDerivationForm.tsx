@@ -31,7 +31,7 @@ import {
 import clsx from 'clsx';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import { Technician } from '@repo/types/src';
+import { Technician } from '@repo/types';
 import Cookies from 'js-cookie';
 import { toast } from '@/hooks/use-toast';
 
