@@ -4,21 +4,18 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param,
-  ParseIntPipe,
   Post,
   Request,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/jwt-auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/jwt/jwt-auth.guard';
 import { UsersService } from './users.service';
 import { ChangePasswordDto } from './dto/request/change-password.dto';
 import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
-  ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
 import { ChangePasswordResponseSuccessDto } from './dto/response/change-password-success.response.dto';
@@ -43,9 +40,8 @@ export class UsersController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post('change-password/:userId')
-  @ApiOperation({ summary: 'Change password by user id' })
-  @ApiParam({ name: 'userId', type: Number })
+  @Post('change-password')
+  @ApiOperation({ summary: 'Change password' })
   @ApiOkResponse({
     description: 'The password has been successfully changed.',
     type: ChangePasswordResponseSuccessDto,
@@ -63,8 +59,8 @@ export class UsersController {
   @ApiBody({ type: ChangePasswordDto })
   async changePassword(
     @Body(new ValidationPipe()) changePasswordDto: ChangePasswordDto,
-    @Param('userId', ParseIntPipe) userId: number
+    @Request() req
   ) {
-    return this.usersService.changePassword(changePasswordDto, userId);
+    return this.usersService.changePassword(changePasswordDto, req.user.userId);
   }
 }

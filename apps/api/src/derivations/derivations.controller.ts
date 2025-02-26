@@ -7,7 +7,7 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/jwt-auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/jwt/jwt-auth.guard';
 import { Role } from 'src/role/role.decorator';
 import { CreateDerivationDto } from './dto/request/create-derivation.dto';
 import { DerivationsService } from './derivations.service';
