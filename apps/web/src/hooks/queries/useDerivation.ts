@@ -4,7 +4,7 @@ import { Derivation } from '@repo/types';
 
 export const useDerivationByUser = (userId: number) => {
   const { data, isLoading, error } = useQuery<Derivation[]>({
-    queryKey: ['derivation', userId],
+    queryKey: ['derivations', userId],
     queryFn: () => derivationService.getDerivationsByUser(userId),
   });
 

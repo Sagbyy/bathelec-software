@@ -2,18 +2,10 @@ import { changePasswordService } from '@/services/changePasswordService';
 import { ChangePassword } from '@/types/changePassword';
 import { useMutation } from '@tanstack/react-query';
 
-export const useChangePassword = (
-  currentPassword: string,
-  newPassword: string,
-  userId: number
-) => {
+export const useChangePassword = () => {
   return useMutation<ChangePassword, Error, ChangePassword>({
-    mutationFn: () =>
-      changePasswordService.changePassword(
-        currentPassword,
-        newPassword,
-        userId
-      ),
+    mutationFn: ({ currentPassword, newPassword }: ChangePassword) =>
+      changePasswordService.changePassword(currentPassword, newPassword),
     onSuccess: (data) => {
       console.log('Password changed successfully with data:', data);
     },
