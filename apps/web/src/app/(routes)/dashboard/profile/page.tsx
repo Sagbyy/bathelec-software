@@ -23,7 +23,7 @@ export default function ProfilePage() {
   return (
     <div className="py-12">
       <div className="mx-auto max-w-2xl">
-        <Card className="rounded-none border-none shadow-none sm:rounded-xl sm:shadow-lg">
+        <Card className="rounded-none border-none shadow-none sm:rounded-xl sm:border sm:shadow">
           <CardHeader className="text-center">
             <div className="bg-primary/10 mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full">
               <Image

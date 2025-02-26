@@ -1,6 +1,6 @@
 'use client';
 
-import { useDerivationById } from '@/hooks/services/useDerivation';
+import { useDerivationById } from '@/hooks/queries/useDerivation';
 import { useParams } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
