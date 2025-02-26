@@ -1,10 +1,18 @@
-import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
+import { ChangePasswordDto } from './dto/request/change-password.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
+  private readonly logger = new Logger(UsersService.name);
 
   async findOne(id: number) {
     return this.prisma.user.findUnique({
@@ -71,5 +79,52 @@ export class UsersService {
         role: 'technician',
       },
     });
+  }
+
+  async changePassword(changePasswordDto: ChangePasswordDto, userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      this.logger.error(`User with ID ${userId} not found`);
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      changePasswordDto.currentPassword,
+      user.password
+    );
+
+    if (!isPasswordValid) {
+      this.logger.error(`Invalid password for user with ID ${userId}`);
+      throw new HttpException('Invalid password', HttpStatus.BAD_REQUEST);
+    }
+
+    const hashedPassword = await bcrypt.hash(changePasswordDto.newPassword, 10);
+
+    try {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          password: hashedPassword,
+        },
+      });
+      this.logger.log(
+        `Password changed successfully for user with ID: ${userId}`
+      );
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Password changed successfully',
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error changing password for user with ID: ${userId}, error: ${error.message}`
+      );
+      throw new HttpException(
+        'Error while changing password',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }
