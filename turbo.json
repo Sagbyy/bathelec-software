@@ -17,6 +17,9 @@
     },
     "@repo/types#build": {
       "outputs": ["dist/**"]
+    },
+    "api#build": {
+      "outputs": ["dist/**"]
     }
   }
 }
