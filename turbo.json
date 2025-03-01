@@ -3,7 +3,7 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "@repo/types#build"],
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
@@ -15,7 +15,7 @@
       "cache": false,
       "persistent": true
     },
-    "@repo/types": {
+    "@repo/types#build": {
       "outputs": ["dist/**"]
     }
   }

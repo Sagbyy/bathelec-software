@@ -1,4 +1,4 @@
-import { User } from '@repo/types/src';
+import { User } from '@repo/types';
 import { jwtDecode } from 'jwt-decode';
 
 export default function getUsernameByToken(token: string | undefined) {
