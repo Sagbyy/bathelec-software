@@ -1,8 +1,12 @@
 import { changePasswordService } from '@/services/changePasswordService';
 import { ChangePassword } from '@/types/changePassword';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, UseMutationResult } from '@tanstack/react-query';
 
-export const useChangePassword = () => {
+export const useChangePassword = (): UseMutationResult<
+  ChangePassword,
+  Error,
+  ChangePassword
+> => {
   return useMutation<ChangePassword, Error, ChangePassword>({
     mutationFn: ({ currentPassword, newPassword }: ChangePassword) =>
       changePasswordService.changePassword(currentPassword, newPassword),
