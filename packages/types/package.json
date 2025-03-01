@@ -39,6 +39,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@repo/typescript-config": "workspace:*",
     "typescript": "^5.7.3"
   }
 }
