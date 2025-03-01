@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "vercel-build": "turbo run build --filter=@repo/types && prisma generate && prisma migrate deploy && nest build",
+    "vercel-build": "cd ../../packages/types && turbo run build && cd ../../apps/api && prisma generate && prisma migrate deploy && nest build",
     "dev": "nest start --watch",
     "prisma": "npx prisma studio",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
