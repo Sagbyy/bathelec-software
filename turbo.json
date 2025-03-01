@@ -19,6 +19,7 @@
       "outputs": ["dist/**"]
     },
     "api#build": {
+      "dependsOn": ["@repo/types#build"],
       "outputs": ["dist/**"]
     }
   }
