@@ -1,5 +1,5 @@
 export class PayloadDto {
   username: string;
-  sub: number;
+  sub: string;
   role: string;
 }
