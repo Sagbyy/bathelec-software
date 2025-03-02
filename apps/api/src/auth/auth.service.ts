@@ -31,7 +31,7 @@ export class AuthService {
 
       return {
         accessToken: this.jwtService.sign(
-          { userId: user.id },
+          { username: user.username },
           {
             secret: process.env.JWT_SECRET,
             expiresIn: '30d',
