@@ -15,11 +15,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: 'yarn'
+          node-version: 22
+          cache: 'pnpm'
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Install pnpm
+        run: npm install -g pnpm@9.0.4
+
+      - name: Install dependencies with pnpm
+        run: pnpm install --frozen-lockfile
 
       - name: Build apps (only changed ones)
         run: yarn turbo run build --filter=...[HEAD^1]
