@@ -3,7 +3,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt'; // Import JwtSignOptions
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcryptjs';
 // import { PayloadDto } from '../jwt/payload.dto';
@@ -29,14 +29,13 @@ export class AuthService {
       //   role: user.role,
       // };
 
+      const options: JwtSignOptions = {
+        secret: process.env.JWT_SECRET,
+        expiresIn: '30d',
+      };
+
       return {
-        accessToken: this.jwtService.sign(
-          { username: user.username },
-          {
-            secret: process.env.JWT_SECRET,
-            expiresIn: '30d' as any, // Ensure expiresIn is correctly typed
-          }
-        ),
+        accessToken: this.jwtService.sign({ username: user.username }, options),
       };
     }
 
