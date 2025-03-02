@@ -16,29 +16,25 @@ export class AuthService {
   ) {}
 
   async signIn(username: string, password: string) {
-    if (!username || !password) {
-      throw new HttpException('You should to fill : username, password', 400);
-    }
-
-    const user = await this.usersService.findOneByUsername(username);
-
-    if (user && (await bcrypt.compare(password, user.password))) {
-      // const payload: JwtPayload = {
-      //   sub: user.id,
-      //   username: user.username,
-      //   role: user.role,
-      // };
-
-      return {
-        accessToken: this.jwtService.sign(
-          { username: user.username },
-          {
-            expiresIn: '30d', // Set expiresIn directly
-          }
-        ),
-      };
-    }
-
-    throw new UnauthorizedException();
+    // if (!username || !password) {
+    //   throw new HttpException('You should to fill : username, password', 400);
+    // }
+    // const user = await this.usersService.findOneByUsername(username);
+    // if (user && (await bcrypt.compare(password, user.password))) {
+    //   // const payload: JwtPayload = {
+    //   //   sub: user.id,
+    //   //   username: user.username,
+    //   //   role: user.role,
+    //   // };
+    //   return {
+    //     accessToken: this.jwtService.sign(
+    //       { username: user.username },
+    //       {
+    //         expiresIn: '30d', // Set expiresIn directly
+    //       }
+    //     ),
+    //   };
+    // }
+    // throw new UnauthorizedException();
   }
 }
