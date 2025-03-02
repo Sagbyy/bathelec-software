@@ -31,7 +31,7 @@ export class AuthService {
 
       const options: JwtSignOptions = {
         secret: process.env.JWT_SECRET,
-        expiresIn: '30d',
+        expiresIn: '30d' as unknown as JwtSignOptions['expiresIn'], // Use type assertion
       };
 
       return {
