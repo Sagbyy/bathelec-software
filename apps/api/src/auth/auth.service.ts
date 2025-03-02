@@ -24,7 +24,7 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload: PayloadDto = {
-        sub: user.id,
+        sub: user.id.toString(),
         username: user.username,
         role: user.role,
       };
