@@ -31,8 +31,8 @@ jobs:
 
       - name: Deploy Web to Vercel
         if: success()
-        run: npx vercel --token ${{ secrets.VERCEL_TOKEN }} --scope sagbyy --cwd apps/web --prod
+        run: npx vercel --token ${{ secrets.VERCEL_TOKEN }} --scope sagbys-projects --cwd apps/web --prod
 
       - name: Deploy Api to Vercel
         if: success()
-        run: npx vercel --token ${{ secrets.VERCEL_TOKEN }} --scope sagbyy --cwd apps/api --prod
+        run: npx vercel --token ${{ secrets.VERCEL_TOKEN }} --scope sagbys-projects --cwd apps/api --prod
