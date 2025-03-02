@@ -33,5 +33,8 @@ jobs:
       - name: Build API
         run: pnpm turbo run build --filter=api
 
+      - name: Create Vercel build output
+        run: npx vercel build --token=${{ secrets.VERCEL_TOKEN }} --cwd=./apps/api
+
       - name: Deploy to Vercel
-        run: npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes --prebuilt --cwd=./apps/api
+        run: npx vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes --prebuilt --cwd=./apps/api
