@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateDerivationDto } from './dto/request/create-derivation.dto';
 import { DerivationStatus } from '@repo/types';
 
