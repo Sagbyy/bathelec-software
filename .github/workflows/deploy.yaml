@@ -18,14 +18,17 @@ jobs:
           node-version: 22
           cache: 'pnpm'
 
-      - name: Install pnpm
-        run: npm install -g pnpm@9.0.4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.4
+          run_install: false 
 
       - name: Install dependencies with pnpm
         run: pnpm install --frozen-lockfile
 
       - name: Build apps (only changed ones)
-        run: yarn turbo run build --filter=...[HEAD^1]
+        run: pnpm turbo run build --filter=...[HEAD^1]
 
       - name: Deploy Web to Vercel
         if: success()
