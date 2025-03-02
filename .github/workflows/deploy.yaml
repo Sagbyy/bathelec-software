@@ -30,8 +30,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build backend
-        run: pnpm turbo run build --filter=backend
+      - name: Build API
+        run: pnpm turbo run build --filter=api
 
       - name: Deploy to Vercel
         run: npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
