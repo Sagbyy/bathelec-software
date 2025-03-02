@@ -34,7 +34,7 @@ export class AuthService {
           { username: user.username },
           {
             secret: process.env.JWT_SECRET,
-            expiresIn: '30d',
+            expiresIn: '30d' as any, // Ensure expiresIn is correctly typed
           }
         ),
       };
