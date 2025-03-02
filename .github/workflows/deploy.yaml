@@ -26,8 +26,8 @@ jobs:
       - name: Install dependencies with pnpm
         run: pnpm install --frozen-lockfile
 
-      - name: Build apps (only changed ones)
-        run: pnpm turbo run build --filter=...[HEAD^1]
+      - name: Build apps
+        run: pnpm turbo run build
 
       - name: Deploy Web to Vercel
         if: success()
