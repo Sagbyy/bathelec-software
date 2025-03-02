@@ -30,10 +30,13 @@ export class AuthService {
       // };
 
       return {
-        accessToken: this.jwtService.sign(user.id.toString(), {
-          secret: process.env.JWT_SECRET,
-          expiresIn: '30d',
-        }),
+        accessToken: this.jwtService.sign(
+          { userId: user.id },
+          {
+            secret: process.env.JWT_SECRET,
+            expiresIn: '30d',
+          }
+        ),
       };
     }
 
