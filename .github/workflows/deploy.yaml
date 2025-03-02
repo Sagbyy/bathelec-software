@@ -1,4 +1,4 @@
-name: Deploy Backend to Vercel
+name: Deploy Turborepo Apps
 
 on:
   push:
@@ -6,9 +6,8 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -16,25 +15,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Setup pnpm cache
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
+          node-version: 18
+          cache: 'yarn'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: yarn install --frozen-lockfile
 
-      - name: Build API
-        run: pnpm turbo run build --filter=api
+      - name: Build apps (only changed ones)
+        run: yarn turbo run build --filter=...[HEAD^1]
 
-      - name: Create Vercel build output
-        run: npx vercel build --token=${{ secrets.VERCEL_TOKEN }} --cwd=./apps/api
+      - name: Deploy Web to Vercel
+        if: success()
+        run: npx vercel --token ${{ secrets.VERCEL_TOKEN }} --scope sagbyy --cwd apps/web --prod
 
-      - name: Deploy to Vercel
-        run: npx vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes --prebuilt --cwd=./apps/api
+      - name: Deploy Api to Vercel
+        if: success()
+        run: npx vercel --token ${{ secrets.VERCEL_TOKEN }} --scope sagbyy --cwd apps/api --prod
