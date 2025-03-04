@@ -26,7 +26,7 @@ npm run build
 turbo dev
 ```
 
-### Prisma
+### Prisma (API Folder)
 
 ```bash
 npx prisma migrate dev
