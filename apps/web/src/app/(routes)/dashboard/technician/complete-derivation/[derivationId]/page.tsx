@@ -3,6 +3,7 @@
 import { useDerivationById } from '@/hooks/queries/useDerivation';
 import { useParams } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { MultiStepForm } from '@/components/derivations/multi-step-form';
 
 export default function CompleteDerivationPage() {
   const { derivationId } = useParams();
@@ -33,6 +34,12 @@ export default function CompleteDerivationPage() {
           <h2>Created At: {derivation?.createdAt}</h2>
         </CardContent>
       </Card>
+      <div className="container mx-auto px-4 py-10 md:px-6">
+        <h1 className="mb-8 text-center text-3xl font-bold">
+          Formulaire d'Intervention
+        </h1>
+        <MultiStepForm />
+      </div>
     </div>
   );
 }
