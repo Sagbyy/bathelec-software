@@ -39,7 +39,15 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
           <FormItem className="flex flex-col">
             <FormLabel>Date et heure</FormLabel>
             <FormControl>
-              <DateTimePicker24h field={field} />
+              <DateTimePicker24h
+                field={{
+                  value: field.value,
+                  onChange: field.onChange,
+                  onBlur: field.onBlur,
+                  name: field.name,
+                  ref: field.ref,
+                }}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

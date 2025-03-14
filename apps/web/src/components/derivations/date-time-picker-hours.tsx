@@ -66,11 +66,6 @@ export function DateTimePicker24h({ field }: DateTimePicker24hProps) {
           ) : (
             <span>DD/MM/YYYY HH:mm</span>
           )}
-          {/* {field.value ? (
-                              format(field.value, 'PPP', { locale: fr })
-                            ) : (
-                              <span>Sélectionner une date</span>
-                            )} */}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
