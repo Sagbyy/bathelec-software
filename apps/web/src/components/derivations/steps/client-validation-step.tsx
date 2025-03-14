@@ -18,6 +18,8 @@ import { Button } from '@/components/ui/button';
 import type { z } from 'zod';
 import type { formSchema } from '@/lib/validations/derivationForm';
 import { Star, Trash2 } from 'lucide-react';
+import SignatureCanvas from 'react-signature-canvas';
+import ReactSignatureCanvas from 'react-signature-canvas';
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -26,14 +28,17 @@ interface ClientValidationStepProps {
 }
 
 export function ClientValidationStep({ form }: ClientValidationStepProps) {
-  const signatureRef = useRef<HTMLCanvasElement>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [hasSignature, setHasSignature] = useState(false);
+  const signatureRef = useRef<ReactSignatureCanvas>(null);
   const [clientPresent, setClientPresent] = useState(
     form.getValues('clientValidation.present')
   );
 
-  // Mettre à jour l'état local lorsque la valeur du formulaire change
+  const clearSignature = () => {
+    if (signatureRef.current) {
+      signatureRef.current.clear();
+    }
+  };
+
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === 'clientValidation.present') {
@@ -42,130 +47,6 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
     });
     return () => subscription.unsubscribe();
   }, [form.watch]);
-
-  const startDrawing = (
-    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
-  ) => {
-    const canvas = signatureRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    setIsDrawing(true);
-
-    // Obtenir les coordonnées correctes pour le dessin
-    const rect = canvas.getBoundingClientRect();
-    let x, y;
-
-    if ('touches' in e) {
-      // Événement tactile
-      if (e.touches[0] && e.touches[0].clientX) {
-        x = e.touches[0].clientX - rect.left;
-        y = e.touches[0].clientY - rect.top;
-      }
-    } else {
-      // Événement de souris
-      x = e.clientX - rect.left;
-      y = e.clientY - rect.top;
-    }
-
-    ctx.beginPath();
-    if (typeof x === 'number' && typeof y === 'number') {
-      ctx.moveTo(x, y);
-    }
-  };
-
-  const draw = (
-    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
-  ) => {
-    if (!isDrawing) return;
-
-    const canvas = signatureRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Obtenir les coordonnées correctes pour le dessin
-    const rect = canvas.getBoundingClientRect();
-    let x, y;
-
-    if ('touches' in e) {
-      // Événement tactile
-      if (e.touches[0] && e.touches[0].clientX) {
-        x = e.touches[0].clientX - rect.left;
-        y = e.touches[0].clientY - rect.top;
-      }
-      e.preventDefault(); // Empêcher le défilement sur les appareils tactiles
-    } else {
-      // Événement de souris
-      x = e.clientX - rect.left;
-      y = e.clientY - rect.top;
-    }
-
-    ctx.lineWidth = 2;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = '#000';
-
-    if (typeof x === 'number' && typeof y === 'number') {
-      ctx.moveTo(x, y);
-    }
-    ctx.stroke();
-
-    setHasSignature(true);
-
-    // Mettre à jour le champ de formulaire avec l'image de la signature
-    updateSignatureField();
-  };
-
-  const endDrawing = () => {
-    setIsDrawing(false);
-
-    // Mettre à jour le champ de formulaire avec l'image de la signature
-    updateSignatureField();
-  };
-
-  const updateSignatureField = () => {
-    const canvas = signatureRef.current;
-    if (!canvas) return;
-
-    const signatureData = canvas.toDataURL('image/png');
-    form.setValue('clientValidation.signature', signatureData);
-  };
-
-  const clearSignature = () => {
-    const canvas = signatureRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    setHasSignature(false);
-    form.setValue('clientValidation.signature', null);
-  };
-
-  // Initialiser le canvas
-  useEffect(() => {
-    const canvas = signatureRef.current;
-    if (!canvas) return;
-
-    // Définir la taille du canvas pour qu'elle corresponde à sa taille d'affichage
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.scale(dpr, dpr);
-
-    canvas.style.width = `${rect.width}px`;
-    canvas.style.height = `${rect.height}px`;
-  }, []);
 
   return (
     <div className="space-y-6">
@@ -279,18 +160,19 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
                 <FormControl>
                   <div className="space-y-2">
                     <div className="rounded-md border bg-white p-2">
-                      <canvas
+                      <SignatureCanvas
                         ref={signatureRef}
-                        width={400}
-                        height={200}
-                        className="w-full touch-none rounded border border-gray-300"
-                        onMouseDown={startDrawing}
-                        onMouseMove={draw}
-                        onMouseUp={endDrawing}
-                        onMouseLeave={endDrawing}
-                        onTouchStart={startDrawing}
-                        onTouchMove={draw}
-                        onTouchEnd={endDrawing}
+                        penColor="black"
+                        canvasProps={{
+                          className: 'w-full h-full',
+                        }}
+                        onEnd={() => {
+                          field.onChange(
+                            signatureRef.current
+                              ?.getTrimmedCanvas()
+                              .toDataURL('image/png')
+                          );
+                        }}
                       />
                     </div>
                     <Button
@@ -298,7 +180,6 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
                       variant="outline"
                       size="sm"
                       onClick={clearSignature}
-                      disabled={!hasSignature}
                       className="flex items-center"
                     >
                       <Trash2 className="mr-2 h-4 w-4" />

@@ -11,7 +11,7 @@ export const formSchema = z.object({
 
   // Étape 2: Informations générales
   generalInfo: z.object({
-    dateTime: z.date(),
+    dateTime: z.string().datetime('Date et heure invalides'),
     derivationBy: z.string().min(1, { message: 'Ce champ est requis' }),
     address: z.object({
       street: z.string().min(1, { message: "L'adresse est requise" }),

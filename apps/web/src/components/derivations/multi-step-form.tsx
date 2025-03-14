@@ -23,7 +23,7 @@ import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 type FormValues = z.infer<typeof formSchema>;
 
 export function MultiStepForm() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(9);
   const totalSteps = 9;
 
   const form = useForm<FormValues>({
@@ -35,7 +35,7 @@ export function MultiStepForm() {
         folio: '',
       },
       generalInfo: {
-        dateTime: new Date(),
+        dateTime: new Date().toISOString(),
         derivationBy: '',
         address: {
           street: '',
@@ -99,7 +99,6 @@ export function MultiStepForm() {
 
   const onSubmit = (data: FormValues) => {
     console.log('Form submitted:', data);
-    // Ici, vous pourriez envoyer les données à votre API
     alert('Formulaire soumis avec succès !');
   };
 
@@ -210,7 +209,7 @@ export function MultiStepForm() {
   const progress = (step / totalSteps) * 100;
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="">
       <div className="mb-8">
         <div className="mb-2 flex justify-between">
           <span className="text-sm font-medium">
