@@ -69,7 +69,7 @@ export default function CompleteDerivationPage() {
   }
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="mx-2 py-10 sm:mx-10">
       <h1 className="mb-5 text-2xl font-bold">
         Liste des relevés de dérivation
       </h1>

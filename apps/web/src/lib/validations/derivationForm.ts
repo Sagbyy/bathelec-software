@@ -1,8 +1,5 @@
 import { z } from 'zod';
 
-const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
-const ACCEPTED_FILE_TYPES = ['image/png'];
-
 export const formSchema = z.object({
   // Étape 1: Informations client
   clientInfo: z.object({
@@ -25,7 +22,7 @@ export const formSchema = z.object({
       .string()
       .min(1, { message: "L'identification CM est requise" }),
     floor: z.string().optional(),
-    situation: z.string().min(1, { message: 'La situation est requise' }),
+    situation: z.string().optional(),
     comment: z.string().optional(),
   }),
 
@@ -87,7 +84,9 @@ export const formSchema = z.object({
     type: z.enum(['non_differentiel', 'differentiel', 'selectif']),
     power: z.string().min(1, { message: 'La puissance est requise' }),
     commissioningDone: z.boolean(),
-    sealed: z.boolean(),
+    sealed: z.boolean().refine((val) => val === true, {
+      message: 'Le disjoncteur doit être scellé',
+    }),
   }),
 
   // Étape 8: Photo après travaux

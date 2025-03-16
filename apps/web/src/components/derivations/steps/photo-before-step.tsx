@@ -53,7 +53,7 @@ export function PhotoBeforeStep({ form }: PhotoBeforeStepProps) {
       <FormField
         control={form.control}
         name="photoBeforeWork.photo"
-        render={({ field: { onChange, ...field } }) => (
+        render={({ field: { value, onChange, ...field } }) => (
           <FormItem>
             <FormLabel>
               Vue d'ensemble platine comptage

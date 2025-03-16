@@ -23,7 +23,7 @@ import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 type FormValues = z.infer<typeof formSchema>;
 
 export function MultiStepForm() {
-  const [step, setStep] = useState(4);
+  const [step, setStep] = useState(7);
   const [totalSteps, setTotalSteps] = useState(9);
 
   const form = useForm<FormValues>({
@@ -125,15 +125,14 @@ export function MultiStepForm() {
 
     if (result) {
       if (step < totalSteps) {
-        // Skip step 6 if old meter is preserved
         if (oldMeterPreserved && step === 5) {
-          setStep(6); // Go to step 6 which will render Circuit Breaker (step 7)
+          setStep(6);
         } else {
           setStep(step + 1);
         }
         window.scrollTo(0, 0);
       } else {
-        form.handleSubmit(onSubmit)();
+        onSubmit(form.getValues());
       }
     }
   };
