@@ -46,7 +46,7 @@ export default function LayoutProtected({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (user) {
       setUser(user);
-      // Rediriger en fonction du rôle de l'utilisateur
+      // Redirect the user by role
       if (
         user.role === 'admin' &&
         pathname.startsWith('/dashboard/technician')

@@ -24,6 +24,7 @@ interface PhotoAfterStepProps {
 }
 
 export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
+  const oldMeterPreserved = form.watch('oldMeter.preserved');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleFileChange = (
@@ -48,7 +49,9 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
 
   return (
     <div className="space-y-6">
-      <div className="text-xl font-semibold">8. Photo après travaux</div>
+      <div className="text-xl font-semibold">
+        {oldMeterPreserved ? 7 : 8}. Photo après travaux
+      </div>
 
       <FormField
         control={form.control}

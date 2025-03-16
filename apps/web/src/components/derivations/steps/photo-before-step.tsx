@@ -53,9 +53,12 @@ export function PhotoBeforeStep({ form }: PhotoBeforeStepProps) {
       <FormField
         control={form.control}
         name="photoBeforeWork.photo"
-        render={({ field: { value, onChange, ...field } }) => (
+        render={({ field: { onChange, ...field } }) => (
           <FormItem>
-            <FormLabel>Vue d'ensemble platine comptage</FormLabel>
+            <FormLabel>
+              Vue d'ensemble platine comptage
+              <span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <div className="flex flex-col items-center gap-4">
                 {previewUrl ? (

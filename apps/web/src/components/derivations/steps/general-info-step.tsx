@@ -20,6 +20,7 @@ import {
 import type { z } from 'zod';
 import type { formSchema } from '@/lib/validations/derivationForm';
 import { DateTimePicker24h } from '../date-time-picker-hours';
+import { useTechnicians } from '@/hooks/queries/useTechnician';
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -28,6 +29,11 @@ interface GeneralInfoStepProps {
 }
 
 export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
+  const { data: technicians, isLoading, error } = useTechnicians();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
   return (
     <div className="space-y-6">
       <div className="text-xl font-semibold">2. Informations générales</div>
@@ -37,7 +43,9 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
         name="generalInfo.dateTime"
         render={({ field }) => (
           <FormItem className="flex flex-col">
-            <FormLabel>Date et heure</FormLabel>
+            <FormLabel>
+              Date et heure<span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <DateTimePicker24h
                 field={{
@@ -59,7 +67,10 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
         name="generalInfo.derivationBy"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Dérivation réalisée par</FormLabel>
+            <FormLabel>
+              Dérivation réalisée par
+              <span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
@@ -67,9 +78,14 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="tech1">Technicien 1</SelectItem>
-                <SelectItem value="tech2">Technicien 2</SelectItem>
-                <SelectItem value="tech3">Technicien 3</SelectItem>
+                {technicians?.map((technician) => (
+                  <SelectItem
+                    key={technician.id}
+                    value={technician.id.toString()}
+                  >
+                    {technician.firstName} {technician.lastName}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <FormMessage />
@@ -85,7 +101,9 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
           name="generalInfo.address.street"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>N° et Rue</FormLabel>
+              <FormLabel>
+                N° et Rue<span className="ml-1 text-red-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -99,7 +117,9 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
           name="generalInfo.address.postalCode"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Code Postal</FormLabel>
+              <FormLabel>
+                Code Postal<span className="ml-1 text-red-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -113,7 +133,9 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
           name="generalInfo.address.city"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Ville</FormLabel>
+              <FormLabel>
+                Ville<span className="ml-1 text-red-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -128,7 +150,9 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
         name="generalInfo.building"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Bâtiment</FormLabel>
+            <FormLabel>
+              Bâtiment<span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <Input placeholder="Ex: A - B / Rue - Cour" {...field} />
             </FormControl>
@@ -142,7 +166,9 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
         name="generalInfo.cmIdentification"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Identification CM</FormLabel>
+            <FormLabel>
+              Identification CM<span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <Input placeholder="Ex: 1D001 - 1C101 - 2C101" {...field} />
             </FormControl>

@@ -30,9 +30,13 @@ interface CircuitBreakerStepProps {
 }
 
 export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
+  const oldMeterPreserved = form.watch('oldMeter.preserved');
+
   return (
     <div className="space-y-6">
-      <div className="text-xl font-semibold">7. Disjoncteur</div>
+      <div className="text-xl font-semibold">
+        {oldMeterPreserved ? 6 : 7}. Disjoncteur
+      </div>
 
       <Alert variant="destructive" className="mb-6">
         <AlertTriangle className="h-4 w-4" />

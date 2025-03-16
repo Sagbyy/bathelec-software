@@ -28,7 +28,9 @@ export function ClientInfoStep({ form }: ClientInfoStepProps) {
         name="clientInfo.name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Nom du client</FormLabel>
+            <FormLabel>
+              Nom du client<span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <Input placeholder="Ex: M. Dupont" {...field} />
             </FormControl>
@@ -56,7 +58,9 @@ export function ClientInfoStep({ form }: ClientInfoStepProps) {
         name="clientInfo.folio"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Folio</FormLabel>
+            <FormLabel>
+              Folio<span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <Input
                 placeholder="Ex: SGX001 - COM001 - ASC001 - 001 - 101"

@@ -20,11 +20,11 @@ export function InfoCard({
 }: InfoCardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending':
+      case DerivationStatus.PENDING:
         return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100';
-      case 'completed':
+      case DerivationStatus.COMPLETED:
         return 'bg-green-100 text-green-800 hover:bg-green-100';
-      case 'cancelled':
+      case DerivationStatus.INCORRECT:
         return 'bg-red-100 text-red-800 hover:bg-red-100';
       default:
         return 'bg-gray-100 text-gray-800 hover:bg-gray-100';
@@ -59,7 +59,7 @@ export function InfoCard({
             </div>
           </div>
           <Badge className={`${getStatusColor(status)}`} variant="outline">
-            {status === DerivationStatus.PENDING && 'En attente'}
+            {status === DerivationStatus.PENDING && 'En cours'}
             {status === DerivationStatus.COMPLETED && 'Terminé'}
             {status === DerivationStatus.INCORRECT && 'Incorrecte'}
           </Badge>

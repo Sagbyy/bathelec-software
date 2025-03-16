@@ -34,6 +34,7 @@ interface OldMeterStepProps {
 
 export function OldMeterStep({ form }: OldMeterStepProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const oldMeterType = form.watch('oldMeter.type');
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -64,7 +65,9 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
         name="oldMeter.type"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Type de compteur</FormLabel>
+            <FormLabel>
+              Type de compteur<span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
@@ -85,29 +88,35 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
         )}
       />
 
-      <FormField
-        control={form.control}
-        name="oldMeter.generation"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Génération</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner une génération" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="g1">G1</SelectItem>
-                <SelectItem value="g2">G2</SelectItem>
-                <SelectItem value="g3">G3</SelectItem>
-                <SelectItem value="autre">Autre</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      {oldMeterType === 'linky' && (
+        <FormField
+          control={form.control}
+          name="oldMeter.generation"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Génération<span className="ml-1 text-red-500">*</span>
+              </FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner une génération" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="autre" className="uppercase">
+                    Pas de generation - Compteur SBE
+                  </SelectItem>
+                  <SelectItem value="g1">G1</SelectItem>
+                  <SelectItem value="g2">G2</SelectItem>
+                  <SelectItem value="g3">G3</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
 
       <FormField
         control={form.control}
@@ -123,6 +132,26 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
           </FormItem>
         )}
       />
+
+      {oldMeterType !== 'linky' && (
+        <FormField
+          control={form.control}
+          name="oldMeter.linkyRefusal"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <FormLabel className="text-base">Refus de Linky</FormLabel>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      )}
 
       <FormField
         control={form.control}
@@ -191,7 +220,10 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
         name="oldMeter.indexPhoto"
         render={({ field: { value, onChange, ...field } }) => (
           <FormItem>
-            <FormLabel>Photo relevé index ancien compteur</FormLabel>
+            <FormLabel>
+              Photo relevé index ancien compteur
+              <span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <div className="flex flex-col items-center gap-4">
                 {previewUrl ? (

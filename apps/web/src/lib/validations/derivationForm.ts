@@ -1,11 +1,13 @@
 import { z } from 'zod';
 
-// Schéma de validation pour le formulaire complet
+const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
+const ACCEPTED_FILE_TYPES = ['image/png'];
+
 export const formSchema = z.object({
   // Étape 1: Informations client
   clientInfo: z.object({
     name: z.string().min(2, { message: 'Le nom est requis' }),
-    phone: z.string().min(8, { message: 'Numéro de téléphone invalide' }),
+    phone: z.string().optional(),
     folio: z.string().min(1, { message: 'Le folio est requis' }),
   }),
 
@@ -15,14 +17,14 @@ export const formSchema = z.object({
     derivationBy: z.string().min(1, { message: 'Ce champ est requis' }),
     address: z.object({
       street: z.string().min(1, { message: "L'adresse est requise" }),
-      postalCode: z.string().min(5, { message: 'Code postal invalide' }),
+      postalCode: z.string().min(4, { message: 'Code postal invalide' }),
       city: z.string().min(1, { message: 'La ville est requise' }),
     }),
     building: z.string().min(1, { message: 'Le bâtiment est requis' }),
     cmIdentification: z
       .string()
       .min(1, { message: "L'identification CM est requise" }),
-    floor: z.string().min(1, { message: "L'étage est requis" }),
+    floor: z.string().optional(),
     situation: z.string().min(1, { message: 'La situation est requise' }),
     comment: z.string().optional(),
   }),
@@ -35,16 +37,29 @@ export const formSchema = z.object({
   }),
 
   // Étape 4: Ancien compteur
-  oldMeter: z.object({
-    type: z.string().min(1, { message: 'Le type de compteur est requis' }),
-    generation: z.string().min(1, { message: 'La génération est requise' }),
-    preserved: z.boolean(),
-    serialNumber: z.string().min(1, { message: 'Le matricule est requis' }),
-    key: z.string().min(1, { message: 'La clé est requise' }),
-    dayIndex: z.string().min(1, { message: "L'index jour est requis" }),
-    nightIndex: z.string().optional(),
-    indexPhoto: z.any().optional(),
-  }),
+  oldMeter: z
+    .object({
+      type: z.string().min(1, { message: 'Le type de compteur est requis' }),
+      generation: z.string().optional(),
+      preserved: z.boolean(),
+      linkyRefusal: z.boolean().optional(),
+      serialNumber: z.string().optional(),
+      key: z.string().optional(),
+      dayIndex: z.string().optional(),
+      nightIndex: z.string().optional(),
+      indexPhoto: z
+        .any()
+        .refine((val) => val !== null, { message: 'La photo est requise' }),
+    })
+    .superRefine((data, ctx) => {
+      if (data.type === 'linky' && !data.generation) {
+        ctx.addIssue({
+          path: ['generation'],
+          message: "La génération est requise lorsque le type est 'linky'",
+          code: 'custom',
+        });
+      }
+    }),
 
   // Étape 5: La nouvelle dérivation
   newDerivation: z.object({

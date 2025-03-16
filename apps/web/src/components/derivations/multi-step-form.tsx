@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
@@ -23,8 +23,8 @@ import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 type FormValues = z.infer<typeof formSchema>;
 
 export function MultiStepForm() {
-  const [step, setStep] = useState(1);
-  const totalSteps = 9;
+  const [step, setStep] = useState(4);
+  const [totalSteps, setTotalSteps] = useState(9);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -55,11 +55,12 @@ export function MultiStepForm() {
         type: '',
         generation: '',
         preserved: false,
+        linkyRefusal: undefined,
         serialNumber: '',
         key: '',
         dayIndex: '',
         nightIndex: '',
-        indexPhoto: null,
+        indexPhoto: undefined,
       },
       newDerivation: {
         section: '',
@@ -102,14 +103,34 @@ export function MultiStepForm() {
     alert('Formulaire soumis avec succès !');
   };
 
+  const oldMeterPreserved = form.watch('oldMeter.preserved');
+
+  useEffect(() => {
+    setTotalSteps(oldMeterPreserved ? 8 : 9);
+  }, [oldMeterPreserved]);
+
+  const getActualStep = (currentStep: number) => {
+    if (oldMeterPreserved) {
+      if (currentStep === 6) return 7; // Circuit Breaker
+      if (currentStep === 7) return 8; // Photo After
+      if (currentStep === 8) return 9; // Client Validation
+    }
+    return currentStep;
+  };
+
   const nextStep = async () => {
-    const fieldsToValidate = getFieldsToValidate(step);
+    const fieldsToValidate = getFieldsToValidate(getActualStep(step));
 
     const result = await form.trigger(fieldsToValidate as any);
 
     if (result) {
       if (step < totalSteps) {
-        setStep(step + 1);
+        // Skip step 6 if old meter is preserved
+        if (oldMeterPreserved && step === 5) {
+          setStep(6); // Go to step 6 which will render Circuit Breaker (step 7)
+        } else {
+          setStep(step + 1);
+        }
         window.scrollTo(0, 0);
       } else {
         form.handleSubmit(onSubmit)();
@@ -119,7 +140,11 @@ export function MultiStepForm() {
 
   const prevStep = () => {
     if (step > 1) {
-      setStep(step - 1);
+      if (oldMeterPreserved && step === 6) {
+        setStep(5);
+      } else {
+        setStep(step - 1);
+      }
       window.scrollTo(0, 0);
     }
   };
@@ -157,6 +182,10 @@ export function MultiStepForm() {
           'newDerivation.length',
         ];
       case 6:
+        // Skip validation for this step if old meter is preserved
+        if (oldMeterPreserved) {
+          return [];
+        }
         return [
           'newMeter.generation',
           'newMeter.serialNumber',
@@ -182,7 +211,9 @@ export function MultiStepForm() {
   };
 
   const renderStep = () => {
-    switch (step) {
+    const actualStep = getActualStep(step);
+
+    switch (actualStep) {
       case 1:
         return <ClientInfoStep form={form} />;
       case 2:
@@ -209,7 +240,7 @@ export function MultiStepForm() {
   const progress = (step / totalSteps) * 100;
 
   return (
-    <div className="">
+    <div className="w-full">
       <div className="mb-8">
         <div className="mb-2 flex justify-between">
           <span className="text-sm font-medium">

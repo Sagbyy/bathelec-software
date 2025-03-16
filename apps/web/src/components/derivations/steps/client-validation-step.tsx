@@ -28,6 +28,7 @@ interface ClientValidationStepProps {
 }
 
 export function ClientValidationStep({ form }: ClientValidationStepProps) {
+  const oldMeterPreserved = form.watch('oldMeter.preserved');
   const signatureRef = useRef<ReactSignatureCanvas>(null);
   const [clientPresent, setClientPresent] = useState(
     form.getValues('clientValidation.present')
@@ -51,7 +52,7 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
   return (
     <div className="space-y-6">
       <div className="text-xl font-semibold">
-        9. Validation des travaux par le client
+        {oldMeterPreserved ? 8 : 9}. Validation des travaux par le client
       </div>
 
       <FormField

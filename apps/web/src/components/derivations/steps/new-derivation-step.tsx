@@ -35,7 +35,9 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
         name="newDerivation.section"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Section posée</FormLabel>
+            <FormLabel>
+              Section posée<span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
@@ -61,7 +63,9 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
         name="newDerivation.cableType"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Nature du câble</FormLabel>
+            <FormLabel>
+              Nature du câble<span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
@@ -84,7 +88,9 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
         name="newDerivation.length"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Longueur posée en M</FormLabel>
+            <FormLabel>
+              Longueur posée en M<span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <Input
                 type="number"
