@@ -29,7 +29,7 @@
 title: Database MCD
 ---
 
-erDiagram
+erDiagram 
     USER {
         INT id PK
         STRING email
@@ -40,7 +40,7 @@ erDiagram
         STRING firstName
         STRING lastName
     }
-    DERIVATION {
+    REQUESTED_DERIVATION {
         INT id PK
         INT userId FK
         DATETIME createdAt
@@ -48,7 +48,14 @@ erDiagram
         STRING city
         INT postalCode
     }
-    USER ||--o{ DERIVATION : "has many"
+    COMPLETED_DERIVATION {
+        INT id PK
+        INT requestedDerivationId FK
+        DATETIME createdAt
+        DATETIME updatedAt
+    }
+    USER ||--o{ REQUESTED_DERIVATION : "has many"
+    REQUESTED_DERIVATION ||--|| COMPLETED_DERIVATION : "has one"
 ```
 
 ## Description
