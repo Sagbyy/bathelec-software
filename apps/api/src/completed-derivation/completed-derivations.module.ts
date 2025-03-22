@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { CompletedDerivationService } from './completed-derivation.service';
-import { CompletedDerivationController } from './completed-derivation.controller';
+import { CompletedDerivationService } from './completed-derivations.service';
+import { CompletedDerivationController } from './completed-derivations.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   CompletedDerivation,
   CompletedDerivationSchema,
-} from './entities/completed-derivation.entity';
+} from './entities/completed-derivations.entity';
 
 @Module({
   imports: [

@@ -23,7 +23,7 @@ import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 type FormValues = z.infer<typeof formSchema>;
 
 export function MultiStepForm() {
-  const [step, setStep] = useState(7);
+  const [step, setStep] = useState(1);
   const [totalSteps, setTotalSteps] = useState(9);
 
   const form = useForm<FormValues>({

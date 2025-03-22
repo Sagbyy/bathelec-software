@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import {
   CompletedDerivation,
   CompletedDerivationDocument,
-} from './entities/completed-derivation.entity';
+} from './entities/completed-derivations.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateCompletedDerivationDto } from './dto/create-completed-derivation.dto';
+import { CreateCompletedDerivationDto } from './dto/create-completed-derivations.dto';
 
 @Injectable()
 export class CompletedDerivationService {

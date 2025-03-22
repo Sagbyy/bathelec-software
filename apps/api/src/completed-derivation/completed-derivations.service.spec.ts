@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CompletedDerivationService } from './completed-derivation.service';
+import { CompletedDerivationService } from './completed-derivations.service';
 
 describe('CompletedDerivationService', () => {
   let service: CompletedDerivationService;
@@ -48,6 +48,9 @@ describe('CompletedDerivationService', () => {
         generation: '1',
         preserved: true,
         serialNumber: '1234567890',
+        key: '1',
+        dayIndex: '1',
+        nightIndex: '1',
       },
       newDerivation: {
         section: '1',
@@ -111,6 +114,9 @@ describe('CompletedDerivationService', () => {
       generation: '1',
       preserved: true,
       serialNumber: '1234567890',
+      key: '1',
+      dayIndex: '1',
+      nightIndex: '1',
     });
     expect(completedDerivation.newDerivation).toEqual({
       section: '1',

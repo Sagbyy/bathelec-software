@@ -3,7 +3,7 @@ import { ObjectId } from 'mongoose';
 
 export type CompletedDerivationDocument = CompletedDerivation & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'completed-derivations' })
 export class CompletedDerivation {
   _id: ObjectId;
 
@@ -35,7 +35,7 @@ export class CompletedDerivation {
 
   @Prop({ type: Object, required: true })
   photoBeforeWork: {
-    photo: string | null;
+    photo: string;
   };
 
   @Prop({ type: Object, required: true })
@@ -62,7 +62,7 @@ export class CompletedDerivation {
     serialNumber: string;
     dayIndex: string;
     nightIndex: string;
-    indexPhoto: string | null;
+    indexPhoto: string;
   };
 
   @Prop({ type: Object, required: true })
@@ -78,7 +78,7 @@ export class CompletedDerivation {
 
   @Prop({ type: Object, required: true })
   photoAfterWork: {
-    photo: any;
+    photo: string;
   };
 
   @Prop({ type: Object, required: true })

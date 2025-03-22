@@ -7,11 +7,19 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
-import { CompletedDerivationService } from './completed-derivation.service';
-import { UpdateCompletedDerivationDto } from './dto/update-completed-derivation.dto';
-import { CompletedDerivation } from './entities/completed-derivation.entity';
-import { CreateCompletedDerivationDto } from './dto/create-completed-derivation.dto';
+import { CompletedDerivationService } from './completed-derivations.service';
+import { UpdateCompletedDerivationDto } from './dto/update-completed-derivations.dto';
+import { CreateCompletedDerivationDto } from './dto/create-completed-derivations.dto';
+import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
+import { RoleGuard } from '../role/role.guard';
+import { Role } from '../role/role.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
+
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RoleGuard)
+@Role('technician')
 @Controller('completed-derivation')
 export class CompletedDerivationController {
   constructor(
@@ -19,7 +27,10 @@ export class CompletedDerivationController {
   ) {}
 
   @Post()
-  create(@Body(ValidationPipe) createCompletedDerivationDto: CreateCompletedDerivationDto) {
+  create(
+    @Body(ValidationPipe)
+    createCompletedDerivationDto: CreateCompletedDerivationDto
+  ) {
     return this.completedDerivationService.create(createCompletedDerivationDto);
   }
 

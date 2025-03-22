@@ -3,10 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { PrismaService } from './prisma/prisma.service';
 import { DerivationsModule } from './derivations/derivations.module';
 import { ConfigModule } from '@nestjs/config';
-import { CompletedDerivationModule } from './completed-derivation/completed-derivation.module';
+import { CompletedDerivationModule } from './completed-derivation/completed-derivations.module';
 import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
@@ -21,6 +20,6 @@ import { MongooseModule } from '@nestjs/mongoose';
     CompletedDerivationModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService],
 })
 export class AppModule {}
