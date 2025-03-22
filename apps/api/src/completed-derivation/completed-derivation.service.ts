@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCompletedDerivationDto } from './dto/create-completed-derivation.dto';
-import { UpdateCompletedDerivationDto } from './dto/update-completed-derivation.dto';
-import { CompletedDerivation } from './entities/completed-derivation.entity';
+import {
+  CompletedDerivation,
+  CompletedDerivationDocument,
+} from './entities/completed-derivation.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { CreateCompletedDerivationDto } from './dto/create-completed-derivation.dto';
 
 @Injectable()
 export class CompletedDerivationService {
   constructor(
     @InjectModel(CompletedDerivation.name)
-    private completedDerivationModel: Model<CompletedDerivation>
+    private completedDerivationModel: Model<CompletedDerivationDocument>
   ) {}
 
   async create(createCompletedDerivationDto: CreateCompletedDerivationDto) {
@@ -29,7 +31,7 @@ export class CompletedDerivationService {
 
   update(
     id: number,
-    updateCompletedDerivationDto: UpdateCompletedDerivationDto
+    updateCompletedDerivationDto: Partial<CompletedDerivation>
   ) {
     return this.completedDerivationModel.findByIdAndUpdate(
       id,

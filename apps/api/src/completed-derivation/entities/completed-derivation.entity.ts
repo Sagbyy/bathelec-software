@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ObjectId } from 'mongoose';
 
+export type CompletedDerivationDocument = CompletedDerivation & Document;
+
 @Schema({ timestamps: true })
 export class CompletedDerivation {
   _id: ObjectId;

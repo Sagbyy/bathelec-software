@@ -6,11 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CompletedDerivationService } from './completed-derivation.service';
-import { CreateCompletedDerivationDto } from './dto/create-completed-derivation.dto';
 import { UpdateCompletedDerivationDto } from './dto/update-completed-derivation.dto';
-
+import { CompletedDerivation } from './entities/completed-derivation.entity';
+import { CreateCompletedDerivationDto } from './dto/create-completed-derivation.dto';
 @Controller('completed-derivation')
 export class CompletedDerivationController {
   constructor(
@@ -18,7 +19,7 @@ export class CompletedDerivationController {
   ) {}
 
   @Post()
-  create(@Body() createCompletedDerivationDto: CreateCompletedDerivationDto) {
+  create(@Body(ValidationPipe) createCompletedDerivationDto: CreateCompletedDerivationDto) {
     return this.completedDerivationService.create(createCompletedDerivationDto);
   }
 
