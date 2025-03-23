@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
+import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
 
 interface NewMeterStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
@@ -30,6 +31,7 @@ interface NewMeterStepProps {
 
 export function NewMeterStep({ form }: NewMeterStepProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { isCompleted } = useDerivationStatusStore();
 
   useEffect(() => {
     setPreviewUrl(form.getValues('newMeter.indexPhoto'));
@@ -56,7 +58,6 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
     }
   };
 
-  
   const clearFile = (onChange: (value: null) => void) => {
     onChange(null);
     setPreviewUrl(null);
@@ -72,7 +73,11 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Génération</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+              disabled={isCompleted}
+            >
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner une génération" />
@@ -97,7 +102,11 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
           <FormItem>
             <FormLabel>Matricule</FormLabel>
             <FormControl>
-              <Input placeholder="Ex: 12 chiffres" {...field} />
+              <Input
+                placeholder="Ex: 12 chiffres"
+                {...field}
+                disabled={isCompleted}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -114,6 +123,7 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
               <Input
                 placeholder="Index à relever pour tous type de contrat"
                 {...field}
+                disabled={isCompleted}
               />
             </FormControl>
             <FormMessage />
@@ -131,6 +141,7 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
               <Input
                 placeholder="Si le client a souscrit un contrat double tarif"
                 {...field}
+                disabled={isCompleted}
               />
             </FormControl>
             <FormMessage />
@@ -161,6 +172,7 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
                       size="icon"
                       className="absolute right-2 top-2"
                       onClick={() => clearFile(onChange)}
+                      disabled={isCompleted}
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -179,6 +191,7 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
                         id="new-meter-photo-upload"
                         onChange={(e) => handleFileChange(e, onChange)}
                         {...field}
+                        disabled={isCompleted}
                       />
                       <Button
                         type="button"
@@ -188,6 +201,7 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
                             .getElementById('new-meter-photo-upload')
                             ?.click()
                         }
+                        disabled={isCompleted}
                       >
                         Sélectionner une photo
                       </Button>

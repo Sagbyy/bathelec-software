@@ -63,13 +63,14 @@ export default function LoginForm() {
 
   return (
     <div className="flex h-screen items-center justify-center">
-      <div className="w-full max-w-72 mx-3 bg-white p-4 shadow-sm rounded-lg">
+      <div className="mx-3 w-full max-w-72 rounded-lg bg-white p-4 shadow-sm">
         <Image
           src="/bathelec-brand-logo.png"
-          className="mx-auto"
+          className="mx-auto h-auto w-auto"
           alt="Bathelec Logo"
           width={200}
           height={100}
+          priority
         />
         {error && (
           <Alert variant="destructive" className="my-3">
@@ -81,7 +82,7 @@ export default function LoginForm() {
           </Alert>
         )}
         {loading ? (
-          <div className="flex items-center justify-center m-5">
+          <div className="m-5 flex items-center justify-center">
             <Loader />
           </div>
         ) : (
@@ -126,7 +127,7 @@ export default function LoginForm() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full bg-[#037BCA] hover:bg">
+              <Button type="submit" className="hover:bg w-full bg-[#037BCA]">
                 Se connecter
               </Button>
             </form>

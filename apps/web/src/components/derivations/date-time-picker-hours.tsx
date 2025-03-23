@@ -49,7 +49,7 @@ export function DateTimePicker24h({ field }: DateTimePicker24hProps) {
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild disabled={field.disabled}>
         <Button
           variant="outline"
           className={cn(

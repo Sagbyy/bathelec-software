@@ -1,6 +1,6 @@
 'use client';
 
-import { useDerivationById } from '@/hooks/queries/useDerivation';
+import { useDerivationById } from '@/hooks/queries/use-derivation';
 import { useParams } from 'next/navigation';
 import { MultiStepForm } from '@/components/derivations/multi-step-form';
 import { InfoCard } from '@/components/derivations/info-derivation-card';
@@ -30,7 +30,10 @@ export default function CompleteDerivationPage() {
         address={derivation?.address}
         createdAt={derivation?.createdAt}
       />
-      <MultiStepForm requestedDerivationId={derivation.id} />
+      <MultiStepForm
+        requestedDerivationId={derivation.id}
+        status={derivation?.status}
+      />
     </div>
   );
 }

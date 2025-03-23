@@ -27,20 +27,33 @@ import { formatCompletedDerivation } from './utils/form-data-formatter';
 import { useFormSteps } from '../../hooks/use-form-steps';
 import { FormHeader } from './form-parts/form-header';
 import { FormNavigation } from './form-parts/form-navigation';
+import { DerivationStatus } from '@repo/types';
+import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
+
+interface MultiStepFormProps {
+  requestedDerivationId: number;
+  status: DerivationStatus;
+}
 
 export function MultiStepForm({
   requestedDerivationId,
-}: {
-  requestedDerivationId: number;
-}) {
+  status,
+}: MultiStepFormProps) {
   const {
     mutate: createCompletedDerivation,
-    status,
+    status: createCompletedDerivationStatus,
     error,
   } = useCompletedDerivations();
   const { data: completedDerivation } = useCompletedDerivationsById(
     requestedDerivationId
   );
+  const { setIsCompleted } = useDerivationStatusStore();
+
+  useEffect(() => {
+    if (status === DerivationStatus.COMPLETED) {
+      setIsCompleted(true);
+    }
+  }, [status, setIsCompleted]);
 
   const form = useForm<CreateCompletedDerivation>({
     resolver: zodResolver(createCompletedDerivationSchema),
@@ -50,7 +63,6 @@ export function MultiStepForm({
 
   useEffect(() => {
     if (completedDerivation) {
-      console.log(formatCompletedDerivation(completedDerivation));
       form.reset(formatCompletedDerivation(completedDerivation));
     }
   }, [completedDerivation, form]);
@@ -66,7 +78,7 @@ export function MultiStepForm({
   );
 
   useEffect(() => {
-    if (status === 'success') {
+    if (createCompletedDerivationStatus === 'success') {
       toast({
         title: 'Formulaire soumis avec succès !',
         description: 'Votre demande a été soumise avec succès.',
@@ -74,14 +86,14 @@ export function MultiStepForm({
       });
     }
 
-    if (status === 'error') {
+    if (createCompletedDerivationStatus === 'error') {
       toast({
         title: 'Erreur lors de la soumission du formulaire',
         description: `Une erreur est survenue lors de la soumission du formulaire. ${error?.message}`,
         variant: 'destructive',
       });
     }
-  }, [status, error]);
+  }, [createCompletedDerivationStatus, error]);
 
   const { step, totalSteps, progress, nextStep, prevStep, getActualStep } =
     useFormSteps({

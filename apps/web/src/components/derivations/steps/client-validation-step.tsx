@@ -19,7 +19,8 @@ import { Star, Trash2 } from 'lucide-react';
 import SignatureCanvas from 'react-signature-canvas';
 import ReactSignatureCanvas from 'react-signature-canvas';
 import type { CreateCompletedDerivation } from '@/types/completed-derivation.types';
-
+import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
+import { cn } from '@/lib/utils';
 interface ClientValidationStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }
@@ -30,6 +31,15 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
   const [clientPresent, setClientPresent] = useState(
     form.getValues('clientValidation.present')
   );
+  const { isCompleted } = useDerivationStatusStore();
+
+  useEffect(() => {
+    if (signatureRef.current) {
+      signatureRef.current.fromDataURL(
+        form.getValues('clientValidation.signature')
+      );
+    }
+  }, []);
 
   const clearSignature = () => {
     if (signatureRef.current) {
@@ -63,6 +73,7 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
                 onValueChange={(value) => field.onChange(value === 'present')}
                 defaultValue={field.value ? 'present' : 'absent'}
                 className="flex flex-row space-x-4"
+                disabled={isCompleted}
               >
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
@@ -99,6 +110,7 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    disabled={isCompleted}
                   />
                 </FormControl>
               </FormItem>
@@ -116,12 +128,18 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
                     {[0, 1, 2, 3, 4].map((rating) => (
                       <Star
                         key={rating}
-                        className={`h-8 w-8 cursor-pointer ${
+                        className={cn(
+                          'h-8 w-8 cursor-pointer',
                           Number.parseInt(field.value || '0') >= rating
                             ? 'fill-yellow-400 text-yellow-400'
-                            : 'text-gray-300'
-                        }`}
-                        onClick={() => field.onChange(rating.toString())}
+                            : 'text-gray-300',
+                          isCompleted && 'cursor-not-allowed'
+                        )}
+                        onClick={() => {
+                          if (!isCompleted) {
+                            field.onChange(rating.toString());
+                          }
+                        }}
                       />
                     ))}
                   </div>
@@ -142,6 +160,7 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
                     placeholder="Commentaires du client..."
                     className="resize-none"
                     {...field}
+                    disabled={isCompleted}
                   />
                 </FormControl>
                 <FormMessage />
@@ -157,7 +176,12 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
                 <FormLabel>Signature du client ou du représentant</FormLabel>
                 <FormControl>
                   <div className="space-y-2">
-                    <div className="rounded-md border bg-white p-2">
+                    <div
+                      className={cn(
+                        'rounded-md border bg-white p-2',
+                        isCompleted && 'pointer-events-none cursor-not-allowed'
+                      )}
+                    >
                       <SignatureCanvas
                         ref={signatureRef}
                         penColor="black"
@@ -179,6 +203,7 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
                       size="sm"
                       onClick={clearSignature}
                       className="flex items-center"
+                      disabled={isCompleted}
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Effacer la signature
@@ -207,6 +232,7 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
                 placeholder="Commentaires de l'électricien..."
                 className="resize-none"
                 {...field}
+                disabled={isCompleted}
               />
             </FormControl>
             <FormMessage />

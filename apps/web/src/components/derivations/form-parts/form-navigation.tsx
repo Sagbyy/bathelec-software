@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 
 type FormNavigationProps = {
@@ -15,6 +16,7 @@ export const FormNavigation = ({
   onPrev,
 }: FormNavigationProps) => {
   const isLastStep = step === totalSteps;
+  const { isCompleted } = useDerivationStatusStore();
 
   return (
     <div className="mt-8 flex justify-between">
@@ -28,7 +30,11 @@ export const FormNavigation = ({
         Précédent
       </Button>
 
-      <Button type="button" onClick={onNext}>
+      <Button
+        type="button"
+        onClick={onNext}
+        disabled={isLastStep && isCompleted}
+      >
         {isLastStep ? (
           <>
             Soumettre

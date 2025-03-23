@@ -21,6 +21,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 import type { CreateCompletedDerivation } from '@/types/completed-derivation.types';
+import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
 
 interface CircuitBreakerStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
@@ -28,6 +29,7 @@ interface CircuitBreakerStepProps {
 
 export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
   const oldMeterPreserved = form.watch('oldMeter.preserved');
+  const { isCompleted } = useDerivationStatusStore();
 
   return (
     <div className="space-y-6">
@@ -54,7 +56,11 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
               <FormLabel className="text-base">Conservé</FormLabel>
             </div>
             <FormControl>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
+              <Switch
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                disabled={isCompleted}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -71,6 +77,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
                 onValueChange={field.onChange}
                 defaultValue={field.value}
                 className="flex flex-row space-x-4"
+                disabled={isCompleted}
               >
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
@@ -98,7 +105,11 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
           <FormItem>
             <FormLabel>Marque</FormLabel>
             <FormControl>
-              <Input placeholder="Ex: BACO, GE, SCHNEIDER..." {...field} />
+              <Input
+                placeholder="Ex: BACO, GE, SCHNEIDER..."
+                {...field}
+                disabled={isCompleted}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -116,6 +127,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
                 onValueChange={field.onChange}
                 defaultValue={field.value}
                 className="space-y-1"
+                disabled={isCompleted}
               >
                 <FormItem className="flex items-center space-x-3 space-y-0">
                   <FormControl>
@@ -150,7 +162,11 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Puissance</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+              disabled={isCompleted}
+            >
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner une puissance" />
@@ -185,7 +201,11 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
               </FormLabel>
             </div>
             <FormControl>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
+              <Switch
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                disabled={isCompleted}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -200,7 +220,11 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
               <FormLabel className="text-base">Plombage</FormLabel>
             </div>
             <FormControl>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
+              <Switch
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                disabled={isCompleted}
+              />
             </FormControl>
           </FormItem>
         )}

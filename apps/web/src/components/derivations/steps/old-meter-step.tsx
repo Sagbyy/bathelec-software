@@ -24,7 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import type { CreateCompletedDerivation } from '@/types/completed-derivation.types';
-
+import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
 interface OldMeterStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }
@@ -32,6 +32,7 @@ interface OldMeterStepProps {
 export function OldMeterStep({ form }: OldMeterStepProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const oldMeterType = form.watch('oldMeter.type');
+  const { isCompleted } = useDerivationStatusStore();
 
   useEffect(() => {
     setPreviewUrl(form.getValues('oldMeter.indexPhoto'));
@@ -70,7 +71,11 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
             <FormLabel>
               Type de compteur<span className="ml-1 text-red-500">*</span>
             </FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+              disabled={isCompleted}
+            >
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner un type" />
@@ -99,7 +104,11 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
               <FormLabel>
                 Génération<span className="ml-1 text-red-500">*</span>
               </FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+                disabled={isCompleted}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Sélectionner une génération" />
@@ -129,7 +138,11 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
               <FormLabel className="text-base">Conservé</FormLabel>
             </div>
             <FormControl>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
+              <Switch
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                disabled={isCompleted}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -148,6 +161,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
                 <Switch
                   checked={field.value}
                   onCheckedChange={field.onChange}
+                  disabled={isCompleted}
                 />
               </FormControl>
             </FormItem>
@@ -162,7 +176,11 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
           <FormItem>
             <FormLabel>Matricule</FormLabel>
             <FormControl>
-              <Input placeholder="Ex: 12 chiffres si CBE et LINKY" {...field} />
+              <Input
+                placeholder="Ex: 12 chiffres si CBE et LINKY"
+                {...field}
+                disabled={isCompleted}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -176,7 +194,11 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
           <FormItem>
             <FormLabel>Clé</FormLabel>
             <FormControl>
-              <Input placeholder="Ex: 2 chiffres" {...field} />
+              <Input
+                placeholder="Ex: 2 chiffres"
+                {...field}
+                disabled={isCompleted}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -193,6 +215,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
               <Input
                 placeholder="Index à relever pour tous type de contrat"
                 {...field}
+                disabled={isCompleted}
               />
             </FormControl>
             <FormMessage />
@@ -210,6 +233,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
               <Input
                 placeholder="Si le client a souscrit un contrat double tarif"
                 {...field}
+                disabled={isCompleted}
               />
             </FormControl>
             <FormMessage />
@@ -243,6 +267,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
                       size="icon"
                       className="absolute right-2 top-2"
                       onClick={() => clearFile(onChange)}
+                      disabled={isCompleted}
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -261,6 +286,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
                         id="old-meter-photo-upload"
                         onChange={(e) => handleFileChange(e, onChange)}
                         {...field}
+                        disabled={isCompleted}
                       />
                       <Button
                         type="button"
@@ -270,6 +296,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
                             .getElementById('old-meter-photo-upload')
                             ?.click()
                         }
+                        disabled={isCompleted}
                       >
                         Sélectionner une photo
                       </Button>

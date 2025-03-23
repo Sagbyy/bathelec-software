@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
+import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
 
 interface PhotoAfterStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
@@ -23,6 +24,7 @@ interface PhotoAfterStepProps {
 export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
   const oldMeterPreserved = form.watch('oldMeter.preserved');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { isCompleted } = useDerivationStatusStore();
 
   useEffect(() => {
     setPreviewUrl(form.getValues('photoAfterWork.photo'));
@@ -78,6 +80,7 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
                       size="icon"
                       className="absolute right-2 top-2"
                       onClick={() => clearFile(onChange)}
+                      disabled={isCompleted}
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -96,6 +99,7 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
                         id="photo-after-upload"
                         onChange={(e) => handleFileChange(e, onChange)}
                         {...field}
+                        disabled={isCompleted}
                       />
                       <Button
                         type="button"
@@ -103,6 +107,7 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
                         onClick={() =>
                           document.getElementById('photo-after-upload')?.click()
                         }
+                        disabled={isCompleted}
                       >
                         Sélectionner une photo
                       </Button>

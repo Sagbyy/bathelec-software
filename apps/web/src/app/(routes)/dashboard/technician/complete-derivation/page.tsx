@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useDerivationByUser } from '@/hooks/queries/useDerivation';
+import { useDerivationByUser } from '@/hooks/queries/use-derivation';
 import { useUserStore } from '@/hooks/useUserStore';
 import { DerivationStatus } from '@repo/types';
 import { Icon } from '@iconify/react/dist/iconify.js';

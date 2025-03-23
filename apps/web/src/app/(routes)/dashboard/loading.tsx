@@ -8,9 +8,11 @@ export default function Loading() {
         <div className="mb-4 mx-auto">
           <Image
             src="/bathelec-brand-logo.png"
+            className="h-auto w-auto"
             width={200}
             height={100}
             alt="loading"
+            priority
           />
         </div>
         <h1 className="text-2xl font-bold mb-2">Chargement en cours...</h1>

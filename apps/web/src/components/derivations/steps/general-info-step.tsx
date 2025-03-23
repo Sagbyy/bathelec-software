@@ -20,6 +20,7 @@ import {
 import { DateTimePicker24h } from '../date-time-picker-hours';
 import { useTechnicians } from '@/hooks/queries/useTechnician';
 import type { CreateCompletedDerivation } from '@/types/completed-derivation.types';
+import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
 
 interface GeneralInfoStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
@@ -27,6 +28,7 @@ interface GeneralInfoStepProps {
 
 export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
   const { data: technicians, isLoading, error } = useTechnicians();
+  const { isCompleted } = useDerivationStatusStore();
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -51,6 +53,7 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
                   onBlur: field.onBlur,
                   name: field.name,
                   ref: field.ref,
+                  disabled: isCompleted,
                 }}
               />
             </FormControl>
@@ -68,7 +71,11 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
               Dérivation réalisée par
               <span className="ml-1 text-red-500">*</span>
             </FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+              disabled={isCompleted}
+            >
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner un technicien" />
@@ -102,7 +109,7 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
                 N° et Rue<span className="ml-1 text-red-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} disabled={isCompleted} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -118,7 +125,7 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
                 Code Postal<span className="ml-1 text-red-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} disabled={isCompleted} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -134,7 +141,7 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
                 Ville<span className="ml-1 text-red-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} disabled={isCompleted} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -151,7 +158,11 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
               Bâtiment<span className="ml-1 text-red-500">*</span>
             </FormLabel>
             <FormControl>
-              <Input placeholder="Ex: A - B / Rue - Cour" {...field} />
+              <Input
+                placeholder="Ex: A - B / Rue - Cour"
+                {...field}
+                disabled={isCompleted}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -167,7 +178,11 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
               Identification CM<span className="ml-1 text-red-500">*</span>
             </FormLabel>
             <FormControl>
-              <Input placeholder="Ex: 1D001 - 1C101 - 2C101" {...field} />
+              <Input
+                placeholder="Ex: 1D001 - 1C101 - 2C101"
+                {...field}
+                disabled={isCompleted}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -180,7 +195,11 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Étage</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+              disabled={isCompleted}
+            >
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner un étage" />
@@ -206,7 +225,11 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Situation</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+              disabled={isCompleted}
+            >
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner une situation" />
@@ -235,6 +258,7 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
                 placeholder="Commentaires additionnels..."
                 className="resize-none"
                 {...field}
+                disabled={isCompleted}
               />
             </FormControl>
             <FormMessage />

@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
+import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
 
 
 interface NewDerivationStepProps {
@@ -24,6 +25,7 @@ interface NewDerivationStepProps {
 }
 
 export function NewDerivationStep({ form }: NewDerivationStepProps) {
+  const { isCompleted } = useDerivationStatusStore();
   return (
     <div className="space-y-6">
       <div className="text-xl font-semibold">5. La nouvelle dérivation</div>
@@ -36,7 +38,11 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
             <FormLabel>
               Section posée<span className="ml-1 text-red-500">*</span>
             </FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+              disabled={isCompleted}
+            >
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner une section" />
@@ -64,7 +70,11 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
             <FormLabel>
               Nature du câble<span className="ml-1 text-red-500">*</span>
             </FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+              disabled={isCompleted}
+            >
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner un type de câble" />
@@ -97,6 +107,7 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
                 onChange={(e) =>
                   field.onChange(Number.parseFloat(e.target.value) || 0)
                 }
+                disabled={isCompleted}
               />
             </FormControl>
             <FormMessage />
