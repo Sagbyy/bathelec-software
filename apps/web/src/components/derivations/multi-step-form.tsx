@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import type { z } from 'zod';
-import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Card, CardContent } from '@/components/ui/card';
 import { ClientInfoStep } from './steps/client-info-step';
@@ -16,200 +14,82 @@ import { NewMeterStep } from './steps/new-meter-step';
 import { CircuitBreakerStep } from './steps/circuit-breaker-step';
 import { PhotoAfterStep } from './steps/photo-after-step';
 import { ClientValidationStep } from './steps/client-validation-step';
-import { formSchema } from '@/lib/validations/derivationForm';
-import { Progress } from '@/components/ui/progress';
-import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { createCompletedDerivationSchema } from '@/validators/derivationForm';
+import {
+  useCompletedDerivations,
+  useCompletedDerivationsById,
+} from '@/hooks/queries/use-completed-derivations';
+import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
+import { toast } from '@/hooks/use-toast';
 
-type FormValues = z.infer<typeof formSchema>;
+import { DEFAULT_FORM_VALUES } from '../../constants/derivations';
+import { formatCompletedDerivation } from './utils/form-data-formatter';
+import { useFormSteps } from '../../hooks/use-form-steps';
+import { FormHeader } from './form-parts/form-header';
+import { FormNavigation } from './form-parts/form-navigation';
 
-export function MultiStepForm() {
-  const [step, setStep] = useState(1);
-  const [totalSteps, setTotalSteps] = useState(9);
+export function MultiStepForm({
+  requestedDerivationId,
+}: {
+  requestedDerivationId: number;
+}) {
+  const {
+    mutate: createCompletedDerivation,
+    status,
+    error,
+  } = useCompletedDerivations();
+  const { data: completedDerivation } = useCompletedDerivationsById(
+    requestedDerivationId
+  );
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      clientInfo: {
-        name: '',
-        phone: '',
-        folio: '',
-      },
-      generalInfo: {
-        dateTime: new Date().toISOString(),
-        derivationBy: '',
-        address: {
-          street: '',
-          postalCode: '',
-          city: '',
-        },
-        building: '',
-        cmIdentification: '',
-        floor: '',
-        situation: '',
-        comment: '',
-      },
-      photoBeforeWork: {
-        photo: null,
-      },
-      oldMeter: {
-        type: '',
-        generation: '',
-        preserved: false,
-        linkyRefusal: undefined,
-        serialNumber: '',
-        key: '',
-        dayIndex: '',
-        nightIndex: '',
-        indexPhoto: undefined,
-      },
-      newDerivation: {
-        section: '',
-        cableType: '',
-        length: 0,
-      },
-      newMeter: {
-        generation: '',
-        serialNumber: '',
-        dayIndex: '',
-        nightIndex: '',
-        indexPhoto: null,
-      },
-      circuitBreaker: {
-        preserved: false,
-        voltage: 'mono',
-        brand: '',
-        type: 'non_differentiel',
-        power: '',
-        commissioningDone: false,
-        sealed: false,
-      },
-      photoAfterWork: {
-        photo: null,
-      },
-      clientValidation: {
-        present: true,
-        workValidation: false,
-        satisfactionLevel: '0',
-        clientComment: '',
-        signature: null,
-        technicianComment: '',
-      },
-    },
+  const form = useForm<CreateCompletedDerivation>({
+    resolver: zodResolver(createCompletedDerivationSchema),
+    defaultValues: DEFAULT_FORM_VALUES,
     mode: 'onChange',
   });
 
-  const onSubmit = (data: FormValues) => {
-    console.log('Form submitted:', data);
-    alert('Formulaire soumis avec succès !');
-  };
+  useEffect(() => {
+    if (completedDerivation) {
+      console.log(formatCompletedDerivation(completedDerivation));
+      form.reset(formatCompletedDerivation(completedDerivation));
+    }
+  }, [completedDerivation, form]);
 
-  const oldMeterPreserved = form.watch('oldMeter.preserved');
+  const onSubmit = useCallback(
+    (data: CreateCompletedDerivation) => {
+      createCompletedDerivation({
+        ...data,
+        requestedDerivationId,
+      });
+    },
+    [createCompletedDerivation, requestedDerivationId]
+  );
 
   useEffect(() => {
-    setTotalSteps(oldMeterPreserved ? 8 : 9);
-  }, [oldMeterPreserved]);
-
-  const getActualStep = (currentStep: number) => {
-    if (oldMeterPreserved) {
-      if (currentStep === 6) return 7; // Circuit Breaker
-      if (currentStep === 7) return 8; // Photo After
-      if (currentStep === 8) return 9; // Client Validation
+    if (status === 'success') {
+      toast({
+        title: 'Formulaire soumis avec succès !',
+        description: 'Votre demande a été soumise avec succès.',
+        variant: 'success',
+      });
     }
-    return currentStep;
-  };
 
-  const nextStep = async () => {
-    const fieldsToValidate = getFieldsToValidate(getActualStep(step));
-
-    const result = await form.trigger(fieldsToValidate as any);
-
-    if (result) {
-      if (step < totalSteps) {
-        if (oldMeterPreserved && step === 5) {
-          setStep(6);
-        } else {
-          setStep(step + 1);
-        }
-        window.scrollTo(0, 0);
-      } else {
-        onSubmit(form.getValues());
-      }
+    if (status === 'error') {
+      toast({
+        title: 'Erreur lors de la soumission du formulaire',
+        description: `Une erreur est survenue lors de la soumission du formulaire. ${error?.message}`,
+        variant: 'destructive',
+      });
     }
-  };
+  }, [status, error]);
 
-  const prevStep = () => {
-    if (step > 1) {
-      if (oldMeterPreserved && step === 6) {
-        setStep(5);
-      } else {
-        setStep(step - 1);
-      }
-      window.scrollTo(0, 0);
-    }
-  };
+  const { step, totalSteps, progress, nextStep, prevStep, getActualStep } =
+    useFormSteps({
+      form,
+      onSubmit,
+    });
 
-  const getFieldsToValidate = (currentStep: number) => {
-    switch (currentStep) {
-      case 1:
-        return ['clientInfo.name', 'clientInfo.phone', 'clientInfo.folio'];
-      case 2:
-        return [
-          'generalInfo.dateTime',
-          'generalInfo.derivationBy',
-          'generalInfo.address.street',
-          'generalInfo.address.postalCode',
-          'generalInfo.address.city',
-          'generalInfo.building',
-          'generalInfo.cmIdentification',
-          'generalInfo.floor',
-          'generalInfo.situation',
-        ];
-      case 3:
-        return ['photoBeforeWork.photo'];
-      case 4:
-        return [
-          'oldMeter.type',
-          'oldMeter.generation',
-          'oldMeter.serialNumber',
-          'oldMeter.key',
-          'oldMeter.dayIndex',
-        ];
-      case 5:
-        return [
-          'newDerivation.section',
-          'newDerivation.cableType',
-          'newDerivation.length',
-        ];
-      case 6:
-        // Skip validation for this step if old meter is preserved
-        if (oldMeterPreserved) {
-          return [];
-        }
-        return [
-          'newMeter.generation',
-          'newMeter.serialNumber',
-          'newMeter.dayIndex',
-          'newMeter.indexPhoto',
-        ];
-      case 7:
-        return ['circuitBreaker.brand', 'circuitBreaker.power'];
-      case 8:
-        return ['photoAfterWork.photo'];
-      case 9:
-        return form.getValues('clientValidation.present')
-          ? [
-              'clientValidation.workValidation',
-              'clientValidation.satisfactionLevel',
-              'clientValidation.signature',
-              'clientValidation.technicianComment',
-            ]
-          : ['clientValidation.technicianComment'];
-      default:
-        return [];
-    }
-  };
-
-  const renderStep = () => {
+  const renderStep = useCallback(() => {
     const actualStep = getActualStep(step);
 
     switch (actualStep) {
@@ -234,21 +114,11 @@ export function MultiStepForm() {
       default:
         return null;
     }
-  };
-
-  const progress = (step / totalSteps) * 100;
+  }, [form, step, getActualStep]);
 
   return (
     <div className="w-full">
-      <div className="mb-8">
-        <div className="mb-2 flex justify-between">
-          <span className="text-sm font-medium">
-            Étape {step} sur {totalSteps}
-          </span>
-          <span className="text-sm font-medium">{Math.round(progress)}%</span>
-        </div>
-        <Progress value={progress} className="h-2" />
-      </div>
+      <FormHeader step={step} totalSteps={totalSteps} progress={progress} />
 
       <Form {...form}>
         <form>
@@ -256,30 +126,12 @@ export function MultiStepForm() {
             <CardContent className="pt-6">
               {renderStep()}
 
-              <div className="mt-8 flex justify-between">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={prevStep}
-                  disabled={step === 1}
-                >
-                  <ChevronLeft className="mr-2 h-4 w-4" />
-                  Précédent
-                </Button>
-                <Button type="button" onClick={nextStep}>
-                  {step === totalSteps ? (
-                    <>
-                      Soumettre
-                      <Check className="ml-2 h-4 w-4" />
-                    </>
-                  ) : (
-                    <>
-                      Suivant
-                      <ChevronRight className="ml-2 h-4 w-4" />
-                    </>
-                  )}
-                </Button>
-              </div>
+              <FormNavigation
+                step={step}
+                totalSteps={totalSteps}
+                onNext={nextStep}
+                onPrev={prevStep}
+              />
             </CardContent>
           </Card>
         </form>

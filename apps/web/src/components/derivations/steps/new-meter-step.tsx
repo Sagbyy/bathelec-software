@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
   FormControl,
@@ -20,35 +20,43 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import type { z } from 'zod';
-import type { formSchema } from '@/lib/validations/derivationForm';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
-
-type FormValues = z.infer<typeof formSchema>;
+import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 
 interface NewMeterStepProps {
-  form: UseFormReturn<FormValues>;
+  form: UseFormReturn<CreateCompletedDerivation>;
 }
 
 export function NewMeterStep({ form }: NewMeterStepProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  useEffect(() => {
+    setPreviewUrl(form.getValues('newMeter.indexPhoto'));
+  }, [form]);
+
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
+    // eslint-disable-next-line no-unused-vars
     onChange: (value: File) => void
   ) => {
     const file = e.target.files?.[0];
+
     if (file) {
       onChange(file);
+
       const reader = new FileReader();
+
       reader.onloadend = () => {
         setPreviewUrl(reader.result as string);
+        form.setValue('newMeter.indexPhoto', reader.result);
       };
+
       reader.readAsDataURL(file);
     }
   };
 
+  
   const clearFile = (onChange: (value: null) => void) => {
     onChange(null);
     setPreviewUrl(null);

@@ -1,9 +1,12 @@
 /** @type {import("eslint").Linter.Config} */
-module.exports = {
+export default {
   root: true,
-  extends: ["@repo/eslint-config/next.js"],
-  parser: "@typescript-eslint/parser",
+  extends: ['@repo/eslint-config/next.js'],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     project: true,
+  },
+  rules: {
+    '@typescript-eslint/no-unused-vars': 'off',
   },
 };

@@ -26,7 +26,9 @@ export class CompletedDerivationService {
   }
 
   findOne(id: number) {
-    return this.completedDerivationModel.findById(id);
+    return this.completedDerivationModel.findOne({
+      requestedDerivationId: id,
+    });
   }
 
   update(

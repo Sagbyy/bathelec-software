@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
   FormControl,
@@ -21,20 +21,21 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import type { z } from 'zod';
-import type { formSchema } from '@/lib/validations/derivationForm';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
-
-type FormValues = z.infer<typeof formSchema>;
+import type { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 
 interface OldMeterStepProps {
-  form: UseFormReturn<FormValues>;
+  form: UseFormReturn<CreateCompletedDerivation>;
 }
 
 export function OldMeterStep({ form }: OldMeterStepProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const oldMeterType = form.watch('oldMeter.type');
+
+  useEffect(() => {
+    setPreviewUrl(form.getValues('oldMeter.indexPhoto'));
+  }, [form]);
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -46,6 +47,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result as string);
+        form.setValue('oldMeter.indexPhoto', reader.result);
       };
       reader.readAsDataURL(file);
     }

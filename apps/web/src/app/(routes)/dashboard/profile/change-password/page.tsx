@@ -15,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 
 import Link from 'next/link';
-import { changePasswordSchema } from '@/lib/validations/changePassword';
+import { changePasswordSchema } from '@/validators/changePassword';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Separator } from '@/components/ui/separator';
 import { useChangePassword } from '@/hooks/queries/useChangePassword';

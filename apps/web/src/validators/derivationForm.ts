@@ -1,14 +1,12 @@
 import { z } from 'zod';
 
-export const formSchema = z.object({
-  // Étape 1: Informations client
+export const createCompletedDerivationSchema = z.object({
   clientInfo: z.object({
     name: z.string().min(2, { message: 'Le nom est requis' }),
     phone: z.string().optional(),
     folio: z.string().min(1, { message: 'Le folio est requis' }),
   }),
 
-  // Étape 2: Informations générales
   generalInfo: z.object({
     dateTime: z.string().datetime('Date et heure invalides'),
     derivationBy: z.string().min(1, { message: 'Ce champ est requis' }),
@@ -26,14 +24,12 @@ export const formSchema = z.object({
     comment: z.string().optional(),
   }),
 
-  // Étape 3: Photo avant travaux
   photoBeforeWork: z.object({
     photo: z
       .any()
       .refine((val) => val !== null, { message: 'La photo est requise' }),
   }),
 
-  // Étape 4: Ancien compteur
   oldMeter: z
     .object({
       type: z.string().min(1, { message: 'Le type de compteur est requis' }),
@@ -58,14 +54,12 @@ export const formSchema = z.object({
       }
     }),
 
-  // Étape 5: La nouvelle dérivation
   newDerivation: z.object({
     section: z.string().min(1, { message: 'La section est requise' }),
     cableType: z.string().min(1, { message: 'La nature du câble est requise' }),
     length: z.number().min(0, { message: 'La longueur doit être positive' }),
   }),
 
-  // Étape 6: Nouveau compteur
   newMeter: z.object({
     generation: z.string().min(1, { message: 'La génération est requise' }),
     serialNumber: z.string().min(1, { message: 'Le matricule est requis' }),
@@ -76,7 +70,6 @@ export const formSchema = z.object({
       .refine((val) => val !== null, { message: 'La photo est requise' }),
   }),
 
-  // Étape 7: Disjoncteur
   circuitBreaker: z.object({
     preserved: z.boolean(),
     voltage: z.enum(['mono', 'tri']),
@@ -89,18 +82,15 @@ export const formSchema = z.object({
     }),
   }),
 
-  // Étape 8: Photo après travaux
   photoAfterWork: z.object({
     photo: z
       .any()
       .refine((val) => val !== null, { message: 'La photo est requise' }),
   }),
 
-  // Étape 9: Validation des travaux par le client
   clientValidation: z
     .object({
       present: z.boolean(),
-      // Champs conditionnels basés sur la présence du client
       workValidation: z.boolean().optional(),
       satisfactionLevel: z.string().optional(),
       clientComment: z.string().optional(),
@@ -111,7 +101,6 @@ export const formSchema = z.object({
     })
     .refine(
       (data) => {
-        // Si le client est présent, les champs supplémentaires sont requis
         if (data.present) {
           return (
             !!data.workValidation !== undefined &&

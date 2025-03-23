@@ -20,7 +20,7 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RoleGuard)
 @Role('technician')
-@Controller('completed-derivation')
+@Controller('completed-derivations')
 export class CompletedDerivationController {
   constructor(
     private readonly completedDerivationService: CompletedDerivationService

@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
   FormControl,
@@ -12,20 +12,21 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import type { z } from 'zod';
-import type { formSchema } from '@/lib/validations/derivationForm';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
-
-type FormValues = z.infer<typeof formSchema>;
+import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 
 interface PhotoAfterStepProps {
-  form: UseFormReturn<FormValues>;
+  form: UseFormReturn<CreateCompletedDerivation>;
 }
 
 export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
   const oldMeterPreserved = form.watch('oldMeter.preserved');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPreviewUrl(form.getValues('photoAfterWork.photo'));
+  }, [form]);
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -37,6 +38,7 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result as string);
+        form.setValue('photoAfterWork.photo', reader.result);
       };
       reader.readAsDataURL(file);
     }

@@ -15,16 +15,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
-import type { z } from 'zod';
-import type { formSchema } from '@/lib/validations/derivationForm';
 import { Star, Trash2 } from 'lucide-react';
 import SignatureCanvas from 'react-signature-canvas';
 import ReactSignatureCanvas from 'react-signature-canvas';
-
-type FormValues = z.infer<typeof formSchema>;
+import type { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 
 interface ClientValidationStepProps {
-  form: UseFormReturn<FormValues>;
+  form: UseFormReturn<CreateCompletedDerivation>;
 }
 
 export function ClientValidationStep({ form }: ClientValidationStepProps) {

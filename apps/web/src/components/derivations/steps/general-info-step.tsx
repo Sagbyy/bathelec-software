@@ -17,15 +17,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { z } from 'zod';
-import type { formSchema } from '@/lib/validations/derivationForm';
 import { DateTimePicker24h } from '../date-time-picker-hours';
 import { useTechnicians } from '@/hooks/queries/useTechnician';
-
-type FormValues = z.infer<typeof formSchema>;
+import type { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 
 interface GeneralInfoStepProps {
-  form: UseFormReturn<FormValues>;
+  form: UseFormReturn<CreateCompletedDerivation>;
 }
 
 export function GeneralInfoStep({ form }: GeneralInfoStepProps) {

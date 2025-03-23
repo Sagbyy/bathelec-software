@@ -9,13 +9,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import type { z } from 'zod';
-import type { formSchema } from '@/lib/validations/derivationForm';
-
-type FormValues = z.infer<typeof formSchema>;
+import type { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 
 interface ClientInfoStepProps {
-  form: UseFormReturn<FormValues>;
+  form: UseFormReturn<CreateCompletedDerivation>;
 }
 
 export function ClientInfoStep({ form }: ClientInfoStepProps) {

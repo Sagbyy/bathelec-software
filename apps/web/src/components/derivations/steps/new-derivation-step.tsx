@@ -16,13 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { z } from 'zod';
-import type { formSchema } from '@/lib/validations/derivationForm';
+import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 
-type FormValues = z.infer<typeof formSchema>;
 
 interface NewDerivationStepProps {
-  form: UseFormReturn<FormValues>;
+  form: UseFormReturn<CreateCompletedDerivation>;
 }
 
 export function NewDerivationStep({ form }: NewDerivationStepProps) {

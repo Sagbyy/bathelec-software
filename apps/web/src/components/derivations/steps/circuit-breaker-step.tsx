@@ -18,15 +18,12 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import type { z } from 'zod';
-import type { formSchema } from '@/lib/validations/derivationForm';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
-
-type FormValues = z.infer<typeof formSchema>;
+import type { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 
 interface CircuitBreakerStepProps {
-  form: UseFormReturn<FormValues>;
+  form: UseFormReturn<CreateCompletedDerivation>;
 }
 
 export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {

@@ -13,14 +13,11 @@ import {
 } from '@/components/ui/popover';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { ControllerRenderProps } from 'react-hook-form';
-import { formSchema } from '@/lib/validations/derivationForm';
-import { z } from 'zod';
 import { fr } from 'date-fns/locale';
-
-type FormValues = z.infer<typeof formSchema>;
+import type { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 
 interface DateTimePicker24hProps {
-  field: ControllerRenderProps<FormValues>;
+  field: ControllerRenderProps<CreateCompletedDerivation>;
 }
 
 export function DateTimePicker24h({ field }: DateTimePicker24hProps) {
