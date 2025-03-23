@@ -15,7 +15,13 @@ import { CreateCompletedDerivationDto } from './dto/create-completed-derivations
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import { RoleGuard } from '../role/role.guard';
 import { Role } from '../role/role.decorator';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+} from '@nestjs/swagger';
+import { CompletedDerivation } from './entities/completed-derivations.entity';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RoleGuard)
@@ -27,6 +33,15 @@ export class CompletedDerivationController {
   ) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create a completed derivation' })
+  @ApiResponse({
+    status: 201,
+    description: 'The completed derivation has been successfully created.',
+    type: CompletedDerivation,
+  })
+  @ApiBody({
+    type: CreateCompletedDerivationDto,
+  })
   create(
     @Body(ValidationPipe)
     createCompletedDerivationDto: CreateCompletedDerivationDto
