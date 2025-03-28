@@ -71,11 +71,16 @@ export async function createNestApp() {
   return app;
 }
 
-// Export handler for serverless environments
+// Create the handler function
 export const handler = async (req: any, res: any) => {
   const app = await createNestApp();
   const expressInstance = app.getHttpAdapter().getInstance();
   return expressInstance(req, res);
+};
+
+// Add a default export for Vercel
+export default async (req: any, res: any) => {
+  return handler(req, res);
 };
 
 // Only call bootstrap in local development
