@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "dev": "nest start --watch",
-    "vercel-build": "npx prisma generate && npx prisma migrate deploy && turbo run build",
+    "vercel-build": "pnpm dlx prisma generate && npx prisma migrate deploy && turbo run build",
     "prisma": "npx prisma studio",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/main",
