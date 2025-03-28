@@ -6,7 +6,7 @@ import {
   CompletedDerivation,
   CompletedDerivationSchema,
 } from './entities/completed-derivations.entity';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Module({
   imports: [

@@ -6,7 +6,7 @@ import {
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateCompletedDerivationDto } from './dto/create-completed-derivations.dto';
-import { PrismaService } from '@/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { DerivationStatus } from '@repo/types';
 
 @Injectable()
