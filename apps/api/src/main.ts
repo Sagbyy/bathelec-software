@@ -36,3 +36,20 @@ async function bootstrap() {
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
+
+// Export for Vercel serverless
+export default async (req, res) => {
+  const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'https://bathelec-software-web.vercel.app',
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
+  await app.init();
+  const expressInstance = app.getHttpAdapter().getInstance();
+  return expressInstance(req, res);
+};
