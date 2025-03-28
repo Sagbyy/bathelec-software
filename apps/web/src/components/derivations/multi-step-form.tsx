@@ -14,7 +14,7 @@ import { NewMeterStep } from './steps/new-meter-step';
 import { CircuitBreakerStep } from './steps/circuit-breaker-step';
 import { PhotoAfterStep } from './steps/photo-after-step';
 import { ClientValidationStep } from './steps/client-validation-step';
-import { createCompletedDerivationSchema } from '@/validators/derivationForm';
+import { createCompletedDerivationSchema } from '@/validators/derivation-form';
 import {
   useCompletedDerivations,
   useCompletedDerivationsById,
@@ -52,6 +52,8 @@ export function MultiStepForm({
   useEffect(() => {
     if (status === DerivationStatus.COMPLETED) {
       setIsCompleted(true);
+    } else {
+      setIsCompleted(false);
     }
   }, [status, setIsCompleted]);
 

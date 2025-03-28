@@ -21,6 +21,8 @@ import { DateTimePicker24h } from '../date-time-picker-hours';
 import { useTechnicians } from '@/hooks/queries/useTechnician';
 import type { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
+import { useUserStore } from '@/hooks/useUserStore';
+import { useEffect } from 'react';
 
 interface GeneralInfoStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
@@ -28,7 +30,20 @@ interface GeneralInfoStepProps {
 
 export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
   const { data: technicians, isLoading, error } = useTechnicians();
+  const { user } = useUserStore();
   const { isCompleted } = useDerivationStatusStore();
+
+  // Set the default value for technician
+  useEffect(() => {
+    if (technicians) {
+      form.setValue(
+        'generalInfo.derivationBy',
+        technicians
+          .find((technician) => technician.id === user?.id)
+          ?.id.toString() || ''
+      );
+    }
+  }, [technicians, user, form]);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -73,7 +88,11 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
             </FormLabel>
             <Select
               onValueChange={field.onChange}
-              defaultValue={field.value}
+              defaultValue={
+                technicians?.find((technician) => technician.id === user?.id)
+                  ? user?.id.toString()
+                  : field.value
+              }
               disabled={isCompleted}
             >
               <FormControl>
