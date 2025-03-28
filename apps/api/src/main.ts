@@ -2,17 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConsoleLogger } from '@nestjs/common';
-import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app: NestExpressApplication = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create(AppModule, {
     logger: new ConsoleLogger({
       logLevels: ['error', 'warn', 'log', 'verbose', 'debug'],
       prefix: 'Bathelec API',
     }),
   });
-
-  app.useBodyParser('json', { limit: '1mb' });
 
   const config = new DocumentBuilder()
     .addBearerAuth()
