@@ -46,6 +46,16 @@ export class DerivationsController {
     return this.derivationsService.createDerivation(createDerivationDto);
   }
 
+  @Get()
+  @ApiOperation({ summary: 'Find all derivations' })
+  @ApiOkResponse({
+    description: 'The derivations have been successfully retrieved.',
+    type: [DerivationResponseDto],
+  })
+  findAllDerivations() {
+    return this.derivationsService.findAllDerivations();
+  }
+
   @Get('by-user/:userId')
   @ApiOperation({ summary: 'Find derivation by user id' })
   @ApiParam({ name: 'userId', type: Number })

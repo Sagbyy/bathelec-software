@@ -15,4 +15,9 @@ export const derivationService = {
     );
     return data;
   },
+
+  getDerivations: async () => {
+    const { data } = await apiClient.get<Derivation[]>(`/derivations`);
+    return data;
+  },
 };

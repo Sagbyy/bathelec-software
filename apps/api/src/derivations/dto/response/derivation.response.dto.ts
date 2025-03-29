@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { DerivationStatus } from '../../../types/enums/derivations-status.enum';
+import { DerivationStatus } from '../../../types/derivations-status.enum';
 
 export class DerivationResponseDto {
   @ApiProperty({ example: 1, description: 'The id of the derivation' })

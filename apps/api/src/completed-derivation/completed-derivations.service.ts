@@ -7,7 +7,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateCompletedDerivationDto } from './dto/create-completed-derivations.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { DerivationStatus } from '../types/enums/derivations-status.enum';
+import { DerivationStatus } from '../types/derivations-status.enum';
 
 @Injectable()
 export class CompletedDerivationService {
@@ -32,7 +32,7 @@ export class CompletedDerivationService {
             id: createCompletedDerivationDto.requestedDerivationId,
           },
           data: {
-            status: DerivationStatus.COMPLETED,
+            status: DerivationStatus.REVIEWING,
           },
         });
 
@@ -55,7 +55,7 @@ export class CompletedDerivationService {
           id: createCompletedDerivationDto.requestedDerivationId,
         },
         data: {
-          status: DerivationStatus.COMPLETED,
+          status: DerivationStatus.REVIEWING,
         },
       });
 
