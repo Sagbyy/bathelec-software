@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateDerivationDto } from './dto/request/create-derivation.dto';
-import { DerivationStatus } from '@repo/types';
+import { DerivationStatus } from '../types/enums/derivations-status.enum';
 
 @Injectable()
 export class DerivationsService {

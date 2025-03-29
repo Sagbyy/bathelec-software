@@ -7,7 +7,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateCompletedDerivationDto } from './dto/create-completed-derivations.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { DerivationStatus } from '@repo/types';
+import { DerivationStatus } from '../types/enums/derivations-status.enum';
 
 @Injectable()
 export class CompletedDerivationService {
