@@ -29,6 +29,7 @@ async function bootstrap() {
       'http://localhost:3000',
       'https://bathelec-software-web.vercel.app',
       'https://web-production-f7934.up.railway.app',
+      'https://abrisur.up.railway.app',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
