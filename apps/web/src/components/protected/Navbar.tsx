@@ -4,6 +4,12 @@ import {
   SheetContent,
   SheetTitle,
 } from '@/components/ui/sheet';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useUserStore } from '@/hooks/useUserStore';
@@ -105,7 +111,8 @@ export function Navbar() {
             <span className="sr-only">Bathelec Software</span>
             <BathelecLogo />
           </Link>
-          <div className="grid gap-2 py-6">
+          <div className="grid gap-4 py-6">
+            {/* Common Links */}
             {commonLinks.map((link, index) => (
               <Link
                 key={index}
@@ -118,19 +125,53 @@ export function Navbar() {
               </Link>
             ))}
 
+            {/* Admin Links with Collapsible */}
             {user?.role === 'admin' &&
               adminLinks.map((link, index) => (
-                <Link
-                  key={index}
-                  href={link.href}
-                  className="flex w-full items-center py-2 text-lg font-semibold"
-                  prefetch={false}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.label}
-                </Link>
+                <div key={index}>
+                  {link.type === 'folder' ? (
+                    <Collapsible>
+                      <CollapsibleTrigger className="group flex w-full items-center justify-between py-2 text-lg font-semibold">
+                        <span>{link.label}</span>
+                        <ChevronDown className="h-4 w-4 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down space-y-2 overflow-hidden transition-all duration-300 ease-in-out">
+                        <div className="ml-4 space-y-2 border-l pl-4">
+                          {link.pages?.map((page, pageIndex) => (
+                            <Link
+                              key={pageIndex}
+                              href={page.href}
+                              className="hover:text-primary flex w-full items-center py-2 text-base"
+                              prefetch={false}
+                              onClick={() => setIsOpen(false)}
+                            >
+                              <div className="flex flex-col">
+                                <p>{page.label}</p>
+                                {page.description && (
+                                  <span className="text-muted-foreground text-sm">
+                                    {page.description}
+                                  </span>
+                                )}
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="flex w-full items-center py-2 text-lg font-semibold"
+                      prefetch={false}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  )}
+                </div>
               ))}
 
+            {/* Technician Links */}
             {user?.role === 'technician' &&
               technicianLinks.map((link, index) => (
                 <Link
@@ -150,7 +191,7 @@ export function Navbar() {
                 setIsOpen(false);
               }}
               variant="default"
-              className="w-full"
+              className="mt-4 w-full"
             >
               Se déconnecter
             </Button>
