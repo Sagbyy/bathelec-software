@@ -76,6 +76,7 @@ export default function LayoutProtected({ children }: { children: ReactNode }) {
       ) : (
         <>
           <Navbar />
+          {/* <NavigationMenuDemo /> */}
           {children}
         </>
       )}

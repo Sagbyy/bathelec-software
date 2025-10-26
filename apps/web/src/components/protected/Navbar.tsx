@@ -7,25 +7,59 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import { useUserStore } from '@/hooks/useUserStore';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import useAuth from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { DropdownMenuProfile } from './DropDownProfile';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from '@/components/ui/navigation-menu';
+import { NavbarLink } from '@/types/navbar.types';
 
 export function Navbar() {
   const { user } = useUserStore();
   const { logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const adminLinks = [
+  const adminLinks: NavbarLink[] = [
     {
-      label: 'Créez un technicien',
-      href: '/dashboard/admin/create-technician',
+      label: 'Techniciens',
+      href: '#',
+      type: 'folder',
+      pages: [
+        {
+          label: 'Liste des techniciens',
+          href: '/dashboard/admin/list-technician',
+          type: 'page',
+          description: 'Voir la liste des techniciens',
+        },
+        {
+          label: 'Créez un technicien',
+          href: '/dashboard/admin/create-technician',
+          type: 'page',
+          description: "Création d'un nouveau compte technicien",
+        },
+      ],
     },
     {
-      label: 'Créez un relevé de dérivation',
-      href: '/dashboard/admin/create-derivation',
+      label: 'Relevés de dérivation',
+      href: '#',
+      type: 'folder',
+      pages: [
+        {
+          label: 'Créez un relevé de dérivation',
+          href: '/dashboard/admin/create-derivation',
+          type: 'page',
+          description: "Création d'un nouveau relevé de dérivation",
+        },
+      ],
     },
   ];
 
@@ -33,6 +67,8 @@ export function Navbar() {
     {
       label: 'Completer un relevé de dérivation',
       href: '/dashboard/technician/complete-derivation',
+      type: 'page',
+      description: 'Completer un relevé de dérivation',
     },
   ];
 
@@ -40,6 +76,8 @@ export function Navbar() {
     {
       label: 'Tableau de bord',
       href: '/dashboard',
+      type: 'page',
+      description: 'Accéder au tableau de bord',
     },
   ];
 
@@ -68,9 +106,9 @@ export function Navbar() {
             <BathelecLogo />
           </Link>
           <div className="grid gap-2 py-6">
-            {commonLinks.map((link) => (
+            {commonLinks.map((link, index) => (
               <Link
-                key={link.href}
+                key={index}
                 href={link.href}
                 className="flex w-full items-center py-2 text-lg font-semibold"
                 prefetch={false}
@@ -81,9 +119,9 @@ export function Navbar() {
             ))}
 
             {user?.role === 'admin' &&
-              adminLinks.map((link) => (
+              adminLinks.map((link, index) => (
                 <Link
-                  key={link.href}
+                  key={index}
                   href={link.href}
                   className="flex w-full items-center py-2 text-lg font-semibold"
                   prefetch={false}
@@ -94,9 +132,9 @@ export function Navbar() {
               ))}
 
             {user?.role === 'technician' &&
-              technicianLinks.map((link) => (
+              technicianLinks.map((link, index) => (
                 <Link
-                  key={link.href}
+                  key={index}
                   href={link.href}
                   className="flex w-full items-center py-2 text-lg font-semibold"
                   prefetch={false}
@@ -123,42 +161,75 @@ export function Navbar() {
         <BathelecLogo />
         <span className="sr-only">Bathelec Software</span>
       </Link>
-      <nav className="ml-auto hidden gap-6 lg:flex">
-        {commonLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-gray-100/50 data-[state=open]:bg-gray-100/50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50 dark:data-[active]:bg-gray-800/50 dark:data-[state=open]:bg-gray-800/50"
-            prefetch={false}
-          >
-            {link.label}
-          </Link>
-        ))}
-
-        {user?.role === 'admin' &&
-          adminLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-gray-100/50 data-[state=open]:bg-gray-100/50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50 dark:data-[active]:bg-gray-800/50 dark:data-[state=open]:bg-gray-800/50"
-              prefetch={false}
-            >
-              {link.label}
-            </Link>
+      <NavigationMenu className="ml-auto hidden lg:block">
+        <NavigationMenuList>
+          {/* Common Links */}
+          {commonLinks.map((link, index) => (
+            <NavigationMenuItem key={index}>
+              <NavigationMenuLink asChild>
+                <Link
+                  href={link.href}
+                  className={navigationMenuTriggerStyle()}
+                  prefetch={false}
+                >
+                  {link.label}
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
           ))}
 
-        {user?.role === 'technician' &&
-          technicianLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-gray-100/50 data-[state=open]:bg-gray-100/50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50 dark:data-[active]:bg-gray-800/50 dark:data-[state=open]:bg-gray-800/50"
-              prefetch={false}
-            >
-              {link.label}
-            </Link>
-          ))}
-      </nav>
+          {/* Admin Links */}
+          {user?.role === 'admin' &&
+            adminLinks.map((link, index) => (
+              <NavigationMenuItem key={index}>
+                {link.type === 'folder' ? (
+                  <>
+                    <NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] list-none gap-3 p-4">
+                        {link.pages?.map((page, index) => (
+                          <ListItem
+                            key={index}
+                            href={page.href}
+                            title={page.label}
+                          >
+                            {page.description && page.description}
+                          </ListItem>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </>
+                ) : (
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href={link.href}
+                      className={navigationMenuTriggerStyle()}
+                      prefetch={false}
+                    >
+                      {link.label}
+                    </Link>
+                  </NavigationMenuLink>
+                )}
+              </NavigationMenuItem>
+            ))}
+
+          {/* Technician Links */}
+          {user?.role === 'technician' &&
+            technicianLinks.map((link, index) => (
+              <NavigationMenuItem key={index}>
+                <NavigationMenuLink asChild>
+                  <Link
+                    href={link.href}
+                    className={navigationMenuTriggerStyle()}
+                    prefetch={false}
+                  >
+                    {link.label}
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ))}
+        </NavigationMenuList>
+      </NavigationMenu>
       <DropdownMenuProfile logout={logout} username={user?.username} />
     </header>
   );
@@ -197,3 +268,27 @@ function MenuIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+const ListItem = React.forwardRef<
+  React.ElementRef<'a'>,
+  React.ComponentPropsWithoutRef<'a'>
+>(({ className, title, children, href, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <Link
+          ref={ref}
+          href={href || '#'}
+          className="hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors"
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+            {children}
+          </p>
+        </Link>
+      </NavigationMenuLink>
+    </li>
+  );
+});
+ListItem.displayName = 'ListItem';
