@@ -129,7 +129,11 @@ export class UsersService {
   }
 
   async findAll() {
-    const users = await this.prisma.user.findMany();
+    const users = await this.prisma.user.findMany({
+      omit: {
+        password: true,
+      },
+    });
 
     return users;
   }
