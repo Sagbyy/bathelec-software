@@ -36,6 +36,19 @@ export function Navbar() {
 
   const adminLinks: NavbarLink[] = [
     {
+      label: 'Utilisateurs',
+      href: '#',
+      type: 'folder',
+      pages: [
+        {
+          label: 'Liste des utilisateurs',
+          href: '/dashboard/admin/list-users',
+          description: 'Voir la liste des utilisateurs',
+          type: 'page',
+        },
+      ],
+    },
+    {
       label: 'Techniciens',
       href: '#',
       type: 'folder',
