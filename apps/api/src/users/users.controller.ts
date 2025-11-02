@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Logger,
+  Param,
   Post,
   Request,
   UseGuards,
@@ -17,13 +18,14 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
 import { ChangePasswordResponseSuccessDto } from './dto/response/change-password-success.response.dto';
-import { ChangePasswordInvalidDto } from './dto/response/change-password-not-found.response.dto';
-import { ChangePasswordNotFoundDto } from './dto/response/change-password-invalid.response.dto';
 import { RoleGuard } from '../role/role.guard';
 import { Role } from '../role/role.decorator';
+import { UserInformationsDto } from './dto/request/user-informations';
+import { NotFoundDto } from './dto/response/not-found.response.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')
@@ -49,6 +51,25 @@ export class UsersController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @UseGuards(RoleGuard)
+  @Role('admin')
+  @Get(':userId')
+  @ApiOperation({ summary: 'Find user by ID' })
+  @ApiParam({ name: 'userId', type: Number, description: 'The ID of the user' })
+  @ApiOkResponse({
+    description: 'The user has been successfully retrieved.',
+    type: UserInformationsDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+    type: NotFoundDto,
+  })
+  async findOneById(@Param('userId') userId: string) {
+    return this.usersService.findOneById(parseInt(userId));
+  }
+
+  @HttpCode(HttpStatus.OK)
   @Get('technicians')
   async allTechniciansInfo() {
     return this.usersService.findAllTechnicians();
@@ -64,12 +85,12 @@ export class UsersController {
   @ApiResponse({
     status: 400,
     description: 'Invalid password',
-    type: ChangePasswordInvalidDto,
+    type: NotFoundDto,
   })
   @ApiResponse({
     status: 404,
     description: 'User not found',
-    type: ChangePasswordNotFoundDto,
+    type: NotFoundDto,
   })
   @ApiBody({ type: ChangePasswordDto })
   async changePassword(

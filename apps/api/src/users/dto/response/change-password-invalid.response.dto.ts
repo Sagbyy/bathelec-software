@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ChangePasswordNotFoundDto {
+export class ChangePasswordInvalidDto {
   @ApiProperty({
     example: 400,
     description: 'The response status code',
