@@ -39,16 +39,14 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
     'front',
     'left_front',
     'right_front',
-    'autre',
+    'other',
   ];
   const isCustomValue =
     situationValue && !predefinedSituations.includes(situationValue);
-  const isOtherSelected = situationValue === 'autre' || isCustomValue;
+  const isOtherSelected = situationValue === 'other' || isCustomValue;
 
-  // Determine what to show in the Select: "autre" if custom value exists, otherwise the actual value
-  const selectValue = isCustomValue ? 'autre' : situationValue;
+  const selectValue = isCustomValue ? 'other' : situationValue;
 
-  // Set the default value for technician
   useEffect(() => {
     if (technicians) {
       form.setValue(
@@ -276,13 +274,9 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
             <FormLabel>Situation</FormLabel>
             <Select
               onValueChange={(value) => {
-                // If user selects a predefined value (not "autre"), use it directly
-                // If user selects "autre", set it to "autre" (or keep existing custom value)
-                if (value === 'autre') {
-                  // If we have a custom value, keep it, otherwise set to "autre"
-                  field.onChange(isCustomValue ? situationValue : 'autre');
+                if (value === 'other') {
+                  field.onChange(isCustomValue ? situationValue : 'other');
                 } else {
-                  // User selected a predefined option, use it
                   field.onChange(value);
                 }
               }}
@@ -300,7 +294,7 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
                 <SelectItem value="front">En face</SelectItem>
                 <SelectItem value="left_front">Face gauche</SelectItem>
                 <SelectItem value="right_front">Face droite</SelectItem>
-                <SelectItem value="autre">Autre</SelectItem>
+                <SelectItem value="other">Autre</SelectItem>
               </SelectContent>
             </Select>
             {isOtherSelected && (

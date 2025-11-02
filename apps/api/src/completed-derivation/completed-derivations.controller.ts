@@ -13,8 +13,6 @@ import { CompletedDerivationService } from './completed-derivations.service';
 import { UpdateCompletedDerivationDto } from './dto/update-completed-derivations.dto';
 import { CreateCompletedDerivationDto } from './dto/create-completed-derivations.dto';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
-import { RoleGuard } from '../role/role.guard';
-import { Role } from '../role/role.decorator';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -24,8 +22,7 @@ import {
 import { CompletedDerivation } from './entities/completed-derivations.entity';
 
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RoleGuard)
-@Role('technician')
+@UseGuards(JwtAuthGuard)
 @Controller('completed-derivations')
 export class CompletedDerivationController {
   constructor(
