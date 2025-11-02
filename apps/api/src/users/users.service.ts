@@ -8,6 +8,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { ChangePasswordDto } from './dto/request/change-password.dto';
+import { UpdateUserDto } from './dto/request/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -136,5 +137,39 @@ export class UsersService {
     });
 
     return users;
+  }
+
+  async updateUser(userId: number, updateUserDto: UpdateUserDto) {
+    if (!userId) throw new BadRequestException('No ID specified');
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      this.logger.error(`User with ID ${userId} not found`);
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    try {
+      const updatedUser = await this.prisma.user.update({
+        where: { id: userId },
+        data: updateUserDto,
+        omit: {
+          password: true,
+        },
+      });
+
+      this.logger.log(`User updated successfully: ${userId}`);
+      return updatedUser;
+    } catch (error) {
+      this.logger.error(
+        `Error updating user with ID: ${userId}, error: ${error.message}`
+      );
+      throw new HttpException(
+        'Error while updating user',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }

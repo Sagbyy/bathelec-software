@@ -8,6 +8,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
   Request,
   UseGuards,
   ValidationPipe,
@@ -27,6 +28,7 @@ import { RoleGuard } from '../role/role.guard';
 import { Role } from '../role/role.decorator';
 import { UserInformationsDto } from './dto/request/user-informations';
 import { NotFoundDto } from './dto/response/not-found.response.dto';
+import { UpdateUserDto } from './dto/request/update-user.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')
@@ -105,5 +107,37 @@ export class UsersController {
     @Request() req
   ) {
     return this.usersService.changePassword(changePasswordDto, req.user.userId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Put(':userId')
+  @UseGuards(RoleGuard)
+  @Role('admin')
+  @ApiOperation({ summary: 'Update user by ID' })
+  @ApiParam({ name: 'userId', type: Number, description: 'The ID of the user' })
+  @ApiOkResponse({
+    description: 'The user has been successfully updated.',
+    type: UserInformationsDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+    type: NotFoundDto,
+  })
+  @ApiBody({ type: UpdateUserDto })
+  async updateUser(
+    @Param('userId') userId: string,
+    @Body(new ValidationPipe()) updateUserDto: UpdateUserDto
+  ) {
+    const user = await this.usersService.updateUser(
+      parseInt(userId),
+      updateUserDto
+    );
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 }
