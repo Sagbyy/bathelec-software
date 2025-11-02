@@ -32,6 +32,21 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
   const { data: technicians, isLoading, error } = useTechnicians();
   const { user } = useUserStore();
   const { isCompleted } = useDerivationStatusStore();
+  const situationValue = form.watch('generalInfo.situation');
+  const predefinedSituations = [
+    'left',
+    'right',
+    'front',
+    'left_front',
+    'right_front',
+    'autre',
+  ];
+  const isCustomValue =
+    situationValue && !predefinedSituations.includes(situationValue);
+  const isOtherSelected = situationValue === 'autre' || isCustomValue;
+
+  // Determine what to show in the Select: "autre" if custom value exists, otherwise the actual value
+  const selectValue = isCustomValue ? 'autre' : situationValue;
 
   // Set the default value for technician
   useEffect(() => {
@@ -226,11 +241,26 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
               </FormControl>
               <SelectContent>
                 <SelectItem value="rdc">Rez-de-chaussée</SelectItem>
-                <SelectItem value="1">1er étage</SelectItem>
-                <SelectItem value="2">2ème étage</SelectItem>
-                <SelectItem value="3">3ème étage</SelectItem>
-                <SelectItem value="4">4ème étage</SelectItem>
-                <SelectItem value="5">5ème étage et plus</SelectItem>
+                <SelectItem value="1">1</SelectItem>
+                <SelectItem value="2">2</SelectItem>
+                <SelectItem value="3">3</SelectItem>
+                <SelectItem value="4">4</SelectItem>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="6">6</SelectItem>
+                <SelectItem value="7">7</SelectItem>
+                <SelectItem value="8">8</SelectItem>
+                <SelectItem value="9">9</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="11">11</SelectItem>
+                <SelectItem value="12">12</SelectItem>
+                <SelectItem value="13">13</SelectItem>
+                <SelectItem value="14">14</SelectItem>
+                <SelectItem value="15">15</SelectItem>
+                <SelectItem value="16">16</SelectItem>
+                <SelectItem value="17">17</SelectItem>
+                <SelectItem value="18">18</SelectItem>
+                <SelectItem value="19">19</SelectItem>
+                <SelectItem value="20">20</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />
@@ -245,8 +275,18 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
           <FormItem>
             <FormLabel>Situation</FormLabel>
             <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
+              onValueChange={(value) => {
+                // If user selects a predefined value (not "autre"), use it directly
+                // If user selects "autre", set it to "autre" (or keep existing custom value)
+                if (value === 'autre') {
+                  // If we have a custom value, keep it, otherwise set to "autre"
+                  field.onChange(isCustomValue ? situationValue : 'autre');
+                } else {
+                  // User selected a predefined option, use it
+                  field.onChange(value);
+                }
+              }}
+              value={selectValue}
               disabled={isCompleted}
             >
               <FormControl>
@@ -255,12 +295,28 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="interieur">Intérieur</SelectItem>
-                <SelectItem value="exterieur">Extérieur</SelectItem>
-                <SelectItem value="facade">Façade</SelectItem>
+                <SelectItem value="left">Gauche</SelectItem>
+                <SelectItem value="right">Droite</SelectItem>
+                <SelectItem value="front">En face</SelectItem>
+                <SelectItem value="left_front">Face gauche</SelectItem>
+                <SelectItem value="right_front">Face droite</SelectItem>
                 <SelectItem value="autre">Autre</SelectItem>
               </SelectContent>
             </Select>
+            {isOtherSelected && (
+              <FormControl>
+                <Input
+                  placeholder="Préciser la situation"
+                  value={isCustomValue ? situationValue : ''}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                  }}
+                  onBlur={field.onBlur}
+                  disabled={isCompleted}
+                  className="mt-2"
+                />
+              </FormControl>
+            )}
             <FormMessage />
           </FormItem>
         )}

@@ -54,31 +54,6 @@ export class UsersController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @UseGuards(RoleGuard)
-  @Role('admin')
-  @Get(':userId')
-  @ApiOperation({ summary: 'Find user by ID' })
-  @ApiParam({ name: 'userId', type: Number, description: 'The ID of the user' })
-  @ApiOkResponse({
-    description: 'The user has been successfully retrieved.',
-    type: UserInformationsDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'User not found',
-    type: NotFoundException,
-  })
-  async findOneById(@Param('userId') userId: string) {
-    const user = await this.usersService.findOneById(parseInt(userId));
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    return user;
-  }
-
-  @HttpCode(HttpStatus.OK)
   @Get('technicians')
   async allTechniciansInfo() {
     return this.usersService.findAllTechnicians();
@@ -133,6 +108,31 @@ export class UsersController {
       parseInt(userId),
       updateUserDto
     );
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(RoleGuard)
+  @Role('admin')
+  @Get(':userId')
+  @ApiOperation({ summary: 'Find user by ID' })
+  @ApiParam({ name: 'userId', type: Number, description: 'The ID of the user' })
+  @ApiOkResponse({
+    description: 'The user has been successfully retrieved.',
+    type: UserInformationsDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+    type: NotFoundException,
+  })
+  async findOneById(@Param('userId') userId: string) {
+    const user = await this.usersService.findOneById(parseInt(userId));
 
     if (!user) {
       throw new NotFoundException('User not found');
