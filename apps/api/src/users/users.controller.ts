@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Logger,
+  NotFoundException,
   Param,
   Post,
   Request,
@@ -63,10 +64,16 @@ export class UsersController {
   @ApiResponse({
     status: 404,
     description: 'User not found',
-    type: NotFoundDto,
+    type: NotFoundException,
   })
   async findOneById(@Param('userId') userId: string) {
-    return this.usersService.findOneById(parseInt(userId));
+    const user = await this.usersService.findOneById(parseInt(userId));
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
   @HttpCode(HttpStatus.OK)
