@@ -75,7 +75,9 @@ export default function ListUsersPage() {
         </div>
       </div>
       <DataTable columns={columns} data={data} />
-      
+      <p className="text-muted-foreground text-sm">
+        <span className="font-bold">{data.length}</span> utilisateurs trouvés
+      </p>
     </div>
   );
 }
