@@ -7,8 +7,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { Icon } from '@iconify/react/dist/iconify.js';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
 
 export type User = {
   id: number;
@@ -62,6 +64,24 @@ export const columns: ColumnDef<User>[] = [
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+      );
+    },
+  },
+  {
+    accessorKey: 'edit',
+    header: 'Modifier',
+    cell: ({ row }) => {
+      const router = useRouter();
+      return (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => {
+            router.push(`/dashboard/admin/users/edit/${row.original.id}`);
+          }}
+        >
+          <Icon icon="material-symbols:edit-rounded" />
+        </Button>
       );
     },
   },

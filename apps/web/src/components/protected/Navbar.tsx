@@ -42,7 +42,7 @@ export function Navbar() {
       pages: [
         {
           label: 'Liste des utilisateurs',
-          href: '/dashboard/admin/list-users',
+          href: '/dashboard/admin/users',
           description: 'Voir la liste des utilisateurs',
           type: 'page',
         },
@@ -55,13 +55,13 @@ export function Navbar() {
       pages: [
         {
           label: 'Liste des techniciens',
-          href: '/dashboard/admin/list-technician',
+          href: '/dashboard/admin/technicians',
           type: 'page',
           description: 'Voir la liste des techniciens',
         },
         {
           label: 'Créez un technicien',
-          href: '/dashboard/admin/create-technician',
+          href: '/dashboard/admin/technicians/new',
           type: 'page',
           description: "Création d'un nouveau compte technicien",
         },
@@ -74,7 +74,7 @@ export function Navbar() {
       pages: [
         {
           label: 'Créez un relevé de dérivation',
-          href: '/dashboard/admin/create-derivation',
+          href: '/dashboard/admin/derivations/new',
           type: 'page',
           description: "Création d'un nouveau relevé de dérivation",
         },
@@ -85,7 +85,7 @@ export function Navbar() {
   const technicianLinks = [
     {
       label: 'Completer un relevé de dérivation',
-      href: '/dashboard/technician/complete-derivation',
+      href: '/dashboard/technician/derivations/complete',
       type: 'page',
       description: 'Completer un relevé de dérivation',
     },

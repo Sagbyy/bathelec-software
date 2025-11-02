@@ -51,12 +51,12 @@ export default function LayoutProtected({ children }: { children: ReactNode }) {
         user.role === 'admin' &&
         pathname.startsWith('/dashboard/technician')
       ) {
-        router.push('/dashboard/admin/create-derivation');
+        router.push('/dashboard/admin/derivations/new');
       } else if (
         user.role === 'technician' &&
         pathname.startsWith('/dashboard/admin')
       ) {
-        router.push('/dashboard/technician/complete-derivation');
+        router.push('/dashboard/technician/derivations/complete');
       }
     }
   }, [user, router]);
