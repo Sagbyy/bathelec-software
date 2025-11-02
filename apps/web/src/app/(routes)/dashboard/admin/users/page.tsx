@@ -75,6 +75,7 @@ export default function ListUsersPage() {
         </div>
       </div>
       <DataTable columns={columns} data={data} />
+      
     </div>
   );
 }
