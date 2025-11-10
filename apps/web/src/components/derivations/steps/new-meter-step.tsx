@@ -24,6 +24,8 @@ import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
 
 interface NewMeterStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
@@ -87,7 +89,6 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
                 <SelectItem value="g1">G1</SelectItem>
                 <SelectItem value="g2">G2</SelectItem>
                 <SelectItem value="g3">G3</SelectItem>
-                <SelectItem value="autre">Autre</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />
@@ -101,6 +102,15 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Matricule</FormLabel>
+            <Zoom>
+              <Image
+                src={'/images/linky-help-matricule.png'}
+                alt="Aperçu de la photo"
+                width={200}
+                height={100}
+                className="rounded-md"
+              />
+            </Zoom>
             <FormControl>
               <Input
                 placeholder="Ex: 12 chiffres"

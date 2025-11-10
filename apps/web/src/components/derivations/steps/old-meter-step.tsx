@@ -85,9 +85,9 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
                 <SelectItem value="electromecanique">
                   Électromécanique
                 </SelectItem>
-                <SelectItem value="electronique">Électronique</SelectItem>
+                <SelectItem value="cbe">CBE</SelectItem>
                 <SelectItem value="linky">Linky</SelectItem>
-                <SelectItem value="autre">Autre</SelectItem>
+                <SelectItem value="other">Autre</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />
@@ -115,7 +115,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="autre" className="uppercase">
+                  <SelectItem value="other" className="uppercase">
                     Pas de generation - Compteur SBE
                   </SelectItem>
                   <SelectItem value="g1">G1</SelectItem>

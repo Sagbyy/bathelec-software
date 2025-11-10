@@ -19,7 +19,6 @@ import {
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
 
-
 interface NewDerivationStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }
@@ -49,12 +48,9 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="1.5">1.5 mm²</SelectItem>
-                <SelectItem value="2.5">2.5 mm²</SelectItem>
-                <SelectItem value="4">4 mm²</SelectItem>
-                <SelectItem value="6">6 mm²</SelectItem>
-                <SelectItem value="10">10 mm²</SelectItem>
-                <SelectItem value="16">16 mm²</SelectItem>
+                <SelectItem value="2x16">2x16 mm²</SelectItem>
+                <SelectItem value="2x25">2x25 mm²</SelectItem>
+                <SelectItem value="2x35">2x35 mm²</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />
@@ -83,7 +79,6 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
               <SelectContent>
                 <SelectItem value="cuivre">Cuivre</SelectItem>
                 <SelectItem value="aluminium">Aluminium</SelectItem>
-                <SelectItem value="autre">Autre</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />
