@@ -14,18 +14,38 @@ export const useFormSteps = ({ form, onSubmit }: UseFormStepsProps) => {
 
   const oldMeterPreserved = form.watch('oldMeter.preserved');
   const clientPresent = form.watch('clientValidation.present');
+  const isLinkyRefusal = form.watch('oldMeter.linkyRefusal');
 
   useEffect(() => {
-    setTotalSteps(oldMeterPreserved ? 8 : 9);
-  }, [oldMeterPreserved]);
+    if (isLinkyRefusal) {
+      setTotalSteps(oldMeterPreserved ? 7 : 8);
+    } else {
+      setTotalSteps(oldMeterPreserved ? 8 : 9);
+    }
+  }, [oldMeterPreserved, isLinkyRefusal]);
 
   const getActualStep = useCallback(
     (currentStep: number) => {
-      if (oldMeterPreserved) {
-        if (currentStep === 6) return 7; // Circuit Breaker
-        if (currentStep === 7) return 8; // Photo After
-        if (currentStep === 8) return 9; // Client Validation
+      if (
+        oldMeterPreserved &&
+        isLinkyRefusal &&
+        currentStep > 5 &&
+        currentStep < 9
+      ) {
+        console.log('currentStep', currentStep);
+        return currentStep + 2;
       }
+
+      if (oldMeterPreserved && currentStep > 5 && currentStep < 9) {
+        console.log('currentStep oldMeterPreserved', currentStep);
+        return currentStep + 1;
+      }
+
+      if (isLinkyRefusal && currentStep > 6 && currentStep < 9) {
+        console.log('currentStep isLinkyRefusal', currentStep);
+        return currentStep + 1;
+      }
+
       return currentStep;
     },
     [oldMeterPreserved]
