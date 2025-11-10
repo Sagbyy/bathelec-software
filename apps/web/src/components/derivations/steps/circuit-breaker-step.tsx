@@ -173,6 +173,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
+                <SelectItem value="10-30">10-30 A</SelectItem>
                 <SelectItem value="15-45">15-45 A</SelectItem>
                 <SelectItem value="30-60">30-60 A</SelectItem>
                 <SelectItem value="60-90">60-90 A</SelectItem>
@@ -234,7 +235,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         <Alert variant="destructive" className="mt-2">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Le plombage est obligatoire et cela même si...
+            Le plombage est obligatoire dans tous les cas
           </AlertDescription>
         </Alert>
       )}
