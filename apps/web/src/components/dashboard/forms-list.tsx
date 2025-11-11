@@ -47,8 +47,9 @@ import { DerivationStatus, Derivation, Technician } from '@repo/types';
 import { useDerivation } from '@/hooks/queries/use-derivation';
 import { useTechnicians } from '@/hooks/queries/useTechnician';
 import { cn } from '@/lib/utils';
+
 const statusText = {
-  [DerivationStatus.PENDING]: 'A compléter',
+  [DerivationStatus.PENDING]: 'À compléter',
   [DerivationStatus.ONGOING]: 'En cours',
   [DerivationStatus.REVIEWING]: 'En attente de validation',
   [DerivationStatus.REVISING]: 'En attente de correction',
@@ -210,7 +211,7 @@ export function FormsList() {
           </div>
           <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
             <Input
-              placeholder="Search forms..."
+              placeholder="Rechercher une dérivation..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full sm:w-64"

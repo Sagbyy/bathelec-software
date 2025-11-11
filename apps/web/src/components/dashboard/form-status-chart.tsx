@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import {
+  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -20,6 +21,36 @@ interface FormStatusChartProps {
   props?: React.HTMLAttributes<HTMLDivElement>;
 }
 
+const chartConfig = {
+  status: {
+    label: 'Status',
+  },
+  completed: {
+    label: 'Terminé',
+    color: 'var(--chart-completed)',
+  },
+  ongoing: {
+    label: 'En cours',
+    color: 'var(--chart-ongoing)',
+  },
+  reviewing: {
+    label: 'En attente de validation',
+    color: 'var(--chart-reviewing)',
+  },
+  revising: {
+    label: 'En attente de correction',
+    color: 'var(--chart-revising)',
+  },
+  incorrect: {
+    label: 'Incorrect',
+    color: 'var(--chart-incorrect)',
+  },
+  pending: {
+    label: 'À compléter',
+    color: 'var(--chart-pending)',
+  },
+} satisfies ChartConfig;
+
 export default function FormStatusChart({
   className,
   ...props
@@ -27,47 +58,40 @@ export default function FormStatusChart({
   const { data, isLoading } = useDerivation();
   const [totalDerivations, setTotalDerivations] = useState(0);
 
-  const chartConfig = {
-    completed: {
-      label: 'A compléter',
-      color: '#2B7FFF',
-    },
-    inProgress: {
-      label: 'En cours',
-      color: 'hsl(var(--chart-4))',
-    },
-    reviewing: {
-      label: 'En attente de validation',
-      color: '#9466FF',
-    },
-    revising: {
-      label: 'En attente de correction',
-      color: '#FFD700',
-    },
-    incorrect: {
-      label: 'Incorrect',
-      color: '#FF0000',
-    },
-  };
-
-  const chartData = [
-    { name: 'completed', value: 1 },
-    { name: 'En cours', value: 3 },
-    { name: 'En attente de validation', value: 2 },
-    { name: 'En attente de correction', value: 1 },
-    { name: 'Incorrect', value: 1 },
-  ];
-
   useEffect(() => {
     setTotalDerivations(data?.length || 0);
   }, [data]);
 
+  if (isLoading) {
+    return <div>Chargement des dérivations...</div>;
+  }
+
+  if (!data) {
+    return <div>Aucune dérivation trouvée</div>;
+  }
+
+  const derivationsByStatus: Record<string, number> = {};
+
+  for (const derivation of data) {
+    const key = derivation.status.toString();
+    if (!derivationsByStatus[key]) {
+      derivationsByStatus[key] = 0;
+    }
+    derivationsByStatus[key]++;
+  }
+
+  const chartData = Object.entries(derivationsByStatus).map(([key, value]) => ({
+    status: key,
+    value: value,
+    fill: `var(--chart-${key.toLowerCase()})`,
+  }));
+
   return (
     <Card className={cn('col-span-3', className)} {...props}>
       <CardHeader>
-        <CardTitle>Form Status Distribution</CardTitle>
+        <CardTitle>Statut des dérivations</CardTitle>
         <CardDescription>
-          Visual breakdown of forms by their current status
+          Visualisation du statut des dérivations
         </CardDescription>
       </CardHeader>
       <CardContent className="pl-2">
@@ -83,7 +107,7 @@ export default function FormStatusChart({
             <Pie
               data={chartData}
               dataKey="value"
-              nameKey="name"
+              nameKey="status"
               innerRadius={60}
               strokeWidth={5}
             >

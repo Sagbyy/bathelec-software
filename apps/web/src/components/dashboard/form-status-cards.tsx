@@ -73,7 +73,7 @@ export function FormStatusCards({ className, ...props }: FormStatusCardsProps) {
   };
 
   const statusText = {
-    [DerivationStatus.PENDING]: 'A compléter',
+    [DerivationStatus.PENDING]: 'À compléter',
     [DerivationStatus.ONGOING]: 'En cours',
     [DerivationStatus.REVIEWING]: 'En attente de validation',
     [DerivationStatus.REVISING]: 'En attente de correction',

@@ -76,6 +76,7 @@ export default function CompleteDerivationPage() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>ID</TableHead>
             <TableHead>Adresse</TableHead>
             <TableHead>Ville</TableHead>
             <TableHead>Code postal</TableHead>
@@ -91,6 +92,7 @@ export default function CompleteDerivationPage() {
           ) : (
             completeToDerivations?.map((derivation) => (
               <TableRow key={derivation.id}>
+                <TableCell>{derivation.id}</TableCell>
                 <TableCell>{derivation.address}</TableCell>
                 <TableCell>{derivation.city}</TableCell>
                 <TableCell>{derivation.postalCode}</TableCell>
