@@ -113,7 +113,7 @@ export function Navbar() {
         </SheetTrigger>
         <SheetContent side="left" aria-describedby={undefined}>
           <VisuallyHidden>
-            <SheetTitle>Bathelec</SheetTitle>
+            <SheetTitle>Abrisûr</SheetTitle>
           </VisuallyHidden>
           <Link
             href="/dashboard"
@@ -121,8 +121,8 @@ export function Navbar() {
             prefetch={false}
             onClick={() => setIsOpen(false)}
           >
-            <span className="sr-only">Bathelec Software</span>
-            <BathelecLogo />
+            <span className="sr-only">Abrisûr Software</span>
+            <AbrisurLogo />
           </Link>
           <div className="grid gap-4 py-6">
             {/* Common Links */}
@@ -212,8 +212,8 @@ export function Navbar() {
         </SheetContent>
       </Sheet>
       <Link href="/dashboard" className="mr-6 hidden lg:flex" prefetch={false}>
-        <BathelecLogo />
-        <span className="sr-only">Bathelec Software</span>
+        <AbrisurLogo />
+        <span className="sr-only">Abrisûr Software</span>
       </Link>
       <NavigationMenu className="ml-auto hidden lg:block">
         <NavigationMenuList>
@@ -289,13 +289,13 @@ export function Navbar() {
   );
 }
 
-function BathelecLogo() {
+function AbrisurLogo() {
   return (
     <Image
-      src="/bathelec-brand-logo.png"
-      alt="Bathelec Software logo"
-      width={100}
-      height={100}
+      src="/logo-abrisur.webp"
+      alt="Abrisûr Logo"
+      width={50}
+      height={50}
       className="h-auto w-auto"
       priority
     />

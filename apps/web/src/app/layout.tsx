@@ -4,8 +4,8 @@ import QueryProvider from '@/contexts/QueryProvider';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Bathelec software',
-  description: 'Dashboard Bathelec software',
+  title: 'Abrisûr software',
+  description: 'Dashboard Abrisûr software',
   icons: {
     icon: '/favicon.ico',
   },

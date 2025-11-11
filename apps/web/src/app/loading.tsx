@@ -7,7 +7,7 @@ export default function Loading() {
       <div className="flex flex-col items-center justify-center text-center">
         <div className="mx-auto mb-4">
           <Image
-            src="/bathelec-brand-logo.png"
+            src="/logo-abrisur.webp"
             className="h-auto w-auto"
             width={200}
             height={100}

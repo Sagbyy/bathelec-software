@@ -65,9 +65,9 @@ export default function LoginForm() {
     <div className="flex h-screen items-center justify-center">
       <div className="mx-3 w-full max-w-72 rounded-lg bg-white p-4 shadow-sm">
         <Image
-          src="/bathelec-brand-logo.png"
+          src="/logo-abrisur.webp"
           className="mx-auto h-auto w-auto"
-          alt="Bathelec Logo"
+          alt="Abrisûr Logo"
           width={200}
           height={100}
           priority
@@ -127,7 +127,7 @@ export default function LoginForm() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="hover:bg w-full bg-[#037BCA]">
+              <Button type="submit" className="hover:bg w-full bg-[#CD2C35]">
                 Se connecter
               </Button>
             </form>
