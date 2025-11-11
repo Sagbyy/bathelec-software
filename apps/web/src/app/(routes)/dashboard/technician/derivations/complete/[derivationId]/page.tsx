@@ -30,10 +30,7 @@ export default function CompleteDerivationPage() {
         address={derivation?.address}
         createdAt={derivation?.createdAt}
       />
-      <MultiStepForm
-        requestedDerivationId={derivation.id}
-        status={derivation?.status}
-      />
+      <MultiStepForm derivation={derivation} />
     </div>
   );
 }

@@ -27,30 +27,26 @@ import { formatCompletedDerivation } from './utils/form-data-formatter';
 import { useFormSteps } from '../../hooks/use-form-steps';
 import { FormHeader } from './form-parts/form-header';
 import { FormNavigation } from './form-parts/form-navigation';
-import { DerivationStatus } from '@repo/types';
+import { Derivation, DerivationStatus } from '@repo/types';
 import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
 
 interface MultiStepFormProps {
-  requestedDerivationId: number;
-  status: DerivationStatus;
+  derivation: Derivation;
 }
 
-export function MultiStepForm({
-  requestedDerivationId,
-  status,
-}: MultiStepFormProps) {
+export function MultiStepForm({ derivation }: MultiStepFormProps) {
   const {
     mutate: createCompletedDerivation,
     status: createCompletedDerivationStatus,
     error,
   } = useCompletedDerivations();
   const { data: completedDerivation } = useCompletedDerivationsById(
-    requestedDerivationId
+    derivation.id
   );
   const { setIsCompleted } = useDerivationStatusStore();
 
   useEffect(() => {
-    if (status === DerivationStatus.COMPLETED) {
+    if (derivation.status === DerivationStatus.COMPLETED) {
       setIsCompleted(true);
     } else {
       setIsCompleted(false);
@@ -73,10 +69,10 @@ export function MultiStepForm({
     (data: CreateCompletedDerivation) => {
       createCompletedDerivation({
         ...data,
-        requestedDerivationId,
+        requestedDerivationId: derivation.id,
       });
     },
-    [createCompletedDerivation, requestedDerivationId]
+    [createCompletedDerivation, derivation.id]
   );
 
   useEffect(() => {
@@ -110,7 +106,7 @@ export function MultiStepForm({
       case 1:
         return <ClientInfoStep form={form} />;
       case 2:
-        return <GeneralInfoStep form={form} />;
+        return <GeneralInfoStep form={form} derivation={derivation} />;
       case 3:
         return <PhotoBeforeStep form={form} />;
       case 4:

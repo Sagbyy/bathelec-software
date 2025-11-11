@@ -22,16 +22,25 @@ import { useTechnicians } from '@/hooks/queries/useTechnician';
 import type { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
 import { useUserStore } from '@/hooks/useUserStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Derivation } from '@repo/types';
+import { Address } from '@repo/types';
 
 interface GeneralInfoStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
+  derivation: Derivation;
 }
 
-export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
+export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
   const { data: technicians, isLoading, error } = useTechnicians();
   const { user } = useUserStore();
   const { isCompleted } = useDerivationStatusStore();
+  const [address, setAddress] = useState<Address>({
+    street: derivation.address,
+    postalCode: derivation.postalCode,
+    city: derivation.city,
+  });
+  
   const situationValue = form.watch('generalInfo.situation');
   const predefinedSituations = [
     'left',
@@ -141,7 +150,11 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
                 N° et Rue<span className="ml-1 text-red-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input {...field} disabled={isCompleted} />
+                <Input
+                  {...field}
+                  disabled={isCompleted}
+                  value={address.street}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -157,7 +170,11 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
                 Code Postal<span className="ml-1 text-red-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input {...field} disabled={isCompleted} />
+                <Input
+                  {...field}
+                  disabled={isCompleted}
+                  value={address.postalCode}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -173,7 +190,11 @@ export function GeneralInfoStep({ form }: GeneralInfoStepProps) {
                 Ville<span className="ml-1 text-red-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input {...field} disabled={isCompleted} />
+                <Input
+                  {...field}
+                  disabled={isCompleted}
+                  value={address.city}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
