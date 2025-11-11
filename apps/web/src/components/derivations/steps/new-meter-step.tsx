@@ -74,7 +74,9 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
         name="newMeter.generation"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Génération</FormLabel>
+            <FormLabel>
+              Génération<span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <Select
               onValueChange={field.onChange}
               defaultValue={field.value}
@@ -101,7 +103,9 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
         name="newMeter.serialNumber"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Matricule</FormLabel>
+            <FormLabel>
+              Matricule<span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <Zoom>
               <Image
                 src={'/images/linky-help-matricule.png'}
@@ -128,7 +132,9 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
         name="newMeter.dayIndex"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Index jour - HP</FormLabel>
+            <FormLabel>
+              Index jour - HP<span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <Input
                 placeholder="Index à relever pour tous type de contrat"
@@ -164,7 +170,10 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
         name="newMeter.indexPhoto"
         render={({ field: { value, onChange, ...field } }) => (
           <FormItem>
-            <FormLabel>Photo avec index visible</FormLabel>
+            <FormLabel>
+              Photo avec index visible
+              <span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <div className="flex flex-col items-center gap-4">
                 {previewUrl ? (

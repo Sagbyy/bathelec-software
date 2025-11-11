@@ -141,6 +141,7 @@ export function MultiStepForm({
               {renderStep()}
 
               <FormNavigation
+                form={form}
                 step={step}
                 totalSteps={totalSteps}
                 onNext={nextStep}

@@ -1,8 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
+import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { UseFormReturn } from 'react-hook-form';
 
 type FormNavigationProps = {
+  form: UseFormReturn<CreateCompletedDerivation>;
   step: number;
   totalSteps: number;
   onNext: () => void;
@@ -10,6 +13,7 @@ type FormNavigationProps = {
 };
 
 export const FormNavigation = ({
+  form,
   step,
   totalSteps,
   onNext,
@@ -17,6 +21,7 @@ export const FormNavigation = ({
 }: FormNavigationProps) => {
   const isLastStep = step === totalSteps;
   const { isCompleted } = useDerivationStatusStore();
+  const isSealed = form.watch('circuitBreaker.sealed');
 
   return (
     <div className="mt-8 flex justify-between">
@@ -33,7 +38,7 @@ export const FormNavigation = ({
       <Button
         type="button"
         onClick={onNext}
-        disabled={isLastStep && isCompleted}
+        disabled={(isLastStep && isCompleted) || (!isSealed && step === 7)}
       >
         {isLastStep ? (
           <>
