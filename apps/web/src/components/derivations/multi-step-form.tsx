@@ -14,7 +14,7 @@ import { NewMeterStep } from './steps/new-meter-step';
 import { CircuitBreakerStep } from './steps/circuit-breaker-step';
 import { PhotoAfterStep } from './steps/photo-after-step';
 import { ClientValidationStep } from './steps/client-validation-step';
-import { createCompletedDerivationSchema } from '@/validators/derivation-form';
+import { createCompletedDerivationSchema } from '@/validators/derivation-form.schema';
 import {
   useCompletedDerivations,
   useCompletedDerivationsById,

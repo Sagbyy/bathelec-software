@@ -34,6 +34,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Technician } from '@repo/types';
 import Cookies from 'js-cookie';
 import { toast } from '@/hooks/use-toast';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { formSchema } from '@/validators/create-derivation.schema';
 
 const fetchTechnicians = async () => {
   const response = await axios
@@ -59,39 +62,11 @@ export default function CreateDerivationForm() {
     queryFn: fetchTechnicians,
   });
 
-  const formSchema = z.object({
-    user: z
-      .string()
-      .min(2, {
-        message: "Le nom d'utilisateur doit comporter au moins 2 caractères",
-      })
-      .max(50, {
-        message: "Le nom d'utilisateur ne peut pas dépasser 50 caractères",
-      }),
-
-    address: z
-      .string()
-      .min(5, { message: "L'adresse doit comporter au moins 5 caractères" })
-      .max(100, { message: "L'adresse ne peut pas dépasser 100 caractères" }),
-
-    postalCode: z.string().regex(/^\d+$/, {
-      message: 'Le code postal doit être un nombre',
-    }),
-
-    city: z
-      .string()
-      .min(2, {
-        message: 'Le nom de la ville doit comporter au moins 2 caractères',
-      })
-      .max(50, {
-        message: 'Le nom de la ville ne peut pas dépasser 50 caractères',
-      }),
-  });
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       user: '',
+      isBlank: false,
       address: '',
       postalCode: '',
       city: '',
@@ -112,6 +87,7 @@ export default function CreateDerivationForm() {
           address: data.address,
           postalCode: Number(data.postalCode),
           city: data.city,
+          isBlank: data.isBlank,
         },
         {
           headers: {
@@ -125,7 +101,6 @@ export default function CreateDerivationForm() {
         throw new Error('Erreur lors de la création de la dérivation');
       }
 
-      // Reset form
       form.reset();
 
       toast({
@@ -228,66 +203,96 @@ export default function CreateDerivationForm() {
 
           <FormField
             control={form.control}
-            name="address"
+            name="isBlank"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Adresse</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="Entrer l'adresse"
-                    className={clsx(
-                      form.formState.errors.address && 'border-red-500'
-                    )}
-                    required
-                  />
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      checked={field.value as boolean}
+                      onCheckedChange={field.onChange}
+                      id="is-derivation-blank"
+                    />
+                    <Label htmlFor="is-derivation-blank">
+                      Je souhaite créer un relevé de dérivation vide
+                    </Label>
+                  </div>
                 </FormControl>
-                <FormMessage>
-                  {form.formState.errors.address?.message}
-                </FormMessage>
               </FormItem>
             )}
           />
 
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="postalCode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Code postal</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="number"
-                      placeholder="Entrer le code postal"
-                    />
-                  </FormControl>
-                  <FormMessage>
-                    {form.formState.errors.postalCode?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="city"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Ville</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="Entrer la ville" />
-                  </FormControl>
-                  <FormMessage>
-                    {form.formState.errors.city?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-          </div>
+          {!form.watch('isBlank') && (
+            <>
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Adresse</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value ?? ''}
+                        placeholder="Entrer l'adresse"
+                        className={clsx(
+                          form.formState.errors.address && 'border-red-500'
+                        )}
+                        required
+                      />
+                    </FormControl>
+                    <FormMessage>
+                      {form.formState.errors.address?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
 
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="postalCode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Code postal</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value ?? ''}
+                          type="number"
+                          placeholder="Entrer le code postal"
+                        />
+                      </FormControl>
+                      <FormMessage>
+                        {form.formState.errors.postalCode?.message}
+                      </FormMessage>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ville</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value ?? ''}
+                          placeholder="Entrer la ville"
+                        />
+                      </FormControl>
+                      <FormMessage>
+                        {form.formState.errors.city?.message}
+                      </FormMessage>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </>
+          )}
           <Button type="submit" className="w-full">
-            Submit
+            Créer la dérivation
           </Button>
         </form>
       </FormProvider>
