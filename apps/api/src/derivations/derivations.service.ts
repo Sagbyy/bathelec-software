@@ -23,6 +23,8 @@ export class DerivationsService {
       `Creating derivation with data: ${JSON.stringify(createDerivationDto)}`
     );
 
+    delete createDerivationDto.isBlank;
+
     return this.prisma.derivation.create({
       data: {
         ...createDerivationDto,

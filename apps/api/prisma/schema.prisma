@@ -23,9 +23,9 @@ model Derivation {
   id         Int      @id @default(autoincrement())
   userId     Int
   createdAt  DateTime @default(now())
-  address    String
-  city       String
-  postalCode Int
+  address    String?
+  city       String?
+  postalCode Int?
   status     String
   user       User     @relation(fields: [userId], references: [id])
 }
