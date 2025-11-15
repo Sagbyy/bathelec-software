@@ -1,4 +1,4 @@
-import { ChangePassword } from '@/types/changePassword';
+import { ChangePassword } from '@/types/change-password.types';
 import apiClient from './apiClient';
 
 export const changePasswordService = {

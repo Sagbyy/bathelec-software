@@ -1,5 +1,5 @@
 import { changePasswordService } from '@/services/changePasswordService';
-import { ChangePassword } from '@/types/changePassword';
+import { ChangePassword } from '@/types/change-password.types';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 
 export const useChangePassword = (): UseMutationResult<
