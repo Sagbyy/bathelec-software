@@ -12,7 +12,9 @@ export const createCompletedDerivationSchema = z.object({
     derivationBy: z.string().min(1, { message: 'Ce champ est requis' }),
     address: z.object({
       street: z.string().min(1, { message: "L'adresse est requise" }),
-      postalCode: z.string().min(4, { message: 'Code postal invalide' }),
+      postalCode: z.string().regex(/^\d{5}$/, {
+        message: 'Le code postal doit contenir exactement 5 chiffres',
+      }),
       city: z.string().min(1, { message: 'La ville est requise' }),
     }),
     building: z.string().min(1, { message: 'Le bâtiment est requis' }),

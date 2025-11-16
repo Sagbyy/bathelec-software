@@ -265,7 +265,7 @@ export default function CreateDerivationForm() {
                         <Input
                           {...field}
                           value={field.value ?? ''}
-                          type="number"
+                          type="text"
                           placeholder="Entrer le code postal"
                         />
                       </FormControl>

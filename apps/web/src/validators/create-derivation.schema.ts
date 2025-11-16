@@ -17,8 +17,8 @@ const nonBlankPart = {
     .string()
     .min(5, { message: "L'adresse doit comporter au moins 5 caractères" })
     .max(100, { message: "L'adresse ne peut pas dépasser 100 caractères" }),
-  postalCode: z.string().regex(/^\d+$/, {
-    message: 'Le code postal doit être un nombre',
+  postalCode: z.string().regex(/^\d{5}$/, {
+    message: 'Le code postal doit contenir exactement 5 chiffres',
   }),
   city: z
     .string()

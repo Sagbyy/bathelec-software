@@ -35,12 +35,20 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
   const { data: technicians, isLoading, error } = useTechnicians();
   const { user } = useUserStore();
   const { isCompleted } = useDerivationStatusStore();
-  const [address, setAddress] = useState<Address>({
-    street: derivation.address,
-    postalCode: derivation.postalCode,
-    city: derivation.city,
-  });
-  
+  const [isStaticAddress, setIsStaticAddress] = useState(false);
+
+  useEffect(() => {
+    if (derivation.address && derivation.postalCode && derivation.city) {
+      form.setValue('generalInfo.address.street', derivation.address);
+      form.setValue(
+        'generalInfo.address.postalCode',
+        String(derivation.postalCode)
+      );
+      form.setValue('generalInfo.address.city', derivation.city);
+      setIsStaticAddress(true);
+    }
+  }, []);
+
   const situationValue = form.watch('generalInfo.situation');
   const predefinedSituations = [
     'left',
@@ -152,8 +160,8 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
               <FormControl>
                 <Input
                   {...field}
-                  disabled={isCompleted}
-                  value={address.street}
+                  disabled={isCompleted || isStaticAddress}
+                  value={isStaticAddress ? derivation.address : field.value}
                 />
               </FormControl>
               <FormMessage />
@@ -172,8 +180,8 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
               <FormControl>
                 <Input
                   {...field}
-                  disabled={isCompleted}
-                  value={address.postalCode}
+                  disabled={isCompleted || isStaticAddress}
+                  value={isStaticAddress ? derivation.postalCode : field.value}
                 />
               </FormControl>
               <FormMessage />
@@ -192,8 +200,8 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
               <FormControl>
                 <Input
                   {...field}
-                  disabled={isCompleted}
-                  value={address.city}
+                  disabled={isCompleted || isStaticAddress}
+                  value={isStaticAddress ? derivation.city : field.value}
                 />
               </FormControl>
               <FormMessage />

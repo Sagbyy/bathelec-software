@@ -48,7 +48,9 @@ export function InfoCard({
             <div className="flex items-center gap-2">
               <MapPinIcon className="text-muted-foreground h-4 w-4" />
               <span className="text-sm font-medium">
-                {address}, {postalCode} {city}
+                {address && postalCode && city
+                  ? `${address}, ${postalCode} ${city}`
+                  : "Pas d'adresse renseignée par le manager"}
               </span>
             </div>
             <div className="flex items-center gap-2">
