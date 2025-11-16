@@ -79,13 +79,19 @@ export default function CreateDerivationForm() {
         `${technician.firstName} ${technician.lastName}` === data.user
     )?.id;
 
+    if (data.isBlank) {
+      data.address = null;
+      data.postalCode = null;
+      data.city = null;
+    }
+
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/derivations`,
         {
           userId,
           address: data.address,
-          postalCode: Number(data.postalCode),
+          postalCode: data.postalCode ? Number(data.postalCode) : null,
           city: data.city,
           isBlank: data.isBlank,
         },

@@ -32,9 +32,9 @@ const nonBlankPart = {
 
 const blankPart = {
   isBlank: z.literal(true),
-  address: z.string().optional(),
-  postalCode: z.string().optional(),
-  city: z.string().optional(),
+  address: z.string().nullable().optional(),
+  postalCode: z.string().nullable().optional(),
+  city: z.string().nullable().optional(),
 };
 
 export const formSchema = z.discriminatedUnion('isBlank', [
