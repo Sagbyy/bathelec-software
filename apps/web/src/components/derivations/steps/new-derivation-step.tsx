@@ -18,13 +18,27 @@ import {
 } from '@/components/ui/select';
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
+import { cn } from '@/lib/utils';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Icon } from '@iconify/react/dist/iconify.js';
 
 interface NewDerivationStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }
 
+const isLengthValid = (length: number, section: string): boolean => {
+  if (section === '2x16') {
+    return length <= 10;
+  }
+  return length <= 20;
+};
+
 export function NewDerivationStep({ form }: NewDerivationStepProps) {
   const { isCompleted } = useDerivationStatusStore();
+
+  const section = form.watch('newDerivation.section');
+  const length = form.watch('newDerivation.length');
+
   return (
     <div className="space-y-6">
       <div className="text-xl font-semibold">5. La nouvelle dérivation</div>
@@ -34,7 +48,9 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
         name="newDerivation.section"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>
+            <FormLabel
+              className={cn(!isLengthValid(length, section) && 'text-red-500')}
+            >
               Section posée<span className="ml-1 text-red-500">*</span>
             </FormLabel>
             <Select
@@ -91,7 +107,9 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
         name="newDerivation.length"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>
+            <FormLabel
+              className={cn(!isLengthValid(length, section) && 'text-red-500')}
+            >
               Longueur posée en M<span className="ml-1 text-red-500">*</span>
             </FormLabel>
             <FormControl>
@@ -109,6 +127,16 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
           </FormItem>
         )}
       />
+      {!isLengthValid(length, section) && (
+        <Alert variant="destructive" className="mb-6 flex items-center gap-2">
+          <div>
+            <Icon icon="si:alert-line" className="size-4" />
+          </div>
+          <AlertDescription>
+            Merci de confirmer la section, et de vérifier par rapport au projet.
+          </AlertDescription>
+        </Alert>
+      )}
     </div>
   );
 }
