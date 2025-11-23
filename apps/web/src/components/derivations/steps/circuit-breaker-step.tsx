@@ -71,7 +71,9 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         name="circuitBreaker.voltage"
         render={({ field }) => (
           <FormItem className="space-y-3">
-            <FormLabel>Voltage</FormLabel>
+            <FormLabel>
+              Voltage <span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <RadioGroup
                 onValueChange={field.onChange}
@@ -103,7 +105,9 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         name="circuitBreaker.brand"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Marque</FormLabel>
+            <FormLabel>
+              Marque <span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <Input
                 placeholder="Ex: BACO, GE, SCHNEIDER..."
@@ -121,7 +125,9 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         name="circuitBreaker.type"
         render={({ field }) => (
           <FormItem className="space-y-3">
-            <FormLabel>Type</FormLabel>
+            <FormLabel>
+              Type <span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <RadioGroup
                 onValueChange={field.onChange}
@@ -161,7 +167,9 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         name="circuitBreaker.power"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Puissance</FormLabel>
+            <FormLabel>
+              Puissance <span className="ml-1 text-red-500">*</span>
+            </FormLabel>
             <Select
               onValueChange={field.onChange}
               defaultValue={field.value}

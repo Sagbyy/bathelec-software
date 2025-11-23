@@ -33,6 +33,11 @@ export class CompletedDerivationService {
           },
           data: {
             status: DerivationStatus.REVIEWING,
+            address: createCompletedDerivationDto.generalInfo.address.street,
+            city: createCompletedDerivationDto.generalInfo.address.city,
+            postalCode: Number(
+              createCompletedDerivationDto.generalInfo.address.postalCode
+            ),
           },
         });
 
@@ -56,6 +61,11 @@ export class CompletedDerivationService {
         },
         data: {
           status: DerivationStatus.REVIEWING,
+          address: createCompletedDerivationDto.generalInfo.address.street,
+          city: createCompletedDerivationDto.generalInfo.address.city,
+          postalCode: Number(
+            createCompletedDerivationDto.generalInfo.address.postalCode
+          ),
         },
       });
 
@@ -66,21 +76,35 @@ export class CompletedDerivationService {
     }
   }
 
-  findAll() {
-    return this.completedDerivationModel.find();
+  async findAll() {
+    return await this.completedDerivationModel.find();
   }
 
-  findOne(id: number) {
-    return this.completedDerivationModel.findOne({
+  async findOne(id: number) {
+    return await this.completedDerivationModel.findOne({
       requestedDerivationId: id,
     });
   }
 
-  update(
+  async update(
     id: number,
     updateCompletedDerivationDto: Partial<CompletedDerivation>
   ) {
-    return this.completedDerivationModel.findByIdAndUpdate(
+    await this.prisma.derivation.update({
+      where: {
+        id: updateCompletedDerivationDto.requestedDerivationId,
+      },
+      data: {
+        status: DerivationStatus.REVIEWING,
+        address: updateCompletedDerivationDto.generalInfo.address.street,
+        city: updateCompletedDerivationDto.generalInfo.address.city,
+        postalCode: Number(
+          updateCompletedDerivationDto.generalInfo.address.postalCode
+        ),
+      },
+    });
+
+    return await this.completedDerivationModel.findByIdAndUpdate(
       id,
       updateCompletedDerivationDto,
       { new: true }

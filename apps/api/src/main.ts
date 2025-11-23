@@ -12,7 +12,7 @@ async function bootstrap() {
     }),
   });
 
-  app.useBodyParser('json', { limit: '1mb' });
+  app.useBodyParser('json', { limit: '5mb' });
 
   const config = new DocumentBuilder()
     .addBearerAuth()
