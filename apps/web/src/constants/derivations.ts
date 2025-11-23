@@ -57,6 +57,8 @@ export const DEFAULT_FORM_VALUES = {
   },
   photoAfterWork: {
     photo: null,
+    secondPhoto: null,
+    thirdPhoto: null,
   },
   clientValidation: {
     present: true,

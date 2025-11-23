@@ -38,7 +38,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
       </div>
 
       <Alert variant="destructive" className="mb-6">
-        <AlertTriangle className="h-4 w-4" />
+        <AlertTriangle />
         <AlertDescription>
           Avant travaux, tester sous-tension le bouton test du disjoncteur. Si
           le bouton test ne fonctionne pas, le remplacement du disjoncteur est

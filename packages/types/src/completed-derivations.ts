@@ -67,6 +67,8 @@ export interface CircuitBreaker {
 
 export interface PhotoAfterWork {
   photo: string;
+  secondPhoto?: string;
+  thirdPhoto?: string;
 }
 
 export interface ClientValidation {
