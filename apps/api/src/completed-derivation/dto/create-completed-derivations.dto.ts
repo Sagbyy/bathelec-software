@@ -271,10 +271,29 @@ class CircuitBreakerDto {
 class PhotoAfterWorkDto {
   @IsString()
   @ApiProperty({
-    example: 'https://example.com/photo.jpg',
-    description: 'The photo after work',
+    example:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=',
+    description: 'The required photo after work',
   })
   photo: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    example:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=',
+    description: 'The second optional photo after work',
+  })
+  secondPhoto: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    example:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=',
+    description: 'The third optional photo after work',
+  })
+  thirdPhoto: string;
 }
 
 class ClientValidationDto {
