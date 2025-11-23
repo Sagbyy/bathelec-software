@@ -203,7 +203,7 @@ export function Navbar() {
                 logout();
                 setIsOpen(false);
               }}
-              variant="default"
+              variant="primary"
               className="mt-4 w-full"
             >
               Se déconnecter

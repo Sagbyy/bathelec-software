@@ -76,7 +76,7 @@ export function DateTimePicker24h({ field }: DateTimePicker24hProps) {
                     key={hour}
                     size="icon"
                     variant={
-                      date && date.getHours() === hour ? 'default' : 'ghost'
+                      date && date.getHours() === hour ? 'primary' : 'ghost'
                     }
                     className="aspect-square shrink-0 sm:w-full"
                     onClick={() => handleTimeChange('hour', hour.toString())}
@@ -94,7 +94,7 @@ export function DateTimePicker24h({ field }: DateTimePicker24hProps) {
                     key={minute}
                     size="icon"
                     variant={
-                      date && date.getMinutes() === minute ? 'default' : 'ghost'
+                      date && date.getMinutes() === minute ? 'primary' : 'ghost'
                     }
                     className="aspect-square shrink-0 sm:w-full"
                     onClick={() =>
