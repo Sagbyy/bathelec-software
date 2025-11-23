@@ -34,7 +34,7 @@ interface GeneralInfoStepProps {
 export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
   const { data: technicians, isLoading, error } = useTechnicians();
   const { user } = useUserStore();
-  const { isCompleted } = useDerivationStatusStore();
+  const { isNotEditable: isCompleted } = useDerivationStatusStore();
   const [isStaticAddress, setIsStaticAddress] = useState(false);
 
   useEffect(() => {

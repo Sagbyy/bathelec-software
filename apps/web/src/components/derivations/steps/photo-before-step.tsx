@@ -23,7 +23,7 @@ interface PhotoBeforeStepProps {
 
 export function PhotoBeforeStep({ form }: PhotoBeforeStepProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const { isCompleted } = useDerivationStatusStore();
+  const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
   useEffect(() => {
     setPreviewUrl(form.getValues('photoBeforeWork.photo'));

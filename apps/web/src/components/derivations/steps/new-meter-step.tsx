@@ -33,7 +33,7 @@ interface NewMeterStepProps {
 
 export function NewMeterStep({ form }: NewMeterStepProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const { isCompleted } = useDerivationStatusStore();
+  const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
   useEffect(() => {
     setPreviewUrl(form.getValues('newMeter.indexPhoto'));

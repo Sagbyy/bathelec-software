@@ -20,7 +20,7 @@ export const FormNavigation = ({
   onPrev,
 }: FormNavigationProps) => {
   const isLastStep = step === totalSteps;
-  const { isCompleted } = useDerivationStatusStore();
+  const { isNotEditable: isCompleted } = useDerivationStatusStore();
   const isSealed = form.watch('circuitBreaker.sealed');
 
   return (

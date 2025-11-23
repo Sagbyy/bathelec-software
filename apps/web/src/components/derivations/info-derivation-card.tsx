@@ -26,6 +26,8 @@ export function InfoCard({
         return 'bg-green-100 text-green-800 hover:bg-green-100';
       case DerivationStatus.INCORRECT:
         return 'bg-red-100 text-red-800 hover:bg-red-100';
+      case DerivationStatus.REVIEWING:
+        return 'bg-blue-100 text-blue-800 hover:bg-blue-100';
       default:
         return 'bg-gray-100 text-gray-800 hover:bg-gray-100';
     }
@@ -64,6 +66,8 @@ export function InfoCard({
             {status === DerivationStatus.PENDING && 'En cours'}
             {status === DerivationStatus.COMPLETED && 'Terminé'}
             {status === DerivationStatus.INCORRECT && 'Incorrecte'}
+            {status === DerivationStatus.REVIEWING &&
+              'En cours de vérification'}
           </Badge>
         </div>
       </CardContent>

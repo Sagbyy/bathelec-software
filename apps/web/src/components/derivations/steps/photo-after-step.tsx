@@ -24,7 +24,7 @@ interface PhotoAfterStepProps {
 export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
   const oldMeterPreserved = form.watch('oldMeter.preserved');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const { isCompleted } = useDerivationStatusStore();
+  const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
   useEffect(() => {
     setPreviewUrl(form.getValues('photoAfterWork.photo'));

@@ -29,7 +29,7 @@ interface CircuitBreakerStepProps {
 
 export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
   const oldMeterPreserved = form.watch('oldMeter.preserved');
-  const { isCompleted } = useDerivationStatusStore();
+  const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
   return (
     <div className="space-y-6">

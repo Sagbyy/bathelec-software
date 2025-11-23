@@ -32,7 +32,7 @@ interface OldMeterStepProps {
 export function OldMeterStep({ form }: OldMeterStepProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const oldMeterType = form.watch('oldMeter.type');
-  const { isCompleted } = useDerivationStatusStore();
+  const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
   useEffect(() => {
     setPreviewUrl(form.getValues('oldMeter.indexPhoto'));

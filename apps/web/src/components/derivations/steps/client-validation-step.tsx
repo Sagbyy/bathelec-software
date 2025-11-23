@@ -31,7 +31,7 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
   const [clientPresent, setClientPresent] = useState(
     form.getValues('clientValidation.present')
   );
-  const { isCompleted } = useDerivationStatusStore();
+  const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
   useEffect(() => {
     if (signatureRef.current) {

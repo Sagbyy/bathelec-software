@@ -16,7 +16,7 @@ interface ClientInfoStepProps {
 }
 
 export function ClientInfoStep({ form }: ClientInfoStepProps) {
-  const { isCompleted } = useDerivationStatusStore();
+  const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
   return (
     <div className="space-y-6">

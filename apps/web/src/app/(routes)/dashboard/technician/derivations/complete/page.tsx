@@ -19,10 +19,12 @@ function getStatusAction(status: DerivationStatus) {
   switch (status) {
     case DerivationStatus.PENDING:
       return 'Compléter';
+    case DerivationStatus.REVIEWING:
+      return 'Voir';
     case DerivationStatus.INCORRECT:
       return 'Corriger';
     case DerivationStatus.COMPLETED:
-      return 'Afficher';
+      return 'Voir';
   }
 }
 
@@ -47,6 +49,13 @@ function getStatusColor(status: DerivationStatus) {
         <div className="flex items-center gap-2 text-green-500">
           <Icon icon="mdi:check-circle-outline" />
           <span className="font-semibold">Terminé</span>
+        </div>
+      );
+    case DerivationStatus.REVIEWING:
+      return (
+        <div className="flex items-center gap-2 text-blue-500">
+          <Icon icon="mdi:clock-outline" />
+          <span className="font-semibold">En cours de vérification</span>
         </div>
       );
   }

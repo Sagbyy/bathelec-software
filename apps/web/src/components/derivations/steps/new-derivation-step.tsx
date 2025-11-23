@@ -34,7 +34,7 @@ const isLengthValid = (length: number, section: string): boolean => {
 };
 
 export function NewDerivationStep({ form }: NewDerivationStepProps) {
-  const { isCompleted } = useDerivationStatusStore();
+  const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
   const section = form.watch('newDerivation.section');
   const length = form.watch('newDerivation.length');

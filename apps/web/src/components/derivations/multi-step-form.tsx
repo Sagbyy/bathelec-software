@@ -21,7 +21,7 @@ import {
 } from '@/hooks/queries/use-completed-derivations';
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 import { toast } from '@/hooks/use-toast';
-
+import { useRouter } from 'next/navigation';
 import { DEFAULT_FORM_VALUES } from '../../constants/derivations';
 import { formatCompletedDerivation } from './utils/form-data-formatter';
 import { useFormSteps } from '../../hooks/use-form-steps';
@@ -43,15 +43,19 @@ export function MultiStepForm({ derivation }: MultiStepFormProps) {
   const { data: completedDerivation } = useCompletedDerivationsById(
     derivation.id
   );
-  const { setIsCompleted } = useDerivationStatusStore();
+  const { setIsNotEditable } = useDerivationStatusStore();
+  const router = useRouter();
 
   useEffect(() => {
-    if (derivation.status === DerivationStatus.COMPLETED) {
-      setIsCompleted(true);
+    if (
+      derivation.status === DerivationStatus.COMPLETED ||
+      derivation.status === DerivationStatus.REVIEWING
+    ) {
+      setIsNotEditable(true);
     } else {
-      setIsCompleted(false);
+      setIsNotEditable(false);
     }
-  }, [status, setIsCompleted]);
+  }, [derivation.status, setIsNotEditable]);
 
   const form = useForm<CreateCompletedDerivation>({
     resolver: zodResolver(createCompletedDerivationSchema),
@@ -82,6 +86,8 @@ export function MultiStepForm({ derivation }: MultiStepFormProps) {
         description: 'Votre demande a été soumise avec succès.',
         variant: 'success',
       });
+
+      router.push('/dashboard/technician/derivations/complete');
     }
 
     if (createCompletedDerivationStatus === 'error') {
