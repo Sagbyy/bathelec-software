@@ -9,7 +9,7 @@ import { z } from 'zod';
 import clsx from 'clsx';
 import useAuth from '@/hooks/useAuth';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import Loader from '@/components/shared/Loader';
+import Loader from '@/components/shared/loader';
 import {
   Form,
   FormControl,

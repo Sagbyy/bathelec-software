@@ -6,6 +6,11 @@ module.exports = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  safelist: [
+    {
+      pattern: /(bg|text)-(yellow|green|red|blue|slate|orange)-(100|500|800)/,
+    },
+  ],
   theme: {
     extend: {
       keyframes: {

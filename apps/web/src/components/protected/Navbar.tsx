@@ -29,76 +29,76 @@ import {
 } from '@/components/ui/navigation-menu';
 import { NavbarLink } from '@/types/navbar.types';
 
+const adminLinks: NavbarLink[] = [
+  {
+    label: 'Utilisateurs',
+    href: '#',
+    type: 'folder',
+    pages: [
+      {
+        label: 'Liste des utilisateurs',
+        href: '/dashboard/admin/users',
+        description: 'Voir la liste des utilisateurs',
+        type: 'page',
+      },
+    ],
+  },
+  {
+    label: 'Techniciens',
+    href: '#',
+    type: 'folder',
+    pages: [
+      {
+        label: 'Liste des techniciens',
+        href: '/dashboard/admin/technicians',
+        type: 'page',
+        description: 'Voir la liste des techniciens',
+      },
+      {
+        label: 'Créez un technicien',
+        href: '/dashboard/admin/technicians/new',
+        type: 'page',
+        description: "Création d'un nouveau compte technicien",
+      },
+    ],
+  },
+  {
+    label: 'Relevés de dérivation',
+    href: '#',
+    type: 'folder',
+    pages: [
+      {
+        label: 'Créez un relevé de dérivation',
+        href: '/dashboard/admin/derivations/new',
+        type: 'page',
+        description: "Création d'un nouveau relevé de dérivation",
+      },
+    ],
+  },
+];
+
+const technicianLinks = [
+  {
+    label: 'Completer un relevé de dérivation',
+    href: '/dashboard/technician/derivations/complete',
+    type: 'page',
+    description: 'Completer un relevé de dérivation',
+  },
+];
+
+const commonLinks = [
+  {
+    label: 'Tableau de bord',
+    href: '/dashboard',
+    type: 'page',
+    description: 'Accéder au tableau de bord',
+  },
+];
+
 export function Navbar() {
   const { user } = useUserStore();
   const { logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-
-  const adminLinks: NavbarLink[] = [
-    {
-      label: 'Utilisateurs',
-      href: '#',
-      type: 'folder',
-      pages: [
-        {
-          label: 'Liste des utilisateurs',
-          href: '/dashboard/admin/users',
-          description: 'Voir la liste des utilisateurs',
-          type: 'page',
-        },
-      ],
-    },
-    {
-      label: 'Techniciens',
-      href: '#',
-      type: 'folder',
-      pages: [
-        {
-          label: 'Liste des techniciens',
-          href: '/dashboard/admin/technicians',
-          type: 'page',
-          description: 'Voir la liste des techniciens',
-        },
-        {
-          label: 'Créez un technicien',
-          href: '/dashboard/admin/technicians/new',
-          type: 'page',
-          description: "Création d'un nouveau compte technicien",
-        },
-      ],
-    },
-    {
-      label: 'Relevés de dérivation',
-      href: '#',
-      type: 'folder',
-      pages: [
-        {
-          label: 'Créez un relevé de dérivation',
-          href: '/dashboard/admin/derivations/new',
-          type: 'page',
-          description: "Création d'un nouveau relevé de dérivation",
-        },
-      ],
-    },
-  ];
-
-  const technicianLinks = [
-    {
-      label: 'Completer un relevé de dérivation',
-      href: '/dashboard/technician/derivations/complete',
-      type: 'page',
-      description: 'Completer un relevé de dérivation',
-    },
-  ];
-
-  const commonLinks = [
-    {
-      label: 'Tableau de bord',
-      href: '/dashboard',
-      type: 'page',
-      description: 'Accéder au tableau de bord',
-    },
-  ];
 
   if (!user) return;
 
@@ -203,7 +203,7 @@ export function Navbar() {
                 logout();
                 setIsOpen(false);
               }}
-              variant="primary"
+              variant="default"
               className="mt-4 w-full"
             >
               Se déconnecter

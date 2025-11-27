@@ -13,7 +13,7 @@ import {
 import { useDerivationByUser } from '@/hooks/queries/use-derivation';
 import { useUserStore } from '@/hooks/useUserStore';
 import { DerivationStatus } from '@repo/types';
-import { Icon } from '@iconify/react/dist/iconify.js';
+import DerivationStatusIcon from '@/components/shared/derivation-status-icon';
 
 function getStatusAction(status: DerivationStatus) {
   switch (status) {
@@ -25,39 +25,6 @@ function getStatusAction(status: DerivationStatus) {
       return 'Corriger';
     case DerivationStatus.COMPLETED:
       return 'Voir';
-  }
-}
-
-function getStatusColor(status: DerivationStatus) {
-  switch (status) {
-    case DerivationStatus.PENDING:
-      return (
-        <div className="flex items-center gap-2 text-yellow-500">
-          <Icon icon="mdi:clock-outline" />
-          <span className="font-semibold">En cours</span>
-        </div>
-      );
-    case DerivationStatus.INCORRECT:
-      return (
-        <div className="flex items-center gap-2 text-red-500">
-          <Icon icon="mdi:close-circle-outline" />
-          <span className="font-semibold">Corrigé</span>
-        </div>
-      );
-    case DerivationStatus.COMPLETED:
-      return (
-        <div className="flex items-center gap-2 text-green-500">
-          <Icon icon="mdi:check-circle-outline" />
-          <span className="font-semibold">Terminé</span>
-        </div>
-      );
-    case DerivationStatus.REVIEWING:
-      return (
-        <div className="flex items-center gap-2 text-blue-500">
-          <Icon icon="mdi:clock-outline" />
-          <span className="font-semibold">En cours de vérification</span>
-        </div>
-      );
   }
 }
 
@@ -105,7 +72,9 @@ export default function CompleteDerivationPage() {
                 <TableCell>{derivation.address}</TableCell>
                 <TableCell>{derivation.city}</TableCell>
                 <TableCell>{derivation.postalCode}</TableCell>
-                <TableCell>{getStatusColor(derivation.status)}</TableCell>
+                <TableCell>
+                  <DerivationStatusIcon derivationStatus={derivation.status} />
+                </TableCell>
                 <TableCell>
                   <Link
                     href={`/dashboard/technician/derivations/complete/${derivation.id}`}

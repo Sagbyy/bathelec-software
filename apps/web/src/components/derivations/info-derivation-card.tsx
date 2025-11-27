@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { CalendarIcon, MapPinIcon } from 'lucide-react';
 import { DerivationStatus } from '@repo/types';
 import { cn } from '@/lib/utils';
+import { derivationStatusConfig } from '@/constants/derivations';
 
 interface InfoCardProps {
   status: DerivationStatus;
@@ -19,21 +20,6 @@ export function InfoCard({
   address,
   createdAt,
 }: InfoCardProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case DerivationStatus.PENDING:
-        return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100';
-      case DerivationStatus.COMPLETED:
-        return 'bg-green-100 text-green-800 hover:bg-green-100';
-      case DerivationStatus.INCORRECT:
-        return 'bg-red-100 text-red-800 hover:bg-red-100';
-      case DerivationStatus.REVIEWING:
-        return 'bg-blue-100 text-blue-800 hover:bg-blue-100';
-      default:
-        return 'bg-gray-100 text-gray-800 hover:bg-gray-100';
-    }
-  };
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('fr-FR', {
@@ -64,14 +50,14 @@ export function InfoCard({
             </div>
           </div>
           <Badge
-            className={cn(getStatusColor(status), 'border-none')}
+            className={cn(
+              derivationStatusConfig[status].textDarkColor,
+              derivationStatusConfig[status].backgroundColor,
+              'border-none'
+            )}
             variant="outline"
           >
-            {status === DerivationStatus.PENDING && 'En cours'}
-            {status === DerivationStatus.COMPLETED && 'Terminé'}
-            {status === DerivationStatus.INCORRECT && 'Incorrecte'}
-            {status === DerivationStatus.REVIEWING &&
-              'En cours de vérification'}
+            {derivationStatusConfig[status].text}
           </Badge>
         </div>
       </CardContent>

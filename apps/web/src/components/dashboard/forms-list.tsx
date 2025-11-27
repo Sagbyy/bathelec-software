@@ -47,7 +47,9 @@ import { DerivationStatus, Derivation, Technician } from '@repo/types';
 import { useDerivation } from '@/hooks/queries/use-derivation';
 import { useTechnicians } from '@/hooks/queries/useTechnician';
 import { cn } from '@/lib/utils';
-import { derivationStatusConfig, derivationStatusText } from '@/constants/derivations';
+import { derivationStatusConfig } from '@/constants/derivations';
+import { Icon } from '@iconify/react/dist/iconify.js';
+import DerivationStatusIcon from '../shared/derivation-status-icon';
 
 export function FormsList() {
   const [derivations, setDerivations] = useState<Derivation[]>([]);
@@ -202,7 +204,9 @@ export function FormsList() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm">
-                    Statut {statusFilter && `(${derivationStatusText[statusFilter]})`}
+                    Statut{' '}
+                    {statusFilter &&
+                      `(${derivationStatusConfig[statusFilter].text})`}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -217,7 +221,7 @@ export function FormsList() {
                         key={status}
                         onClick={() => setStatusFilter(status)}
                       >
-                        {derivationStatusText[status]}
+                        {derivationStatusConfig[status].text}
                       </DropdownMenuItem>
                     ))}
                   </div>
@@ -280,16 +284,7 @@ export function FormsList() {
                   {derivation.postalCode}
                 </TableCell>
                 <TableCell>
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      derivationStatusConfig[derivation.status].bgColor,
-                      derivationStatusConfig[derivation.status].color,
-                      'border-none'
-                    )}
-                  >
-                    {derivationStatusText[derivation.status]}
-                  </Badge>
+                  <DerivationStatusIcon derivationStatus={derivation.status} />
                 </TableCell>
                 <TableCell className="text-right">
                   <Button
@@ -323,7 +318,7 @@ export function FormsList() {
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <Button
                 key={page}
-                variant={currentPage === page ? 'primary' : 'outline'}
+                variant={currentPage === page ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => handlePageChange(page)}
               >
@@ -392,16 +387,19 @@ export function FormsList() {
               <div className="grid grid-cols-4 items-center gap-4">
                 <span className="text-sm font-medium">Statut:</span>
                 <span className="col-span-3">
-                  <Badge
-                    variant="outline"
+                  <div
                     className={cn(
-                      derivationStatusConfig[selectedForm.status].bgColor,
-                      derivationStatusConfig[selectedForm.status].color,
-                      'border-none'
+                      derivationStatusConfig[selectedForm.status].textColor,
+                      'flex items-center gap-2'
                     )}
                   >
-                    {derivationStatusText[selectedForm.status]}
-                  </Badge>
+                    <Icon
+                      icon={derivationStatusConfig[selectedForm.status].icon}
+                    />
+                    <span className="font-semibold">
+                      {derivationStatusConfig[selectedForm.status].text}
+                    </span>
+                  </div>
                 </span>
               </div>
               <div className="grid grid-cols-4 items-center gap-4">

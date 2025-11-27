@@ -38,7 +38,11 @@ export function FormStatusCards({ className, ...props }: FormStatusCardsProps) {
       {...props}
     >
       {Object.values(DerivationStatus).map((status) => {
-        const { icon, color, bgColor } = derivationStatusConfig[status];
+        const {
+          icon,
+          textColor: color,
+          backgroundColor: bgColor,
+        } = derivationStatusConfig[status];
         return (
           <Card key={status}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">

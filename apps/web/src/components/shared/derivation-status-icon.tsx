@@ -1,0 +1,24 @@
+import { DerivationStatus } from '@repo/types';
+import { cn } from '@/lib/utils';
+import { derivationStatusConfig } from '@/constants/derivations';
+import { Icon } from '@iconify/react/dist/iconify.js';
+
+export default function DerivationStatusIcon({
+  derivationStatus,
+}: {
+  derivationStatus: DerivationStatus;
+}) {
+  return (
+    <div
+      className={cn(
+        derivationStatusConfig[derivationStatus].textColor,
+        'flex items-center gap-2'
+      )}
+    >
+      <Icon icon={derivationStatusConfig[derivationStatus].icon} />
+      <span className="font-semibold">
+        {derivationStatusConfig[derivationStatus].text}
+      </span>
+    </div>
+  );
+}
