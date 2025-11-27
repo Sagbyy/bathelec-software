@@ -1,4 +1,47 @@
-import { CircuitBreakerType, VoltageType } from '@repo/types';
+import { CircuitBreakerType, DerivationStatus, VoltageType } from '@repo/types';
+import { DerivationStatusConfig } from '@/types/derivations.type';
+
+export const derivationStatusConfig: Record<
+  DerivationStatus,
+  DerivationStatusConfig
+> = {
+  [DerivationStatus.PENDING]: {
+    text: 'À compléter',
+    icon: 'mdi:clipboard-list',
+    color: 'text-blue-500',
+    bgColor: 'bg-blue-100',
+  },
+  [DerivationStatus.ONGOING]: {
+    text: 'En cours',
+    icon: 'mdi:clock',
+    color: 'text-yellow-500',
+    bgColor: 'bg-yellow-100',
+  },
+  [DerivationStatus.REVIEWING]: {
+    text: 'En attente de validation',
+    icon: 'mdi:eye',
+    color: 'text-purple-500',
+    bgColor: 'bg-purple-100',
+  },
+  [DerivationStatus.REVISING]: {
+    text: 'En attente de correction',
+    icon: 'mdi:refresh-cw',
+    color: 'text-orange-500',
+    bgColor: 'bg-orange-100',
+  },
+  [DerivationStatus.INCORRECT]: {
+    text: 'Incorrect',
+    icon: 'mdi:alert-circle',
+    color: 'text-red-500',
+    bgColor: 'bg-red-100',
+  },
+  [DerivationStatus.COMPLETED]: {
+    text: 'Terminé',
+    icon: 'mdi:check-circle',
+    color: 'text-green-500',
+    bgColor: 'bg-green-100',
+  },
+};
 
 export const DEFAULT_FORM_VALUES = {
   clientInfo: {

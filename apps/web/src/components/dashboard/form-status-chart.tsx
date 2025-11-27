@@ -15,6 +15,8 @@ import {
 import { Label, Pie, PieChart } from 'recharts';
 import { useDerivation } from '@/hooks/queries/use-derivation';
 import { useEffect, useState } from 'react';
+import { DerivationStatus } from '@repo/types';
+import { derivationStatusConfig } from '@/constants/derivations';
 
 interface FormStatusChartProps {
   className?: string;
@@ -23,30 +25,30 @@ interface FormStatusChartProps {
 
 const chartConfig = {
   status: {
-    label: 'Status',
+    label: derivationStatusConfig[DerivationStatus.PENDING].text,
   },
   completed: {
-    label: 'Terminé',
+    label: derivationStatusConfig[DerivationStatus.COMPLETED].text,
     color: 'var(--chart-completed)',
   },
   ongoing: {
-    label: 'En cours',
+    label: derivationStatusConfig[DerivationStatus.ONGOING].text,
     color: 'var(--chart-ongoing)',
   },
   reviewing: {
-    label: 'En attente de validation',
+    label: derivationStatusConfig[DerivationStatus.REVIEWING].text,
     color: 'var(--chart-reviewing)',
   },
   revising: {
-    label: 'En attente de correction',
+    label: derivationStatusConfig[DerivationStatus.REVISING].text,
     color: 'var(--chart-revising)',
   },
   incorrect: {
-    label: 'Incorrect',
+    label: derivationStatusConfig[DerivationStatus.INCORRECT].text,
     color: 'var(--chart-incorrect)',
   },
   pending: {
-    label: 'À compléter',
+    label: derivationStatusConfig[DerivationStatus.PENDING].text,
     color: 'var(--chart-pending)',
   },
 } satisfies ChartConfig;

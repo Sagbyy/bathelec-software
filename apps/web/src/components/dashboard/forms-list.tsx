@@ -47,48 +47,7 @@ import { DerivationStatus, Derivation, Technician } from '@repo/types';
 import { useDerivation } from '@/hooks/queries/use-derivation';
 import { useTechnicians } from '@/hooks/queries/useTechnician';
 import { cn } from '@/lib/utils';
-
-const statusText = {
-  [DerivationStatus.PENDING]: 'À compléter',
-  [DerivationStatus.ONGOING]: 'En cours',
-  [DerivationStatus.REVIEWING]: 'En attente de validation',
-  [DerivationStatus.REVISING]: 'En attente de correction',
-  [DerivationStatus.INCORRECT]: 'Incorrect',
-  [DerivationStatus.COMPLETED]: 'Terminé',
-};
-
-const statusConfig = {
-  [DerivationStatus.PENDING]: {
-    icon: ClipboardList,
-    color: 'text-blue-500',
-    bgColor: 'bg-blue-100',
-  },
-  [DerivationStatus.ONGOING]: {
-    icon: Clock,
-    color: 'text-yellow-500',
-    bgColor: 'bg-yellow-100',
-  },
-  [DerivationStatus.REVIEWING]: {
-    icon: Eye,
-    color: 'text-purple-500',
-    bgColor: 'bg-purple-100',
-  },
-  [DerivationStatus.REVISING]: {
-    icon: RefreshCw,
-    color: 'text-orange-500',
-    bgColor: 'bg-orange-100',
-  },
-  [DerivationStatus.INCORRECT]: {
-    icon: AlertCircle,
-    color: 'text-red-500',
-    bgColor: 'bg-red-100',
-  },
-  [DerivationStatus.COMPLETED]: {
-    icon: CheckCircle,
-    color: 'text-green-500',
-    bgColor: 'bg-green-100',
-  },
-};
+import { derivationStatusConfig, derivationStatusText } from '@/constants/derivations';
 
 export function FormsList() {
   const [derivations, setDerivations] = useState<Derivation[]>([]);
@@ -243,7 +202,7 @@ export function FormsList() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm">
-                    Statut {statusFilter && `(${statusText[statusFilter]})`}
+                    Statut {statusFilter && `(${derivationStatusText[statusFilter]})`}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -258,7 +217,7 @@ export function FormsList() {
                         key={status}
                         onClick={() => setStatusFilter(status)}
                       >
-                        {statusText[status]}
+                        {derivationStatusText[status]}
                       </DropdownMenuItem>
                     ))}
                   </div>
@@ -324,12 +283,12 @@ export function FormsList() {
                   <Badge
                     variant="outline"
                     className={cn(
-                      statusConfig[derivation.status].bgColor,
-                      statusConfig[derivation.status].color,
+                      derivationStatusConfig[derivation.status].bgColor,
+                      derivationStatusConfig[derivation.status].color,
                       'border-none'
                     )}
                   >
-                    {statusText[derivation.status]}
+                    {derivationStatusText[derivation.status]}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
@@ -436,12 +395,12 @@ export function FormsList() {
                   <Badge
                     variant="outline"
                     className={cn(
-                      statusConfig[selectedForm.status].bgColor,
-                      statusConfig[selectedForm.status].color,
+                      derivationStatusConfig[selectedForm.status].bgColor,
+                      derivationStatusConfig[selectedForm.status].color,
                       'border-none'
                     )}
                   >
-                    {statusText[selectedForm.status]}
+                    {derivationStatusText[selectedForm.status]}
                   </Badge>
                 </span>
               </div>

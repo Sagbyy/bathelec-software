@@ -16,7 +16,7 @@ cp apps/api/.env.example apps/api/.env
 #### API (`apps/api/.env`)
 
 - `DATABASE_POSTGRES_URL` - Connection string pour PostgreSQL (utilisé avec Prisma)
-- `DATABASE_MONGO_URL` - Connection string pour MongoDB (utilisé avec Mongoose)
+- `DATABASE_MONGO_URL` - Connection string pour MongoDB (utilisé avec Mongoose) 
 - `JWT_SECRET` - Secret pour la signature des tokens JWT
 - `PORT` - Port d'écoute du serveur API (défaut: 3002)
 

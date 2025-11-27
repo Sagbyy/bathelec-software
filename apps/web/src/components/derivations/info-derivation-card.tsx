@@ -2,6 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CalendarIcon, MapPinIcon } from 'lucide-react';
 import { DerivationStatus } from '@repo/types';
+import { cn } from '@/lib/utils';
 
 interface InfoCardProps {
   status: DerivationStatus;
@@ -62,7 +63,10 @@ export function InfoCard({
               </span>
             </div>
           </div>
-          <Badge className={`${getStatusColor(status)}`} variant="outline">
+          <Badge
+            className={cn(getStatusColor(status), 'border-none')}
+            variant="outline"
+          >
             {status === DerivationStatus.PENDING && 'En cours'}
             {status === DerivationStatus.COMPLETED && 'Terminé'}
             {status === DerivationStatus.INCORRECT && 'Incorrecte'}
