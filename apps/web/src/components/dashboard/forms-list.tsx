@@ -1,15 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-  Eye,
-  ClipboardList,
-  Clock,
-  RefreshCw,
-  AlertCircle,
-  CheckCircle,
-} from 'lucide-react';
-
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -42,7 +33,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { DerivationStatus, Derivation, Technician } from '@repo/types';
 import { useDerivation } from '@/hooks/queries/use-derivation';
 import { useTechnicians } from '@/hooks/queries/useTechnician';
@@ -50,6 +40,7 @@ import { cn } from '@/lib/utils';
 import { derivationStatusConfig } from '@/constants/derivations';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import DerivationStatusIcon from '../shared/derivation-status-icon';
+import { useRouter } from 'next/navigation';
 
 export function FormsList() {
   const [derivations, setDerivations] = useState<Derivation[]>([]);
@@ -67,6 +58,8 @@ export function FormsList() {
   const [technicianFilter, setTechnicianFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState<DerivationStatus | ''>('');
   const [cityFilter, setCityFilter] = useState('');
+
+  const router = useRouter();
 
   const { data: derivationsData, isLoading, error } = useDerivation();
   const {
@@ -139,25 +132,6 @@ export function FormsList() {
   const handleViewForm = (derivation: Derivation) => {
     setSelectedForm(derivation);
     setIsDialogOpen(true);
-  };
-
-  const getStatusBadgeVariant = (status: DerivationStatus) => {
-    switch (status) {
-      case DerivationStatus.PENDING:
-        return 'secondary';
-      case DerivationStatus.ONGOING:
-        return 'default';
-      case DerivationStatus.REVIEWING:
-        return 'outline';
-      case DerivationStatus.REVISING:
-        return 'destructive';
-      case DerivationStatus.INCORRECT:
-        return 'destructive';
-      case DerivationStatus.COMPLETED:
-        return 'success';
-      default:
-        return 'default';
-    }
   };
 
   return (
@@ -292,8 +266,32 @@ export function FormsList() {
                     size="icon"
                     onClick={() => handleViewForm(derivation)}
                   >
-                    <Eye className="h-4 w-4" />
-                    <span className="sr-only">Voir la dérivation</span>
+                    {derivation.status === DerivationStatus.REVIEWING ? (
+                      <Button
+                        variant="default"
+                        className={cn('bg-blue-500 hover:bg-blue-600')}
+                        size="sm"
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/admin/derivations/${derivation.id}`
+                          )
+                        }
+                      >
+                        <p>Corriger</p>
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/admin/derivations/${derivation.id}`
+                          )
+                        }
+                      >
+                        <p>Voir</p>
+                      </Button>
+                    )}
                   </Button>
                 </TableCell>
               </TableRow>
