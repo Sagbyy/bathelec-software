@@ -1,5 +1,5 @@
-export default function Loader() {
-  
+export default function LoaderComponent() {
+
   return (
     <div role="status">
       <svg

@@ -9,7 +9,7 @@ import { z } from 'zod';
 import clsx from 'clsx';
 import useAuth from '@/hooks/useAuth';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import Loader from '@/components/shared/loader';
+import LoaderComponent from '@/components/shared/loader-component';
 import {
   Form,
   FormControl,
@@ -62,7 +62,7 @@ export default function LoginForm() {
         )}
         {loading ? (
           <div className="m-5 flex items-center justify-center">
-            <Loader />
+            <LoaderComponent />
           </div>
         ) : (
           <Form {...form}>
