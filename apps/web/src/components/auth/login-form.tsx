@@ -23,27 +23,6 @@ import { Button } from '@/components/ui/button';
 const formSchema = z.object({
   username: z.string().min(2).max(50),
   password: z.string(),
-  // password: z
-  //   .string()
-  //   .min(8, {
-  //     message: 'Le mot de passe doit contenir au moins 8 caractères.',
-  //   })
-  //   .max(32, {
-  //     message: 'Le mot de passe ne doit pas dépasser 32 caractères.',
-  //   })
-  //   .regex(/[a-z]/, {
-  //     message: 'Le mot de passe doit contenir au moins une lettre minuscule.',
-  //   })
-  //   .regex(/[A-Z]/, {
-  //     message: 'Le mot de passe doit contenir au moins une lettre majuscule.',
-  //   })
-  //   .regex(/[0-9]/, {
-  //     message: 'Le mot de passe doit contenir au moins un chiffre.',
-  //   })
-  //   .regex(/[@$!%*?&]/, {
-  //     message:
-  //       'Le mot de passe doit contenir au moins un caractère spécial (ex: @$!%*?&).',
-  //   }),
 });
 
 export default function LoginForm() {
