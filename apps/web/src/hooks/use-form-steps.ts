@@ -6,9 +6,10 @@ import { STEP_FIELDS_TO_VALIDATE } from '../constants/derivations';
 type UseFormStepsProps = {
   form: UseFormReturn<CreateCompletedDerivation>;
   onSubmit: (data: CreateCompletedDerivation) => void;
+  readOnly?: boolean;
 };
 
-export const useFormSteps = ({ form, onSubmit }: UseFormStepsProps) => {
+export const useFormSteps = ({ form, onSubmit, readOnly = false }: UseFormStepsProps) => {
   const [step, setStep] = useState(1);
   const [totalSteps, setTotalSteps] = useState(9);
 
@@ -74,6 +75,18 @@ export const useFormSteps = ({ form, onSubmit }: UseFormStepsProps) => {
   );
 
   const nextStep = useCallback(async () => {
+    if (readOnly) {
+      if (step < totalSteps) {
+        if (oldMeterPreserved && step === 5) {
+          setStep(6);
+        } else {
+          setStep(step + 1);
+        }
+        window.scrollTo(0, 0);
+      }
+      return;
+    }
+
     const fieldsToValidate = getFieldsToValidate(getActualStep(step));
     const result = await form.trigger(fieldsToValidate as any);
 
@@ -99,6 +112,7 @@ export const useFormSteps = ({ form, onSubmit }: UseFormStepsProps) => {
     getActualStep,
     getFieldsToValidate,
     onSubmit,
+    readOnly,
   ]);
 
   const prevStep = useCallback(() => {

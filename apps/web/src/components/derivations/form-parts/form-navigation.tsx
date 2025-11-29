@@ -10,6 +10,7 @@ type FormNavigationProps = {
   totalSteps: number;
   onNext: () => void;
   onPrev: () => void;
+  readOnly?: boolean;
 };
 
 export const FormNavigation = ({
@@ -18,6 +19,7 @@ export const FormNavigation = ({
   totalSteps,
   onNext,
   onPrev,
+  readOnly = false,
 }: FormNavigationProps) => {
   const isLastStep = step === totalSteps;
   const { isNotEditable: isCompleted } = useDerivationStatusStore();
@@ -38,7 +40,9 @@ export const FormNavigation = ({
       <Button
         type="button"
         onClick={onNext}
-        disabled={(isLastStep && isCompleted) || (!isSealed && step === 7)}
+        disabled={
+          (isLastStep && (isCompleted || readOnly)) || (!isSealed && step === 7 && !readOnly)
+        }
       >
         {isLastStep ? (
           <>

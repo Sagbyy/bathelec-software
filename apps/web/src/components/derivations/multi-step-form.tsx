@@ -32,9 +32,10 @@ import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
 
 interface MultiStepFormProps {
   derivation: Derivation;
+  readOnly?: boolean;
 }
 
-export function MultiStepForm({ derivation }: MultiStepFormProps) {
+export function MultiStepForm({ derivation, readOnly = false }: MultiStepFormProps) {
   const {
     mutate: createCompletedDerivation,
     status: createCompletedDerivationStatus,
@@ -47,6 +48,11 @@ export function MultiStepForm({ derivation }: MultiStepFormProps) {
   const router = useRouter();
 
   useEffect(() => {
+    if (readOnly) {
+      setIsNotEditable(true);
+      return;
+    }
+    
     if (
       derivation.status === DerivationStatus.COMPLETED ||
       derivation.status === DerivationStatus.REVIEWING
@@ -55,7 +61,7 @@ export function MultiStepForm({ derivation }: MultiStepFormProps) {
     } else {
       setIsNotEditable(false);
     }
-  }, [derivation.status, setIsNotEditable]);
+  }, [derivation.status, setIsNotEditable, readOnly]);
 
   const form = useForm<CreateCompletedDerivation>({
     resolver: zodResolver(createCompletedDerivationSchema),
@@ -103,6 +109,7 @@ export function MultiStepForm({ derivation }: MultiStepFormProps) {
     useFormSteps({
       form,
       onSubmit,
+      readOnly,
     });
 
   const renderStep = useCallback(() => {
@@ -137,7 +144,14 @@ export function MultiStepForm({ derivation }: MultiStepFormProps) {
       <FormHeader step={step} totalSteps={totalSteps} progress={progress} />
 
       <Form {...form}>
-        <form>
+        <form
+          onSubmit={(e) => {
+            if (readOnly) {
+              e.preventDefault();
+              return false;
+            }
+          }}
+        >
           <Card>
             <CardContent className="pt-6">
               {renderStep()}
@@ -148,6 +162,7 @@ export function MultiStepForm({ derivation }: MultiStepFormProps) {
                 totalSteps={totalSteps}
                 onNext={nextStep}
                 onPrev={prevStep}
+                readOnly={readOnly}
               />
             </CardContent>
           </Card>

@@ -7,16 +7,26 @@ import { Button } from '@/components/ui/button';
 import { useDerivationById } from '@/hooks/queries/use-derivation';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
 
 export default function AdminDerivationPage() {
   const { derivationId } = useParams();
   const router = useRouter();
+  const { setIsNotEditable } = useDerivationStatusStore();
 
   const {
     data: derivation,
     isLoading,
     error,
   } = useDerivationById(parseInt(derivationId as string));
+
+  useEffect(() => {
+    setIsNotEditable(true);
+    return () => {
+      setIsNotEditable(false);
+    };
+  }, [setIsNotEditable]);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -39,7 +49,7 @@ export default function AdminDerivationPage() {
         address={derivation?.address}
         createdAt={derivation?.createdAt}
       />
-      <MultiStepForm derivation={derivation} />
+      <MultiStepForm derivation={derivation} readOnly={true} />
     </div>
   );
 }
