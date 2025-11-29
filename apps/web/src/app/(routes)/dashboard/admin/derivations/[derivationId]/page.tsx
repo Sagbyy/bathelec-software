@@ -1,5 +1,6 @@
 'use client';
 
+import CorrectionComment from '@/components/derivations/admin/correction-comment';
 import { InfoCard } from '@/components/derivations/info-derivation-card';
 import { MultiStepForm } from '@/components/derivations/multi-step-form';
 import { Button } from '@/components/ui/button';
@@ -22,14 +23,15 @@ export default function AdminDerivationPage() {
   if (!derivation) return <div>Derivation not found</div>;
 
   return (
-    <div className="container relative mx-auto max-w-3xl px-4 py-10 md:px-6">
+    <div className="container relative mx-auto max-w-3xl space-y-8 px-4 py-10 md:px-6">
       <Button variant="secondary" size="sm" onClick={() => router.back()}>
         <Icon icon="mdi:arrow-left" />
         <p>Retour</p>
       </Button>
-      <h1 className="mb-8 text-center text-3xl font-bold">
+      <h1 className="text-center text-3xl font-bold">
         Formulaire d'Intervention
       </h1>
+      <CorrectionComment />
       <InfoCard
         status={derivation?.status}
         city={derivation?.city}

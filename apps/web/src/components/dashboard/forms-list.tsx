@@ -129,11 +129,6 @@ export function FormsList() {
     setCurrentPage(pageNumber);
   };
 
-  const handleViewForm = (derivation: Derivation) => {
-    setSelectedForm(derivation);
-    setIsDialogOpen(true);
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -261,38 +256,32 @@ export function FormsList() {
                   <DerivationStatusIcon derivationStatus={derivation.status} />
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleViewForm(derivation)}
-                  >
-                    {derivation.status === DerivationStatus.REVIEWING ? (
-                      <Button
-                        variant="default"
-                        className={cn('bg-blue-500 hover:bg-blue-600')}
-                        size="sm"
-                        onClick={() =>
-                          router.push(
-                            `/dashboard/admin/derivations/${derivation.id}`
-                          )
-                        }
-                      >
-                        <p>Corriger</p>
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() =>
-                          router.push(
-                            `/dashboard/admin/derivations/${derivation.id}`
-                          )
-                        }
-                      >
-                        <p>Voir</p>
-                      </Button>
-                    )}
-                  </Button>
+                  {derivation.status === DerivationStatus.REVIEWING ? (
+                    <Button
+                      variant="default"
+                      className={cn('bg-blue-500 hover:bg-blue-600')}
+                      size="sm"
+                      onClick={() =>
+                        router.push(
+                          `/dashboard/admin/derivations/${derivation.id}`
+                        )
+                      }
+                    >
+                      <p>Corriger</p>
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() =>
+                        router.push(
+                          `/dashboard/admin/derivations/${derivation.id}`
+                        )
+                      }
+                    >
+                      <p>Voir</p>
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
