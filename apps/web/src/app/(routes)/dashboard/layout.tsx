@@ -28,12 +28,7 @@ export default function LayoutProtected({ children }: { children: ReactNode }) {
   const { setUser } = useUserStore();
   const router = useRouter();
 
-  let pathname: string | null = null;
-  try {
-    pathname = usePathname();
-  } catch (e) {
-    console.error('Error getting pathname: ', e);
-  }
+  const pathname = usePathname();
 
   useEffect(() => {
     setIsClient(true);
