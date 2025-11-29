@@ -19,18 +19,13 @@ import {
   SelectTrigger,
   SelectValue,
   SelectContent,
-  SelectGroup,
-  SelectLabel,
   SelectItem,
 } from '@/components/ui/select';
-import { useState } from 'react';
 import { derivationStatusConfig } from '@/constants/derivations';
 import { DerivationStatus } from '@repo/types';
 import { Badge } from '@/components/ui/badge';
 
 export default function CorrectionComment() {
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('');
   const statuses = Object.entries(derivationStatusConfig).map(
     ([key, value]) => ({
       value: key,
@@ -80,19 +75,20 @@ export default function CorrectionComment() {
                 </SelectContent>
               </Select>
               <FieldDescription>
-                Selectionner un des trois status après votre revue :{' '}
+                Selectionner un des trois status après votre revue de
+                l'intervention.
+              </FieldDescription>
+              <div className="flex gap-2">
                 <Badge variant="default" className="bg-green-500">
                   {derivationStatusConfig[DerivationStatus.COMPLETED].text}
                 </Badge>
-                {' - '}
                 <Badge variant="secondary">
                   {derivationStatusConfig[DerivationStatus.REVISING].text}
                 </Badge>
-                {' - '}
                 <Badge variant="destructive">
                   {derivationStatusConfig[DerivationStatus.INCORRECT].text}
                 </Badge>
-              </FieldDescription>
+              </div>
             </Field>
             <Field orientation="horizontal" className="w-full justify-end">
               <Button type="submit" className="w-full">
