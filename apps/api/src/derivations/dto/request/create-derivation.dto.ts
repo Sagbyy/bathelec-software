@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsNumber,
+  IsOptional,
   IsString,
   MinLength,
   ValidateIf,
@@ -38,4 +39,9 @@ export class CreateDerivationDto {
   @IsString()
   @MinLength(2)
   city: string;
+
+  @ApiProperty({ example: 'Comment', description: 'The correction comment' })
+  @IsString()
+  @IsOptional()
+  correctionComment: string;
 }

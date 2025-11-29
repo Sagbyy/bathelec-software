@@ -20,12 +20,13 @@ model User {
 }
 
 model Derivation {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  createdAt  DateTime @default(now())
-  address    String?
-  city       String?
-  postalCode Int?
-  status     String
-  user       User     @relation(fields: [userId], references: [id])
+  id                Int      @id @default(autoincrement())
+  userId            Int
+  createdAt         DateTime @default(now())
+  address           String?
+  city              String?
+  postalCode        Int?
+  status            String
+  correctionComment String?
+  user              User     @relation(fields: [userId], references: [id])
 }

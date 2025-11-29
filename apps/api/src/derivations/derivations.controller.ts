@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   UseGuards,
   ValidationPipe,
@@ -24,6 +25,7 @@ import {
   GetDerivationByIdDto,
   GetDerivationByUserDto,
 } from './dto/request/get-derivation.dto';
+import { UpdateDerivationDto } from './dto/request/update-derivation.dto';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
@@ -86,5 +88,27 @@ export class DerivationsController {
   @ApiBody({ type: GetDerivationByIdDto })
   findDerivationById(@Param('derivationId') derivationId: number) {
     return this.derivationsService.findDerivationById(derivationId);
+  }
+
+  @Patch('/:derivationId')
+  @ApiOperation({ summary: 'Update a derivation' })
+  @ApiParam({ name: 'derivationId', type: Number })
+  @ApiOkResponse({
+    description: 'The derivation has been successfully updated.',
+    type: DerivationResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'The derivation has not been found.',
+  })
+  @ApiBody({ type: UpdateDerivationDto })
+  updateDerivation(
+    @Param('derivationId') derivationId: number,
+    @Body() updateDerivationDto: UpdateDerivationDto
+  ) {
+    return this.derivationsService.updateDerivation(
+      derivationId,
+      updateDerivationDto
+    );
   }
 }

@@ -27,7 +27,13 @@ export default function LayoutProtected({ children }: { children: ReactNode }) {
   const [isClient, setIsClient] = useState(false);
   const { setUser } = useUserStore();
   const router = useRouter();
-  const pathname = usePathname();
+
+  let pathname: string | null = null;
+  try {
+    pathname = usePathname();
+  } catch (e) {
+    console.error('Error getting pathname: ', e);
+  }
 
   useEffect(() => {
     setIsClient(true);
@@ -44,7 +50,7 @@ export default function LayoutProtected({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    if (user) {
+    if (user && isClient && pathname) {
       setUser(user);
       // Redirect the user by role
       if (
@@ -59,7 +65,7 @@ export default function LayoutProtected({ children }: { children: ReactNode }) {
         router.push('/dashboard/technician/derivations/complete');
       }
     }
-  }, [user, router]);
+  }, [user, router, isClient, pathname, setUser]);
 
   if (!isClient) {
     return null;
@@ -76,7 +82,6 @@ export default function LayoutProtected({ children }: { children: ReactNode }) {
       ) : (
         <>
           <Navbar />
-          {/* <NavigationMenuDemo /> */}
           {children}
         </>
       )}

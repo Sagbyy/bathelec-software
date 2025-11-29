@@ -2,6 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateDerivationDto } from './dto/request/create-derivation.dto';
 import { DerivationStatus } from '../types/derivations-status.enum';
+import { UpdateDerivationDto } from './dto/request/update-derivation.dto';
 
 @Injectable()
 export class DerivationsService {
@@ -77,5 +78,35 @@ export class DerivationsService {
 
   async findAllDerivations() {
     return this.prisma.derivation.findMany();
+  }
+
+  async updateDerivation(
+    derivationId: number,
+    updateDerivationDto: UpdateDerivationDto
+  ) {
+    const parsedDerivationId = Number(derivationId);
+    if (isNaN(parsedDerivationId)) {
+      throw new NotFoundException('Invalid derivation ID');
+    }
+
+    this.logger.log(`Finding derivation with ID: ${parsedDerivationId}`);
+
+    const derivation = await this.prisma.derivation.findUnique({
+      where: {
+        id: parsedDerivationId,
+      },
+    });
+
+    if (!derivation) {
+      this.logger.error(`Derivation with ID ${parsedDerivationId} not found`);
+      throw new NotFoundException('Derivation not found');
+    }
+
+    this.logger.log(`Updating derivation with ID: ${parsedDerivationId}`);
+
+    return this.prisma.derivation.update({
+      where: { id: parsedDerivationId },
+      data: updateDerivationDto,
+    });
   }
 }
