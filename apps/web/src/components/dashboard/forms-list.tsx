@@ -41,6 +41,7 @@ import { derivationStatusConfig } from '@/constants/derivations';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import DerivationStatusIcon from '../shared/derivation-status-icon';
 import { useRouter } from 'next/navigation';
+import { formatDate } from 'date-fns';
 
 export function FormsList() {
   const [derivations, setDerivations] = useState<Derivation[]>([]);
@@ -228,6 +229,7 @@ export function FormsList() {
           <TableHeader>
             <TableRow>
               <TableHead>ID</TableHead>
+              <TableHead>Créé le</TableHead>
               <TableHead>Technicien</TableHead>
               <TableHead className="hidden md:table-cell">Adresse</TableHead>
               <TableHead className="hidden md:table-cell">Ville</TableHead>
@@ -242,6 +244,9 @@ export function FormsList() {
             {currentItems.map((derivation) => (
               <TableRow key={derivation.id}>
                 <TableCell className="font-medium">{derivation.id}</TableCell>
+                <TableCell>
+                  {formatDate(derivation.createdAt, 'dd/MM/yyyy')}
+                </TableCell>
                 <TableCell>{getTechnicianName(derivation.userId)}</TableCell>
                 <TableCell className="hidden md:table-cell">
                   {derivation.address}

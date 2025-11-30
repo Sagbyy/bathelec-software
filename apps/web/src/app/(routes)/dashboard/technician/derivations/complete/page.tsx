@@ -14,6 +14,7 @@ import { useDerivationByUser } from '@/hooks/queries/use-derivation';
 import { useUserStore } from '@/hooks/useUserStore';
 import { DerivationStatus } from '@repo/types';
 import DerivationStatusIcon from '@/components/shared/derivation-status-icon';
+import { formatDate } from 'date-fns';
 
 function getStatusAction(status: DerivationStatus) {
   switch (status) {
@@ -53,6 +54,7 @@ export default function CompleteDerivationPage() {
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
+            <TableHead>Créé le</TableHead>
             <TableHead>Adresse</TableHead>
             <TableHead>Ville</TableHead>
             <TableHead>Code postal</TableHead>
@@ -69,6 +71,7 @@ export default function CompleteDerivationPage() {
             completeToDerivations?.map((derivation) => (
               <TableRow key={derivation.id}>
                 <TableCell>{derivation.id}</TableCell>
+                <TableCell>{formatDate(derivation.createdAt, 'dd/MM/yyyy')}</TableCell>
                 <TableCell>{derivation.address}</TableCell>
                 <TableCell>{derivation.city}</TableCell>
                 <TableCell>{derivation.postalCode}</TableCell>
