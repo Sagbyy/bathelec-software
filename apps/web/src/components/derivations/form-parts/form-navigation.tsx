@@ -23,7 +23,6 @@ export const FormNavigation = ({
 }: FormNavigationProps) => {
   const isLastStep = step === totalSteps;
   const { isNotEditable: isCompleted } = useDerivationStatusStore();
-  const isSealed = form.watch('circuitBreaker.sealed');
 
   return (
     <div className="mt-8 flex justify-between">
@@ -40,9 +39,7 @@ export const FormNavigation = ({
       <Button
         type="button"
         onClick={onNext}
-        disabled={
-          (isLastStep && (isCompleted || readOnly)) || (!isSealed && step === 7 && !readOnly)
-        }
+        disabled={isLastStep && isCompleted}
       >
         {isLastStep ? (
           <>

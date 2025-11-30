@@ -58,7 +58,8 @@ export function MultiStepForm({
 
     if (
       derivation.status === DerivationStatus.COMPLETED ||
-      derivation.status === DerivationStatus.REVIEWING
+      derivation.status === DerivationStatus.REVIEWING ||
+      derivation.status === DerivationStatus.INCORRECT
     ) {
       setIsNotEditable(true);
     } else {

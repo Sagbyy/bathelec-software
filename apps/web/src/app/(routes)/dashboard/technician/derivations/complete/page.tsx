@@ -36,6 +36,15 @@ function getStatusAction(status: DerivationStatus) {
           Corriger
         </Button>
       );
+    case DerivationStatus.ONGOING:
+      return (
+        <Button
+          variant="outline"
+          className="bg-slate-500 text-white hover:bg-slate-600 hover:text-white"
+        >
+          Continuer
+        </Button>
+      );
     default:
       return <Button variant="outline">Voir</Button>;
   }
