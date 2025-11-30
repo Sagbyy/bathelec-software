@@ -82,11 +82,13 @@ export default function FormStatusChart({
     derivationsByStatus[key]++;
   }
 
-  const chartData = Object.entries(derivationsByStatus).map(([key, value]) => ({
-    status: key,
-    value: value,
-    fill: `var(--chart-${key.toLowerCase()})`,
-  }));
+  const chartData = Object.entries(derivationsByStatus).map(
+    ([key, value]: [string, number]) => ({
+      status: `${derivationStatusConfig[key as DerivationStatus].text}\u00A0\u00A0`,
+      value: value,
+      fill: `var(--chart-${key.toLowerCase()})`,
+    })
+  );
 
   return (
     <Card className={cn('col-span-3', className)} {...props}>
