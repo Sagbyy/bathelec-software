@@ -19,13 +19,25 @@ import { formatDate } from 'date-fns';
 function getStatusAction(status: DerivationStatus) {
   switch (status) {
     case DerivationStatus.PENDING:
-      return 'Compléter';
-    case DerivationStatus.REVIEWING:
-      return 'Voir';
-    case DerivationStatus.INCORRECT:
-      return 'Corriger';
-    case DerivationStatus.COMPLETED:
-      return 'Voir';
+      return (
+        <Button
+          variant="outline"
+          className="bg-yellow-500 text-white hover:bg-yellow-600 hover:text-white"
+        >
+          Compléter
+        </Button>
+      );
+    case DerivationStatus.REVISING:
+      return (
+        <Button
+          variant="outline"
+          className="bg-orange-500 text-white hover:bg-orange-600 hover:text-white"
+        >
+          Corriger
+        </Button>
+      );
+    default:
+      return <Button variant="outline">Voir</Button>;
   }
 }
 
@@ -71,7 +83,9 @@ export default function CompleteDerivationPage() {
             completeToDerivations?.map((derivation) => (
               <TableRow key={derivation.id}>
                 <TableCell>{derivation.id}</TableCell>
-                <TableCell>{formatDate(derivation.createdAt, 'dd/MM/yyyy')}</TableCell>
+                <TableCell>
+                  {formatDate(derivation.createdAt, 'dd/MM/yyyy')}
+                </TableCell>
                 <TableCell>{derivation.address}</TableCell>
                 <TableCell>{derivation.city}</TableCell>
                 <TableCell>{derivation.postalCode}</TableCell>
@@ -82,9 +96,7 @@ export default function CompleteDerivationPage() {
                   <Link
                     href={`/dashboard/technician/derivations/complete/${derivation.id}`}
                   >
-                    <Button variant="outline">
-                      {getStatusAction(derivation.status)}
-                    </Button>
+                    {getStatusAction(derivation.status)}
                   </Link>
                 </TableCell>
               </TableRow>
