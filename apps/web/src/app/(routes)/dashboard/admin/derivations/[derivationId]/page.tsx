@@ -41,7 +41,7 @@ export default function AdminDerivationPage() {
       <h1 className="text-center text-3xl font-bold">
         Formulaire d'Intervention
       </h1>
-      <CorrectionComment derivationStatus={derivation?.status} />
+      <CorrectionComment derivation={derivation} />
       <InfoCard
         status={derivation?.status}
         city={derivation?.city}

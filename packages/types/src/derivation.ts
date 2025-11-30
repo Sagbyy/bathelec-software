@@ -15,4 +15,5 @@ export interface Derivation {
   postalCode: string;
   createdAt: string;
   status: DerivationStatus;
+  correctionComment: string | null;
 }

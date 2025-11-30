@@ -12,8 +12,8 @@ import {
   FieldSet,
   Field,
   FieldLabel,
-  FieldDescription,
   FieldError,
+  FieldDescription,
 } from '@/components/ui/field';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -25,11 +25,13 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { derivationStatusConfig } from '@/constants/derivations';
-import { DerivationStatus } from '@repo/types';
+import { Derivation, DerivationStatus } from '@repo/types';
 import { z } from 'zod';
 import { useForm } from '@tanstack/react-form';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useUpdateCommentDerivation } from '@/hooks/queries/use-update-comment-derivation';
+import { Badge } from '@/components/ui/badge';
 
 const formSchema = z.object({
   correctionComment: z.string().max(255, {
@@ -39,24 +41,39 @@ const formSchema = z.object({
 });
 
 interface CorrectionCommentProps {
-  derivationStatus: DerivationStatus;
+  derivation: Derivation;
 }
 
 export default function CorrectionComment({
-  derivationStatus,
+  derivation,
 }: CorrectionCommentProps) {
   const router = useRouter();
+  const updateCommentDerivationMutation = useUpdateCommentDerivation(
+    derivation.id
+  );
 
   const form = useForm({
     defaultValues: {
-      correctionComment: '',
-      status: derivationStatus,
+      correctionComment: derivation.correctionComment || '',
+      status: derivation.status as DerivationStatus,
     },
     validators: {
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      toast.success('Formulaire soumis avec succès !');
+      updateCommentDerivationMutation.mutate({
+        correctionComment: value.correctionComment,
+        status: value.status,
+      });
+
+      if (updateCommentDerivationMutation.isSuccess) {
+        toast.success('Formulaire soumis avec succès !');
+      }
+
+      if (updateCommentDerivationMutation.isError) {
+        toast.error('Erreur lors de la mise à jour du formulaire');
+      }
+
       router.push('/dashboard');
     },
   });
@@ -157,6 +174,23 @@ export default function CorrectionComment({
                 />
               </FieldGroup>
             </FieldSet>
+            <FieldDescription>
+              Selectionner un des trois status après votre revue : Selectionner
+              un des trois status après votre revue de l'intervention.
+            </FieldDescription>
+            <div className="flex gap-2">
+              <Badge variant="default" className="bg-green-500">
+                {derivationStatusConfig[DerivationStatus.COMPLETED].text}
+              </Badge>
+              {' - '}
+              <Badge variant="secondary">
+                {derivationStatusConfig[DerivationStatus.REVISING].text}
+              </Badge>
+              {' - '}
+              <Badge variant="destructive">
+                {derivationStatusConfig[DerivationStatus.INCORRECT].text}
+              </Badge>
+            </div>
             <form.Subscribe
               selector={(state) => state.isPristine}
               children={(isPristine) => (
