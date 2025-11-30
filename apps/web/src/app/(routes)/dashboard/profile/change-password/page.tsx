@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { changePasswordSchema } from '@/validators/change-password.schema';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Separator } from '@/components/ui/separator';
-import { useChangePassword } from '@/hooks/queries/useChangePassword';
+import { useChangePassword } from '@/hooks/queries/use-change-password';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';

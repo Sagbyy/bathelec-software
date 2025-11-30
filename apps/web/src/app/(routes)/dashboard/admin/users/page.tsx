@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { DataTable } from './data-table';
 import { columns } from './columns';
-import { useUsers } from '@/hooks/queries/useUser';
+import { useUsers } from '@/hooks/queries/use-user';
 
 export default function ListUsersPage() {
   const { data, isLoading, error } = useUsers();

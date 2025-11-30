@@ -29,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useUserById, useUpdateUser } from '@/hooks/queries/useUser';
+import { useUserById, useUpdateUser } from '@/hooks/queries/use-user';
 import { toast } from 'sonner';
 import clsx from 'clsx';
 

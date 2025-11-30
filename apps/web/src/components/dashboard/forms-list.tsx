@@ -35,7 +35,7 @@ import {
 } from '@/components/ui/table';
 import { DerivationStatus, Derivation, Technician } from '@repo/types';
 import { useDerivation } from '@/hooks/queries/use-derivation';
-import { useTechnicians } from '@/hooks/queries/useTechnician';
+import { useTechnicians } from '@/hooks/queries/use-technician';
 import { cn } from '@/lib/utils';
 import { derivationStatusConfig } from '@/constants/derivations';
 import { Icon } from '@iconify/react/dist/iconify.js';
