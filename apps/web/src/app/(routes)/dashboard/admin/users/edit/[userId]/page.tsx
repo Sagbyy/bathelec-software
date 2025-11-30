@@ -30,7 +30,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useUserById, useUpdateUser } from '@/hooks/queries/useUser';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import clsx from 'clsx';
 
 const updateUserSchema = z.object({
@@ -57,7 +57,6 @@ type UpdateUserFormValues = z.infer<typeof updateUserSchema>;
 export default function UserDetailsPage() {
   const { userId } = useParams();
   const router = useRouter();
-  const { toast } = useToast();
   const userIdNumber = parseInt(userId as string);
 
   const { data: user, isLoading, error } = useUserById(userIdNumber);
@@ -95,22 +94,14 @@ export default function UserDetailsPage() {
       },
       {
         onSuccess: () => {
-          toast({
-            title: 'Utilisateur mis à jour',
-            description:
-              "Les informations de l'utilisateur ont été mises à jour avec succès",
-            variant: 'success',
-          });
+          toast.success('Utilisateur mis à jour avec succès');
           router.push('/dashboard/admin/users');
         },
         onError: (error: any) => {
-          toast({
-            title: 'Erreur lors de la mise à jour',
-            description:
-              error?.response?.data?.message ||
-              "Une erreur est survenue lors de la mise à jour de l'utilisateur",
-            variant: 'destructive',
-          });
+          toast.error(
+            error?.response?.data?.message ||
+              "Une erreur est survenue lors de la mise à jour de l'utilisateur"
+          );
         },
       }
     );

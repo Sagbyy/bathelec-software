@@ -7,7 +7,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import clsx from 'clsx';
@@ -16,7 +16,6 @@ import { z } from 'zod';
 import Cookies from 'js-cookie';
 
 export default function RegisterTechnicianForm() {
-  const { toast } = useToast();
 
   const registerTechnicianSchema = z
     .object({
@@ -76,18 +75,9 @@ export default function RegisterTechnicianForm() {
       // Reset form
       form.reset();
 
-      toast({
-        title: `Technicien ${data.username} créé`,
-        description: 'Le technicien a été créé avec succès',
-        variant: 'success',
-      });
+      toast.success(`Technicien ${data.username} créé avec succès`);
     } catch (error) {
-      toast({
-        title: 'Erreur lors de la création du technicien',
-        description:
-          'Une erreur est survenue lors de la création du technicien',
-        variant: 'destructive',
-      });
+      toast.error('Une erreur est survenue lors de la création du technicien');
 
       console.error(error);
     }

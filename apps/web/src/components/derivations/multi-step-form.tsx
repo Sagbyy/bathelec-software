@@ -20,7 +20,7 @@ import {
   useCompletedDerivationsById,
 } from '@/hooks/queries/use-completed-derivations';
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { DEFAULT_FORM_VALUES } from '../../constants/derivations';
 import { formatCompletedDerivation } from './utils/form-data-formatter';
@@ -35,7 +35,10 @@ interface MultiStepFormProps {
   readOnly?: boolean;
 }
 
-export function MultiStepForm({ derivation, readOnly = false }: MultiStepFormProps) {
+export function MultiStepForm({
+  derivation,
+  readOnly = false,
+}: MultiStepFormProps) {
   const {
     mutate: createCompletedDerivation,
     status: createCompletedDerivationStatus,
@@ -52,7 +55,7 @@ export function MultiStepForm({ derivation, readOnly = false }: MultiStepFormPro
       setIsNotEditable(true);
       return;
     }
-    
+
     if (
       derivation.status === DerivationStatus.COMPLETED ||
       derivation.status === DerivationStatus.REVIEWING
@@ -87,21 +90,15 @@ export function MultiStepForm({ derivation, readOnly = false }: MultiStepFormPro
 
   useEffect(() => {
     if (createCompletedDerivationStatus === 'success') {
-      toast({
-        title: 'Formulaire soumis avec succès !',
-        description: 'Votre demande a été soumise avec succès.',
-        variant: 'success',
-      });
+      toast.success('Formulaire soumis avec succès !');
 
       router.push('/dashboard/technician/derivations/complete');
     }
 
     if (createCompletedDerivationStatus === 'error') {
-      toast({
-        title: 'Erreur lors de la soumission du formulaire',
-        description: `Une erreur est survenue lors de la soumission du formulaire. ${error?.message}`,
-        variant: 'destructive',
-      });
+      toast.error(
+        `Une erreur est survenue lors de la soumission du formulaire. ${error?.message}`
+      );
     }
   }, [createCompletedDerivationStatus, error]);
 

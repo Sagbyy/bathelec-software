@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import QueryProvider from '@/contexts/QueryProvider';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: 'Abrisûr software',

@@ -33,7 +33,7 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { Technician } from '@repo/types';
 import Cookies from 'js-cookie';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { formSchema } from '@/validators/create-derivation.schema';
@@ -109,17 +109,9 @@ export default function CreateDerivationForm() {
 
       form.reset();
 
-      toast({
-        title: 'Dérivation créée',
-        description: 'La dérivation a été créée avec succès',
-        variant: 'success',
-      });
+      toast.success('Dérivation créée avec succès');
     } catch (error) {
-      toast({
-        title: 'Erreur lors de la création de la dérivation',
-        description: "La dérivation n'a pas pu être créée",
-        variant: 'destructive',
-      });
+      toast.error("La dérivation n'a pas pu être créée");
 
       console.error(error);
     }

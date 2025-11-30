@@ -26,9 +26,10 @@ import {
 } from '@/components/ui/select';
 import { derivationStatusConfig } from '@/constants/derivations';
 import { DerivationStatus } from '@repo/types';
-import { Badge } from '@/components/ui/badge';
 import { z } from 'zod';
 import { useForm } from '@tanstack/react-form';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   correctionComment: z.string().max(255, {
@@ -44,6 +45,8 @@ interface CorrectionCommentProps {
 export default function CorrectionComment({
   derivationStatus,
 }: CorrectionCommentProps) {
+  const router = useRouter();
+
   const form = useForm({
     defaultValues: {
       correctionComment: '',
@@ -53,7 +56,8 @@ export default function CorrectionComment({
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
+      toast.success('Formulaire soumis avec succès !');
+      router.push('/dashboard');
     },
   });
 
