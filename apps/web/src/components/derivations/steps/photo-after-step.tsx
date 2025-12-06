@@ -104,7 +104,7 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
         {oldMeterPreserved ? 7 : 8}. Photo après travaux
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6">
         {photos.map((photo) => (
           <FormField
             key={photo.fieldName}
