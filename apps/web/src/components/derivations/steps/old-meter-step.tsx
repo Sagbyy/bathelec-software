@@ -129,33 +129,14 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
         />
       )}
 
-      <FormField
-        control={form.control}
-        name="oldMeter.preserved"
-        render={({ field }) => (
-          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-            <div className="space-y-0.5">
-              <FormLabel className="text-base">Conservé</FormLabel>
-            </div>
-            <FormControl>
-              <Switch
-                checked={field.value}
-                onCheckedChange={field.onChange}
-                disabled={isCompleted}
-              />
-            </FormControl>
-          </FormItem>
-        )}
-      />
-
-      {oldMeterType !== 'linky' && (
+      <div className="flex w-full flex-col gap-4 sm:flex-row">
         <FormField
           control={form.control}
-          name="oldMeter.linkyRefusal"
+          name="oldMeter.preserved"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+            <FormItem className="flex w-full flex-row items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">Refus de Linky</FormLabel>
+                <FormLabel className="text-base">Conservé</FormLabel>
               </div>
               <FormControl>
                 <Switch
@@ -167,7 +148,28 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
             </FormItem>
           )}
         />
-      )}
+
+        {oldMeterType !== 'linky' && (
+          <FormField
+            control={form.control}
+            name="oldMeter.linkyRefusal"
+            render={({ field }) => (
+              <FormItem className="flex w-full flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">Refus de Linky</FormLabel>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    disabled={isCompleted}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        )}
+      </div>
 
       <FormField
         control={form.control}
