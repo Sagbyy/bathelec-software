@@ -68,45 +68,53 @@ export function DateTimePicker24h({ field }: DateTimePicker24hProps) {
       <PopoverContent className="w-auto p-0">
         <div className="sm:flex">
           <Calendar mode="single" selected={date} onSelect={handleDateSelect} />
-          <div className="flex flex-col divide-y sm:h-[300px] sm:flex-row sm:divide-x sm:divide-y-0">
-            <ScrollArea className="w-64 sm:w-auto">
-              <div className="flex p-2 sm:flex-col">
-                {hours.reverse().map((hour) => (
-                  <Button
-                    key={hour}
-                    size="icon"
-                    variant={
-                      date && date.getHours() === hour ? 'default' : 'ghost'
-                    }
-                    className="aspect-square shrink-0 sm:w-full"
-                    onClick={() => handleTimeChange('hour', hour.toString())}
-                  >
-                    {hour}
-                  </Button>
-                ))}
-              </div>
-              <ScrollBar orientation="horizontal" className="sm:hidden" />
-            </ScrollArea>
-            <ScrollArea className="w-64 sm:w-auto">
-              <div className="flex p-2 sm:flex-col">
-                {Array.from({ length: 12 }, (_, i) => i * 5).map((minute) => (
-                  <Button
-                    key={minute}
-                    size="icon"
-                    variant={
-                      date && date.getMinutes() === minute ? 'default' : 'ghost'
-                    }
-                    className="aspect-square shrink-0 sm:w-full"
-                    onClick={() =>
-                      handleTimeChange('minute', minute.toString())
-                    }
-                  >
-                    {minute.toString().padStart(2, '0')}
-                  </Button>
-                ))}
-              </div>
-              <ScrollBar orientation="horizontal" className="sm:hidden" />
-            </ScrollArea>
+          <div className="flex flex-col sm:h-[300px] sm:flex-row sm:divide-x sm:divide-y-0">
+            <div className="flex flex-col border-t pt-2 sm:border-l sm:border-t-0">
+              <p className="text-center text-sm font-medium sm:px-2">Heures</p>
+              <ScrollArea className="w-64 sm:w-auto">
+                <div className="flex p-2 sm:flex-col">
+                  {hours.reverse().map((hour) => (
+                    <Button
+                      key={hour}
+                      size="icon"
+                      variant={
+                        date && date.getHours() === hour ? 'default' : 'ghost'
+                      }
+                      className="aspect-square shrink-0 sm:w-full"
+                      onClick={() => handleTimeChange('hour', hour.toString())}
+                    >
+                      {hour}
+                    </Button>
+                  ))}
+                </div>
+                <ScrollBar orientation="horizontal" className="sm:hidden" />
+              </ScrollArea>
+            </div>
+            <div className="flex flex-col border-t pt-2 sm:border-t-0">
+              <p className="text-center text-sm font-medium sm:px-2">Minutes</p>
+              <ScrollArea className="w-64 sm:w-auto">
+                <div className="flex p-2 sm:flex-col">
+                  {Array.from({ length: 12 }, (_, i) => i * 5).map((minute) => (
+                    <Button
+                      key={minute}
+                      size="icon"
+                      variant={
+                        date && date.getMinutes() === minute
+                          ? 'default'
+                          : 'ghost'
+                      }
+                      className="aspect-square shrink-0 sm:w-full"
+                      onClick={() =>
+                        handleTimeChange('minute', minute.toString())
+                      }
+                    >
+                      {minute.toString().padStart(2, '0')}
+                    </Button>
+                  ))}
+                </div>
+                <ScrollBar orientation="horizontal" className="sm:hidden" />
+              </ScrollArea>
+            </div>
           </div>
         </div>
       </PopoverContent>
