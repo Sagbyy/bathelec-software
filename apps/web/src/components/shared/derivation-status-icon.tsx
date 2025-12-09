@@ -15,7 +15,10 @@ export default function DerivationStatusIcon({
         'flex items-center gap-2'
       )}
     >
-      <Icon icon={derivationStatusConfig[derivationStatus].icon} />
+      <Icon
+        className="shrink-0"
+        icon={derivationStatusConfig[derivationStatus].icon}
+      />
       <span className="font-semibold">
         {derivationStatusConfig[derivationStatus].text}
       </span>
