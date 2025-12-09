@@ -84,6 +84,12 @@ const technicianLinks = [
     type: 'page',
     description: 'Completer un relevé de dérivation',
   },
+  {
+    label: 'Créez un relevé de dérivation',
+    href: '/dashboard/technician/derivations/new',
+    type: 'page',
+    description: "Création d'un nouveau relevé de dérivation",
+  },
 ];
 
 const commonLinks = [

@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { CommandList } from 'cmdk';
 import { z } from 'zod';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -37,6 +37,7 @@ import { toast } from 'sonner';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { formSchema } from '@/validators/create-derivation.schema';
+import { useUserStore } from '@/hooks/useUserStore';
 
 const fetchTechnicians = async () => {
   const response = await axios
@@ -52,6 +53,7 @@ const fetchTechnicians = async () => {
 
 export default function CreateDerivationForm() {
   const [open, setOpen] = useState(false);
+  const { user } = useUserStore();
 
   const {
     data: technicians,
@@ -72,6 +74,18 @@ export default function CreateDerivationForm() {
       city: '',
     },
   });
+
+  useEffect(() => {
+    if (user) {
+      const fullName = `${user.firstName} ${user.lastName}`;
+      if (user.role === 'technician') {
+        form.reset({
+          ...form.getValues(),
+          user: fullName,
+        });
+      }
+    }
+  }, [user, form]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const userId: number | undefined = technicians?.find(
@@ -139,6 +153,7 @@ export default function CreateDerivationForm() {
                         role="combobox"
                         aria-expanded={open}
                         className="w-full justify-between"
+                        disabled={user?.role === 'technician'}
                       >
                         {value || 'Selectionner un technicien...'}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
