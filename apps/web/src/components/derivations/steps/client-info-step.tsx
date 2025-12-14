@@ -11,6 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import type { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
+import { PhoneInput } from '@/components/ui/phone-input';
 interface ClientInfoStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }
@@ -49,11 +50,17 @@ export function ClientInfoStep({ form }: ClientInfoStepProps) {
           <FormItem>
             <FormLabel>Téléphone</FormLabel>
             <FormControl>
-              <Input
+              <PhoneInput
+                {...field}
+                disabled={isCompleted}
+                defaultCountry="FR"
+                placeholder="Ex: 01 55 99 03 89"
+              />
+              {/*<Input
                 placeholder="Ex: 01 55 99 03 89"
                 {...field}
                 disabled={isCompleted}
-              />
+              />*/}
             </FormControl>
             <FormMessage />
           </FormItem>
