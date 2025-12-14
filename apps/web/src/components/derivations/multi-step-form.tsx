@@ -112,7 +112,7 @@ export function MultiStepForm({
 
   const renderStep = useCallback(() => {
     const actualStep = getActualStep(step);
-    //const actualStep = 5;
+    //const actualStep = 7;
 
     switch (actualStep) {
       case 1:

@@ -97,9 +97,9 @@ export const DEFAULT_FORM_VALUES = {
   },
   circuitBreaker: {
     preserved: false,
-    voltage: 'mono' as VoltageType,
+    voltage: undefined as unknown as VoltageType,
     brand: '',
-    type: 'non_differentiel' as CircuitBreakerType,
+    type: undefined as unknown as CircuitBreakerType,
     power: '',
     commissioningDone: false,
     sealed: false,
