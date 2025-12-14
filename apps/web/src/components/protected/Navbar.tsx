@@ -17,7 +17,7 @@ import React, { useState } from 'react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import useAuth from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { DropdownMenuProfile } from './DropDownProfile';
+import { DropdownMenuProfile } from './drop-down-profile';
 import {
   NavigationMenu,
   NavigationMenuContent,

@@ -1,6 +1,6 @@
 'use client';
 
-import RegisterTechnicianForm from '@/components/protected/admin/create-technician/RegisterTechnicianForm';
+import RegisterTechnicianForm from '@/components/protected/admin/create-technician/register-technician-form';
 
 export default function CreateTechnician() {
   return (
