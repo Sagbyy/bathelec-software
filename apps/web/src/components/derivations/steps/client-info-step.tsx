@@ -36,6 +36,9 @@ export function ClientInfoStep({ form }: ClientInfoStepProps) {
                 placeholder="Ex: M. Dupont"
                 {...field}
                 disabled={isCompleted}
+                onChange={(e) => {
+                  field.onChange(e.target.value.toUpperCase());
+                }}
               />
             </FormControl>
             <FormMessage />
@@ -75,6 +78,9 @@ export function ClientInfoStep({ form }: ClientInfoStepProps) {
                 placeholder="Ex: SGX001 - COM001 - ASC001 - 001 - 101"
                 {...field}
                 disabled={isCompleted}
+                onChange={(e) => {
+                  field.onChange(e.target.value.toUpperCase());
+                }}
               />
             </FormControl>
             <FormMessage />

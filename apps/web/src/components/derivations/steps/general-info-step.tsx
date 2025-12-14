@@ -162,6 +162,9 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
                   {...field}
                   disabled={isCompleted || isStaticAddress}
                   value={isStaticAddress ? derivation.address : field.value}
+                  onChange={(e) => {
+                    field.onChange(e.target.value.toUpperCase());
+                  }}
                 />
               </FormControl>
               <FormMessage />
@@ -202,6 +205,9 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
                   {...field}
                   disabled={isCompleted || isStaticAddress}
                   value={isStaticAddress ? derivation.city : field.value}
+                  onChange={(e) => {
+                    field.onChange(e.target.value.toUpperCase());
+                  }}
                 />
               </FormControl>
               <FormMessage />
@@ -223,6 +229,9 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
                 placeholder="Ex: A - B / Rue - Cour"
                 {...field}
                 disabled={isCompleted}
+                onChange={(e) => {
+                  field.onChange(e.target.value.toUpperCase());
+                }}
               />
             </FormControl>
             <FormMessage />
@@ -243,6 +252,9 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
                 placeholder="Ex: 1D001 - 1C101 - 2C101"
                 {...field}
                 disabled={isCompleted}
+                onChange={(e) => {
+                  field.onChange(e.target.value.toUpperCase());
+                }}
               />
             </FormControl>
             <FormMessage />

@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 import { User } from '@repo/types';
 import { useUserStore } from '@/hooks/useUserStore';
 import getUsernameByToken from '@/lib/decodeJwt';
-import { Navbar } from '@/components/protected/Navbar';
+import { Navbar } from '@/components/protected/navbar';
 import { usePathname, useRouter } from 'next/navigation';
 
 const fetchUserData = async (): Promise<User> => {

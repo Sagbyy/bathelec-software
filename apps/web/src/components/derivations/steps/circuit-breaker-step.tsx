@@ -80,6 +80,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
                 defaultValue={field.value}
                 className="flex flex-row space-x-4"
                 disabled={isCompleted}
+                required
               >
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
@@ -113,6 +114,9 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
                 placeholder="Ex: BACO, GE, SCHNEIDER..."
                 {...field}
                 disabled={isCompleted}
+                onChange={(e) => {
+                  field.onChange(e.target.value.toUpperCase());
+                }}
               />
             </FormControl>
             <FormMessage />
@@ -134,6 +138,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
                 defaultValue={field.value}
                 className="space-y-1"
                 disabled={isCompleted}
+                required
               >
                 <FormItem className="flex items-center space-x-3 space-y-0">
                   <FormControl>
