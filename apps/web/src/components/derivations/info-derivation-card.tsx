@@ -39,7 +39,7 @@ export function InfoCard({
               <span className="text-sm font-medium">
                 {address && postalCode && city
                   ? `${address}, ${postalCode} ${city}`
-                  : "Pas d'adresse renseignée par le manager"}
+                  : "Pas d'adresse renseignée."}
               </span>
             </div>
             <div className="flex items-center gap-2">

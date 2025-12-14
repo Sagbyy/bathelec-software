@@ -50,8 +50,12 @@ function getStatusAction(status: DerivationStatus) {
 
 export const columns: ColumnDef<Derivation>[] = [
   {
-    accessorFn: (row) =>
-      `${row.address}, ${row.postalCode} ${row.city}`.toLowerCase(),
+    accessorFn: (row) => {
+      if (row.address && row.postalCode && row.city) {
+        return `${row.address}, ${row.postalCode} ${row.city}`.toLowerCase();
+      }
+      return "Pas d'adresse renseignée.";
+    },
     id: 'address',
     header: ({ column }) => {
       return (
