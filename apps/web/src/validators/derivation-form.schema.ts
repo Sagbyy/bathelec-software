@@ -1,9 +1,12 @@
+import { isValidPhoneNumber } from 'react-phone-number-input';
 import { z } from 'zod';
 
 export const createCompletedDerivationSchema = z.object({
   clientInfo: z.object({
     name: z.string().min(2, { message: 'Le nom est requis' }),
-    phone: z.string().optional(),
+    phone: z
+      .string()
+      .refine(isValidPhoneNumber, { message: 'Numéro de téléphone invalide' }),
     folio: z.string().min(1, { message: 'Le folio est requis' }),
   }),
 

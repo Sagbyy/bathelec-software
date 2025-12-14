@@ -21,6 +21,7 @@ import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
 import { cn } from '@/lib/utils';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Icon } from '@iconify/react/dist/iconify.js';
+import InputNumberButtonsRounded from '@/components/ui/input-number-buttons';
 
 interface NewDerivationStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
@@ -113,8 +114,8 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
               Longueur posée en M<span className="ml-1 text-red-500">*</span>
             </FormLabel>
             <FormControl>
-              <Input
-                type="number"
+              <InputNumberButtonsRounded
+                defaultValue={field.value}
                 placeholder="Indiquer la longueur de câble posée"
                 {...field}
                 onChange={(e) =>
@@ -122,6 +123,15 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
                 }
                 disabled={isCompleted}
               />
+              {/*<Input
+                type="number"
+                placeholder="Indiquer la longueur de câble posée"
+                {...field}
+                onChange={(e) =>
+                  field.onChange(Number.parseFloat(e.target.value) || 0)
+                }
+                disabled={isCompleted}
+              />*/}
             </FormControl>
             <FormMessage />
           </FormItem>

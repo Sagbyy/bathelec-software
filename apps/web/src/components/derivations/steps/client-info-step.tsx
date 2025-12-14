@@ -56,11 +56,6 @@ export function ClientInfoStep({ form }: ClientInfoStepProps) {
                 defaultCountry="FR"
                 placeholder="Ex: 01 55 99 03 89"
               />
-              {/*<Input
-                placeholder="Ex: 01 55 99 03 89"
-                {...field}
-                disabled={isCompleted}
-              />*/}
             </FormControl>
             <FormMessage />
           </FormItem>
