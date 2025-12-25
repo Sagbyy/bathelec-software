@@ -192,7 +192,7 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
                   <div className="space-y-2">
                     <div
                       className={cn(
-                        'rounded-md border bg-white p-2',
+                        'h-64 rounded-md border bg-white p-2',
                         isCompleted && 'pointer-events-none cursor-not-allowed'
                       )}
                     >
