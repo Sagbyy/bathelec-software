@@ -125,23 +125,37 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
                 <FormLabel>Niveau de satisfaction du client</FormLabel>
                 <FormControl>
                   <div className="flex space-x-1">
-                    {[0, 1, 2, 3, 4].map((rating) => (
-                      <Star
-                        key={rating}
-                        className={cn(
-                          'h-8 w-8 cursor-pointer',
-                          Number.parseInt(field.value || '0') >= rating
-                            ? 'fill-yellow-400 text-yellow-400'
-                            : 'text-gray-300',
-                          isCompleted && 'cursor-not-allowed'
-                        )}
-                        onClick={() => {
-                          if (!isCompleted) {
-                            field.onChange(rating.toString());
-                          }
-                        }}
-                      />
-                    ))}
+                    {[0, 1, 2, 3, 4].map((rating) => {
+                      const value = Number.parseInt(field.value || '0');
+                      const isFilled = value >= rating;
+                      let colorClass = 'text-gray-300';
+
+                      if (isFilled) {
+                        if (value === 0) {
+                          colorClass = 'fill-red-500 text-red-600';
+                        } else if (value === 1 || value === 2) {
+                          colorClass = 'fill-orange-500 text-orange-600';
+                        } else if (value === 3 || value === 4) {
+                          colorClass = 'fill-green-500 text-green-600';
+                        }
+                      }
+
+                      return (
+                        <Star
+                          key={rating}
+                          className={cn(
+                            'h-8 w-8 cursor-pointer',
+                            colorClass,
+                            isCompleted && 'cursor-not-allowed'
+                          )}
+                          onClick={() => {
+                            if (!isCompleted) {
+                              field.onChange(rating.toString());
+                            }
+                          }}
+                        />
+                      );
+                    })}
                   </div>
                 </FormControl>
                 <FormMessage />
