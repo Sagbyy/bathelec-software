@@ -117,7 +117,7 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
             </Zoom>
             <FormControl>
               <Input
-                placeholder="Ex: 12 chiffres"
+                placeholder="Les 3 derniers chiffres du dernier groupe de 5 numéros"
                 {...field}
                 disabled={isCompleted}
               />

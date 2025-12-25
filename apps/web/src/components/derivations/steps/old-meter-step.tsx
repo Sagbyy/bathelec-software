@@ -179,7 +179,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
             <FormLabel>Matricule</FormLabel>
             <FormControl>
               <Input
-                placeholder="Ex: 12 chiffres si CBE et LINKY"
+                placeholder="Les 3 derniers chiffres du dernier groupe de 5 numéros"
                 {...field}
                 disabled={isCompleted}
               />

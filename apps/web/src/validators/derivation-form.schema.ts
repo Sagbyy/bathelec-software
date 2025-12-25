@@ -72,7 +72,9 @@ export const createCompletedDerivationSchema = z.object({
 
   newMeter: z.object({
     generation: z.string().min(1, { message: 'La génération est requise' }),
-    serialNumber: z.string().min(1, { message: 'Le matricule est requis' }),
+    serialNumber: z.string().regex(/^\d{3}$/, {
+      message: 'Le matricule doit contenir exactement 3 chiffres',
+    }),
     dayIndex: z.string().min(1, { message: "L'index jour est requis" }),
     nightIndex: z.string().optional(),
     indexPhoto: z
