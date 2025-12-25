@@ -1,3 +1,5 @@
+import CompleteDerivationPage from './technician/derivations/complete/completed-derivation-page';
+
 export default function TechnicianPage() {
-  return <div>TechnicianPage</div>;
+  return <CompleteDerivationPage />;
 }

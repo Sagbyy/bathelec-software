@@ -79,12 +79,6 @@ const adminLinks: NavbarLink[] = [
 
 const technicianLinks = [
   {
-    label: 'Completer un relevé de dérivation',
-    href: '/dashboard/technician/derivations/complete',
-    type: 'page',
-    description: 'Completer un relevé de dérivation',
-  },
-  {
     label: 'Créez un relevé de dérivation',
     href: '/dashboard/technician/derivations/new',
     type: 'page',
