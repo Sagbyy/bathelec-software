@@ -21,7 +21,7 @@ import {
 } from '@/hooks/queries/use-completed-derivations';
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 import { toast } from 'sonner';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { DEFAULT_FORM_VALUES } from '../../constants/derivations';
 import { formatCompletedDerivation } from './utils/form-data-formatter';
 import { useFormSteps } from '../../hooks/use-form-steps';

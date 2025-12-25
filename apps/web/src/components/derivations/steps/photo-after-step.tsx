@@ -29,6 +29,7 @@ interface PhotoPreview {
 }
 
 export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
+  const [numberOfPhotos, setNumberOfPhotos] = useState(1);
   const oldMeterPreserved = form.watch('oldMeter.preserved');
   const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
@@ -105,7 +106,7 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        {photos.map((photo) => (
+        {photos.slice(0, numberOfPhotos).map((photo) => (
           <FormField
             key={photo.fieldName}
             control={form.control}
@@ -187,6 +188,19 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
             )}
           />
         ))}
+        {numberOfPhotos < photos.length && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setNumberOfPhotos(numberOfPhotos + 1);
+            }}
+            disabled={isCompleted}
+          >
+            Ajouter une photo supplémentaire
+          </Button>
+        )}
       </div>
     </div>
   );
