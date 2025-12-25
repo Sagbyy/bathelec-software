@@ -41,7 +41,12 @@ export const createCompletedDerivationSchema = z.object({
       generation: z.string().optional(),
       preserved: z.boolean(),
       linkyRefusal: z.boolean().optional(),
-      serialNumber: z.string().optional(),
+      serialNumber: z
+        .string()
+        .regex(/^\d{3}$/, {
+          message: 'Le matricule doit contenir exactement 3 chiffres',
+        })
+        .optional(),
       key: z.string().optional(),
       dayIndex: z.string().optional(),
       nightIndex: z.string().optional(),
