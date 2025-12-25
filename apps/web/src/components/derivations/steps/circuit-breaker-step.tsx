@@ -77,20 +77,20 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
             <FormControl>
               <RadioGroup
                 onValueChange={field.onChange}
-                defaultValue={field.value}
+                value={field.value}
                 className="flex flex-row space-x-4"
                 disabled={isCompleted}
                 required
               >
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
-                    <RadioGroupItem value="mono" />
+                    <RadioGroupItem value="mono" id="mono" />
                   </FormControl>
                   <FormLabel className="font-normal">Mono</FormLabel>
                 </FormItem>
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
-                    <RadioGroupItem value="tri" />
+                    <RadioGroupItem value="tri" id="tri" />
                   </FormControl>
                   <FormLabel className="font-normal">Tri</FormLabel>
                 </FormItem>
@@ -135,14 +135,17 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
             <FormControl>
               <RadioGroup
                 onValueChange={field.onChange}
-                defaultValue={field.value}
+                value={field.value}
                 className="space-y-1"
                 disabled={isCompleted}
                 required
               >
                 <FormItem className="flex items-center space-x-3 space-y-0">
                   <FormControl>
-                    <RadioGroupItem value="non_differentiel" />
+                    <RadioGroupItem
+                      value="non_differentiel"
+                      id="non_differentiel"
+                    />
                   </FormControl>
                   <FormLabel className="font-normal">
                     Non différentiel
@@ -150,13 +153,13 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
                 </FormItem>
                 <FormItem className="flex items-center space-x-3 space-y-0">
                   <FormControl>
-                    <RadioGroupItem value="differentiel" />
+                    <RadioGroupItem value="differentiel" id="differentiel" />
                   </FormControl>
                   <FormLabel className="font-normal">Différentiel</FormLabel>
                 </FormItem>
                 <FormItem className="flex items-center space-x-3 space-y-0">
                   <FormControl>
-                    <RadioGroupItem value="selectif" />
+                    <RadioGroupItem value="selectif" id="selectif" />
                   </FormControl>
                   <FormLabel className="font-normal">Sélectif</FormLabel>
                 </FormItem>

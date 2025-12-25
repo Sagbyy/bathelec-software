@@ -77,13 +77,29 @@ export const createCompletedDerivationSchema = z.object({
 
   circuitBreaker: z.object({
     preserved: z.boolean(),
-    voltage: z.enum(['mono', 'tri'], {
-      required_error: 'La tension est requise',
-    }),
+    voltage: z.preprocess(
+      (val) => (val === undefined ? '' : val),
+      z
+        .string()
+        .min(1, { message: 'La tension est requise' })
+        .refine((val) => val === 'mono' || val === 'tri', {
+          message: 'La tension doit être "mono" ou "tri"',
+        })
+    ),
     brand: z.string().min(1, { message: 'La marque est requise' }),
-    type: z.enum(['non_differentiel', 'differentiel', 'selectif'], {
-      required_error: 'Le type est requis',
-    }),
+    type: z.preprocess(
+      (val) => (val === undefined ? '' : val),
+      z
+        .string()
+        .min(1, { message: 'Le type est requis' })
+        .refine(
+          (val) =>
+            val === 'non_differentiel' ||
+            val === 'differentiel' ||
+            val === 'selectif',
+          { message: 'Le type doit être sélectionné' }
+        )
+    ),
     power: z.string().min(1, { message: 'La puissance est requise' }),
     commissioningDone: z.boolean(),
     sealed: z.boolean().refine((val) => val === true, {

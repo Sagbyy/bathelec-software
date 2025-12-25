@@ -97,9 +97,9 @@ export const DEFAULT_FORM_VALUES = {
   },
   circuitBreaker: {
     preserved: false,
-    voltage: undefined as unknown as VoltageType,
+    voltage: undefined,
     brand: '',
-    type: undefined as unknown as CircuitBreakerType,
+    type: undefined,
     power: '',
     commissioningDone: false,
     sealed: false,
@@ -153,7 +153,12 @@ export const STEP_FIELDS_TO_VALIDATE: {
     'newMeter.dayIndex',
     'newMeter.indexPhoto',
   ],
-  7: ['circuitBreaker.brand', 'circuitBreaker.power'],
+  7: [
+    'circuitBreaker.voltage',
+    'circuitBreaker.brand',
+    'circuitBreaker.type',
+    'circuitBreaker.power',
+  ],
   8: ['photoAfterWork.photo'],
   9: {
     present: [
