@@ -272,7 +272,7 @@ export function FormsList() {
                         )
                       }
                     >
-                      <p>Corriger</p>
+                      <p>À vérifier</p>
                     </Button>
                   ) : (
                     <Button
