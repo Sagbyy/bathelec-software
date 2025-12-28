@@ -16,6 +16,8 @@ export class UsersService {
   private readonly logger = new Logger(UsersService.name);
 
   async findOne(id: number) {
+    if (!id) throw new BadRequestException('id must be a number');
+
     return this.prisma.user.findUnique({
       where: { id },
     });
