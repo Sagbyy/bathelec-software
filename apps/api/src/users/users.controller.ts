@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -139,5 +140,32 @@ export class UsersController {
     }
 
     return user;
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(RoleGuard)
+  @Role('admin')
+  @Delete(':userId')
+  @ApiOperation({ summary: 'Delete user by ID' })
+  @ApiParam({ name: 'userId', type: Number, description: 'The ID of the user' })
+  @ApiOkResponse({
+    description: 'The user has been successfully deleted.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+    type: NotFoundDto,
+  })
+  async deleteUser(@Param('userId') userId: string) {
+    const user = await this.usersService.deleteUser(parseInt(userId));
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'User deleted successfully',
+    };
   }
 }

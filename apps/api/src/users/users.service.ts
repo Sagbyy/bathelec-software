@@ -172,4 +172,34 @@ export class UsersService {
       );
     }
   }
+
+  async deleteUser(userId: number) {
+    if (!userId) throw new BadRequestException('No ID specified');
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      this.logger.error(`User with ID ${userId} not found`);
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    try {
+      await this.prisma.user.delete({
+        where: { id: userId },
+      });
+
+      this.logger.log(`User deleted successfully: ${userId}`);
+      return user;
+    } catch (error) {
+      this.logger.error(
+        `Error deleting user with ID: ${userId}, error: ${error.message}`
+      );
+      throw new HttpException(
+        'Error while deleting user',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 }
