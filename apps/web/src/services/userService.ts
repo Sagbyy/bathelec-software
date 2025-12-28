@@ -24,4 +24,9 @@ export const userService = {
     const { data } = await apiClient.put<User>(`/users/${userId}`, updateData);
     return data;
   },
+
+  deleteUser: async (userId: number) => {
+    const { data } = await apiClient.delete<User>(`/users/${userId}`);
+    return data;
+  },
 };

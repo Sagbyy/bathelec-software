@@ -29,9 +29,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useUserById, useUpdateUser } from '@/hooks/queries/use-user';
+import {
+  useUserById,
+  useUpdateUser,
+  useDeleteUser,
+} from '@/hooks/queries/use-user';
 import { toast } from 'sonner';
 import clsx from 'clsx';
+import { Icon } from '@iconify/react/dist/iconify.js';
 
 const updateUserSchema = z.object({
   firstName: z
@@ -51,6 +56,16 @@ const updateUserSchema = z.object({
     errorMap: () => ({ message: 'Le rôle doit être admin ou technician' }),
   }),
 });
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
 
 type UpdateUserFormValues = z.infer<typeof updateUserSchema>;
 
@@ -60,7 +75,8 @@ export default function UserDetailsPage() {
   const userIdNumber = parseInt(userId as string);
 
   const { data: user, isLoading, error } = useUserById(userIdNumber);
-  const { mutate: updateUser, isPending } = useUpdateUser();
+  const { mutate: updateUser, isPending: isUpdating } = useUpdateUser();
+  const { mutate: deleteUser, isPending: isDeleting } = useDeleteUser();
 
   const form = useForm<UpdateUserFormValues>({
     resolver: zodResolver(updateUserSchema),
@@ -105,6 +121,21 @@ export default function UserDetailsPage() {
         },
       }
     );
+  };
+
+  const onDelete = () => {
+    deleteUser(userIdNumber, {
+      onSuccess: () => {
+        toast.success('Utilisateur supprimé avec succès');
+        router.push('/dashboard/admin/users');
+      },
+      onError: (error: any) => {
+        toast.error(
+          error?.response?.data?.message ||
+            "Une erreur est survenue lors de la suppression de l'utilisateur"
+        );
+      },
+    });
   };
 
   if (isLoading) {
@@ -300,18 +331,53 @@ export default function UserDetailsPage() {
                 )}
               />
 
+              <Dialog>
+                <DialogTrigger className="w-full">
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    className="w-full"
+                  >
+                    <Icon icon="mdi:trash" className="h-4 w-4" />
+                    Supprimer l'utilisateur
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Êtes-vous absolument sûr ?</DialogTitle>
+                    <DialogDescription>
+                      Cette action ne peut pas être annulée. Cette action
+                      supprimera définitivement le compte de l'utilisateur et
+                      supprimera ses données de nos serveurs.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <DialogClose>
+                      <Button variant="outline">Annuler</Button>
+                    </DialogClose>
+                    <Button
+                      variant="destructive"
+                      onClick={onDelete}
+                      disabled={isDeleting}
+                    >
+                      {isDeleting ? 'Suppression...' : 'Supprimer'}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
               <div className="flex gap-4">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => router.back()}
                   className="flex-1"
-                  disabled={isPending}
+                  disabled={isUpdating}
                 >
                   Annuler
                 </Button>
-                <Button type="submit" className="flex-1" disabled={isPending}>
-                  {isPending ? 'Mise à jour...' : 'Mettre à jour'}
+                <Button type="submit" className="flex-1" disabled={isUpdating}>
+                  {isUpdating ? 'Mise à jour...' : 'Mettre à jour'}
                 </Button>
               </div>
             </form>
