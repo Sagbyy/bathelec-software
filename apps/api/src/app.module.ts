@@ -7,6 +7,7 @@ import { DerivationsModule } from './derivations/derivations.module';
 import { ConfigModule } from '@nestjs/config';
 import { CompletedDerivationModule } from './completed-derivation/completed-derivations.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UsersGroupsModule } from './users-groups/users-groups.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     UsersModule,
     DerivationsModule,
     CompletedDerivationModule,
+    UsersGroupsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
