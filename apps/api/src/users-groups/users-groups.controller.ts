@@ -19,8 +19,8 @@ import {
 import { UsersGroupsService } from './users-groups.service';
 import { CreateUsersGroupDto } from './dto/create-users-group.dto';
 import { UpdateUsersGroupDto } from './dto/update-users-group.dto';
-import { JwtAuthGuard } from 'src/jwt/jwt-auth.guard';
-import { Role } from 'src/role/role.decorator';
+import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
+import { Role } from '../role/role.decorator';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
