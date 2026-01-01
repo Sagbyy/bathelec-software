@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { CreateUsersGroupDto } from './dto/create-users-group.dto';
 import { UpdateUsersGroupDto } from './dto/update-users-group.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UsersGroupsService {
