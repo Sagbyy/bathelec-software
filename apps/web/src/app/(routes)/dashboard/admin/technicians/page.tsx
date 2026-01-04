@@ -1,3 +1,57 @@
+'use client';
+
+import { Button } from '@/components/ui/button';
+import { Icon } from '@iconify/react/dist/iconify.js';
+import { DataTable } from '@/components/dashboard/users-data-table/data-table';
+import { columns } from '@/components/dashboard/users-data-table/columns';
+import { useUsers } from '@/hooks/queries/use-user';
+
 export default function ListTechnicianPage() {
-  return <div>ListTechnicianPage</div>;
+  const { data, isLoading, error } = useUsers();
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-4 p-8">
+        <div className="flex items-center justify-center py-12">
+          <p>Chargement...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col gap-4 p-8">
+        <div className="flex items-center justify-center py-12">
+          <p className="text-destructive">
+            Erreur:{' '}
+            {error instanceof Error ? error.message : 'Une erreur est survenue'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const technicians = data?.filter((user) => user.role === 'technician') || [];
+
+  return (
+    <div className="flex flex-col gap-4 p-8">
+      <div className="flex items-center justify-between">
+        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+          Utilisateurs
+        </h2>
+        <div>
+          <Button variant="outline">
+            <Icon icon="hugeicons:csv-02" />
+            Télécharger CSV
+          </Button>
+        </div>
+      </div>
+      <DataTable columns={columns} data={technicians} />
+      <p className="text-muted-foreground text-sm">
+        <span className="font-bold">{technicians.length}</span> techniciens
+        trouvés
+      </p>
+    </div>
+  );
 }

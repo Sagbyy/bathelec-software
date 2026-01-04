@@ -60,6 +60,12 @@ const adminLinks: NavbarLink[] = [
         type: 'page',
         description: "Création d'un nouveau compte technicien",
       },
+      {
+        label: 'Groupes de techniciens',
+        href: '/dashboard/admin/technicians/group',
+        type: 'page',
+        description: 'Voir la liste des groupes de techniciens',
+      },
     ],
   },
   {

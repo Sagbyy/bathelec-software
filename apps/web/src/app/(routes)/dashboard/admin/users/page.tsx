@@ -2,8 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { DataTable } from './data-table';
-import { columns } from './columns';
+import { DataTable } from '@/components/dashboard/users-data-table/data-table';
+import { columns } from '@/components/dashboard/users-data-table/columns';
 import { useUsers } from '@/hooks/queries/use-user';
 
 export default function ListUsersPage() {
