@@ -332,7 +332,7 @@ export default function UserDetailsPage() {
               />
 
               <Dialog>
-                <DialogTrigger className="w-full">
+                <DialogTrigger asChild>
                   <Button
                     type="button"
                     variant="destructive"

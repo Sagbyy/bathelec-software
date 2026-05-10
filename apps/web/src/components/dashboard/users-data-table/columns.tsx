@@ -176,19 +176,19 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'edit',
     header: 'Modifier',
-    cell: ({ row }) => {
-      const router = useRouter();
-      return (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => {
-            router.push(`/dashboard/admin/users/edit/${row.original.id}`);
-          }}
-        >
-          <Icon icon="material-symbols:edit-rounded" />
-        </Button>
-      );
-    },
+    cell: ({ row }) => <EditCell userId={row.original.id} />,
   },
 ];
+
+function EditCell({ userId }: { userId: number }) {
+  const router = useRouter();
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => router.push(`/dashboard/admin/users/edit/${userId}`)}
+    >
+      <Icon icon="material-symbols:edit-rounded" />
+    </Button>
+  );
+}
