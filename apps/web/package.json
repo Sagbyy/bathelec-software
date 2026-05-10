@@ -70,6 +70,7 @@
     "zustand": "5.0.8"
   },
   "devDependencies": {
+    "@feature-sliced/steiger-plugin": "^0.5.7",
     "@iconify/react": "^5.0.2",
     "@playwright/test": "^1.59.1",
     "@repo/eslint-config": "workspace:*",
@@ -89,7 +90,9 @@
     "msw": "^2.14.5",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.8",
+    "steiger": "^0.5.11",
     "typescript": "^5",
+    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.5"
   }
 }
