@@ -35,8 +35,7 @@
     "clean": "rm -rf dist node_modules",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@repo/typescript-config": "workspace:*",

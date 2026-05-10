@@ -21,6 +21,10 @@
     "api#build": {
       "dependsOn": ["@repo/types#build"],
       "outputs": ["dist/**"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "vitest.config.ts", "src/test/**"]
     }
   }
 }
