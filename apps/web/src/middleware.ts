@@ -1,13 +1,19 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const protectedRoutes = ['/protected', '/dashboard', '/profile'];
-
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
+  const { pathname } = request.nextUrl;
 
-  if (!token && protectedRoutes.includes(request.nextUrl.pathname)) {
-    return NextResponse.redirect(new URL('/auth', request.url));
+  const isProtected =
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/protected') ||
+    pathname.startsWith('/profile');
+
+  if (!token && isProtected) {
+    const loginUrl = new URL('/auth', request.url);
+    loginUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();
