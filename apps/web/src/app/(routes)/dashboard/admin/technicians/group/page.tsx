@@ -49,7 +49,9 @@ import { toast } from 'sonner';
 import {
   CreateUserGroupDto,
   UpdateUserGroupDto,
+  UserGroupWithUsers,
 } from '@/services/users-groups-service';
+import { getApiErrorMessage } from '@/types/api-error';
 
 export default function TechniciansGroupPage() {
   const { data: groups, isLoading, error } = useUsersGroupsWithUsers();
@@ -89,10 +91,9 @@ export default function TechniciansGroupPage() {
         setCreateDialogOpen(false);
         setFormData({ name: '', description: '' });
       },
-      onError: (error: any) => {
+      onError: (error: Error) => {
         toast.error(
-          error?.response?.data?.message ||
-            'Erreur lors de la création du groupe'
+          getApiErrorMessage(error) || 'Erreur lors de la création du groupe'
         );
       },
     });
@@ -112,17 +113,16 @@ export default function TechniciansGroupPage() {
         onSuccess: () => {
           toast.success('Groupe modifié avec succès');
         },
-        onError: (error: any) => {
+        onError: (error: Error) => {
           toast.error(
-            error?.response?.data?.message ||
-              'Erreur lors de la modification du groupe'
+            getApiErrorMessage(error) || 'Erreur lors de la modification du groupe'
           );
         },
       }
     );
   };
 
-  const handleDeleteGroup = (group: any) => {
+  const handleDeleteGroup = (group: UserGroupWithUsers) => {
     setGroupToDelete({ id: group.id, name: group.name });
     setDeleteGroupDialogOpen(true);
   };
@@ -136,16 +136,15 @@ export default function TechniciansGroupPage() {
         setDeleteGroupDialogOpen(false);
         setGroupToDelete(null);
       },
-      onError: (error: any) => {
+      onError: (error: Error) => {
         toast.error(
-          error?.response?.data?.message ||
-            'Erreur lors de la suppression du groupe'
+          getApiErrorMessage(error) || 'Erreur lors de la suppression du groupe'
         );
       },
     });
   };
 
-  const handleManageGroup = (group: any) => {
+  const handleManageGroup = (group: UserGroupWithUsers) => {
     setSelectedGroup(group.id);
     setFormData({
       name: group.name,
@@ -175,10 +174,9 @@ export default function TechniciansGroupPage() {
           setSearchOpen(false);
           setSearchQuery('');
         },
-        onError: (error: any) => {
+        onError: (error: Error) => {
           toast.error(
-            error?.response?.data?.message ||
-              "Erreur lors de l'ajout du technicien"
+            getApiErrorMessage(error) || "Erreur lors de l'ajout du technicien"
           );
         },
       }
@@ -199,11 +197,10 @@ export default function TechniciansGroupPage() {
         onSuccess: () => {
           toast.success('Technicien retiré du groupe');
         },
-        onError: (error: any) => {
+        onError: (error: Error) => {
           console.error('Error removing user:', error);
           toast.error(
-            error?.response?.data?.message ||
-              'Erreur lors du retrait du technicien'
+            getApiErrorMessage(error) || 'Erreur lors du retrait du technicien'
           );
         },
       }

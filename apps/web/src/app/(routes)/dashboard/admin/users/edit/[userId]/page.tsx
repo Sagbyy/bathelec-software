@@ -37,6 +37,7 @@ import {
 import { toast } from 'sonner';
 import clsx from 'clsx';
 import { Icon } from '@iconify/react/dist/iconify.js';
+import { getApiErrorMessage } from '@/types/api-error';
 
 const updateUserSchema = z.object({
   firstName: z
@@ -113,9 +114,9 @@ export default function UserDetailsPage() {
           toast.success('Utilisateur mis à jour avec succès');
           router.push('/dashboard/admin/users');
         },
-        onError: (error: any) => {
+        onError: (error: Error) => {
           toast.error(
-            error?.response?.data?.message ||
+            getApiErrorMessage(error) ||
               "Une erreur est survenue lors de la mise à jour de l'utilisateur"
           );
         },
@@ -129,9 +130,9 @@ export default function UserDetailsPage() {
         toast.success('Utilisateur supprimé avec succès');
         router.push('/dashboard/admin/users');
       },
-      onError: (error: any) => {
+      onError: (error: Error) => {
         toast.error(
-          error?.response?.data?.message ||
+          getApiErrorMessage(error) ||
             "Une erreur est survenue lors de la suppression de l'utilisateur"
         );
       },

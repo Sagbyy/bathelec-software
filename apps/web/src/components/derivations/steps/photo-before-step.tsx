@@ -26,7 +26,10 @@ export function PhotoBeforeStep({ form }: PhotoBeforeStepProps) {
   const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
   useEffect(() => {
-    setPreviewUrl(form.getValues('photoBeforeWork.photo'));
+    const photo = form.getValues('photoBeforeWork.photo');
+    if (typeof photo === 'string' || photo === null) {
+      setPreviewUrl(photo);
+    }
   }, [form]);
 
   const handleFileChange = (
@@ -38,8 +41,9 @@ export function PhotoBeforeStep({ form }: PhotoBeforeStepProps) {
       onChange(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-        form.setValue('photoBeforeWork.photo', reader.result);
+        const dataUrl = reader.result as string;
+        setPreviewUrl(dataUrl);
+        form.setValue('photoBeforeWork.photo', dataUrl);
       };
       reader.readAsDataURL(file);
     }

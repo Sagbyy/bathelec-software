@@ -12,6 +12,7 @@ import {
   useReactTable,
   FilterFn,
   VisibilityState,
+  Row,
 } from '@tanstack/react-table';
 
 import {
@@ -38,7 +39,11 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-const globalFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
+const globalFilterFn = <TData,>(
+  row: Row<TData>,
+  _columnId: string,
+  filterValue: unknown
+): boolean => {
   const searchValue = String(filterValue).toLowerCase();
 
   const searchableColumns = [
@@ -49,12 +54,12 @@ const globalFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
     'lastName',
   ];
 
-  return searchableColumns.some((col) => {
-    const cellValue = row.original[col];
-    if (cellValue == null) return false;
+  const original = row.original as Record<string, unknown>;
 
-    const stringValue = String(cellValue).toLowerCase();
-    return stringValue.includes(searchValue);
+  return searchableColumns.some((col) => {
+    const cellValue = original[col];
+    if (cellValue == null) return false;
+    return String(cellValue).toLowerCase().includes(searchValue);
   });
 };
 

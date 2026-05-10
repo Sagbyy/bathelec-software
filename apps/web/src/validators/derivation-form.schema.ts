@@ -1,6 +1,15 @@
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { z } from 'zod';
 
+type PhotoValue = File | Blob | string | null;
+
+photoBeforeWork: z.object({
+  photo: z
+    .union([z.instanceof(File), z.instanceof(Blob), z.string()])
+    .nullable()
+    .refine((val) => val !== null, 'La photo est requise'),
+});
+
 export const createCompletedDerivationSchema = z.object({
   clientInfo: z.object({
     name: z.string().min(2, { message: 'Le nom est requis' }),
@@ -31,8 +40,9 @@ export const createCompletedDerivationSchema = z.object({
 
   photoBeforeWork: z.object({
     photo: z
-      .any()
-      .refine((val) => val !== null, { message: 'La photo est requise' }),
+      .union([z.instanceof(File), z.instanceof(Blob), z.string()])
+      .nullable()
+      .refine((val) => val !== null, 'La photo est requise'),
   }),
 
   oldMeter: z

@@ -8,18 +8,18 @@ export interface UserGroup {
   updatedAt: string;
 }
 
+export interface GroupMember {
+  id: number;
+  email: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  createdAt: string;
+}
+
 export interface UserGroupWithUsers extends UserGroup {
-  groupMemberships: Array<{
-    user: {
-      id: number;
-      email: string;
-      username: string;
-      firstName: string;
-      lastName: string;
-      role: string;
-      createdAt: string;
-    };
-  }>;
+  groupMemberships: Array<{ user: GroupMember }>;
 }
 
 export interface CreateUserGroupDto {
@@ -58,7 +58,7 @@ export const usersGroupsService = {
   },
 
   getUsersInGroup: async (groupId: number) => {
-    const { data } = await apiClient.get<any[]>(
+    const { data } = await apiClient.get<GroupMember[]>(
       `/users-groups/${groupId}/users`
     );
     return data;

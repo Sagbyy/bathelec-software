@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, type DefaultValues } from 'react-hook-form';
 import { Form } from '@/components/ui/form';
 import { Card, CardContent } from '@/components/ui/card';
 import { ClientInfoStep } from './steps/client-info-step';
@@ -67,9 +67,9 @@ export function MultiStepForm({
     }
   }, [derivation.status, setIsNotEditable, readOnly]);
 
-  const form = useForm<CreateCompletedDerivation>({
+  const form = useForm<CreateCompletedDerivation, unknown, CreateCompletedDerivation>({
     resolver: zodResolver(createCompletedDerivationSchema),
-    defaultValues: DEFAULT_FORM_VALUES,
+    defaultValues: DEFAULT_FORM_VALUES as unknown as DefaultValues<CreateCompletedDerivation>,
     mode: 'onChange',
   });
 

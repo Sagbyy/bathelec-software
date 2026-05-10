@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { UseFormReturn } from 'react-hook-form';
+import { Path, UseFormReturn } from 'react-hook-form';
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 import { STEP_FIELDS_TO_VALIDATE, TOTAL_STEPS } from '../constants/derivations';
 
@@ -92,7 +92,9 @@ export const useFormSteps = ({
     }
 
     const fieldsToValidate = getFieldsToValidate(getActualStep(step));
-    const result = await form.trigger(fieldsToValidate as any);
+    const result = await form.trigger(
+      fieldsToValidate as Path<CreateCompletedDerivation>[]
+    );
 
     if (result) {
       if (step < totalSteps) {
