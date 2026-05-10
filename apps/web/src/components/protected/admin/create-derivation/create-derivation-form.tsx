@@ -29,26 +29,18 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import clsx from 'clsx';
-import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { Technician } from '@repo/types';
-import Cookies from 'js-cookie';
 import { toast } from 'sonner';
+import apiClient from '@/services/apiClient';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { formSchema } from '@/validators/create-derivation.schema';
 import { useUserStore } from '@/hooks/useUserStore';
 
 const fetchTechnicians = async () => {
-  const response = await axios
-    .get(`${process.env.NEXT_PUBLIC_API_URL}/users/technicians`, {
-      headers: {
-        Authorization: `Bearer ${Cookies.get('token')}`,
-      },
-    })
-    .then((res) => res.data);
-
-  return response;
+  const response = await apiClient.get('/users/technicians');
+  return response.data;
 };
 
 export default function CreateDerivationForm() {
@@ -100,22 +92,13 @@ export default function CreateDerivationForm() {
     }
 
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/derivations`,
-        {
-          userId,
-          address: data.address,
-          postalCode: data.postalCode ? Number(data.postalCode) : null,
-          city: data.city,
-          isBlank: data.isBlank,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${Cookies.get('token')}`,
-          },
-        }
-      );
+      const response = await apiClient.post('/derivations', {
+        userId,
+        address: data.address,
+        postalCode: data.postalCode ? Number(data.postalCode) : null,
+        city: data.city,
+        isBlank: data.isBlank,
+      });
 
       if (response.status !== 201) {
         throw new Error('Erreur lors de la création de la dérivation');

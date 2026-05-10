@@ -16,9 +16,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  if (token && pathname === '/auth') {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/protected/:path*', '/dashboard/:path*', '/profile/:path*'],
+  matcher: ['/protected/:path*', '/dashboard/:path*', '/profile/:path*', '/auth'],
 };

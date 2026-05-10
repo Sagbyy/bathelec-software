@@ -1,12 +1,13 @@
 'use client';
 
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import apiClient from '../services/apiClient';
 
 const useAuth = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
@@ -14,28 +15,18 @@ const useAuth = () => {
     setError(false);
     setLoading(true);
     try {
-      let response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-        {
-          username,
-          password,
-        }
-      );
-
-      const { accessToken } = response.data;
-
-      Cookies.set('token', accessToken);
-
+      await apiClient.post('/auth/login', { username, password });
       router.push('/dashboard');
-    } catch (error) {
+    } catch {
       setError(true);
       setLoading(false);
-      console.log('Here error: ', error);
     }
   };
 
   const logout = async () => {
-    Cookies.remove('token');
+    setLoading(true);
+    await apiClient.post('/auth/logout');
+    queryClient.clear();
     router.push('/auth');
   };
 

@@ -9,11 +9,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
 import clsx from 'clsx';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import Cookies from 'js-cookie';
+import apiClient from '@/services/apiClient';
 
 export default function RegisterTechnicianForm() {
 
@@ -57,16 +56,7 @@ export default function RegisterTechnicianForm() {
 
   const onSubmit = async (data: z.infer<typeof registerTechnicianSchema>) => {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
-        data,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${Cookies.get('token')}`,
-          },
-        }
-      );
+      const response = await apiClient.post('/auth/register', data);
 
       if (response.status !== 201) {
         throw new Error('Erreur lors de la création du technicien');

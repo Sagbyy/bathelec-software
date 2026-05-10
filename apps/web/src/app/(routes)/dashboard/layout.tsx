@@ -1,25 +1,15 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { ReactNode, useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
 import { User } from '@repo/types';
 import { useUserStore } from '@/hooks/useUserStore';
-import getUsernameByToken from '@/lib/decodeJwt';
 import { Navbar } from '@/components/protected/navbar';
 import { usePathname, useRouter } from 'next/navigation';
+import apiClient from '@/services/apiClient';
 
 const fetchUserData = async (): Promise<User> => {
-  const response = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/users/informations`,
-    {
-      headers: {
-        Authorization: `Bearer ${Cookies.get('token')}`,
-      },
-    }
-  );
-
+  const response = await apiClient.get('/users/informations');
   return response.data;
 };
 
@@ -40,8 +30,8 @@ export default function LayoutProtected({ children }: { children: ReactNode }) {
     error,
   } = useQuery<User>({
     queryFn: fetchUserData,
-    queryKey: ['user', getUsernameByToken(Cookies.get('token'))],
-    enabled: !!Cookies.get('token') && isClient,
+    queryKey: ['user'],
+    enabled: isClient,
   });
 
   useEffect(() => {

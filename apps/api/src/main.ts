@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConsoleLogger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
@@ -12,6 +13,7 @@ async function bootstrap() {
     }),
   });
 
+  app.use(cookieParser());
   app.useBodyParser('json', { limit: '100mb' });
 
   const config = new DocumentBuilder()
