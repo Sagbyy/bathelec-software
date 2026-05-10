@@ -10,6 +10,11 @@ export interface UpdateUserData {
 }
 
 export const userService = {
+  getCurrentUser: async () => {
+    const { data } = await apiClient.get<User>('/users/informations');
+    return data;
+  },
+
   getAllUsers: async () => {
     const { data } = await apiClient.get<User[]>(`/users`);
     return data;

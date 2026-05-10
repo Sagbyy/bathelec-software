@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Path, UseFormReturn } from 'react-hook-form';
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
-import { STEP_FIELDS_TO_VALIDATE, TOTAL_STEPS } from '../constants/derivations';
+import { STEP_FIELDS_TO_VALIDATE, TOTAL_STEPS } from '../constants/derivation-step-fields';
 
 type UseFormStepsProps = {
   form: UseFormReturn<CreateCompletedDerivation>;

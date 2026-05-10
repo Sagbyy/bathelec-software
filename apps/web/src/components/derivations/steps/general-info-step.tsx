@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { LabeledField } from '@/components/shared/labeled-field';
 import {
   Select,
   SelectContent,
@@ -149,118 +150,85 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
       <div className="space-y-4">
         <div className="font-medium">Adresse du chantier</div>
 
-        <FormField
+        <LabeledField
           control={form.control}
           name="generalInfo.address.street"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                N° et Rue<span className="ml-1 text-red-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  disabled={isCompleted || isStaticAddress}
-                  value={isStaticAddress ? derivation.address : field.value}
-                  onChange={(e) => {
-                    field.onChange(e.target.value.toUpperCase());
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          label="N° et Rue"
+          required
+        >
+          {(field) => (
+            <Input
+              {...field}
+              disabled={isCompleted || isStaticAddress}
+              value={isStaticAddress ? derivation.address : field.value}
+              onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+            />
           )}
-        />
+        </LabeledField>
 
-        <FormField
+        <LabeledField
           control={form.control}
           name="generalInfo.address.postalCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Code Postal<span className="ml-1 text-red-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  disabled={isCompleted || isStaticAddress}
-                  value={isStaticAddress ? derivation.postalCode : field.value}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          label="Code Postal"
+          required
+        >
+          {(field) => (
+            <Input
+              {...field}
+              disabled={isCompleted || isStaticAddress}
+              value={isStaticAddress ? derivation.postalCode : field.value}
+            />
           )}
-        />
+        </LabeledField>
 
-        <FormField
+        <LabeledField
           control={form.control}
           name="generalInfo.address.city"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Ville<span className="ml-1 text-red-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  disabled={isCompleted || isStaticAddress}
-                  value={isStaticAddress ? derivation.city : field.value}
-                  onChange={(e) => {
-                    field.onChange(e.target.value.toUpperCase());
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          label="Ville"
+          required
+        >
+          {(field) => (
+            <Input
+              {...field}
+              disabled={isCompleted || isStaticAddress}
+              value={isStaticAddress ? derivation.city : field.value}
+              onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+            />
           )}
-        />
+        </LabeledField>
       </div>
 
-      <FormField
+      <LabeledField
         control={form.control}
         name="generalInfo.building"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>
-              Bâtiment<span className="ml-1 text-red-500">*</span>
-            </FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Ex: A - B / Rue - Cour"
-                {...field}
-                disabled={isCompleted}
-                onChange={(e) => {
-                  field.onChange(e.target.value.toUpperCase());
-                }}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+        label="Bâtiment"
+        required
+      >
+        {(field) => (
+          <Input
+            placeholder="Ex: A - B / Rue - Cour"
+            {...field}
+            disabled={isCompleted}
+            onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+          />
         )}
-      />
+      </LabeledField>
 
-      <FormField
+      <LabeledField
         control={form.control}
         name="generalInfo.cmIdentification"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>
-              Identification CM<span className="ml-1 text-red-500">*</span>
-            </FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Ex: 1D001 - 1C101 - 2C101"
-                {...field}
-                disabled={isCompleted}
-                onChange={(e) => {
-                  field.onChange(e.target.value.toUpperCase());
-                }}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+        label="Identification CM"
+        required
+      >
+        {(field) => (
+          <Input
+            placeholder="Ex: 1D001 - 1C101 - 2C101"
+            {...field}
+            disabled={isCompleted}
+            onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+          />
         )}
-      />
+      </LabeledField>
 
       <FormField
         control={form.control}
@@ -357,24 +325,16 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
         )}
       />
 
-      <FormField
-        control={form.control}
-        name="generalInfo.comment"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Commentaire</FormLabel>
-            <FormControl>
-              <Textarea
-                placeholder="Commentaires additionnels..."
-                className="resize-none"
-                {...field}
-                disabled={isCompleted}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+      <LabeledField control={form.control} name="generalInfo.comment" label="Commentaire">
+        {(field) => (
+          <Textarea
+            placeholder="Commentaires additionnels..."
+            className="resize-none"
+            {...field}
+            disabled={isCompleted}
+          />
         )}
-      />
+      </LabeledField>
     </div>
   );
 }

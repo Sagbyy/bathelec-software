@@ -15,14 +15,10 @@ import { CircuitBreakerStep } from './steps/circuit-breaker-step';
 import { PhotoAfterStep } from './steps/photo-after-step';
 import { ClientValidationStep } from './steps/client-validation-step';
 import { createCompletedDerivationSchema } from '@/validators/derivation-form.schema';
-import {
-  useCompletedDerivations,
-  useCompletedDerivationsById,
-} from '@/hooks/queries/use-completed-derivations';
+import { useCompletedDerivationsById } from '@/hooks/queries/use-completed-derivations';
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { DEFAULT_FORM_VALUES } from '../../constants/derivations';
+import { useDerivationSubmit } from '@/hooks/use-derivation-submit';
+import { DEFAULT_FORM_VALUES } from '../../constants/derivation-form.defaults';
 import { formatCompletedDerivation } from './utils/form-data-formatter';
 import { useFormSteps } from '../../hooks/use-form-steps';
 import { FormHeader } from './form-parts/form-header';
@@ -39,16 +35,11 @@ export function MultiStepForm({
   derivation,
   readOnly = false,
 }: MultiStepFormProps) {
-  const {
-    mutate: createCompletedDerivation,
-    status: createCompletedDerivationStatus,
-    error,
-  } = useCompletedDerivations();
+  const { submit } = useDerivationSubmit(derivation.id);
   const { data: completedDerivation } = useCompletedDerivationsById(
     derivation.id
   );
   const { setIsNotEditable } = useDerivationStatusStore();
-  const router = useRouter();
 
   useEffect(() => {
     if (readOnly) {
@@ -79,34 +70,10 @@ export function MultiStepForm({
     }
   }, [completedDerivation, form]);
 
-  const onSubmit = useCallback(
-    (data: CreateCompletedDerivation) => {
-      createCompletedDerivation({
-        ...data,
-        requestedDerivationId: derivation.id,
-      });
-    },
-    [createCompletedDerivation, derivation.id]
-  );
-
-  useEffect(() => {
-    if (createCompletedDerivationStatus === 'success') {
-      toast.success('Formulaire soumis avec succès !');
-
-      router.push('/dashboard/technician/derivations/complete');
-    }
-
-    if (createCompletedDerivationStatus === 'error') {
-      toast.error(
-        `Une erreur est survenue lors de la soumission du formulaire. ${error?.message}`
-      );
-    }
-  }, [createCompletedDerivationStatus, error]);
-
   const { step, totalSteps, progress, nextStep, prevStep, getActualStep } =
     useFormSteps({
       form,
-      onSubmit,
+      onSubmit: submit,
       readOnly,
     });
 

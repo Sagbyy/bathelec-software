@@ -96,19 +96,13 @@ describe('MultiStepForm — intégration', () => {
     const user = userEvent.setup();
     renderForm();
 
-    await user.type(
-      screen.getByPlaceholderText('Ex: M. Dupont'),
-      'M. DUPONT'
-    );
+    await user.type(screen.getByPlaceholderText('Ex: M. Dupont'), 'M. DUPONT');
 
     await user.type(screen.getByTestId('phone-input'), '+33612345678');
 
-    await user.type(
-      screen.getByPlaceholderText(/SGX001/),
-      'SGX001'
-    );
+    await user.type(screen.getByPlaceholderText(/SGX001/), 'SGX001');
 
-    await user.click(screen.getAllByRole('button', { name: /Suivant/i })[0]);
+    await user.click(screen.getAllByRole('button', { name: /Suivant/i })[0]!);
 
     await waitFor(() => {
       expect(screen.getByText(/Étape 2 sur/)).toBeInTheDocument();
@@ -119,7 +113,7 @@ describe('MultiStepForm — intégration', () => {
     const user = userEvent.setup();
     renderForm();
 
-    await user.click(screen.getAllByRole('button', { name: /Suivant/i })[0]);
+    await user.click(screen.getAllByRole('button', { name: /Suivant/i })[0]!);
 
     await waitFor(() => {
       expect(screen.getByText(/Étape 1 sur/)).toBeInTheDocument();

@@ -12,6 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { LabeledField } from '@/components/shared/labeled-field';
 import {
   Select,
   SelectContent,
@@ -171,77 +172,45 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
         )}
       </div>
 
-      <FormField
-        control={form.control}
-        name="oldMeter.serialNumber"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Matricule</FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Les 3 derniers chiffres du dernier groupe de 5 numéros"
-                {...field}
-                disabled={isCompleted}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+      <LabeledField control={form.control} name="oldMeter.serialNumber" label="Matricule">
+        {(field) => (
+          <Input
+            placeholder="Les 3 derniers chiffres du dernier groupe de 5 numéros"
+            {...field}
+            disabled={isCompleted}
+          />
         )}
-      />
+      </LabeledField>
 
-      <FormField
-        control={form.control}
-        name="oldMeter.key"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Clé</FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Ex: 2 chiffres"
-                {...field}
-                disabled={isCompleted}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+      <LabeledField control={form.control} name="oldMeter.key" label="Clé">
+        {(field) => (
+          <Input
+            placeholder="Ex: 2 chiffres"
+            {...field}
+            disabled={isCompleted}
+          />
         )}
-      />
+      </LabeledField>
 
-      <FormField
-        control={form.control}
-        name="oldMeter.dayIndex"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Index jour - HP</FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Index à relever pour tous type de contrat"
-                {...field}
-                disabled={isCompleted}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+      <LabeledField control={form.control} name="oldMeter.dayIndex" label="Index jour - HP">
+        {(field) => (
+          <Input
+            placeholder="Index à relever pour tous type de contrat"
+            {...field}
+            disabled={isCompleted}
+          />
         )}
-      />
+      </LabeledField>
 
-      <FormField
-        control={form.control}
-        name="oldMeter.nightIndex"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Index nuit - HC</FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Si le client a souscrit un contrat double tarif"
-                {...field}
-                disabled={isCompleted}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+      <LabeledField control={form.control} name="oldMeter.nightIndex" label="Index nuit - HC">
+        {(field) => (
+          <Input
+            placeholder="Si le client a souscrit un contrat double tarif"
+            {...field}
+            disabled={isCompleted}
+          />
         )}
-      />
+      </LabeledField>
 
       <FormField
         control={form.control}
