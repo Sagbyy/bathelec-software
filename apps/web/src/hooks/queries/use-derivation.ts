@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { derivationService } from '@/services/derivationService';
+import { derivationService } from '@/services/derivation.service';
 import { Derivation } from '@repo/types';
 
 export const useDerivationByUser = (userId: number) => {

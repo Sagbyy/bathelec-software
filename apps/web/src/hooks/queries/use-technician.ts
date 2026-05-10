@@ -1,4 +1,4 @@
-import { technicianService } from '@/services/technicianService';
+import { technicianService } from '@/services/technician.service';
 import { Technician } from '@repo/types';
 import { useQuery } from '@tanstack/react-query';
 

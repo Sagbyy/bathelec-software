@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useUserStore } from '@/hooks/useUserStore';
+import { useUserStore } from '@/hooks/use-user-store';
 import { LockKeyhole } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';

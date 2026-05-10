@@ -1,5 +1,5 @@
 import { Derivation } from '@repo/types';
-import apiClient from './apiClient';
+import apiClient from './api-client';
 import { UpdateDerivation } from '@/types/update-derivation.types';
 
 export const derivationService = {

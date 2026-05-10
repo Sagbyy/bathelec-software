@@ -1,4 +1,4 @@
-import apiClient from './apiClient';
+import apiClient from './api-client';
 import { User } from '@repo/types';
 
 export interface UpdateUserData {

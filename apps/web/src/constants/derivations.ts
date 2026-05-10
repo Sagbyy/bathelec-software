@@ -1,6 +1,8 @@
 import { CircuitBreakerType, DerivationStatus, VoltageType } from '@repo/types';
 import { DerivationStatusConfig } from '@/types/derivations.type';
 
+export const TOTAL_STEPS = 9;
+
 export const derivationStatusConfig: Record<
   DerivationStatus,
   DerivationStatusConfig

@@ -1,4 +1,4 @@
-import { changePasswordService } from '@/services/changePasswordService';
+import { changePasswordService } from '@/services/change-password.service';
 import { ChangePassword } from '@/types/change-password.types';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 

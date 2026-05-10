@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import apiClient from '../services/apiClient';
+import apiClient from '../services/api-client';
 
 const useAuth = () => {
   const router = useRouter();

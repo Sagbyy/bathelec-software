@@ -1,5 +1,5 @@
 import { ChangePassword } from '@/types/change-password.types';
-import apiClient from './apiClient';
+import apiClient from './api-client';
 
 export const changePasswordService = {
   changePassword: async (currentPassword: string, newPassword: string) => {

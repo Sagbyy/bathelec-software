@@ -12,10 +12,10 @@ import {
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useUserStore } from '@/hooks/useUserStore';
+import { useUserStore } from '@/hooks/use-user-store';
 import React, { useState } from 'react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import useAuth from '@/hooks/useAuth';
+import useAuth from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { DropdownMenuProfile } from './drop-down-profile';
 import {

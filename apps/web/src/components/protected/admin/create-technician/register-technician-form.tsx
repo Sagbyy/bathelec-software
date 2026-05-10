@@ -12,10 +12,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import clsx from 'clsx';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import apiClient from '@/services/apiClient';
+import apiClient from '@/services/api-client';
 
 export default function RegisterTechnicianForm() {
-
   const registerTechnicianSchema = z
     .object({
       firstName: z
@@ -187,7 +186,7 @@ export default function RegisterTechnicianForm() {
             </FormItem>
           )}
         />
-        <div className="flex items-center justify-center flex-col gap-5 lg:flex-row">
+        <div className="flex flex-col items-center justify-center gap-5 lg:flex-row">
           <FormField
             control={form.control}
             name="password"

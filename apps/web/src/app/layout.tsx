@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import QueryProvider from '@/contexts/QueryProvider';
+import QueryProvider from '@/contexts/query-provider';
 import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {

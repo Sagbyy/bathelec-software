@@ -1,5 +1,5 @@
 import { CompletedDerivation } from '@repo/types';
-import apiClient from './apiClient';
+import apiClient from './api-client';
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
 
 export const completedDerivationsService = {

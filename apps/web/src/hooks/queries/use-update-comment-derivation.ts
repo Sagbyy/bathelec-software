@@ -1,4 +1,4 @@
-import { derivationService } from '@/services/derivationService';
+import { derivationService } from '@/services/derivation.service';
 import { UpdateDerivation } from '@/types/update-derivation.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';

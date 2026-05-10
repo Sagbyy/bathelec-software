@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { CreateCompletedDerivation } from '@/types/completed-derivation.types';
-import { STEP_FIELDS_TO_VALIDATE } from '../constants/derivations';
+import { STEP_FIELDS_TO_VALIDATE, TOTAL_STEPS } from '../constants/derivations';
 
 type UseFormStepsProps = {
   form: UseFormReturn<CreateCompletedDerivation>;
@@ -9,9 +9,13 @@ type UseFormStepsProps = {
   readOnly?: boolean;
 };
 
-export const useFormSteps = ({ form, onSubmit, readOnly = false }: UseFormStepsProps) => {
+export const useFormSteps = ({
+  form,
+  onSubmit,
+  readOnly = false,
+}: UseFormStepsProps) => {
   const [step, setStep] = useState(1);
-  const [totalSteps, setTotalSteps] = useState(9);
+  const [totalSteps, setTotalSteps] = useState(TOTAL_STEPS);
 
   const oldMeterPreserved = form.watch('oldMeter.preserved');
   const clientPresent = form.watch('clientValidation.present');
@@ -61,7 +65,7 @@ export const useFormSteps = ({ form, onSubmit, readOnly = false }: UseFormStepsP
       }
 
       if (
-        currentStep === 9 &&
+        currentStep === TOTAL_STEPS &&
         stepConfig &&
         typeof stepConfig === 'object' &&
         'present' in stepConfig

@@ -1,7 +1,7 @@
 'use client';
 
 import { useDerivationByUser } from '@/hooks/queries/use-derivation';
-import { useUserStore } from '@/hooks/useUserStore';
+import { useUserStore } from '@/hooks/use-user-store';
 import { DataTable } from './data-table';
 import { columns } from './columns';
 
@@ -27,7 +27,7 @@ export default function CompleteDerivationPage() {
         Liste des relevés de dérivation
       </h1>
       <DataTable columns={columns} data={completeToDerivations ?? []} />
-      <p className="text-muted-foreground text-sm mt-4">
+      <p className="text-muted-foreground mt-4 text-sm">
         <span className="font-bold">{completeToDerivations?.length ?? 0}</span>{' '}
         relevés de dérivation trouvés
       </p>

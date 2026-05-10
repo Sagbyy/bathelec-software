@@ -5,7 +5,7 @@ import {
   UpdateUserGroupDto,
   UserGroup,
   UserGroupWithUsers,
-} from '@/services/usersGroupsService';
+} from '@/services/users-groups-service';
 
 export const useUsersGroups = () => {
   const { data, isLoading, error } = useQuery<UserGroup[]>({
@@ -106,13 +106,8 @@ export const useAddUserToGroup = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      groupId,
-      userId,
-    }: {
-      groupId: number;
-      userId: number;
-    }) => usersGroupsService.addUserToGroup(groupId, userId),
+    mutationFn: ({ groupId, userId }: { groupId: number; userId: number }) =>
+      usersGroupsService.addUserToGroup(groupId, userId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['users-groups-with-users'],
@@ -131,13 +126,8 @@ export const useRemoveUserFromGroup = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      groupId,
-      userId,
-    }: {
-      groupId: number;
-      userId: number;
-    }) => usersGroupsService.removeUserFromGroup(groupId, userId),
+    mutationFn: ({ groupId, userId }: { groupId: number; userId: number }) =>
+      usersGroupsService.removeUserFromGroup(groupId, userId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['users-groups-with-users'],
@@ -151,4 +141,3 @@ export const useRemoveUserFromGroup = () => {
     },
   });
 };
-

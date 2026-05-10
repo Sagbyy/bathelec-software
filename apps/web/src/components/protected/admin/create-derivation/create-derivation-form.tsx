@@ -32,11 +32,11 @@ import clsx from 'clsx';
 import { useQuery } from '@tanstack/react-query';
 import { Technician } from '@repo/types';
 import { toast } from 'sonner';
-import apiClient from '@/services/apiClient';
+import apiClient from '@/services/api-client';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { formSchema } from '@/validators/create-derivation.schema';
-import { useUserStore } from '@/hooks/useUserStore';
+import { useUserStore } from '@/hooks/use-user-store';
 
 const fetchTechnicians = async () => {
   const response = await apiClient.get('/users/technicians');

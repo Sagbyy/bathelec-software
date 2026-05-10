@@ -3,10 +3,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useEffect, useState } from 'react';
 import { User } from '@repo/types';
-import { useUserStore } from '@/hooks/useUserStore';
+import { useUserStore } from '@/hooks/use-user-store';
 import { Navbar } from '@/components/protected/navbar';
 import { usePathname, useRouter } from 'next/navigation';
-import apiClient from '@/services/apiClient';
+import apiClient from '@/services/api-client';
 
 const fetchUserData = async (): Promise<User> => {
   const response = await apiClient.get('/users/informations');

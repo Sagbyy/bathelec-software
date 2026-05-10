@@ -49,7 +49,7 @@ import { toast } from 'sonner';
 import {
   CreateUserGroupDto,
   UpdateUserGroupDto,
-} from '@/services/usersGroupsService';
+} from '@/services/users-groups-service';
 
 export default function TechniciansGroupPage() {
   const { data: groups, isLoading, error } = useUsersGroupsWithUsers();
