@@ -12,13 +12,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SelectItem } from '@/components/ui/select';
+import { LabeledInput } from '@/components/shared/labeled-input';
+import { LabeledSelect } from '@/components/shared/labeled-select';
 import { Button } from '@/components/ui/button';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
@@ -69,34 +65,18 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
     <div className="space-y-6">
       <div className="text-xl font-semibold">6. Nouveau compteur</div>
 
-      <FormField
+      <LabeledSelect
         control={form.control}
         name="newMeter.generation"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>
-              Génération<span className="ml-1 text-red-500">*</span>
-            </FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-              disabled={isCompleted}
-            >
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner une génération" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="g1">G1</SelectItem>
-                <SelectItem value="g2">G2</SelectItem>
-                <SelectItem value="g3">G3</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+        label="Génération"
+        placeholder="Sélectionner une génération"
+        disabled={isCompleted}
+        required
+      >
+        <SelectItem value="g1">G1</SelectItem>
+        <SelectItem value="g2">G2</SelectItem>
+        <SelectItem value="g3">G3</SelectItem>
+      </LabeledSelect>
 
       <FormField
         control={form.control}
@@ -127,42 +107,21 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
         )}
       />
 
-      <FormField
+      <LabeledInput
         control={form.control}
         name="newMeter.dayIndex"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>
-              Index jour - HP<span className="ml-1 text-red-500">*</span>
-            </FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Index à relever pour tous type de contrat"
-                {...field}
-                disabled={isCompleted}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        label="Index jour - HP"
+        placeholder="Index à relever pour tous type de contrat"
+        disabled={isCompleted}
+        required
       />
 
-      <FormField
+      <LabeledInput
         control={form.control}
         name="newMeter.nightIndex"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Index nuit - HC</FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Si le client a souscrit un contrat double tarif"
-                {...field}
-                disabled={isCompleted}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        label="Index nuit - HC"
+        placeholder="Si le client a souscrit un contrat double tarif"
+        disabled={isCompleted}
       />
 
       <FormField

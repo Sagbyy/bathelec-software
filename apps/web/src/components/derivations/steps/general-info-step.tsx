@@ -11,6 +11,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { LabeledField } from '@/components/shared/labeled-field';
+import { LabeledInput } from '@/components/shared/labeled-input';
+import { LabeledSelect } from '@/components/shared/labeled-select';
 import {
   Select,
   SelectContent,
@@ -198,82 +200,41 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
         </LabeledField>
       </div>
 
-      <LabeledField
+      <LabeledInput
         control={form.control}
         name="generalInfo.building"
         label="Bâtiment"
+        placeholder="Ex: A - B / Rue - Cour"
+        disabled={isCompleted}
         required
-      >
-        {(field) => (
-          <Input
-            placeholder="Ex: A - B / Rue - Cour"
-            {...field}
-            disabled={isCompleted}
-            onChange={(e) => field.onChange(e.target.value.toUpperCase())}
-          />
-        )}
-      </LabeledField>
+        transform={(v) => v.toUpperCase()}
+      />
 
-      <LabeledField
+      <LabeledInput
         control={form.control}
         name="generalInfo.cmIdentification"
         label="Identification CM"
+        placeholder="Ex: 1D001 - 1C101 - 2C101"
+        disabled={isCompleted}
         required
-      >
-        {(field) => (
-          <Input
-            placeholder="Ex: 1D001 - 1C101 - 2C101"
-            {...field}
-            disabled={isCompleted}
-            onChange={(e) => field.onChange(e.target.value.toUpperCase())}
-          />
-        )}
-      </LabeledField>
+        transform={(v) => v.toUpperCase()}
+      />
 
-      <FormField
+      <LabeledSelect
         control={form.control}
         name="generalInfo.floor"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Étage</FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-              disabled={isCompleted}
-            >
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un étage" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="rdc">Rez-de-chaussée</SelectItem>
-                <SelectItem value="1">1</SelectItem>
-                <SelectItem value="2">2</SelectItem>
-                <SelectItem value="3">3</SelectItem>
-                <SelectItem value="4">4</SelectItem>
-                <SelectItem value="5">5</SelectItem>
-                <SelectItem value="6">6</SelectItem>
-                <SelectItem value="7">7</SelectItem>
-                <SelectItem value="8">8</SelectItem>
-                <SelectItem value="9">9</SelectItem>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="11">11</SelectItem>
-                <SelectItem value="12">12</SelectItem>
-                <SelectItem value="13">13</SelectItem>
-                <SelectItem value="14">14</SelectItem>
-                <SelectItem value="15">15</SelectItem>
-                <SelectItem value="16">16</SelectItem>
-                <SelectItem value="17">17</SelectItem>
-                <SelectItem value="18">18</SelectItem>
-                <SelectItem value="19">19</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
+        label="Étage"
+        placeholder="Sélectionner un étage"
+        disabled={isCompleted}
+      >
+        {['rdc', ...Array.from({ length: 20 }, (_, i) => String(i + 1))].map(
+          (v) => (
+            <SelectItem key={v} value={v}>
+              {v === 'rdc' ? 'Rez-de-chaussée' : v}
+            </SelectItem>
+          )
         )}
-      />
+      </LabeledSelect>
 
       <FormField
         control={form.control}

@@ -8,14 +8,9 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SelectItem } from '@/components/ui/select';
+import { LabeledInput } from '@/components/shared/labeled-input';
+import { LabeledSelect } from '@/components/shared/labeled-select';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -101,27 +96,14 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         )}
       />
 
-      <FormField
+      <LabeledInput
         control={form.control}
         name="circuitBreaker.brand"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>
-              Marque <span className="ml-1 text-red-500">*</span>
-            </FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Ex: BACO, GE, SCHNEIDER..."
-                {...field}
-                disabled={isCompleted}
-                onChange={(e) => {
-                  field.onChange(e.target.value.toUpperCase());
-                }}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        label="Marque"
+        placeholder="Ex: BACO, GE, SCHNEIDER..."
+        disabled={isCompleted}
+        required
+        transform={(v) => v.toUpperCase()}
       />
 
       <FormField
@@ -170,42 +152,26 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         )}
       />
 
-      <FormField
+      <LabeledSelect
         control={form.control}
         name="circuitBreaker.power"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>
-              Puissance <span className="ml-1 text-red-500">*</span>
-            </FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-              disabled={isCompleted}
-            >
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner une puissance" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="10-30">10-30 A</SelectItem>
-                <SelectItem value="15-45">15-45 A</SelectItem>
-                <SelectItem value="30-60">30-60 A</SelectItem>
-                <SelectItem value="60-90">60-90 A</SelectItem>
-                <SelectItem value="10">10 A</SelectItem>
-                <SelectItem value="15">15 A</SelectItem>
-                <SelectItem value="20">20 A</SelectItem>
-                <SelectItem value="30">30 A</SelectItem>
-                <SelectItem value="40">40 A</SelectItem>
-                <SelectItem value="50">50 A</SelectItem>
-                <SelectItem value="60">60 A</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+        label="Puissance"
+        placeholder="Sélectionner une puissance"
+        disabled={isCompleted}
+        required
+      >
+        <SelectItem value="10-30">10-30 A</SelectItem>
+        <SelectItem value="15-45">15-45 A</SelectItem>
+        <SelectItem value="30-60">30-60 A</SelectItem>
+        <SelectItem value="60-90">60-90 A</SelectItem>
+        <SelectItem value="10">10 A</SelectItem>
+        <SelectItem value="15">15 A</SelectItem>
+        <SelectItem value="20">20 A</SelectItem>
+        <SelectItem value="30">30 A</SelectItem>
+        <SelectItem value="40">40 A</SelectItem>
+        <SelectItem value="50">50 A</SelectItem>
+        <SelectItem value="60">60 A</SelectItem>
+      </LabeledSelect>
 
       <FormField
         control={form.control}

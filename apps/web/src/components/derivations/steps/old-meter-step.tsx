@@ -11,15 +11,9 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { LabeledField } from '@/components/shared/labeled-field';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SelectItem } from '@/components/ui/select';
+import { LabeledInput } from '@/components/shared/labeled-input';
+import { LabeledSelect } from '@/components/shared/labeled-select';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Upload, X } from 'lucide-react';
@@ -64,70 +58,36 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
     <div className="space-y-6">
       <div className="text-xl font-semibold">4. Ancien compteur</div>
 
-      <FormField
+      <LabeledSelect
         control={form.control}
         name="oldMeter.type"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>
-              Type de compteur<span className="ml-1 text-red-500">*</span>
-            </FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-              disabled={isCompleted}
-            >
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un type" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="electromecanique">
-                  Électromécanique
-                </SelectItem>
-                <SelectItem value="cbe">CBE</SelectItem>
-                <SelectItem value="linky">Linky</SelectItem>
-                <SelectItem value="other">Autre</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+        label="Type de compteur"
+        placeholder="Sélectionner un type"
+        disabled={isCompleted}
+        required
+      >
+        <SelectItem value="electromecanique">Électromécanique</SelectItem>
+        <SelectItem value="cbe">CBE</SelectItem>
+        <SelectItem value="linky">Linky</SelectItem>
+        <SelectItem value="other">Autre</SelectItem>
+      </LabeledSelect>
 
       {oldMeterType === 'linky' && (
-        <FormField
+        <LabeledSelect
           control={form.control}
           name="oldMeter.generation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Génération<span className="ml-1 text-red-500">*</span>
-              </FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                disabled={isCompleted}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner une génération" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="other" className="uppercase">
-                    Pas de generation - Compteur SBE
-                  </SelectItem>
-                  <SelectItem value="g1">G1</SelectItem>
-                  <SelectItem value="g2">G2</SelectItem>
-                  <SelectItem value="g3">G3</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          label="Génération"
+          placeholder="Sélectionner une génération"
+          disabled={isCompleted}
+          required
+        >
+          <SelectItem value="other" className="uppercase">
+            Pas de generation - Compteur SBE
+          </SelectItem>
+          <SelectItem value="g1">G1</SelectItem>
+          <SelectItem value="g2">G2</SelectItem>
+          <SelectItem value="g3">G3</SelectItem>
+        </LabeledSelect>
       )}
 
       <div className="flex w-full flex-col gap-4 sm:flex-row">
@@ -172,45 +132,37 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
         )}
       </div>
 
-      <LabeledField control={form.control} name="oldMeter.serialNumber" label="Matricule">
-        {(field) => (
-          <Input
-            placeholder="Les 3 derniers chiffres du dernier groupe de 5 numéros"
-            {...field}
-            disabled={isCompleted}
-          />
-        )}
-      </LabeledField>
+      <LabeledInput
+        control={form.control}
+        name="oldMeter.serialNumber"
+        label="Matricule"
+        placeholder="Les 3 derniers chiffres du dernier groupe de 5 numéros"
+        disabled={isCompleted}
+      />
 
-      <LabeledField control={form.control} name="oldMeter.key" label="Clé">
-        {(field) => (
-          <Input
-            placeholder="Ex: 2 chiffres"
-            {...field}
-            disabled={isCompleted}
-          />
-        )}
-      </LabeledField>
+      <LabeledInput
+        control={form.control}
+        name="oldMeter.key"
+        label="Clé"
+        placeholder="Ex: 2 chiffres"
+        disabled={isCompleted}
+      />
 
-      <LabeledField control={form.control} name="oldMeter.dayIndex" label="Index jour - HP">
-        {(field) => (
-          <Input
-            placeholder="Index à relever pour tous type de contrat"
-            {...field}
-            disabled={isCompleted}
-          />
-        )}
-      </LabeledField>
+      <LabeledInput
+        control={form.control}
+        name="oldMeter.dayIndex"
+        label="Index jour - HP"
+        placeholder="Index à relever pour tous type de contrat"
+        disabled={isCompleted}
+      />
 
-      <LabeledField control={form.control} name="oldMeter.nightIndex" label="Index nuit - HC">
-        {(field) => (
-          <Input
-            placeholder="Si le client a souscrit un contrat double tarif"
-            {...field}
-            disabled={isCompleted}
-          />
-        )}
-      </LabeledField>
+      <LabeledInput
+        control={form.control}
+        name="oldMeter.nightIndex"
+        label="Index nuit - HC"
+        placeholder="Si le client a souscrit un contrat double tarif"
+        disabled={isCompleted}
+      />
 
       <FormField
         control={form.control}
