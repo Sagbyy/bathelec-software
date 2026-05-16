@@ -41,6 +41,47 @@ describe('middleware', () => {
 
       expect(response.status).toBe(307);
     });
+
+    it('redirects /dashboard/technician/top-chantiers to /auth', () => {
+      const response = middleware(
+        createRequest('/dashboard/technician/top-chantiers')
+      );
+
+      expect(response.status).toBe(307);
+      expect(response.headers.get('location')).toContain('/auth');
+    });
+
+    it('redirects /dashboard/technician/documents to /auth', () => {
+      const response = middleware(
+        createRequest('/dashboard/technician/documents')
+      );
+
+      expect(response.status).toBe(307);
+    });
+
+    it('redirects /dashboard/technician/habilitations to /auth', () => {
+      const response = middleware(
+        createRequest('/dashboard/technician/habilitations')
+      );
+
+      expect(response.status).toBe(307);
+    });
+
+    it('redirects /dashboard/technician/vehicule to /auth', () => {
+      const response = middleware(
+        createRequest('/dashboard/technician/vehicule')
+      );
+
+      expect(response.status).toBe(307);
+    });
+
+    it('redirects /dashboard/technician/urgences to /auth', () => {
+      const response = middleware(
+        createRequest('/dashboard/technician/urgences')
+      );
+
+      expect(response.status).toBe(307);
+    });
   });
 
   describe('protected routes with valid token', () => {
@@ -52,6 +93,46 @@ describe('middleware', () => {
 
     it('allows access to /profile', () => {
       const response = middleware(createRequest('/profile', 'valid-token'));
+
+      expect(response.headers.get('location')).toBeNull();
+    });
+
+    it('allows access to /dashboard/technician/top-chantiers with token', () => {
+      const response = middleware(
+        createRequest('/dashboard/technician/top-chantiers', 'valid-token')
+      );
+
+      expect(response.headers.get('location')).toBeNull();
+    });
+
+    it('allows access to /dashboard/technician/urgences with token', () => {
+      const response = middleware(
+        createRequest('/dashboard/technician/urgences', 'valid-token')
+      );
+
+      expect(response.headers.get('location')).toBeNull();
+    });
+
+    it('allows access to /dashboard/technician/documents with token', () => {
+      const response = middleware(
+        createRequest('/dashboard/technician/documents', 'valid-token')
+      );
+
+      expect(response.headers.get('location')).toBeNull();
+    });
+
+    it('allows access to /dashboard/technician/habilitations with token', () => {
+      const response = middleware(
+        createRequest('/dashboard/technician/habilitations', 'valid-token')
+      );
+
+      expect(response.headers.get('location')).toBeNull();
+    });
+
+    it('allows access to /dashboard/technician/vehicule with token', () => {
+      const response = middleware(
+        createRequest('/dashboard/technician/vehicule', 'valid-token')
+      );
 
       expect(response.headers.get('location')).toBeNull();
     });
