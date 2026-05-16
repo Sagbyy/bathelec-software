@@ -83,12 +83,68 @@ const adminLinks: NavbarLink[] = [
   },
 ];
 
-const technicianLinks = [
+const technicianLinks: NavbarLink[] = [
   {
-    label: 'Créez un relevé de dérivation',
-    href: '/dashboard/technician/derivations/new',
-    type: 'page',
-    description: "Création d'un nouveau relevé de dérivation",
+    label: 'Chantiers',
+    href: '#',
+    type: 'folder',
+    pages: [
+      {
+        label: 'Top Chantiers',
+        href: '/dashboard/technician/top-chantiers',
+        type: 'page',
+        description: 'Classement de vos meilleurs chantiers',
+      },
+      {
+        label: 'Chantiers en cours',
+        href: '/dashboard/technician/derivations',
+        type: 'page',
+        description: 'Vos interventions actives',
+      },
+      {
+        label: 'Chantiers terminés',
+        href: '/dashboard/technician/derivations/complete',
+        type: 'page',
+        description: 'Historique de vos chantiers terminés',
+      },
+      {
+        label: 'Nouveau relevé de dérivation',
+        href: '/dashboard/technician/derivations/new',
+        type: 'page',
+        description: "Création d'un nouveau relevé de dérivation",
+      },
+    ],
+  },
+  {
+    label: 'Mon espace',
+    href: '#',
+    type: 'folder',
+    pages: [
+      {
+        label: 'Mes documents officiels',
+        href: '/dashboard/technician/documents',
+        type: 'page',
+        description: 'Vos documents administratifs',
+      },
+      {
+        label: 'Mes habilitations',
+        href: '/dashboard/technician/habilitations',
+        type: 'page',
+        description: 'Vos habilitations électriques',
+      },
+      {
+        label: 'Mon véhicule',
+        href: '/dashboard/technician/vehicule',
+        type: 'page',
+        description: 'Informations sur votre véhicule de service',
+      },
+      {
+        label: "Numéros d'urgence",
+        href: '/dashboard/technician/urgences',
+        type: 'page',
+        description: "Contacts essentiels en cas d'urgence",
+      },
+    ],
   },
 ];
 
@@ -193,15 +249,47 @@ export function Navbar() {
             {/* Technician Links */}
             {user?.role === 'technician' &&
               technicianLinks.map((link, index) => (
-                <Link
-                  key={index}
-                  href={link.href}
-                  className="flex w-full items-center py-2 text-lg font-semibold"
-                  prefetch={false}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.label}
-                </Link>
+                <div key={index}>
+                  {link.type === 'folder' ? (
+                    <Collapsible>
+                      <CollapsibleTrigger className="group flex w-full items-center justify-between py-2 text-lg font-semibold">
+                        <span>{link.label}</span>
+                        <ChevronDown className="h-4 w-4 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down space-y-2 overflow-hidden transition-all duration-300 ease-in-out">
+                        <div className="ml-4 space-y-2 border-l pl-4">
+                          {link.pages?.map((page, pageIndex) => (
+                            <Link
+                              key={pageIndex}
+                              href={page.href}
+                              className="hover:text-primary flex w-full items-center py-2 text-base"
+                              prefetch={false}
+                              onClick={() => setIsOpen(false)}
+                            >
+                              <div className="flex flex-col">
+                                <p>{page.label}</p>
+                                {page.description && (
+                                  <span className="text-muted-foreground text-sm">
+                                    {page.description}
+                                  </span>
+                                )}
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="flex w-full items-center py-2 text-lg font-semibold"
+                      prefetch={false}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  )}
+                </div>
               ))}
 
             <Button
@@ -277,15 +365,34 @@ export function Navbar() {
           {user?.role === 'technician' &&
             technicianLinks.map((link, index) => (
               <NavigationMenuItem key={index}>
-                <NavigationMenuLink asChild>
-                  <Link
-                    href={link.href}
-                    className={navigationMenuTriggerStyle()}
-                    prefetch={false}
-                  >
-                    {link.label}
-                  </Link>
-                </NavigationMenuLink>
+                {link.type === 'folder' ? (
+                  <>
+                    <NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] list-none gap-3 p-4">
+                        {link.pages?.map((page, pageIndex) => (
+                          <ListItem
+                            key={pageIndex}
+                            href={page.href}
+                            title={page.label}
+                          >
+                            {page.description && page.description}
+                          </ListItem>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </>
+                ) : (
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href={link.href}
+                      className={navigationMenuTriggerStyle()}
+                      prefetch={false}
+                    >
+                      {link.label}
+                    </Link>
+                  </NavigationMenuLink>
+                )}
               </NavigationMenuItem>
             ))}
         </NavigationMenuList>

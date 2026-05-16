@@ -1,5 +1,5 @@
-import CompleteDerivationPage from './technician/derivations/complete/completed-derivation-page';
+import { TechnicianHome } from '@/widgets/technician-home';
 
 export default function TechnicianPage() {
-  return <CompleteDerivationPage />;
+  return <TechnicianHome />;
 }

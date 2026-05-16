@@ -7,15 +7,7 @@ export default defineConfig([
   {
     ignores: [
       'src/app/**',
-      'src/components/**',
-      'src/constants/**',
-      'src/contexts/**',
-      'src/hooks/**',
-      'src/lib/**',
-      'src/services/**',
       'src/test/**',
-      'src/types/**',
-      'src/validators/**',
       'src/middleware.ts',
       'src/middleware.test.ts',
     ],
