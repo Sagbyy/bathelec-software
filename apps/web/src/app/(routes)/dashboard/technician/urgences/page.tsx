@@ -5,7 +5,6 @@ const EMERGENCY_CONTACTS = [
   { label: 'Police / Gendarmerie', number: '17', description: 'Urgences sécurité' },
   { label: 'Pompiers', number: '18', description: 'Incendie & secours' },
   { label: 'Numéro européen', number: '112', description: 'Toutes urgences' },
-  { label: 'EDF — Urgences réseau', number: '3946', description: 'Incidents réseau électrique' },
 ] as const;
 
 export default function UrgencesPage() {

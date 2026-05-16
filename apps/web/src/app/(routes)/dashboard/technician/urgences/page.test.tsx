@@ -20,11 +20,11 @@ describe('UrgencesPage', () => {
       ).toBeInTheDocument();
     });
 
-    it('affiche 5 contacts d\'urgence', () => {
+    it('affiche 4 contacts d\'urgence', () => {
       render(<UrgencesPage />);
 
       const links = screen.getAllByRole('link');
-      expect(links).toHaveLength(5);
+      expect(links).toHaveLength(4);
     });
   });
 
@@ -57,12 +57,6 @@ describe('UrgencesPage', () => {
       expect(screen.getByText('112')).toBeInTheDocument();
     });
 
-    it('affiche EDF Urgences avec le numéro 3946', () => {
-      render(<UrgencesPage />);
-
-      expect(screen.getByText('EDF — Urgences réseau')).toBeInTheDocument();
-      expect(screen.getByText('3946')).toBeInTheDocument();
-    });
   });
 
   describe('liens téléphoniques', () => {
@@ -94,17 +88,11 @@ describe('UrgencesPage', () => {
       expect(link).toHaveAttribute('href', 'tel:112');
     });
 
-    it('le lien EDF a un href tel:3946', () => {
-      render(<UrgencesPage />);
-
-      const link = screen.getByRole('link', { name: /edf/i });
-      expect(link).toHaveAttribute('href', 'tel:3946');
-    });
-
     it('tous les liens ont un attribut href valide commençant par tel:', () => {
       render(<UrgencesPage />);
 
       const links = screen.getAllByRole('link');
+      expect(links).toHaveLength(4);
       links.forEach((link) => {
         expect(link.getAttribute('href')).toMatch(/^tel:\d+$/);
       });
@@ -124,12 +112,5 @@ describe('UrgencesPage', () => {
       expect(screen.getByText('Incendie & secours')).toBeInTheDocument();
     });
 
-    it('affiche la description EDF', () => {
-      render(<UrgencesPage />);
-
-      expect(
-        screen.getByText('Incidents réseau électrique')
-      ).toBeInTheDocument();
-    });
   });
 });

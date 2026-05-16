@@ -113,12 +113,11 @@ test.describe('Page Numéros d\'urgence', () => {
     await page.goto('/dashboard/technician/urgences');
   });
 
-  test('affiche les 5 contacts d\'urgence', async ({ page }) => {
+  test('affiche les 4 contacts d\'urgence', async ({ page }) => {
     await expect(page.getByRole('link', { name: /samu/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /police/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /pompiers/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /européen/i })).toBeVisible();
-    await expect(page.getByRole('link', { name: /edf/i })).toBeVisible();
   });
 
   test('chaque contact affiche son numéro', async ({ page }) => {
@@ -126,7 +125,6 @@ test.describe('Page Numéros d\'urgence', () => {
     await expect(page.getByText('17')).toBeVisible();
     await expect(page.getByText('18')).toBeVisible();
     await expect(page.getByText('112')).toBeVisible();
-    await expect(page.getByText('3946')).toBeVisible();
   });
 
   test('les liens sont des liens téléphoniques (tel:)', async ({ page }) => {
@@ -135,6 +133,9 @@ test.describe('Page Numéros d\'urgence', () => {
 
     const pompiers = page.getByRole('link', { name: /pompiers/i });
     await expect(pompiers).toHaveAttribute('href', 'tel:18');
+
+    const europeen = page.getByRole('link', { name: /européen/i });
+    await expect(europeen).toHaveAttribute('href', 'tel:112');
   });
 
   test("accès direct sans token redirige vers /auth", async ({ page: unauthPage, browser }) => {
