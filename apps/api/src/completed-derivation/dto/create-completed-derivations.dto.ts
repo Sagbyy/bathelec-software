@@ -284,7 +284,7 @@ class PhotoAfterWorkDto {
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=',
     description: 'The second optional photo after work',
   })
-  secondPhoto: string;
+  secondPhoto?: string;
 
   @IsString()
   @IsOptional()
@@ -293,7 +293,7 @@ class PhotoAfterWorkDto {
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=',
     description: 'The third optional photo after work',
   })
-  thirdPhoto: string;
+  thirdPhoto?: string;
 }
 
 class ClientValidationDto {

@@ -79,8 +79,8 @@ export class CompletedDerivation {
   @Prop({ type: Object, required: true })
   photoAfterWork: {
     photo: string;
-    secondPhoto: string;
-    thirdPhoto: string;
+    secondPhoto?: string;
+    thirdPhoto?: string;
   };
 
   @Prop({ type: Object, required: true })
