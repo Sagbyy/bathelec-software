@@ -55,4 +55,38 @@ export const handlers = [
   http.post(`${BASE}/auth/logout`, () =>
     HttpResponse.json({ message: 'Logout successful' })
   ),
+
+  http.get(`${BASE}/vehicle-documents/by-user/:userId`, ({ params }) =>
+    HttpResponse.json({
+      _id: 'doc1',
+      userId: Number(params.userId),
+      carteGrise: 'data:image/jpeg;base64,carteGriseBase64',
+      permisDeConduire: 'data:image/jpeg;base64,permisBase64',
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
+    })
+  ),
+
+  http.post(`${BASE}/vehicle-documents`, async ({ request }) => {
+    const body = await request.json() as Record<string, unknown>;
+    return HttpResponse.json({
+      _id: 'doc1',
+      userId: 1,
+      carteGrise: body.carteGrise ?? null,
+      permisDeConduire: body.permisDeConduire ?? null,
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
+    });
+  }),
+
+  http.delete(`${BASE}/vehicle-documents/by-user/:userId`, ({ params }) =>
+    HttpResponse.json({
+      _id: 'doc1',
+      userId: Number(params.userId),
+      carteGrise: null,
+      permisDeConduire: null,
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
+    })
+  ),
 ];
