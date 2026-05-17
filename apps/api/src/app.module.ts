@@ -9,6 +9,7 @@ import { CompletedDerivationModule } from './completed-derivation/completed-deri
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersGroupsModule } from './users-groups/users-groups.module';
 import { VehicleDocumentsModule } from './vehicle-documents/vehicle-documents.module';
+import { OfficialDocumentsModule } from './official-documents/official-documents.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { VehicleDocumentsModule } from './vehicle-documents/vehicle-documents.mo
     CompletedDerivationModule,
     UsersGroupsModule,
     VehicleDocumentsModule,
+    OfficialDocumentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

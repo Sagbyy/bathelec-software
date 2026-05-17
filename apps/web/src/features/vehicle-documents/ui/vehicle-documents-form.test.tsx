@@ -37,21 +37,22 @@ import {
 const mockUseVehicleDocument = vi.mocked(useVehicleDocument);
 const mockUseUpsertVehicleDocument = vi.mocked(useUpsertVehicleDocument);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const asHook = (v: unknown) => v as any;
+
 describe('VehicleDocumentsForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseUpsertVehicleDocument.mockReturnValue({
-      mutate: mockMutate,
-      isPending: false,
-    } as ReturnType<typeof useUpsertVehicleDocument>);
+    mockUseUpsertVehicleDocument.mockReturnValue(
+      asHook({ mutate: mockMutate, isPending: false })
+    );
   });
 
   describe('état de chargement', () => {
     it('affiche le spinner pendant le chargement', () => {
-      mockUseVehicleDocument.mockReturnValue({
-        data: undefined,
-        isLoading: true,
-      } as ReturnType<typeof useVehicleDocument>);
+      mockUseVehicleDocument.mockReturnValue(
+        asHook({ data: undefined, isLoading: true })
+      );
 
       const { container } = render(<VehicleDocumentsForm />);
       expect(container.querySelector('.animate-spin')).toBeInTheDocument();
@@ -60,17 +61,19 @@ describe('VehicleDocumentsForm', () => {
 
   describe('rendu avec données', () => {
     beforeEach(() => {
-      mockUseVehicleDocument.mockReturnValue({
-        data: {
-          _id: 'doc1',
-          userId: 1,
-          carteGrise: 'data:image/jpeg;base64,carte',
-          permisDeConduire: 'data:image/jpeg;base64,permis',
-          createdAt: '2024-01-01T00:00:00.000Z',
-          updatedAt: '2024-01-01T00:00:00.000Z',
-        },
-        isLoading: false,
-      } as ReturnType<typeof useVehicleDocument>);
+      mockUseVehicleDocument.mockReturnValue(
+        asHook({
+          data: {
+            _id: 'doc1',
+            userId: 1,
+            carteGrise: 'data:image/jpeg;base64,carte',
+            permisDeConduire: 'data:image/jpeg;base64,permis',
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
+          },
+          isLoading: false,
+        })
+      );
     });
 
     it('affiche le label carte grise', () => {
@@ -94,10 +97,9 @@ describe('VehicleDocumentsForm', () => {
 
   describe('rendu sans données', () => {
     beforeEach(() => {
-      mockUseVehicleDocument.mockReturnValue({
-        data: undefined,
-        isLoading: false,
-      } as ReturnType<typeof useVehicleDocument>);
+      mockUseVehicleDocument.mockReturnValue(
+        asHook({ data: undefined, isLoading: false })
+      );
     });
 
     it('affiche les zones de dépôt si aucun document', () => {
@@ -111,10 +113,9 @@ describe('VehicleDocumentsForm', () => {
 
   describe('upload automatique', () => {
     beforeEach(() => {
-      mockUseVehicleDocument.mockReturnValue({
-        data: undefined,
-        isLoading: false,
-      } as ReturnType<typeof useVehicleDocument>);
+      mockUseVehicleDocument.mockReturnValue(
+        asHook({ data: undefined, isLoading: false })
+      );
     });
 
     it('appelle mutate immédiatement après upload de la carte grise', () => {
@@ -129,14 +130,9 @@ describe('VehicleDocumentsForm', () => {
 
       const { container } = render(<VehicleDocumentsForm />);
       const inputs = container.querySelectorAll('input[type="file"]');
-      const file = new File(['img'], 'carte.jpg', { type: 'image/jpeg' });
+      fireEvent.change(inputs[0]!, { target: { files: [new File(['img'], 'carte.jpg', { type: 'image/jpeg' })] } });
 
-      fireEvent.change(inputs[0], { target: { files: [file] } });
-
-      expect(mockMutate).toHaveBeenCalledWith({
-        carteGrise: base64,
-        permisDeConduire: null,
-      });
+      expect(mockMutate).toHaveBeenCalledWith({ carteGrise: base64, permisDeConduire: null });
       vi.unstubAllGlobals();
     });
 
@@ -152,38 +148,33 @@ describe('VehicleDocumentsForm', () => {
 
       const { container } = render(<VehicleDocumentsForm />);
       const inputs = container.querySelectorAll('input[type="file"]');
-      const file = new File(['img'], 'permis.jpg', { type: 'image/jpeg' });
+      fireEvent.change(inputs[1]!, { target: { files: [new File(['img'], 'permis.jpg', { type: 'image/jpeg' })] } });
 
-      fireEvent.change(inputs[1], { target: { files: [file] } });
-
-      expect(mockMutate).toHaveBeenCalledWith({
-        carteGrise: null,
-        permisDeConduire: base64,
-      });
+      expect(mockMutate).toHaveBeenCalledWith({ carteGrise: null, permisDeConduire: base64 });
       vi.unstubAllGlobals();
     });
   });
 
   describe('suppression automatique', () => {
     beforeEach(() => {
-      mockUseVehicleDocument.mockReturnValue({
-        data: {
-          _id: 'doc1',
-          userId: 1,
-          carteGrise: 'data:image/jpeg;base64,carte',
-          permisDeConduire: 'data:image/jpeg;base64,permis',
-          createdAt: '2024-01-01T00:00:00.000Z',
-          updatedAt: '2024-01-01T00:00:00.000Z',
-        },
-        isLoading: false,
-      } as ReturnType<typeof useVehicleDocument>);
+      mockUseVehicleDocument.mockReturnValue(
+        asHook({
+          data: {
+            _id: 'doc1',
+            userId: 1,
+            carteGrise: 'data:image/jpeg;base64,carte',
+            permisDeConduire: 'data:image/jpeg;base64,permis',
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
+          },
+          isLoading: false,
+        })
+      );
     });
 
     it('appelle mutate avec carteGrise=null quand on supprime la carte grise', async () => {
       render(<VehicleDocumentsForm />);
-      const deleteButtons = screen.getAllByRole('button');
-
-      fireEvent.click(deleteButtons[0]);
+      fireEvent.click(screen.getAllByRole('button')[0]!);
 
       await waitFor(() => {
         expect(mockMutate).toHaveBeenCalledWith({
@@ -195,9 +186,7 @@ describe('VehicleDocumentsForm', () => {
 
     it('appelle mutate avec permisDeConduire=null quand on supprime le permis', async () => {
       render(<VehicleDocumentsForm />);
-      const deleteButtons = screen.getAllByRole('button');
-
-      fireEvent.click(deleteButtons[1]);
+      fireEvent.click(screen.getAllByRole('button')[1]!);
 
       await waitFor(() => {
         expect(mockMutate).toHaveBeenCalledWith({
@@ -210,19 +199,15 @@ describe('VehicleDocumentsForm', () => {
 
   describe('état pending', () => {
     it('transmet isPending aux cartes pour désactiver les boutons', () => {
-      mockUseVehicleDocument.mockReturnValue({
-        data: undefined,
-        isLoading: false,
-      } as ReturnType<typeof useVehicleDocument>);
-
-      mockUseUpsertVehicleDocument.mockReturnValue({
-        mutate: mockMutate,
-        isPending: true,
-      } as ReturnType<typeof useUpsertVehicleDocument>);
+      mockUseVehicleDocument.mockReturnValue(
+        asHook({ data: undefined, isLoading: false })
+      );
+      mockUseUpsertVehicleDocument.mockReturnValue(
+        asHook({ mutate: mockMutate, isPending: true })
+      );
 
       render(<VehicleDocumentsForm />);
-      const buttons = screen.getAllByRole('button');
-      buttons.forEach((btn) => expect(btn).toBeDisabled());
+      screen.getAllByRole('button').forEach((btn) => expect(btn).toBeDisabled());
     });
   });
 });

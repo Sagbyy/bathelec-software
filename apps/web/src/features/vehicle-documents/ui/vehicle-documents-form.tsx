@@ -7,7 +7,7 @@ import {
   useUpsertVehicleDocument,
   useVehicleDocument,
 } from '@/entities/vehicle-document';
-import { DocumentUploadCard } from './document-upload-card';
+import { DocumentUploadCard } from '@/shared/ui/document-upload-card';
 
 export function VehicleDocumentsForm() {
   const user = useUserStore((s) => s.user);
