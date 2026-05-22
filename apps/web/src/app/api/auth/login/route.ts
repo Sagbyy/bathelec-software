@@ -25,5 +25,5 @@ export async function POST(req: NextRequest) {
     path: '/',
   });
 
-  return NextResponse.json({ message: 'Login successful' });
+  return NextResponse.json({ accessToken });
 }

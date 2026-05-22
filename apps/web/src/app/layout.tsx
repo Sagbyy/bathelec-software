@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import QueryProvider from '@/contexts/query-provider';
+import AuthProvider from '@/contexts/auth-provider';
 import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
@@ -20,7 +21,9 @@ export default function RootLayout({
     <html lang="fr">
       <body>
         <QueryProvider>
-          <main>{children}</main>
+          <AuthProvider>
+            <main>{children}</main>
+          </AuthProvider>
         </QueryProvider>
         <Toaster />
       </body>

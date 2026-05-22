@@ -65,6 +65,7 @@
       "@/validators/create-derivation.schema": ["./src/features/derivations/model/create-derivation.schema"],
       "@/validators/change-password.schema": ["./src/features/auth/model/change-password.schema"],
       "@/contexts/query-provider": ["./src/shared/config/query-provider"],
+      "@/contexts/auth-provider": ["./src/shared/config/auth-provider"],
       "@/*": ["./src/*"]
     },
     "plugins": [
