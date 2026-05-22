@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/shared/api';
 
 const useAuth = () => {
   const router = useRouter();
@@ -15,7 +14,13 @@ const useAuth = () => {
     setError(false);
     setLoading(true);
     try {
-      await apiClient.post('/auth/login', { username, password });
+      await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      }).then((res) => {
+        if (!res.ok) throw new Error();
+      });
       router.push('/dashboard');
     } catch {
       setError(true);
@@ -25,7 +30,7 @@ const useAuth = () => {
 
   const logout = async () => {
     setLoading(true);
-    await apiClient.post('/auth/logout');
+    await fetch('/api/auth/logout', { method: 'POST' });
     queryClient.clear();
     router.push('/auth');
   };

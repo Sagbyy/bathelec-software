@@ -12,19 +12,17 @@ vi.mock('@tanstack/react-query', () => ({
   useQueryClient: () => ({ clear: mockClear }),
 }));
 
-const mockPost = vi.hoisted(() => vi.fn());
-vi.mock('@/services/api-client', () => ({
-  default: { post: mockPost },
-}));
+const mockFetch = vi.fn();
 
 describe('useAuth', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubGlobal('fetch', mockFetch);
   });
 
   describe('login', () => {
-    it('calls POST /auth/login with credentials', async () => {
-      mockPost.mockResolvedValueOnce({ data: {} });
+    it('calls POST /api/auth/login with credentials', async () => {
+      mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) });
 
       const { result } = renderHook(() => useAuth());
 
@@ -32,14 +30,15 @@ describe('useAuth', () => {
         await result.current.login('adminuser', 'Pass123!');
       });
 
-      expect(mockPost).toHaveBeenCalledWith('/auth/login', {
-        username: 'adminuser',
-        password: 'Pass123!',
+      expect(mockFetch).toHaveBeenCalledWith('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: 'adminuser', password: 'Pass123!' }),
       });
     });
 
     it('redirects to /dashboard on success', async () => {
-      mockPost.mockResolvedValueOnce({ data: {} });
+      mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) });
 
       const { result } = renderHook(() => useAuth());
 
@@ -52,7 +51,7 @@ describe('useAuth', () => {
     });
 
     it('sets error state and does not redirect on failure', async () => {
-      mockPost.mockRejectedValueOnce(new Error('Unauthorized'));
+      mockFetch.mockResolvedValueOnce({ ok: false, json: () => Promise.resolve({}) });
 
       const { result } = renderHook(() => useAuth());
 
@@ -65,10 +64,10 @@ describe('useAuth', () => {
     });
 
     it('sets loading to true during login', async () => {
-      let resolvePost: (value: unknown) => void;
-      mockPost.mockReturnValueOnce(
+      let resolveFetch: (value: unknown) => void;
+      mockFetch.mockReturnValueOnce(
         new Promise((resolve) => {
-          resolvePost = resolve;
+          resolveFetch = resolve;
         })
       );
 
@@ -81,14 +80,14 @@ describe('useAuth', () => {
       expect(result.current.loading).toBe(true);
 
       await act(async () => {
-        resolvePost!({ data: {} });
+        resolveFetch!({ ok: true, json: () => Promise.resolve({}) });
       });
     });
   });
 
   describe('logout', () => {
-    it('calls POST /auth/logout', async () => {
-      mockPost.mockResolvedValueOnce({ data: {} });
+    it('calls POST /api/auth/logout', async () => {
+      mockFetch.mockResolvedValueOnce({ ok: true });
 
       const { result } = renderHook(() => useAuth());
 
@@ -96,11 +95,11 @@ describe('useAuth', () => {
         await result.current.logout();
       });
 
-      expect(mockPost).toHaveBeenCalledWith('/auth/logout');
+      expect(mockFetch).toHaveBeenCalledWith('/api/auth/logout', { method: 'POST' });
     });
 
     it('clears React Query cache on logout', async () => {
-      mockPost.mockResolvedValueOnce({ data: {} });
+      mockFetch.mockResolvedValueOnce({ ok: true });
 
       const { result } = renderHook(() => useAuth());
 
@@ -112,7 +111,7 @@ describe('useAuth', () => {
     });
 
     it('redirects to /auth on logout', async () => {
-      mockPost.mockResolvedValueOnce({ data: {} });
+      mockFetch.mockResolvedValueOnce({ ok: true });
 
       const { result } = renderHook(() => useAuth());
 
