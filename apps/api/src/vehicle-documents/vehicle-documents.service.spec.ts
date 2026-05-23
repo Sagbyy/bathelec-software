@@ -5,13 +5,13 @@ import { VehicleDocument } from './entities/vehicle-document.entity';
 
 const mockVehicleDocument = {
   userId: 1,
-  carteGrise: 'data:image/jpeg;base64,carteGriseBase64',
-  permisDeConduire: 'data:image/jpeg;base64,permisBase64',
+  vehicleRegistration: 'data:image/jpeg;base64,vehicleRegistrationBase64',
+  drivingLicense: 'data:image/jpeg;base64,permisBase64',
 };
 
 const mockDto = {
-  carteGrise: 'data:image/jpeg;base64,carteGriseBase64',
-  permisDeConduire: 'data:image/jpeg;base64,permisBase64',
+  vehicleRegistration: 'data:image/jpeg;base64,vehicleRegistrationBase64',
+  drivingLicense: 'data:image/jpeg;base64,permisBase64',
 };
 
 describe('VehicleDocumentsService', () => {
@@ -70,7 +70,7 @@ describe('VehicleDocumentsService', () => {
         lean: jest.fn().mockResolvedValue(mockVehicleDocument),
       });
       const updatedDto = {
-        carteGrise: 'data:image/jpeg;base64,newCarteGriseBase64',
+        vehicleRegistration: 'data:image/jpeg;base64,newCarteGriseBase64',
       };
       mockVehicleDocumentModel.findOneAndUpdate.mockResolvedValue({
         ...mockVehicleDocument,
@@ -79,7 +79,7 @@ describe('VehicleDocumentsService', () => {
 
       const result = await service.createOrUpdate(1, updatedDto);
 
-      expect(result.carteGrise).toBe(
+      expect(result.vehicleRegistration).toBe(
         'data:image/jpeg;base64,newCarteGriseBase64'
       );
       expect(mockVehicleDocumentModel.findOneAndUpdate).toHaveBeenCalledWith(
@@ -115,21 +115,21 @@ describe('VehicleDocumentsService', () => {
     it('should update a vehicle document by userId', async () => {
       const updated = {
         ...mockVehicleDocument,
-        permisDeConduire: 'data:image/jpeg;base64,newPermisBase64',
+        drivingLicense: 'data:image/jpeg;base64,newPermisBase64',
       };
       mockVehicleDocumentModel.findOneAndUpdate.mockResolvedValue(updated);
 
       const result = await service.update(1, {
-        permisDeConduire: 'data:image/jpeg;base64,newPermisBase64',
+        drivingLicense: 'data:image/jpeg;base64,newPermisBase64',
       });
 
-      expect(result.permisDeConduire).toBe(
+      expect(result.drivingLicense).toBe(
         'data:image/jpeg;base64,newPermisBase64'
       );
       expect(mockVehicleDocumentModel.findOneAndUpdate).toHaveBeenCalledWith(
         { userId: 1 },
         expect.objectContaining({
-          permisDeConduire: 'data:image/jpeg;base64,newPermisBase64',
+          drivingLicense: 'data:image/jpeg;base64,newPermisBase64',
         }),
         { new: true }
       );

@@ -86,7 +86,7 @@ export function TechnicianHome() {
 
   return (
     <div className="flex min-h-[calc(100vh-5rem)] flex-col bg-gray-50">
-      <div className="px-4 pb-8 pt-6 md:px-8 md:pt-10">
+      <div className="mx-auto w-full max-w-5xl px-4 pb-8 pt-6 md:px-8 md:pt-10">
         <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">
           Tableau de bord
         </p>
@@ -96,7 +96,7 @@ export function TechnicianHome() {
         <p className="mt-1 text-gray-500">Que souhaitez-vous faire ?</p>
       </div>
 
-      <div className="flex-1 px-4 pb-8 md:px-8">
+      <div className="mx-auto w-full max-w-5xl flex-1 px-4 pb-8 md:px-8">
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
           {NAV_ITEMS.slice(0, 6).map((item) => (
             <NavCard key={item.href} item={item} />

@@ -7,15 +7,15 @@ export class CreateVehicleDocumentDto {
   @IsOptional()
   @ApiPropertyOptional({
     example: 'data:image/jpeg;base64,...',
-    description: 'La carte grise en base64 (jpeg, png, webp — max 5MB)',
+    description: 'Vehicle registration in base64 (jpeg, png, webp — max 5MB)',
   })
-  carteGrise?: string;
+  vehicleRegistration?: string;
 
   @IsBase64Image()
   @IsOptional()
   @ApiPropertyOptional({
     example: 'data:image/jpeg;base64,...',
-    description: 'Le permis de conduire en base64 (jpeg, png, webp — max 5MB)',
+    description: 'Driving license in base64 (jpeg, png, webp — max 5MB)',
   })
-  permisDeConduire?: string;
+  drivingLicense?: string;
 }

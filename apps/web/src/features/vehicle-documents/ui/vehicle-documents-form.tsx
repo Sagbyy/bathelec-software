@@ -16,26 +16,26 @@ export function VehicleDocumentsForm() {
   const { data, isLoading } = useVehicleDocument(userId!);
   const { mutate, isPending } = useUpsertVehicleDocument(userId!);
 
-  const [carteGrise, setCarteGrise] = useState<string | null>(null);
-  const [permisDeConduire, setPermisDeConduire] = useState<string | null>(null);
+  const [vehicleRegistration, setVehicleRegistration] = useState<string | null>(null);
+  const [drivingLicense, setDrivingLicense] = useState<string | null>(null);
   const initialized = useRef(false);
 
   useEffect(() => {
     if (data && !initialized.current) {
-      setCarteGrise(data.carteGrise ?? null);
-      setPermisDeConduire(data.permisDeConduire ?? null);
+      setVehicleRegistration(data.vehicleRegistration ?? null);
+      setDrivingLicense(data.drivingLicense ?? null);
       initialized.current = true;
     }
   }, [data]);
 
-  const handleCarteGriseChange = (value: string | null) => {
-    setCarteGrise(value);
-    mutate({ carteGrise: value, permisDeConduire });
+  const handleVehicleRegistrationChange = (value: string | null) => {
+    setVehicleRegistration(value);
+    mutate({ vehicleRegistration: value, drivingLicense });
   };
 
-  const handlePermisChange = (value: string | null) => {
-    setPermisDeConduire(value);
-    mutate({ carteGrise, permisDeConduire: value });
+  const handleDrivingLicenseChange = (value: string | null) => {
+    setDrivingLicense(value);
+    mutate({ vehicleRegistration, drivingLicense: value });
   };
 
   if (isLoading) {
@@ -51,9 +51,9 @@ export function VehicleDocumentsForm() {
       <DocumentUploadCard
         label="Carte grise"
         description="Photo ou scan de la carte grise du véhicule (jpeg, png, webp — max 5 Mo)"
-        inputId="carte-grise-upload"
-        value={carteGrise}
-        onChange={handleCarteGriseChange}
+        inputId="vehicle-registration-upload"
+        value={vehicleRegistration}
+        onChange={handleVehicleRegistrationChange}
         isPending={isPending}
       />
 
@@ -62,9 +62,9 @@ export function VehicleDocumentsForm() {
       <DocumentUploadCard
         label="Permis de conduire"
         description="Photo ou scan du permis de conduire (jpeg, png, webp — max 5 Mo)"
-        inputId="permis-upload"
-        value={permisDeConduire}
-        onChange={handlePermisChange}
+        inputId="driving-license-upload"
+        value={drivingLicense}
+        onChange={handleDrivingLicenseChange}
         isPending={isPending}
       />
     </div>

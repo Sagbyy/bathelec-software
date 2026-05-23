@@ -32,7 +32,7 @@ describe('useVehicleDocument', () => {
 
     expect(result.current.data).toMatchObject({
       userId: 1,
-      carteGrise: 'data:image/jpeg;base64,carteGriseBase64',
+      vehicleRegistration: 'data:image/jpeg;base64,vehicleRegistrationBase64',
     });
   });
 
@@ -70,15 +70,15 @@ describe('useUpsertVehicleDocument', () => {
 
     await act(async () => {
       result.current.mutate({
-        carteGrise: 'data:image/jpeg;base64,nouveau',
-        permisDeConduire: null,
+        vehicleRegistration: 'data:image/jpeg;base64,nouveau',
+        drivingLicense: null,
       });
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toMatchObject({
-      carteGrise: 'data:image/jpeg;base64,nouveau',
+      vehicleRegistration: 'data:image/jpeg;base64,nouveau',
     });
   });
 
@@ -94,7 +94,7 @@ describe('useUpsertVehicleDocument', () => {
     });
 
     await act(async () => {
-      result.current.mutate({ carteGrise: 'invalid' });
+      result.current.mutate({ vehicleRegistration: 'invalid' });
     });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
@@ -112,7 +112,7 @@ describe('useUpsertVehicleDocument', () => {
     const { result } = renderHook(() => useUpsertVehicleDocument(1), { wrapper });
 
     await act(async () => {
-      result.current.mutate({ carteGrise: 'data:image/jpeg;base64,test' });
+      result.current.mutate({ vehicleRegistration: 'data:image/jpeg;base64,test' });
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));

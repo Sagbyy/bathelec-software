@@ -60,8 +60,8 @@ export const handlers = [
     HttpResponse.json({
       _id: 'doc1',
       userId: Number(params.userId),
-      carteGrise: 'data:image/jpeg;base64,carteGriseBase64',
-      permisDeConduire: 'data:image/jpeg;base64,permisBase64',
+      vehicleRegistration: 'data:image/jpeg;base64,vehicleRegistrationBase64',
+      drivingLicense: 'data:image/jpeg;base64,permisBase64',
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
     })
@@ -72,8 +72,8 @@ export const handlers = [
     return HttpResponse.json({
       _id: 'doc1',
       userId: 1,
-      carteGrise: body.carteGrise ?? null,
-      permisDeConduire: body.permisDeConduire ?? null,
+      vehicleRegistration: body.vehicleRegistration ?? null,
+      drivingLicense: body.drivingLicense ?? null,
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
     });
@@ -83,8 +83,8 @@ export const handlers = [
     HttpResponse.json({
       _id: 'doc1',
       userId: Number(params.userId),
-      carteGrise: null,
-      permisDeConduire: null,
+      vehicleRegistration: null,
+      drivingLicense: null,
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
     })

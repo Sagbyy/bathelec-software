@@ -6,8 +6,8 @@ import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 
 const vehicleDocumentEntity = {
   userId: 1,
-  carteGrise: 'data:image/jpeg;base64,carteGriseBase64',
-  permisDeConduire: 'data:image/jpeg;base64,permisBase64',
+  vehicleRegistration: 'data:image/jpeg;base64,vehicleRegistrationBase64',
+  drivingLicense: 'data:image/jpeg;base64,permisBase64',
 };
 
 const mockVehicleDocumentsService = {
@@ -48,7 +48,7 @@ describe('VehicleDocumentsController', () => {
 
   describe('createOrUpdate', () => {
     it('should delegate to service with userId from current user', async () => {
-      const dto = { carteGrise: 'data:image/jpeg;base64,carteGriseBase64' };
+      const dto = { vehicleRegistration: 'data:image/jpeg;base64,vehicleRegistrationBase64' };
       mockVehicleDocumentsService.createOrUpdate.mockResolvedValue(
         vehicleDocumentEntity
       );
@@ -81,7 +81,7 @@ describe('VehicleDocumentsController', () => {
 
   describe('update', () => {
     it('should update a vehicle document', async () => {
-      const dto = { permisDeConduire: 'data:image/jpeg;base64,newPermis' };
+      const dto = { drivingLicense: 'data:image/jpeg;base64,newPermis' };
       const updated = { ...vehicleDocumentEntity, ...dto };
       mockVehicleDocumentsService.update.mockResolvedValue(updated);
 

@@ -11,10 +11,10 @@ export class VehicleDocument {
   userId: number;
 
   @Prop({ type: String, default: null })
-  carteGrise: string;
+  vehicleRegistration: string;
 
   @Prop({ type: String, default: null })
-  permisDeConduire: string;
+  drivingLicense: string;
 }
 
 export const VehicleDocumentSchema =

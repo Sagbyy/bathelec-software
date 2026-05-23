@@ -66,8 +66,8 @@ describe('VehicleDocumentsForm', () => {
           data: {
             _id: 'doc1',
             userId: 1,
-            carteGrise: 'data:image/jpeg;base64,carte',
-            permisDeConduire: 'data:image/jpeg;base64,permis',
+            vehicleRegistration: 'data:image/jpeg;base64,carte',
+            drivingLicense: 'data:image/jpeg;base64,permis',
             createdAt: '2024-01-01T00:00:00.000Z',
             updatedAt: '2024-01-01T00:00:00.000Z',
           },
@@ -132,7 +132,7 @@ describe('VehicleDocumentsForm', () => {
       const inputs = container.querySelectorAll('input[type="file"]');
       fireEvent.change(inputs[0]!, { target: { files: [new File(['img'], 'carte.jpg', { type: 'image/jpeg' })] } });
 
-      expect(mockMutate).toHaveBeenCalledWith({ carteGrise: base64, permisDeConduire: null });
+      expect(mockMutate).toHaveBeenCalledWith({ vehicleRegistration: base64, drivingLicense: null });
       vi.unstubAllGlobals();
     });
 
@@ -150,7 +150,7 @@ describe('VehicleDocumentsForm', () => {
       const inputs = container.querySelectorAll('input[type="file"]');
       fireEvent.change(inputs[1]!, { target: { files: [new File(['img'], 'permis.jpg', { type: 'image/jpeg' })] } });
 
-      expect(mockMutate).toHaveBeenCalledWith({ carteGrise: null, permisDeConduire: base64 });
+      expect(mockMutate).toHaveBeenCalledWith({ vehicleRegistration: null, drivingLicense: base64 });
       vi.unstubAllGlobals();
     });
   });
@@ -162,8 +162,8 @@ describe('VehicleDocumentsForm', () => {
           data: {
             _id: 'doc1',
             userId: 1,
-            carteGrise: 'data:image/jpeg;base64,carte',
-            permisDeConduire: 'data:image/jpeg;base64,permis',
+            vehicleRegistration: 'data:image/jpeg;base64,carte',
+            drivingLicense: 'data:image/jpeg;base64,permis',
             createdAt: '2024-01-01T00:00:00.000Z',
             updatedAt: '2024-01-01T00:00:00.000Z',
           },
@@ -172,26 +172,26 @@ describe('VehicleDocumentsForm', () => {
       );
     });
 
-    it('appelle mutate avec carteGrise=null quand on supprime la carte grise', async () => {
+    it('appelle mutate avec vehicleRegistration=null quand on supprime la carte grise', async () => {
       render(<VehicleDocumentsForm />);
       fireEvent.click(screen.getAllByRole('button')[0]!);
 
       await waitFor(() => {
         expect(mockMutate).toHaveBeenCalledWith({
-          carteGrise: null,
-          permisDeConduire: 'data:image/jpeg;base64,permis',
+          vehicleRegistration: null,
+          drivingLicense: 'data:image/jpeg;base64,permis',
         });
       });
     });
 
-    it('appelle mutate avec permisDeConduire=null quand on supprime le permis', async () => {
+    it('appelle mutate avec drivingLicense=null quand on supprime le permis', async () => {
       render(<VehicleDocumentsForm />);
       fireEvent.click(screen.getAllByRole('button')[1]!);
 
       await waitFor(() => {
         expect(mockMutate).toHaveBeenCalledWith({
-          carteGrise: 'data:image/jpeg;base64,carte',
-          permisDeConduire: null,
+          vehicleRegistration: 'data:image/jpeg;base64,carte',
+          drivingLicense: null,
         });
       });
     });

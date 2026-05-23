@@ -8,8 +8,8 @@ const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 const mockDocument = {
   _id: 'doc1',
   userId: 1,
-  carteGrise: 'data:image/jpeg;base64,carteGriseBase64',
-  permisDeConduire: 'data:image/jpeg;base64,permisBase64',
+  vehicleRegistration: 'data:image/jpeg;base64,vehicleRegistrationBase64',
+  drivingLicense: 'data:image/jpeg;base64,permisBase64',
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 };
@@ -22,8 +22,8 @@ describe('vehicleDocumentService', () => {
       const data = await vehicleDocumentService.getByUserId(1);
 
       expect(data).toMatchObject({ userId: 1 });
-      expect(data.carteGrise).toBe('data:image/jpeg;base64,carteGriseBase64');
-      expect(data.permisDeConduire).toBe('data:image/jpeg;base64,permisBase64');
+      expect(data.vehicleRegistration).toBe('data:image/jpeg;base64,vehicleRegistrationBase64');
+      expect(data.drivingLicense).toBe('data:image/jpeg;base64,permisBase64');
     });
 
     it('propage le userId dans la requête', async () => {
@@ -56,14 +56,14 @@ describe('vehicleDocumentService', () => {
   describe('createOrUpdate', () => {
     it('envoie un POST et retourne le document créé', async () => {
       const dto = {
-        carteGrise: 'data:image/jpeg;base64,nouveau',
-        permisDeConduire: null,
+        vehicleRegistration: 'data:image/jpeg;base64,nouveau',
+        drivingLicense: null,
       };
 
       const data = await vehicleDocumentService.createOrUpdate(dto);
 
-      expect(data.carteGrise).toBe('data:image/jpeg;base64,nouveau');
-      expect(data.permisDeConduire).toBeNull();
+      expect(data.vehicleRegistration).toBe('data:image/jpeg;base64,nouveau');
+      expect(data.drivingLicense).toBeNull();
     });
 
     it('envoie un POST avec les deux champs', async () => {
@@ -75,14 +75,14 @@ describe('vehicleDocumentService', () => {
       );
 
       const dto = {
-        carteGrise: 'data:image/jpeg;base64,carte',
-        permisDeConduire: 'data:image/jpeg;base64,permis',
+        vehicleRegistration: 'data:image/jpeg;base64,carte',
+        drivingLicense: 'data:image/jpeg;base64,permis',
       };
 
       const data = await vehicleDocumentService.createOrUpdate(dto);
 
-      expect(data.carteGrise).toBe('data:image/jpeg;base64,carte');
-      expect(data.permisDeConduire).toBe('data:image/jpeg;base64,permis');
+      expect(data.vehicleRegistration).toBe('data:image/jpeg;base64,carte');
+      expect(data.drivingLicense).toBe('data:image/jpeg;base64,permis');
     });
 
     it('lève une erreur si le serveur répond 400', async () => {
@@ -93,7 +93,7 @@ describe('vehicleDocumentService', () => {
       );
 
       await expect(
-        vehicleDocumentService.createOrUpdate({ carteGrise: 'invalid' })
+        vehicleDocumentService.createOrUpdate({ vehicleRegistration: 'invalid' })
       ).rejects.toThrow();
     });
   });
@@ -103,8 +103,8 @@ describe('vehicleDocumentService', () => {
       const data = await vehicleDocumentService.remove(1);
 
       expect(data.userId).toBe(1);
-      expect(data.carteGrise).toBeNull();
-      expect(data.permisDeConduire).toBeNull();
+      expect(data.vehicleRegistration).toBeNull();
+      expect(data.drivingLicense).toBeNull();
     });
 
     it('propage le userId dans la requête DELETE', async () => {

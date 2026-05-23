@@ -17,7 +17,7 @@ vi.mock('next/image', () => ({
 const defaultProps = {
   label: 'Carte grise',
   description: 'Photo de la carte grise',
-  inputId: 'carte-grise-upload',
+  inputId: 'vehicle-registration-upload',
   value: null,
   onChange: vi.fn(),
 };
