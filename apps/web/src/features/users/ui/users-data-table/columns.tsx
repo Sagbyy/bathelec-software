@@ -175,20 +175,33 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: 'edit',
-    header: 'Modifier',
-    cell: ({ row }) => <EditCell userId={row.original.id} />,
+    header: 'Actions',
+    cell: ({ row }) => <ActionCell userId={row.original.id} />,
   },
 ];
 
-function EditCell({ userId }: { userId: number }) {
+function ActionCell({ userId }: { userId: number }) {
   const router = useRouter();
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={() => router.push(`/dashboard/admin/users/edit/${userId}`)}
-    >
-      <Icon icon="material-symbols:edit-rounded" />
-    </Button>
+    <div className="flex items-center gap-1">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => router.push(`/dashboard/admin/users/edit/${userId}`)}
+        title="Modifier"
+      >
+        <Icon icon="material-symbols:edit-rounded" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() =>
+          router.push(`/dashboard/admin/technicians/${userId}/habilitations`)
+        }
+        title="Habilitations"
+      >
+        <Icon icon="material-symbols:shield-check-outline-rounded" />
+      </Button>
+    </div>
   );
 }

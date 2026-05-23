@@ -10,6 +10,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersGroupsModule } from './users-groups/users-groups.module';
 import { VehicleDocumentsModule } from './vehicle-documents/vehicle-documents.module';
 import { OfficialDocumentsModule } from './official-documents/official-documents.module';
+import { HabilitationsModule } from './habilitations/habilitations.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { OfficialDocumentsModule } from './official-documents/official-documents
     UsersGroupsModule,
     VehicleDocumentsModule,
     OfficialDocumentsModule,
+    HabilitationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

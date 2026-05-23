@@ -109,14 +109,14 @@ export default function ChangePassword() {
                 name="currentPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Current Password</FormLabel>
+                    <FormLabel>Mot de passe actuel</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
                           type={
                             showPassword.currentPassword ? 'text' : 'password'
                           }
-                          placeholder="Enter your current password"
+                          placeholder="Entrez votre mot de passe actuel"
                           {...field}
                         />
                         <Button
@@ -135,8 +135,8 @@ export default function ChangePassword() {
                           )}
                           <span className="sr-only">
                             {showPassword.currentPassword
-                              ? 'Hide password'
-                              : 'Show password'}
+                              ? 'Masquer le mot de passe'
+                              : 'Afficher le mot de passe'}
                           </span>
                         </Button>
                       </div>
@@ -189,8 +189,8 @@ export default function ChangePassword() {
                           )}
                           <span className="sr-only">
                             {showPassword.password
-                              ? 'Hide password'
-                              : 'Show password'}
+                              ? 'Masquer le mot de passe'
+                              : 'Afficher le mot de passe'}
                           </span>
                         </Button>
                       </div>
@@ -231,8 +231,8 @@ export default function ChangePassword() {
                           )}
                           <span className="sr-only">
                             {showPassword.confirmPassword
-                              ? 'Hide password'
-                              : 'Show password'}
+                              ? 'Masquer le mot de passe'
+                              : 'Afficher le mot de passe'}
                           </span>
                         </Button>
                       </div>

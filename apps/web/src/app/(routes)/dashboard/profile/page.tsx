@@ -11,12 +11,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useUserStore } from '@/hooks/use-user-store';
-import { LockKeyhole } from 'lucide-react';
+import { LockKeyhole, LogOut } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuth } from '@/features/auth';
 
 export default function ProfilePage() {
   const { user } = useUserStore();
+  const { logout } = useAuth();
 
   if (!user) return null;
 
@@ -28,11 +30,10 @@ export default function ProfilePage() {
             <div className="bg-primary/10 mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full">
               <Image
                 src={`https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=${user.username}`}
-                alt="Profile Avatar"
+                alt="Avatar"
                 width={80}
                 height={80}
                 className="rounded-full"
-                typeof="svg"
               />
             </div>
             <CardTitle className="text-2xl font-bold">Profil</CardTitle>
@@ -75,16 +76,24 @@ export default function ProfilePage() {
                 readOnly
               />
             </div>
-            <div className="pt-4">
+            <div className="space-y-3 pt-4">
               <Link
                 href="/dashboard/profile/change-password"
                 className="w-full"
               >
-                <Button className="w-full space-x-2">
+                <Button className="w-full space-x-2 bg-black hover:bg-gray-800">
                   <LockKeyhole className="h-4 w-4" />
                   <span>Changer le mot de passe</span>
                 </Button>
               </Link>
+              <Button
+                variant="destructive"
+                className="w-full space-x-2"
+                onClick={() => logout()}
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Se déconnecter</span>
+              </Button>
             </div>
           </CardContent>
         </Card>

@@ -22,11 +22,18 @@ describe('TechnicianHome', () => {
   });
 
   describe('rendu général', () => {
-    it('affiche exactement 7 cartes de navigation', () => {
+    it('affiche exactement 8 liens (7 cartes + Mon profil)', () => {
       render(<TechnicianHome />);
 
       const links = screen.getAllByRole('link');
-      expect(links).toHaveLength(7);
+      expect(links).toHaveLength(8);
+    });
+
+    it('affiche le bouton Mon profil pointant vers /dashboard/profile', () => {
+      render(<TechnicianHome />);
+
+      const profilLink = screen.getByRole('link', { name: /mon profil/i });
+      expect(profilLink).toHaveAttribute('href', '/dashboard/profile');
     });
 
     it('affiche les 7 labels de section', () => {

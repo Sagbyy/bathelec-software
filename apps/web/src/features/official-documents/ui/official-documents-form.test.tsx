@@ -76,7 +76,7 @@ describe('OfficialDocumentsForm', () => {
 
     it("affiche le label pièce d'identité", () => {
       render(<OfficialDocumentsForm />);
-      expect(screen.getByText(\"Pièce d'identité ou titre de séjour\")).toBeInTheDocument();
+      expect(screen.getByText("Pièce d'identité ou titre de séjour")).toBeInTheDocument();
     });
 
     it('affiche le label carte BTP', () => {
