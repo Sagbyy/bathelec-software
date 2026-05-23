@@ -7,6 +7,19 @@ import {
   HabilitationCodes,
   HabilitationKey,
 } from '@/entities/habilitation';
+import Image from 'next/image';
+
+const COLUMN_IMAGES: Record<string, string> = {
+  nonElec1: '/images/plumber.png',
+  nonElec2: '/images/air-conditioning-technician.png',
+  executant: '/images/performer.png',
+  chargedTravaux: '/images/site-supervisor.png',
+  chargedConsig: '/images/consignment-manager.png',
+  chargedInterv: '/images/response-coordinator.png',
+  chargedOp: '/images/operations-manager.png',
+};
+
+const NO_LABEL_COLUMNS = new Set(['nonElec1', 'nonElec2']);
 
 interface HabilitationsTableProps {
   habilitations: HabilitationCodes | null;
@@ -56,7 +69,7 @@ export function HabilitationsTable({ habilitations }: HabilitationsTableProps) {
         <table className="w-full min-w-[700px] border-collapse text-sm">
           <thead>
             <tr className="border-b bg-gray-50">
-              <th className="w-28 border-r p-3" rowSpan={2} />
+              <th className="w-28 border-r p-3" rowSpan={3} />
               <th
                 className="border-r p-3 text-center font-semibold text-gray-600"
                 colSpan={2}
@@ -70,15 +83,55 @@ export function HabilitationsTable({ habilitations }: HabilitationsTableProps) {
                 Opération d'ordre électrique
               </th>
             </tr>
+            {/* Ligne labels (+ images nonElec en rowSpan=2) */}
             <tr className="border-b bg-gray-50">
-              {HABILITATION_TABLE.columns.slice(1).map((col) => (
-                <th
-                  key={col.key}
-                  className="border-r p-3 text-center text-xs font-medium text-gray-500 last:border-r-0"
-                >
-                  {col.label}
-                </th>
-              ))}
+              {HABILITATION_TABLE.columns.slice(1).map((col) =>
+                NO_LABEL_COLUMNS.has(col.key) ? (
+                  <th
+                    key={col.key}
+                    rowSpan={2}
+                    className="border-r p-2 text-center last:border-r-0"
+                  >
+                    {COLUMN_IMAGES[col.key] != null && (
+                      <Image
+                        src={COLUMN_IMAGES[col.key]!}
+                        alt={col.label}
+                        width={250}
+                        height={250}
+                        className="mx-auto object-contain"
+                      />
+                    )}
+                  </th>
+                ) : (
+                  <th
+                    key={col.key}
+                    className="border-r p-2 text-center text-xs font-medium text-gray-500 last:border-r-0"
+                  >
+                    {col.label}
+                  </th>
+                )
+              )}
+            </tr>
+            {/* Ligne images (colonnes avec label uniquement) */}
+            <tr className="border-b bg-gray-50">
+              {HABILITATION_TABLE.columns.slice(1)
+                .filter((col) => !NO_LABEL_COLUMNS.has(col.key))
+                .map((col) => (
+                  <th
+                    key={col.key}
+                    className="border-r p-2 text-center last:border-r-0"
+                  >
+                    {COLUMN_IMAGES[col.key] != null && (
+                      <Image
+                        src={COLUMN_IMAGES[col.key]!}
+                        alt={col.label}
+                        width={250}
+                        height={250}
+                        className="mx-auto object-contain"
+                      />
+                    )}
+                  </th>
+                ))}
             </tr>
           </thead>
           <tbody>
@@ -112,6 +165,11 @@ export function HabilitationsTable({ habilitations }: HabilitationsTableProps) {
                           />
                         ))}
                       </div>
+                      {cell.description && (
+                        <p className="mt-1.5 text-center text-[10px] leading-tight text-gray-400">
+                          {cell.description}
+                        </p>
+                      )}
                     </td>
                   )
                 )}
