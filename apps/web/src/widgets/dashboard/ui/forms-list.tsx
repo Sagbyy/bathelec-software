@@ -56,25 +56,19 @@ export function FormsList() {
 
   const [technicianFilter, setTechnicianFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState<DerivationStatus | ''>('');
-  const [cityFilter, setCityFilter] = useState('');
 
   const router = useRouter();
 
-  const { data: derivationsData, isLoading, error } = useDerivation();
-  const {
-    data: techniciansData,
-    isLoading: techniciansLoading,
-    error: techniciansError,
-  } = useTechnicians();
+  const { data: derivationsData, isLoading } = useDerivation();
+  const { data: techniciansData } = useTechnicians();
 
   useEffect(() => {
-    if (derivationsData) {
-      setDerivations(derivationsData);
-    }
-    if (techniciansData) {
-      setTechnicians(techniciansData);
-    }
-  }, [derivationsData, techniciansData]);
+    if (derivationsData) setDerivations(derivationsData);
+  }, [derivationsData]);
+
+  useEffect(() => {
+    if (techniciansData) setTechnicians(techniciansData);
+  }, [techniciansData]);
 
   const getTechnicianName = (userId: number) => {
     const technician = technicians.find((t) => t.id === userId);
@@ -88,20 +82,13 @@ export function FormsList() {
       derivations.map((derivation) => getTechnicianName(derivation.userId))
     )
   );
-  const uniqueCities = Array.from(
-    new Set(derivations.map((derivation) => derivation.city))
-  );
-
   const filteredForms = derivations.filter((derivation) => {
+    const chantierAddress = derivation.chantier?.address ?? '';
     const matchesSearch =
       getTechnicianName(derivation.userId)
         .toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
-      derivation.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      derivation.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      String(derivation.postalCode)
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
+      chantierAddress.toLowerCase().includes(searchQuery.toLowerCase()) ||
       derivation.status.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesTechnician =
@@ -109,9 +96,8 @@ export function FormsList() {
       getTechnicianName(derivation.userId) === technicianFilter;
     const matchesStatus =
       statusFilter === '' || derivation.status === statusFilter;
-    const matchesCity = cityFilter === '' || derivation.city === cityFilter;
 
-    return matchesSearch && matchesTechnician && matchesStatus && matchesCity;
+    return matchesSearch && matchesTechnician && matchesStatus;
   });
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -191,154 +177,131 @@ export function FormsList() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    Ville {cityFilter && `(${cityFilter})`}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Filtrer par ville</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => setCityFilter('')}>
-                    Toutes les villes
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  {uniqueCities.map((city) => (
-                    <DropdownMenuItem
-                      key={city}
-                      onClick={() => setCityFilter(city)}
-                    >
-                      {city}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Créé le</TableHead>
-              <TableHead>Technicien</TableHead>
-              <TableHead className="hidden md:table-cell">Adresse</TableHead>
-              <TableHead className="hidden md:table-cell">Ville</TableHead>
-              <TableHead className="hidden md:table-cell">
-                Code postal
-              </TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead className="text-right">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentItems.map((derivation) => (
-              <TableRow key={derivation.id}>
-                <TableCell className="font-medium">{derivation.id}</TableCell>
-                <TableCell>
-                  {formatDate(derivation.createdAt, 'dd/MM/yyyy')}
-                </TableCell>
-                <TableCell>{getTechnicianName(derivation.userId)}</TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {derivation.address}
-                </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {derivation.city}
-                </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {derivation.postalCode}
-                </TableCell>
-                <TableCell>
-                  <DerivationStatusIcon derivationStatus={derivation.status} />
-                </TableCell>
-                <TableCell className="text-right">
-                  {derivation.status === DerivationStatus.REVIEWING ? (
-                    <Button
-                      variant="default"
-                      className={cn('bg-blue-500 hover:bg-blue-600')}
-                      size="sm"
-                      onClick={() =>
-                        router.push(
-                          `/dashboard/admin/derivations/${derivation.id}`
-                        )
-                      }
-                    >
-                      <p>À vérifier</p>
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() =>
-                        router.push(
-                          `/dashboard/admin/derivations/${derivation.id}`
-                        )
-                      }
-                    >
-                      <p>Voir</p>
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <div className="mt-4 flex items-center justify-between">
-          <div className="text-muted-foreground text-sm">
-            Afficher {indexOfFirstItem + 1} à{' '}
-            {Math.min(indexOfLastItem, filteredForms.length)} sur{' '}
-            {filteredForms.length} entrées
+        {isLoading && (
+          <div className="text-muted-foreground flex items-center justify-center py-10 text-sm">
+            Chargement des dérivations...
           </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              Précédent
-            </Button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <Button
-                key={page}
-                variant={currentPage === page ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => handlePageChange(page)}
-              >
-                {page}
-              </Button>
-            ))}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Suivant
-            </Button>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-muted-foreground text-sm">
-              Dérivations par page:
-            </span>
-            <select
-              className="border-input bg-background h-8 rounded-md border px-2 text-sm"
-              value={itemsPerPage}
-              onChange={(e) => {
-                setItemsPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-            >
-              {[5, 10, 20, 50].map((value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+        )}
+        {!isLoading && (
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Créé le</TableHead>
+                  <TableHead>Technicien</TableHead>
+                  <TableHead className="hidden md:table-cell">Chantier</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {currentItems.map((derivation) => (
+                  <TableRow key={derivation.id}>
+                    <TableCell className="font-medium">{derivation.id}</TableCell>
+                    <TableCell>
+                      {formatDate(derivation.createdAt, 'dd/MM/yyyy')}
+                    </TableCell>
+                    <TableCell>{getTechnicianName(derivation.userId)}</TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      {derivation.chantier?.address ?? '—'}
+                    </TableCell>
+                    <TableCell>
+                      <DerivationStatusIcon derivationStatus={derivation.status} />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {derivation.status === DerivationStatus.REVIEWING ? (
+                        <Button
+                          variant="default"
+                          className={cn('bg-blue-500 hover:bg-blue-600')}
+                          size="sm"
+                          onClick={() =>
+                            router.push(
+                              `/dashboard/admin/derivations/${derivation.id}`
+                            )
+                          }
+                        >
+                          <p>À vérifier</p>
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() =>
+                            router.push(
+                              `/dashboard/admin/derivations/${derivation.id}`
+                            )
+                          }
+                        >
+                          <p>Voir</p>
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-muted-foreground text-sm">
+                Afficher {filteredForms.length === 0 ? 0 : indexOfFirstItem + 1} à{' '}
+                {Math.min(indexOfLastItem, filteredForms.length)} sur{' '}
+                {filteredForms.length} entrées
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Précédent
+                </Button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </Button>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                >
+                  Suivant
+                </Button>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-muted-foreground text-sm">
+                  Dérivations par page:
+                </span>
+                <select
+                  className="border-input bg-background h-8 rounded-md border px-2 text-sm"
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                >
+                  {[5, 10, 20, 50].map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </>
+        )}
       </CardContent>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -358,17 +321,21 @@ export function FormsList() {
                 </span>
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <span className="text-sm font-medium">Adresse:</span>
-                <span className="col-span-3">{selectedForm.address}</span>
+                <span className="text-sm font-medium">Chantier:</span>
+                <span className="col-span-3">{selectedForm.chantier?.address ?? '—'}</span>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="text-sm font-medium">Ville:</span>
-                <span className="col-span-3">{selectedForm.city}</span>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="text-sm font-medium">Code postal:</span>
-                <span className="col-span-3">{selectedForm.postalCode}</span>
-              </div>
+              {selectedForm.chantier && (
+                <>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <span className="text-sm font-medium">N° Enedis:</span>
+                    <span className="col-span-3">{selectedForm.chantier.enedisAffaireNumber}</span>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <span className="text-sm font-medium">N° Interne:</span>
+                    <span className="col-span-3">{selectedForm.chantier.internalAffaireNumber}</span>
+                  </div>
+                </>
+              )}
               <div className="grid grid-cols-4 items-center gap-4">
                 <span className="text-sm font-medium">Statut:</span>
                 <span className="col-span-3">

@@ -8,9 +8,17 @@ export const handlers = [
       {
         id: 1,
         userId: 1,
-        address: '1 rue de la Paix',
-        city: 'Paris',
-        postalCode: '75001',
+        chantierId: 1,
+        chantier: {
+          id: 1,
+          address: '1 rue de la Paix',
+          enedisAffaireNumber: 'AFF-001',
+          internalAffaireNumber: 'INT-001',
+          marketId: 1,
+          market: { id: 1, name: 'Marché Test', createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-01-01T00:00:00.000Z' },
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
         createdAt: '2024-01-01T00:00:00.000Z',
         status: 'Pending',
         correctionComment: null,
@@ -22,9 +30,17 @@ export const handlers = [
     HttpResponse.json({
       id: Number(params.id),
       userId: 1,
-      address: '1 rue de la Paix',
-      city: 'Paris',
-      postalCode: '75001',
+      chantierId: 1,
+      chantier: {
+        id: 1,
+        address: '1 rue de la Paix',
+        enedisAffaireNumber: 'AFF-001',
+        internalAffaireNumber: 'INT-001',
+        marketId: 1,
+        market: { id: 1, name: 'Marché Test', createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-01-01T00:00:00.000Z' },
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
       createdAt: '2024-01-01T00:00:00.000Z',
       status: 'Pending',
       correctionComment: null,
@@ -36,13 +52,42 @@ export const handlers = [
       {
         id: 1,
         userId: Number(params.userId),
-        address: '1 rue de la Paix',
-        city: 'Paris',
-        postalCode: '75001',
+        chantierId: 1,
+        chantier: {
+          id: 1,
+          address: '1 rue de la Paix',
+          enedisAffaireNumber: 'AFF-001',
+          internalAffaireNumber: 'INT-001',
+          marketId: 1,
+          market: { id: 1, name: 'Marché Test', createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-01-01T00:00:00.000Z' },
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
         createdAt: '2024-01-01T00:00:00.000Z',
         status: 'Pending',
         correctionComment: null,
       },
+    ])
+  ),
+
+  http.get(`${BASE}/chantiers`, () =>
+    HttpResponse.json([
+      {
+        id: 1,
+        address: '1 rue de la Paix',
+        enedisAffaireNumber: 'AFF-001',
+        internalAffaireNumber: 'INT-001',
+        marketId: 1,
+        market: { id: 1, name: 'Marché Test', createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-01-01T00:00:00.000Z' },
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+    ])
+  ),
+
+  http.get(`${BASE}/markets`, () =>
+    HttpResponse.json([
+      { id: 1, name: 'Marché Test', createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-01-01T00:00:00.000Z' },
     ])
   ),
 

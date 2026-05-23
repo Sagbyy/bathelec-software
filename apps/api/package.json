@@ -5,8 +5,12 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "prisma": {
+    "seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
+  },
   "scripts": {
     "build": "nest build",
+    "seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
     "dev": "nest start --watch",
     "vercel-build": "npx prisma generate && npx prisma migrate deploy && turbo run build",
     "postinstall": "npx prisma generate",

@@ -50,20 +50,15 @@ function getStatusAction(status: DerivationStatus) {
 
 export const columns: ColumnDef<Derivation>[] = [
   {
-    accessorFn: (row) => {
-      if (row.address && row.postalCode && row.city) {
-        return `${row.address}, ${row.postalCode} ${row.city}`.toLowerCase();
-      }
-      return "Pas d'adresse renseignée.";
-    },
-    id: 'address',
+    accessorFn: (row) => row.chantier?.address ?? "Pas de chantier renseigné.",
+    id: 'chantier',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Adresse
+          Chantier
           {column.getIsSorted() === 'desc' ? (
             <Icon icon="ri:arrow-down-line" className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === 'asc' ? (

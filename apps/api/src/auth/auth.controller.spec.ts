@@ -30,11 +30,19 @@ describe('AuthController', () => {
 
   describe('login', () => {
     it('returns accessToken on valid credentials', async () => {
-      mockAuthService.signIn.mockResolvedValueOnce({ accessToken: 'jwt-token' });
+      mockAuthService.signIn.mockResolvedValueOnce({
+        accessToken: 'jwt-token',
+      });
 
-      const result = await controller.login({ username: 'adminuser', password: 'Pass123!' });
+      const result = await controller.login({
+        username: 'adminuser',
+        password: 'Pass123!',
+      });
 
-      expect(mockAuthService.signIn).toHaveBeenCalledWith('adminuser', 'Pass123!');
+      expect(mockAuthService.signIn).toHaveBeenCalledWith(
+        'adminuser',
+        'Pass123!'
+      );
       expect(result).toEqual({ accessToken: 'jwt-token' });
     });
 

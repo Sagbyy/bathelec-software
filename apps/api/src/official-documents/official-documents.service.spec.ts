@@ -50,8 +50,10 @@ describe('OfficialDocumentsService', () => {
   });
 
   describe('createOrUpdate', () => {
-    it('crée un nouveau document quand aucun n\'existe', async () => {
-      mockModel.findOne.mockReturnValue({ lean: jest.fn().mockResolvedValue(null) });
+    it("crée un nouveau document quand aucun n'existe", async () => {
+      mockModel.findOne.mockReturnValue({
+        lean: jest.fn().mockResolvedValue(null),
+      });
 
       const result = await service.createOrUpdate(1, mockDto);
 
@@ -79,8 +81,10 @@ describe('OfficialDocumentsService', () => {
       );
     });
 
-    it('crée uniquement avec pièce d\'identité (autres champs absents)', async () => {
-      mockModel.findOne.mockReturnValue({ lean: jest.fn().mockResolvedValue(null) });
+    it("crée uniquement avec pièce d'identité (autres champs absents)", async () => {
+      mockModel.findOne.mockReturnValue({
+        lean: jest.fn().mockResolvedValue(null),
+      });
 
       const result = await service.createOrUpdate(1, {
         idCard: 'data:image/jpeg;base64,idCardBase64',
@@ -103,7 +107,7 @@ describe('OfficialDocumentsService', () => {
       expect(mockModel.findOne).toHaveBeenCalledWith({ userId: 1 });
     });
 
-    it('retourne null si aucun document n\'existe', async () => {
+    it("retourne null si aucun document n'existe", async () => {
       mockModel.findOne.mockResolvedValue(null);
 
       const result = await service.findByUserId(99);
@@ -159,7 +163,7 @@ describe('OfficialDocumentsService', () => {
       expect(mockModel.findOneAndDelete).toHaveBeenCalledWith({ userId: 1 });
     });
 
-    it('retourne null si aucun document n\'existait', async () => {
+    it("retourne null si aucun document n'existait", async () => {
       mockModel.findOneAndDelete.mockResolvedValue(null);
 
       const result = await service.remove(99);

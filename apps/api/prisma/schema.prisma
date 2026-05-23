@@ -20,16 +20,35 @@ model User {
   groupMemberships UserGroupMembership[]
 }
 
+model Market {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  chantiers Chantier[]
+}
+
+model Chantier {
+  id                    Int          @id @default(autoincrement())
+  address               String
+  enedisAffaireNumber   String
+  internalAffaireNumber String
+  marketId              Int
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  market                Market       @relation(fields: [marketId], references: [id])
+  derivations           Derivation[]
+}
+
 model Derivation {
-  id                Int      @id @default(autoincrement())
+  id                Int       @id @default(autoincrement())
   userId            Int
-  createdAt         DateTime @default(now())
-  address           String?
-  city              String?
-  postalCode        Int?
+  chantierId        Int?
+  createdAt         DateTime  @default(now())
   status            String
   correctionComment String?
-  user              User     @relation(fields: [userId], references: [id])
+  user              User      @relation(fields: [userId], references: [id])
+  chantier          Chantier? @relation(fields: [chantierId], references: [id])
 }
 
 model UserGroup {

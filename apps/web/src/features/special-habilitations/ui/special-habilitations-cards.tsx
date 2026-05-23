@@ -91,10 +91,19 @@ export function SpecialHabilitationsCards({
   habilitations,
 }: SpecialHabilitationsCardsProps) {
   const data = habilitations ?? DEFAULT_SPECIAL_HABILITATIONS;
+  const activeConfigs = SPECIAL_HABILITATION_CONFIG.filter(
+    (config) => data[config.key]
+  );
+
+  if (activeConfigs.length === 0) {
+    return (
+      <p className="text-sm text-gray-400">Aucun titre ou certificat attribué.</p>
+    );
+  }
 
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-      {SPECIAL_HABILITATION_CONFIG.map((config) => (
+      {activeConfigs.map((config) => (
         <SpecialHabilitationCard
           key={config.key}
           config={config}

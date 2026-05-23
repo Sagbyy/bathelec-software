@@ -1,4 +1,3 @@
-import { ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { OfficialDocumentsController } from './official-documents.controller';
 import { OfficialDocumentsService } from './official-documents.service';
@@ -134,11 +133,12 @@ describe('OfficialDocumentsController', () => {
       expect(guards).toContain(SelfOrAdminGuard);
     });
 
-    it('n\'applique pas SelfOrAdminGuard sur createOrUpdate (userId vient du JWT)', () => {
-      const guards = Reflect.getMetadata(
-        '__guards__',
-        OfficialDocumentsController.prototype.createOrUpdate
-      ) ?? [];
+    it("n'applique pas SelfOrAdminGuard sur createOrUpdate (userId vient du JWT)", () => {
+      const guards =
+        Reflect.getMetadata(
+          '__guards__',
+          OfficialDocumentsController.prototype.createOrUpdate
+        ) ?? [];
       expect(guards).not.toContain(SelfOrAdminGuard);
     });
   });

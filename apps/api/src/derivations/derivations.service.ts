@@ -4,6 +4,8 @@ import { CreateDerivationDto } from './dto/request/create-derivation.dto';
 import { DerivationStatus } from '../types/derivations-status.enum';
 import { UpdateDerivationDto } from './dto/request/update-derivation.dto';
 
+const CHANTIER_INCLUDE = { chantier: { include: { market: true } } } as const;
+
 @Injectable()
 export class DerivationsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -11,26 +13,32 @@ export class DerivationsService {
 
   async createDerivation(createDerivationDto: CreateDerivationDto) {
     const isUserExist = await this.prisma.user.findUnique({
-      where: {
-        id: createDerivationDto.userId,
-      },
+      where: { id: createDerivationDto.userId },
     });
 
     if (!isUserExist) {
       throw new NotFoundException('User not found');
     }
 
+    if (createDerivationDto.chantierId) {
+      const chantier = await this.prisma.chantier.findUnique({
+        where: { id: createDerivationDto.chantierId },
+      });
+      if (!chantier) throw new NotFoundException('Chantier not found');
+    }
+
     this.logger.log(
       `Creating derivation with data: ${JSON.stringify(createDerivationDto)}`
     );
 
-    delete createDerivationDto.isBlank;
-
     return this.prisma.derivation.create({
       data: {
-        ...createDerivationDto,
+        userId: createDerivationDto.userId,
+        chantierId: createDerivationDto.chantierId ?? null,
+        correctionComment: createDerivationDto.correctionComment ?? null,
         status: DerivationStatus.PENDING,
       },
+      include: CHANTIER_INCLUDE,
     });
   }
 
@@ -41,15 +49,13 @@ export class DerivationsService {
     }
 
     const derivations = await this.prisma.derivation.findMany({
-      where: {
-        userId: parsedUserId,
-      },
+      where: { userId: parsedUserId },
+      include: CHANTIER_INCLUDE,
     });
 
     this.logger.log(
       `Found ${derivations.length} derivations for user ID: ${parsedUserId}`
     );
-    this.logger.log(`Derivations: ${JSON.stringify(derivations, null, 2)}`);
 
     return derivations;
   }
@@ -63,9 +69,8 @@ export class DerivationsService {
     this.logger.log(`Finding derivation with ID: ${parsedDerivationId}`);
 
     const derivation = await this.prisma.derivation.findUnique({
-      where: {
-        id: parsedDerivationId,
-      },
+      where: { id: parsedDerivationId },
+      include: CHANTIER_INCLUDE,
     });
 
     if (!derivation) {
@@ -77,7 +82,7 @@ export class DerivationsService {
   }
 
   async findAllDerivations() {
-    return this.prisma.derivation.findMany();
+    return this.prisma.derivation.findMany({ include: CHANTIER_INCLUDE });
   }
 
   async updateDerivation(
@@ -92,9 +97,7 @@ export class DerivationsService {
     this.logger.log(`Finding derivation with ID: ${parsedDerivationId}`);
 
     const derivation = await this.prisma.derivation.findUnique({
-      where: {
-        id: parsedDerivationId,
-      },
+      where: { id: parsedDerivationId },
     });
 
     if (!derivation) {
@@ -107,6 +110,7 @@ export class DerivationsService {
     return this.prisma.derivation.update({
       where: { id: parsedDerivationId },
       data: updateDerivationDto,
+      include: CHANTIER_INCLUDE,
     });
   }
 }

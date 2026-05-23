@@ -59,7 +59,9 @@ describe('CompletedDerivationService', () => {
   let service: CompletedDerivationService;
 
   const mockCompletedDerivationModel = {
-    findOne: jest.fn().mockReturnValue({ lean: jest.fn().mockResolvedValue(null) }),
+    findOne: jest
+      .fn()
+      .mockReturnValue({ lean: jest.fn().mockResolvedValue(null) }),
     findOneAndUpdate: jest.fn(),
     findByIdAndUpdate: jest.fn(),
     findByIdAndDelete: jest.fn(),
@@ -95,7 +97,9 @@ describe('CompletedDerivationService', () => {
       ],
     }).compile();
 
-    service = module.get<CompletedDerivationService>(CompletedDerivationService);
+    service = module.get<CompletedDerivationService>(
+      CompletedDerivationService
+    );
     jest.clearAllMocks();
     mockCompletedDerivationModel.findOne.mockReturnValue({
       lean: jest.fn().mockResolvedValue(null),
@@ -113,12 +117,16 @@ describe('CompletedDerivationService', () => {
     expect(completedDerivation).toBeDefined();
     expect(completedDerivation.clientInfo).toEqual(mockDto.clientInfo);
     expect(completedDerivation.generalInfo).toMatchObject(mockDto.generalInfo);
-    expect(completedDerivation.photoBeforeWork).toEqual(mockDto.photoBeforeWork);
+    expect(completedDerivation.photoBeforeWork).toEqual(
+      mockDto.photoBeforeWork
+    );
     expect(completedDerivation.oldMeter).toEqual(mockDto.oldMeter);
     expect(completedDerivation.newDerivation).toEqual(mockDto.newDerivation);
     expect(completedDerivation.newMeter).toEqual(mockDto.newMeter);
     expect(completedDerivation.circuitBreaker).toEqual(mockDto.circuitBreaker);
     expect(completedDerivation.photoAfterWork).toEqual(mockDto.photoAfterWork);
-    expect(completedDerivation.clientValidation).toEqual(mockDto.clientValidation);
+    expect(completedDerivation.clientValidation).toEqual(
+      mockDto.clientValidation
+    );
   });
 });

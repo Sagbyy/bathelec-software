@@ -33,11 +33,6 @@ export class CompletedDerivationService {
           },
           data: {
             status: DerivationStatus.REVIEWING,
-            address: createCompletedDerivationDto.generalInfo.address.street,
-            city: createCompletedDerivationDto.generalInfo.address.city,
-            postalCode: Number(
-              createCompletedDerivationDto.generalInfo.address.postalCode
-            ),
           },
         });
 
@@ -61,11 +56,6 @@ export class CompletedDerivationService {
         },
         data: {
           status: DerivationStatus.REVIEWING,
-          address: createCompletedDerivationDto.generalInfo.address.street,
-          city: createCompletedDerivationDto.generalInfo.address.city,
-          postalCode: Number(
-            createCompletedDerivationDto.generalInfo.address.postalCode
-          ),
         },
       });
 
@@ -96,11 +86,6 @@ export class CompletedDerivationService {
       },
       data: {
         status: DerivationStatus.REVIEWING,
-        address: updateCompletedDerivationDto.generalInfo.address.street,
-        city: updateCompletedDerivationDto.generalInfo.address.city,
-        postalCode: Number(
-          updateCompletedDerivationDto.generalInfo.address.postalCode
-        ),
       },
     });
 

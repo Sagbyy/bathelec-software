@@ -27,7 +27,6 @@ import { useDerivationStatusStore } from '@/entities/derivation';
 import { useUserStore } from '@/entities/user';
 import { useEffect, useState } from 'react';
 import { Derivation } from '@repo/types';
-import { Address } from '@repo/types';
 
 interface GeneralInfoStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
@@ -41,13 +40,8 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
   const [isStaticAddress, setIsStaticAddress] = useState(false);
 
   useEffect(() => {
-    if (derivation.address && derivation.postalCode && derivation.city) {
-      form.setValue('generalInfo.address.street', derivation.address);
-      form.setValue(
-        'generalInfo.address.postalCode',
-        String(derivation.postalCode)
-      );
-      form.setValue('generalInfo.address.city', derivation.city);
+    if (derivation.chantier?.address) {
+      form.setValue('generalInfo.address.street', derivation.chantier.address);
       setIsStaticAddress(true);
     }
   }, []);
@@ -162,7 +156,11 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
             <Input
               {...field}
               disabled={isCompleted || isStaticAddress}
-              value={isStaticAddress ? derivation.address : field.value}
+              value={
+                isStaticAddress
+                  ? (derivation.chantier?.address ?? '')
+                  : field.value
+              }
               onChange={(e) => field.onChange(e.target.value.toUpperCase())}
             />
           )}
@@ -175,11 +173,7 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
           required
         >
           {(field) => (
-            <Input
-              {...field}
-              disabled={isCompleted || isStaticAddress}
-              value={isStaticAddress ? derivation.postalCode : field.value}
-            />
+            <Input {...field} disabled={isCompleted} value={field.value} />
           )}
         </LabeledField>
 
@@ -192,8 +186,8 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
           {(field) => (
             <Input
               {...field}
-              disabled={isCompleted || isStaticAddress}
-              value={isStaticAddress ? derivation.city : field.value}
+              disabled={isCompleted}
+              value={field.value}
               onChange={(e) => field.onChange(e.target.value.toUpperCase())}
             />
           )}

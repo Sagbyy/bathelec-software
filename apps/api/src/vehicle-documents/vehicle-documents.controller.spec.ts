@@ -48,7 +48,9 @@ describe('VehicleDocumentsController', () => {
 
   describe('createOrUpdate', () => {
     it('should delegate to service with userId from current user', async () => {
-      const dto = { vehicleRegistration: 'data:image/jpeg;base64,vehicleRegistrationBase64' };
+      const dto = {
+        vehicleRegistration: 'data:image/jpeg;base64,vehicleRegistrationBase64',
+      };
       mockVehicleDocumentsService.createOrUpdate.mockResolvedValue(
         vehicleDocumentEntity
       );

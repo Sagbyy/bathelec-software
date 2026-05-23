@@ -12,6 +12,8 @@ import { VehicleDocumentsModule } from './vehicle-documents/vehicle-documents.mo
 import { OfficialDocumentsModule } from './official-documents/official-documents.module';
 import { HabilitationsModule } from './habilitations/habilitations.module';
 import { SpecialHabilitationsModule } from './special-habilitations/special-habilitations.module';
+import { MarketModule } from './market/market.module';
+import { ChantiersModule } from './chantiers/chantiers.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { SpecialHabilitationsModule } from './special-habilitations/special-habi
     OfficialDocumentsModule,
     HabilitationsModule,
     SpecialHabilitationsModule,
+    MarketModule,
+    ChantiersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

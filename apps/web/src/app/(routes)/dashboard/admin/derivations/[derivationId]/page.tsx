@@ -44,9 +44,7 @@ export default function AdminDerivationPage() {
       <CorrectionComment derivation={derivation} />
       <InfoCard
         status={derivation?.status}
-        city={derivation?.city}
-        postalCode={derivation?.postalCode}
-        address={derivation?.address}
+        chantier={derivation?.chantier}
         createdAt={derivation?.createdAt}
       />
       <MultiStepForm derivation={derivation} readOnly={true} />

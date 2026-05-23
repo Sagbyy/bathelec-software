@@ -14,7 +14,7 @@ describe('derivationService', () => {
 
       expect(Array.isArray(data)).toBe(true);
       expect(data).toHaveLength(1);
-      expect(data[0]).toMatchObject({ id: 1, city: 'Paris' });
+      expect(data[0]).toMatchObject({ id: 1, chantierId: 1 });
     });
 
     it('throws when the server returns an error', async () => {
@@ -44,9 +44,8 @@ describe('derivationService', () => {
           HttpResponse.json({
             id: 42,
             userId: 1,
-            address: 'Test',
-            city: 'Lyon',
-            postalCode: '69001',
+            chantierId: 2,
+            chantier: null,
             createdAt: '2024-01-01T00:00:00.000Z',
             status: 'Pending',
             correctionComment: null,
@@ -56,7 +55,7 @@ describe('derivationService', () => {
 
       const data = await derivationService.getDerivationById(42);
       expect(data.id).toBe(42);
-      expect(data.city).toBe('Lyon');
+      expect(data.chantierId).toBe(2);
     });
   });
 

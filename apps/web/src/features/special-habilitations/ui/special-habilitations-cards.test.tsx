@@ -16,34 +16,31 @@ describe('SpecialHabilitationsCards', () => {
     vi.stubGlobal('open', vi.fn());
   });
 
-  it('affiche les 4 cartes', () => {
+  it("affiche le message d'état vide quand aucune habilitation n'est attribuée", () => {
     render(<SpecialHabilitationsCards habilitations={null} />);
     expect(
-      screen.getByText("Titre d'habilitation électrique")
+      screen.getByText('Aucun titre ou certificat attribué.')
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Titre d'habilitation SS4")
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("Titre d'habilitation Plomb")
-    ).toBeInTheDocument();
-    expect(screen.getByText('Certificat SST')).toBeInTheDocument();
+      screen.queryByText("Titre d'habilitation électrique")
+    ).not.toBeInTheDocument();
   });
 
-  it('affiche "Non attribuée" pour toutes les cartes quand habilitations est null', () => {
+  it("n'affiche aucun badge Non attribuée quand habilitations est null", () => {
     render(<SpecialHabilitationsCards habilitations={null} />);
-    const badges = screen.getAllByText('Non attribuée');
-    expect(badges).toHaveLength(4);
+    expect(screen.queryAllByText('Non attribuée')).toHaveLength(0);
   });
 
-  it('affiche "Non attribuée" pour toutes les cartes avec les valeurs par défaut', () => {
+  it("n'affiche aucun badge Non attribuée avec les valeurs par défaut", () => {
     render(
       <SpecialHabilitationsCards
         habilitations={DEFAULT_SPECIAL_HABILITATIONS}
       />
     );
-    const badges = screen.getAllByText('Non attribuée');
-    expect(badges).toHaveLength(4);
+    expect(screen.queryAllByText('Non attribuée')).toHaveLength(0);
+    expect(
+      screen.getByText('Aucun titre ou certificat attribué.')
+    ).toBeInTheDocument();
   });
 
   it('affiche "Document disponible" quand une habilitation est activée avec document', () => {
@@ -117,15 +114,18 @@ describe('SpecialHabilitationsCards', () => {
     expect(buttons).toHaveLength(0);
   });
 
-  it('applique opacity-50 aux cartes désactivées', () => {
+  it("n'affiche pas de cartes quand toutes les habilitations sont inactives", () => {
     const { container } = render(
       <SpecialHabilitationsCards habilitations={null} />
     );
     const opacityCards = container.querySelectorAll('.opacity-50');
-    expect(opacityCards).toHaveLength(4);
+    expect(opacityCards).toHaveLength(0);
+    expect(
+      screen.getByText('Aucun titre ou certificat attribué.')
+    ).toBeInTheDocument();
   });
 
-  it("n'applique pas opacity-50 aux cartes activées", () => {
+  it('affiche uniquement la carte active, sans opacity-50', () => {
     const { container } = render(
       <SpecialHabilitationsCards
         habilitations={{
@@ -136,7 +136,8 @@ describe('SpecialHabilitationsCards', () => {
       />
     );
     const opacityCards = container.querySelectorAll('.opacity-50');
-    expect(opacityCards).toHaveLength(3);
+    expect(opacityCards).toHaveLength(0);
+    expect(screen.getByText('Document disponible')).toBeInTheDocument();
   });
 
   it('ouvre la carte via la touche Entrée', async () => {

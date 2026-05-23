@@ -1,3 +1,5 @@
+import { Chantier } from './chantier.js';
+
 export enum DerivationStatus {
   PENDING = 'Pending',
   ONGOING = 'Ongoing',
@@ -10,9 +12,8 @@ export enum DerivationStatus {
 export interface Derivation {
   id: number;
   userId: number;
-  address: string;
-  city: string;
-  postalCode: string;
+  chantierId: number | null;
+  chantier: Chantier | null;
   createdAt: string;
   status: DerivationStatus;
   correctionComment: string | null;

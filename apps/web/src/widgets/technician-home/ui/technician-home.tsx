@@ -86,7 +86,7 @@ export function TechnicianHome() {
   const firstName = user?.username ?? 'Technicien';
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
+    <div className="flex min-h-screen flex-col bg-white">
       <div className="mx-auto w-full max-w-5xl px-4 pb-8 pt-6 md:px-8 md:pt-10">
         <div className="flex items-start justify-between">
           <div>

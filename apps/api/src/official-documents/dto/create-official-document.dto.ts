@@ -7,7 +7,8 @@ export class CreateOfficialDocumentDto {
   @IsOptional()
   @ApiPropertyOptional({
     example: 'data:image/jpeg;base64,...',
-    description: 'ID card or residence permit in base64 (jpeg, png, webp — max 5MB)',
+    description:
+      'ID card or residence permit in base64 (jpeg, png, webp — max 5MB)',
   })
   idCard?: string;
 
