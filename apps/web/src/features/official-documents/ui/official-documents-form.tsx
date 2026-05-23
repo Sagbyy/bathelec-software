@@ -16,33 +16,33 @@ export function OfficialDocumentsForm() {
   const { data, isLoading } = useOfficialDocument(userId!);
   const { mutate, isPending } = useUpsertOfficialDocument(userId!);
 
-  const [pieceIdentite, setPieceIdentite] = useState<string | null>(null);
-  const [carteProBtp, setCarteProBtp] = useState<string | null>(null);
-  const [carteMutuelle, setCarteMutuelle] = useState<string | null>(null);
+  const [idCard, setIdCard] = useState<string | null>(null);
+  const [btpCard, setBtpCard] = useState<string | null>(null);
+  const [mutualCard, setMutualCard] = useState<string | null>(null);
   const initialized = useRef(false);
 
   useEffect(() => {
     if (data && !initialized.current) {
-      setPieceIdentite(data.pieceIdentite ?? null);
-      setCarteProBtp(data.carteProBtp ?? null);
-      setCarteMutuelle(data.carteMutuelle ?? null);
+      setIdCard(data.idCard ?? null);
+      setBtpCard(data.btpCard ?? null);
+      setMutualCard(data.mutualCard ?? null);
       initialized.current = true;
     }
   }, [data]);
 
-  const handlePieceIdentiteChange = (value: string | null) => {
-    setPieceIdentite(value);
-    mutate({ pieceIdentite: value, carteProBtp, carteMutuelle });
+  const handleIdCardChange = (value: string | null) => {
+    setIdCard(value);
+    mutate({ idCard: value, btpCard, mutualCard });
   };
 
-  const handleCarteProBtpChange = (value: string | null) => {
-    setCarteProBtp(value);
-    mutate({ pieceIdentite, carteProBtp: value, carteMutuelle });
+  const handleBtpCardChange = (value: string | null) => {
+    setBtpCard(value);
+    mutate({ idCard, btpCard: value, mutualCard });
   };
 
-  const handleCarteMutuelleChange = (value: string | null) => {
-    setCarteMutuelle(value);
-    mutate({ pieceIdentite, carteProBtp, carteMutuelle: value });
+  const handleMutualCardChange = (value: string | null) => {
+    setMutualCard(value);
+    mutate({ idCard, btpCard, mutualCard: value });
   };
 
   if (isLoading) {
@@ -56,11 +56,11 @@ export function OfficialDocumentsForm() {
   return (
     <div className="space-y-8">
       <DocumentUploadCard
-        label="Pièce d'identité"
-        description="Carte nationale d'identité ou passeport (jpeg, png, webp — max 5 Mo)"
-        inputId="piece-identite-upload"
-        value={pieceIdentite}
-        onChange={handlePieceIdentiteChange}
+        label="Pièce d'identité ou titre de séjour"
+        description="Carte nationale d'identité, passeport ou titre de séjour (jpeg, png, webp — max 5 Mo)"
+        inputId="id-card-upload"
+        value={idCard}
+        onChange={handleIdCardChange}
         isPending={isPending}
       />
 
@@ -69,9 +69,9 @@ export function OfficialDocumentsForm() {
       <DocumentUploadCard
         label="Carte professionnelle BTP"
         description="Carte BTP en cours de validité (jpeg, png, webp — max 5 Mo)"
-        inputId="carte-pro-btp-upload"
-        value={carteProBtp}
-        onChange={handleCarteProBtpChange}
+        inputId="btp-card-upload"
+        value={btpCard}
+        onChange={handleBtpCardChange}
         isPending={isPending}
       />
 
@@ -80,9 +80,9 @@ export function OfficialDocumentsForm() {
       <DocumentUploadCard
         label="Carte mutuelle"
         description="Attestation ou carte de mutuelle (jpeg, png, webp — max 5 Mo)"
-        inputId="carte-mutuelle-upload"
-        value={carteMutuelle}
-        onChange={handleCarteMutuelleChange}
+        inputId="mutual-card-upload"
+        value={mutualCard}
+        onChange={handleMutualCardChange}
         isPending={isPending}
       />
     </div>

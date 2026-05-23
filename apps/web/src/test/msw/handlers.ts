@@ -94,9 +94,9 @@ export const handlers = [
     HttpResponse.json({
       _id: 'doc2',
       userId: Number(params.userId),
-      pieceIdentite: 'data:image/jpeg;base64,pieceBase64',
-      carteProBtp: 'data:image/jpeg;base64,btpBase64',
-      carteMutuelle: 'data:image/jpeg;base64,mutuelleBase64',
+      idCard: 'data:image/jpeg;base64,pieceBase64',
+      btpCard: 'data:image/jpeg;base64,btpBase64',
+      mutualCard: 'data:image/jpeg;base64,mutuelleBase64',
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
     })
@@ -107,9 +107,9 @@ export const handlers = [
     return HttpResponse.json({
       _id: 'doc2',
       userId: 1,
-      pieceIdentite: body.pieceIdentite ?? null,
-      carteProBtp: body.carteProBtp ?? null,
-      carteMutuelle: body.carteMutuelle ?? null,
+      idCard: body.idCard ?? null,
+      btpCard: body.btpCard ?? null,
+      mutualCard: body.mutualCard ?? null,
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
     });
@@ -119,9 +119,9 @@ export const handlers = [
     HttpResponse.json({
       _id: 'doc2',
       userId: Number(params.userId),
-      pieceIdentite: null,
-      carteProBtp: null,
-      carteMutuelle: null,
+      idCard: null,
+      btpCard: null,
+      mutualCard: null,
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
     })

@@ -43,9 +43,9 @@ const asHook = (v: unknown) => v as any;
 const fullData = {
   _id: 'doc1',
   userId: 1,
-  pieceIdentite: 'data:image/jpeg;base64,pieceBase64',
-  carteProBtp: 'data:image/jpeg;base64,btpBase64',
-  carteMutuelle: 'data:image/jpeg;base64,mutuelleBase64',
+  idCard: 'data:image/jpeg;base64,pieceBase64',
+  btpCard: 'data:image/jpeg;base64,btpBase64',
+  mutualCard: 'data:image/jpeg;base64,mutuelleBase64',
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 };
@@ -134,9 +134,9 @@ describe('OfficialDocumentsForm', () => {
       fireEvent.change(inputs[0]!, { target: { files: [new File(['img'], 'piece.jpg', { type: 'image/jpeg' })] } });
 
       expect(mockMutate).toHaveBeenCalledWith({
-        pieceIdentite: base64,
-        carteProBtp: null,
-        carteMutuelle: null,
+        idCard: base64,
+        btpCard: null,
+        mutualCard: null,
       });
       vi.unstubAllGlobals();
     });
@@ -155,9 +155,9 @@ describe('OfficialDocumentsForm', () => {
       fireEvent.change(inputs[1]!, { target: { files: [new File(['img'], 'btp.jpg', { type: 'image/jpeg' })] } });
 
       expect(mockMutate).toHaveBeenCalledWith({
-        pieceIdentite: null,
-        carteProBtp: base64,
-        carteMutuelle: null,
+        idCard: null,
+        btpCard: base64,
+        mutualCard: null,
       });
       vi.unstubAllGlobals();
     });
@@ -176,9 +176,9 @@ describe('OfficialDocumentsForm', () => {
       fireEvent.change(inputs[2]!, { target: { files: [new File(['img'], 'mutuelle.jpg', { type: 'image/jpeg' })] } });
 
       expect(mockMutate).toHaveBeenCalledWith({
-        pieceIdentite: null,
-        carteProBtp: null,
-        carteMutuelle: base64,
+        idCard: null,
+        btpCard: null,
+        mutualCard: base64,
       });
       vi.unstubAllGlobals();
     });
@@ -189,41 +189,41 @@ describe('OfficialDocumentsForm', () => {
       mockUseOfficialDocument.mockReturnValue(asHook({ data: fullData, isLoading: false }));
     });
 
-    it("appelle mutate avec pieceIdentite=null quand on supprime la pièce d'identité", async () => {
+    it("appelle mutate avec idCard=null quand on supprime la pièce d'identité", async () => {
       render(<OfficialDocumentsForm />);
       fireEvent.click(screen.getAllByRole('button')[0]!);
 
       await waitFor(() => {
         expect(mockMutate).toHaveBeenCalledWith({
-          pieceIdentite: null,
-          carteProBtp: 'data:image/jpeg;base64,btpBase64',
-          carteMutuelle: 'data:image/jpeg;base64,mutuelleBase64',
+          idCard: null,
+          btpCard: 'data:image/jpeg;base64,btpBase64',
+          mutualCard: 'data:image/jpeg;base64,mutuelleBase64',
         });
       });
     });
 
-    it('appelle mutate avec carteProBtp=null quand on supprime la carte BTP', async () => {
+    it('appelle mutate avec btpCard=null quand on supprime la carte BTP', async () => {
       render(<OfficialDocumentsForm />);
       fireEvent.click(screen.getAllByRole('button')[1]!);
 
       await waitFor(() => {
         expect(mockMutate).toHaveBeenCalledWith({
-          pieceIdentite: 'data:image/jpeg;base64,pieceBase64',
-          carteProBtp: null,
-          carteMutuelle: 'data:image/jpeg;base64,mutuelleBase64',
+          idCard: 'data:image/jpeg;base64,pieceBase64',
+          btpCard: null,
+          mutualCard: 'data:image/jpeg;base64,mutuelleBase64',
         });
       });
     });
 
-    it('appelle mutate avec carteMutuelle=null quand on supprime la carte mutuelle', async () => {
+    it('appelle mutate avec mutualCard=null quand on supprime la carte mutuelle', async () => {
       render(<OfficialDocumentsForm />);
       fireEvent.click(screen.getAllByRole('button')[2]!);
 
       await waitFor(() => {
         expect(mockMutate).toHaveBeenCalledWith({
-          pieceIdentite: 'data:image/jpeg;base64,pieceBase64',
-          carteProBtp: 'data:image/jpeg;base64,btpBase64',
-          carteMutuelle: null,
+          idCard: 'data:image/jpeg;base64,pieceBase64',
+          btpCard: 'data:image/jpeg;base64,btpBase64',
+          mutualCard: null,
         });
       });
     });

@@ -7,23 +7,23 @@ export class CreateOfficialDocumentDto {
   @IsOptional()
   @ApiPropertyOptional({
     example: 'data:image/jpeg;base64,...',
-    description: "Pièce d'identité en base64 (jpeg, png, webp — max 5MB)",
+    description: 'ID card or residence permit in base64 (jpeg, png, webp — max 5MB)',
   })
-  pieceIdentite?: string;
+  idCard?: string;
 
   @IsBase64Image()
   @IsOptional()
   @ApiPropertyOptional({
     example: 'data:image/jpeg;base64,...',
-    description: 'Carte professionnelle BTP en base64 (jpeg, png, webp — max 5MB)',
+    description: 'BTP professional card in base64 (jpeg, png, webp — max 5MB)',
   })
-  carteProBtp?: string;
+  btpCard?: string;
 
   @IsBase64Image()
   @IsOptional()
   @ApiPropertyOptional({
     example: 'data:image/jpeg;base64,...',
-    description: 'Carte mutuelle en base64 (jpeg, png, webp — max 5MB)',
+    description: 'Mutual insurance card in base64 (jpeg, png, webp — max 5MB)',
   })
-  carteMutuelle?: string;
+  mutualCard?: string;
 }

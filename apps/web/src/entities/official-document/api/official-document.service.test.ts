@@ -13,9 +13,9 @@ describe('officialDocumentService', () => {
       const data = await officialDocumentService.getByUserId(1);
 
       expect(data).toMatchObject({ userId: 1 });
-      expect(data.pieceIdentite).toBe('data:image/jpeg;base64,pieceBase64');
-      expect(data.carteProBtp).toBe('data:image/jpeg;base64,btpBase64');
-      expect(data.carteMutuelle).toBe('data:image/jpeg;base64,mutuelleBase64');
+      expect(data.idCard).toBe('data:image/jpeg;base64,pieceBase64');
+      expect(data.btpCard).toBe('data:image/jpeg;base64,btpBase64');
+      expect(data.mutualCard).toBe('data:image/jpeg;base64,mutuelleBase64');
     });
 
     it('propage le userId dans la requête', async () => {
@@ -45,14 +45,14 @@ describe('officialDocumentService', () => {
   describe('createOrUpdate', () => {
     it('envoie un POST et retourne le document créé', async () => {
       const dto = {
-        pieceIdentite: 'data:image/jpeg;base64,nouvellePiece',
-        carteProBtp: null,
-        carteMutuelle: null,
+        idCard: 'data:image/jpeg;base64,nouvellePiece',
+        btpCard: null,
+        mutualCard: null,
       };
       const data = await officialDocumentService.createOrUpdate(dto);
 
-      expect(data.pieceIdentite).toBe('data:image/jpeg;base64,nouvellePiece');
-      expect(data.carteProBtp).toBeNull();
+      expect(data.idCard).toBe('data:image/jpeg;base64,nouvellePiece');
+      expect(data.btpCard).toBeNull();
     });
 
     it('envoie un POST avec les trois champs', async () => {
@@ -61,9 +61,9 @@ describe('officialDocumentService', () => {
           const body = await request.json() as Record<string, unknown>;
           return HttpResponse.json({
             _id: 'doc2', userId: 1,
-            pieceIdentite: body.pieceIdentite,
-            carteProBtp: body.carteProBtp,
-            carteMutuelle: body.carteMutuelle,
+            idCard: body.idCard,
+            btpCard: body.btpCard,
+            mutualCard: body.mutualCard,
             createdAt: '2024-01-01T00:00:00.000Z',
             updatedAt: '2024-01-01T00:00:00.000Z',
           });
@@ -71,15 +71,15 @@ describe('officialDocumentService', () => {
       );
 
       const dto = {
-        pieceIdentite: 'data:image/jpeg;base64,piece',
-        carteProBtp: 'data:image/jpeg;base64,btp',
-        carteMutuelle: 'data:image/jpeg;base64,mutuelle',
+        idCard: 'data:image/jpeg;base64,piece',
+        btpCard: 'data:image/jpeg;base64,btp',
+        mutualCard: 'data:image/jpeg;base64,mutuelle',
       };
       const data = await officialDocumentService.createOrUpdate(dto);
 
-      expect(data.pieceIdentite).toBe('data:image/jpeg;base64,piece');
-      expect(data.carteProBtp).toBe('data:image/jpeg;base64,btp');
-      expect(data.carteMutuelle).toBe('data:image/jpeg;base64,mutuelle');
+      expect(data.idCard).toBe('data:image/jpeg;base64,piece');
+      expect(data.btpCard).toBe('data:image/jpeg;base64,btp');
+      expect(data.mutualCard).toBe('data:image/jpeg;base64,mutuelle');
     });
 
     it('lève une erreur si le serveur répond 400', async () => {
@@ -89,7 +89,7 @@ describe('officialDocumentService', () => {
         )
       );
       await expect(
-        officialDocumentService.createOrUpdate({ pieceIdentite: 'invalid' })
+        officialDocumentService.createOrUpdate({ idCard: 'invalid' })
       ).rejects.toThrow();
     });
   });
@@ -99,9 +99,9 @@ describe('officialDocumentService', () => {
       const data = await officialDocumentService.remove(1);
 
       expect(data.userId).toBe(1);
-      expect(data.pieceIdentite).toBeNull();
-      expect(data.carteProBtp).toBeNull();
-      expect(data.carteMutuelle).toBeNull();
+      expect(data.idCard).toBeNull();
+      expect(data.btpCard).toBeNull();
+      expect(data.mutualCard).toBeNull();
     });
 
     it('propage le userId dans la requête DELETE', async () => {

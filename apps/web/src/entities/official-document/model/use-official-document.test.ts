@@ -32,9 +32,9 @@ describe('useOfficialDocument', () => {
 
     expect(result.current.data).toMatchObject({
       userId: 1,
-      pieceIdentite: 'data:image/jpeg;base64,pieceBase64',
-      carteProBtp: 'data:image/jpeg;base64,btpBase64',
-      carteMutuelle: 'data:image/jpeg;base64,mutuelleBase64',
+      idCard: 'data:image/jpeg;base64,pieceBase64',
+      btpCard: 'data:image/jpeg;base64,btpBase64',
+      mutualCard: 'data:image/jpeg;base64,mutuelleBase64',
     });
   });
 
@@ -72,16 +72,16 @@ describe('useUpsertOfficialDocument', () => {
 
     await act(async () => {
       result.current.mutate({
-        pieceIdentite: 'data:image/jpeg;base64,nouvellePiece',
-        carteProBtp: null,
-        carteMutuelle: null,
+        idCard: 'data:image/jpeg;base64,nouvellePiece',
+        btpCard: null,
+        mutualCard: null,
       });
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toMatchObject({
-      pieceIdentite: 'data:image/jpeg;base64,nouvellePiece',
+      idCard: 'data:image/jpeg;base64,nouvellePiece',
     });
   });
 
@@ -97,7 +97,7 @@ describe('useUpsertOfficialDocument', () => {
     });
 
     await act(async () => {
-      result.current.mutate({ pieceIdentite: 'invalid' });
+      result.current.mutate({ idCard: 'invalid' });
     });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
@@ -115,7 +115,7 @@ describe('useUpsertOfficialDocument', () => {
     const { result } = renderHook(() => useUpsertOfficialDocument(1), { wrapper });
 
     await act(async () => {
-      result.current.mutate({ pieceIdentite: 'data:image/jpeg;base64,test' });
+      result.current.mutate({ idCard: 'data:image/jpeg;base64,test' });
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));

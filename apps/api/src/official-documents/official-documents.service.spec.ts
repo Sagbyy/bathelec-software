@@ -5,15 +5,15 @@ import { OfficialDocument } from './entities/official-document.entity';
 
 const mockDocument = {
   userId: 1,
-  pieceIdentite: 'data:image/jpeg;base64,pieceIdentiteBase64',
-  carteProBtp: 'data:image/jpeg;base64,carteProBtpBase64',
-  carteMutuelle: 'data:image/jpeg;base64,carteMutuelleBase64',
+  idCard: 'data:image/jpeg;base64,idCardBase64',
+  btpCard: 'data:image/jpeg;base64,btpCardBase64',
+  mutualCard: 'data:image/jpeg;base64,mutualCardBase64',
 };
 
 const mockDto = {
-  pieceIdentite: 'data:image/jpeg;base64,pieceIdentiteBase64',
-  carteProBtp: 'data:image/jpeg;base64,carteProBtpBase64',
-  carteMutuelle: 'data:image/jpeg;base64,carteMutuelleBase64',
+  idCard: 'data:image/jpeg;base64,idCardBase64',
+  btpCard: 'data:image/jpeg;base64,btpCardBase64',
+  mutualCard: 'data:image/jpeg;base64,mutualCardBase64',
 };
 
 describe('OfficialDocumentsService', () => {
@@ -63,7 +63,7 @@ describe('OfficialDocumentsService', () => {
       mockModel.findOne.mockReturnValue({
         lean: jest.fn().mockResolvedValue(mockDocument),
       });
-      const updatedDto = { pieceIdentite: 'data:image/jpeg;base64,nouveau' };
+      const updatedDto = { idCard: 'data:image/jpeg;base64,nouveau' };
       mockModel.findOneAndUpdate.mockResolvedValue({
         ...mockDocument,
         ...updatedDto,
@@ -71,7 +71,7 @@ describe('OfficialDocumentsService', () => {
 
       const result = await service.createOrUpdate(1, updatedDto);
 
-      expect(result.pieceIdentite).toBe('data:image/jpeg;base64,nouveau');
+      expect(result.idCard).toBe('data:image/jpeg;base64,nouveau');
       expect(mockModel.findOneAndUpdate).toHaveBeenCalledWith(
         { userId: 1 },
         expect.objectContaining(updatedDto),
@@ -83,12 +83,12 @@ describe('OfficialDocumentsService', () => {
       mockModel.findOne.mockReturnValue({ lean: jest.fn().mockResolvedValue(null) });
 
       const result = await service.createOrUpdate(1, {
-        pieceIdentite: 'data:image/jpeg;base64,pieceIdentiteBase64',
+        idCard: 'data:image/jpeg;base64,idCardBase64',
       });
 
       expect(result).toMatchObject({
         userId: 1,
-        pieceIdentite: 'data:image/jpeg;base64,pieceIdentiteBase64',
+        idCard: 'data:image/jpeg;base64,idCardBase64',
       });
     });
   });
@@ -116,19 +116,19 @@ describe('OfficialDocumentsService', () => {
     it('met à jour la carte mutuelle par userId', async () => {
       const updated = {
         ...mockDocument,
-        carteMutuelle: 'data:image/jpeg;base64,nouvelleMutuelle',
+        mutualCard: 'data:image/jpeg;base64,nouvelleMutuelle',
       };
       mockModel.findOneAndUpdate.mockResolvedValue(updated);
 
       const result = await service.update(1, {
-        carteMutuelle: 'data:image/jpeg;base64,nouvelleMutuelle',
+        mutualCard: 'data:image/jpeg;base64,nouvelleMutuelle',
       });
 
-      expect(result.carteMutuelle).toBe('data:image/jpeg;base64,nouvelleMutuelle');
+      expect(result.mutualCard).toBe('data:image/jpeg;base64,nouvelleMutuelle');
       expect(mockModel.findOneAndUpdate).toHaveBeenCalledWith(
         { userId: 1 },
         expect.objectContaining({
-          carteMutuelle: 'data:image/jpeg;base64,nouvelleMutuelle',
+          mutualCard: 'data:image/jpeg;base64,nouvelleMutuelle',
         }),
         { new: true }
       );
@@ -137,15 +137,15 @@ describe('OfficialDocumentsService', () => {
     it('met à jour la carte pro BTP par userId', async () => {
       const updated = {
         ...mockDocument,
-        carteProBtp: 'data:image/jpeg;base64,nouvelleCartePro',
+        btpCard: 'data:image/jpeg;base64,nouvelleCartePro',
       };
       mockModel.findOneAndUpdate.mockResolvedValue(updated);
 
       const result = await service.update(1, {
-        carteProBtp: 'data:image/jpeg;base64,nouvelleCartePro',
+        btpCard: 'data:image/jpeg;base64,nouvelleCartePro',
       });
 
-      expect(result.carteProBtp).toBe('data:image/jpeg;base64,nouvelleCartePro');
+      expect(result.btpCard).toBe('data:image/jpeg;base64,nouvelleCartePro');
     });
   });
 

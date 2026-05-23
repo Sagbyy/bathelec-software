@@ -7,9 +7,9 @@ import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 
 const officialDocumentEntity = {
   userId: 1,
-  pieceIdentite: 'data:image/jpeg;base64,pieceIdentiteBase64',
-  carteProBtp: 'data:image/jpeg;base64,carteProBtpBase64',
-  carteMutuelle: 'data:image/jpeg;base64,carteMutuelleBase64',
+  idCard: 'data:image/jpeg;base64,idCardBase64',
+  btpCard: 'data:image/jpeg;base64,btpCardBase64',
+  mutualCard: 'data:image/jpeg;base64,mutualCardBase64',
 };
 
 const mockOfficialDocumentsService = {
@@ -51,7 +51,7 @@ describe('OfficialDocumentsController', () => {
   describe('createOrUpdate', () => {
     it('utilise le userId du JWT, pas du body', async () => {
       const dto = {
-        pieceIdentite: 'data:image/jpeg;base64,pieceIdentiteBase64',
+        idCard: 'data:image/jpeg;base64,idCardBase64',
       };
       mockOfficialDocumentsService.createOrUpdate.mockResolvedValue(
         officialDocumentEntity
@@ -85,7 +85,7 @@ describe('OfficialDocumentsController', () => {
 
   describe('update', () => {
     it('met à jour les documents par userId', async () => {
-      const dto = { carteMutuelle: 'data:image/jpeg;base64,nouvelleMutuelle' };
+      const dto = { mutualCard: 'data:image/jpeg;base64,nouvelleMutuelle' };
       const updated = { ...officialDocumentEntity, ...dto };
       mockOfficialDocumentsService.update.mockResolvedValue(updated);
 

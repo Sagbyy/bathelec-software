@@ -11,13 +11,13 @@ export class OfficialDocument {
   userId: number;
 
   @Prop({ type: String, default: null })
-  pieceIdentite: string;
+  idCard: string;
 
   @Prop({ type: String, default: null })
-  carteProBtp: string;
+  btpCard: string;
 
   @Prop({ type: String, default: null })
-  carteMutuelle: string;
+  mutualCard: string;
 }
 
 export const OfficialDocumentSchema =

@@ -6,7 +6,7 @@ const DOCUMENT_CARDS = [
   {
     label: 'Carte grise de mon véhicule',
     href: '/dashboard/technician/vehicule/vehicle-registration',
-    image: '/images/vehicle-registration-image.svg',
+    image: '/images/vehicle-registration.svg',
   },
   {
     label: 'Mon permis de conduire',
