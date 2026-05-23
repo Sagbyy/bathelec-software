@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import { Loader2 } from 'lucide-react';
 import { useUserStore } from '@/entities/user';
 import {
   useOfficialDocument,
@@ -34,14 +33,6 @@ export default function BtpCardPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 md:px-8">
-      <Link
-        href="/dashboard/technician/documents"
-        className="mb-6 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Retour
-      </Link>
-
       <h1 className="mb-6 text-2xl font-bold text-gray-900">
         Carte Pro du BTP
       </h1>

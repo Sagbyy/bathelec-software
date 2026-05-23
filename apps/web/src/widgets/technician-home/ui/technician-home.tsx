@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Car,
   PhoneCall,
+  User,
 } from 'lucide-react';
 import { useUserStore } from '@/entities/user';
 import { cn } from '@/lib/utils';
@@ -85,15 +86,26 @@ export function TechnicianHome() {
   const firstName = user?.username ?? 'Technicien';
 
   return (
-    <div className="flex min-h-[calc(100vh-5rem)] flex-col bg-gray-50">
+    <div className="flex min-h-screen flex-col bg-gray-50">
       <div className="mx-auto w-full max-w-5xl px-4 pb-8 pt-6 md:px-8 md:pt-10">
-        <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">
-          Tableau de bord
-        </p>
-        <h1 className="mt-1 text-2xl font-bold text-gray-900 md:text-3xl">
-          Bonjour, {firstName} 👋
-        </h1>
-        <p className="mt-1 text-gray-500">Que souhaitez-vous faire ?</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">
+              Tableau de bord
+            </p>
+            <h1 className="mt-1 text-2xl font-bold text-gray-900 md:text-3xl">
+              Bonjour, {firstName} 👋
+            </h1>
+            <p className="mt-1 text-gray-500">Que souhaitez-vous faire ?</p>
+          </div>
+          <Link
+            href="/dashboard/profile"
+            className="flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 shadow-sm transition-all duration-150 hover:shadow-md active:scale-95"
+          >
+            <User className="h-4 w-4 text-slate-600" strokeWidth={1.75} />
+            <span className="text-sm font-medium text-gray-900">Mon profil</span>
+          </Link>
+        </div>
       </div>
 
       <div className="mx-auto w-full max-w-5xl flex-1 px-4 pb-8 md:px-8">
