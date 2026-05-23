@@ -1,0 +1,9 @@
+version: 2
+updates:
+  - package-ecosystem: "pnpm" 
+    directories:
+      - "/"
+      - "/apps/api"
+      - "/apps/web"
+    schedule:
+      interval: "weekly"
