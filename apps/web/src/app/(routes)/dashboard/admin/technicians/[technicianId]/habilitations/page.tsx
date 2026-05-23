@@ -3,6 +3,7 @@
 import { ShieldCheck, Loader2 } from 'lucide-react';
 import { useUserById } from '@/features/users';
 import { HabilitationsAdmin } from '@/features/habilitations';
+import { SpecialHabilitationsAdmin } from '@/features/special-habilitations';
 
 interface PageProps {
   params: { technicianId: string };
@@ -37,7 +38,21 @@ export default function AdminHabilitationsPage({ params }: PageProps) {
         </div>
       </div>
 
-      <HabilitationsAdmin technicianId={userId} />
+      <div className="space-y-8">
+        <section>
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500">
+            Titres &amp; certificats
+          </h2>
+          <SpecialHabilitationsAdmin technicianId={userId} />
+        </section>
+
+        <section>
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500">
+            Habilitations NF C 18-510
+          </h2>
+          <HabilitationsAdmin technicianId={userId} />
+        </section>
+      </div>
     </div>
   );
 }

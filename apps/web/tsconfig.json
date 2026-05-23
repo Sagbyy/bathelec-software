@@ -11,59 +11,137 @@
       "@/components/shared/labeled-field": ["./src/shared/ui/labeled-field"],
       "@/components/shared/labeled-input": ["./src/shared/ui/labeled-input"],
       "@/components/shared/labeled-select": ["./src/shared/ui/labeled-select"],
-      "@/components/shared/loader-component": ["./src/shared/ui/loader-component"],
-      "@/components/shared/derivation-status-icon": ["./src/entities/derivation/ui/derivation-status-icon"],
+      "@/components/shared/loader-component": [
+        "./src/shared/ui/loader-component"
+      ],
+      "@/components/shared/derivation-status-icon": [
+        "./src/entities/derivation/ui/derivation-status-icon"
+      ],
       "@/components/auth/login-form": ["./src/features/auth/ui/login-form"],
-      "@/components/derivations/multi-step-form": ["./src/features/derivations/ui/multi-step-form"],
-      "@/components/derivations/info-derivation-card": ["./src/features/derivations/ui/info-derivation-card"],
-      "@/components/derivations/admin/correction-comment": ["./src/features/derivations/ui/admin/correction-comment"],
-      "@/components/derivations/date-time-picker-hours": ["./src/features/derivations/ui/date-time-picker-hours"],
+      "@/components/derivations/multi-step-form": [
+        "./src/features/derivations/ui/multi-step-form"
+      ],
+      "@/components/derivations/info-derivation-card": [
+        "./src/features/derivations/ui/info-derivation-card"
+      ],
+      "@/components/derivations/admin/correction-comment": [
+        "./src/features/derivations/ui/admin/correction-comment"
+      ],
+      "@/components/derivations/date-time-picker-hours": [
+        "./src/features/derivations/ui/date-time-picker-hours"
+      ],
       "@/components/protected/navbar": ["./src/widgets/navbar/ui/navbar"],
-      "@/components/protected/drop-down-profile": ["./src/widgets/navbar/ui/drop-down-profile"],
-      "@/components/protected/admin/create-derivation/create-derivation-form": ["./src/features/derivations/ui/create-derivation-form"],
-      "@/components/protected/admin/create-technician/register-technician-form": ["./src/features/users/ui/register-technician-form"],
+      "@/components/protected/drop-down-profile": [
+        "./src/widgets/navbar/ui/drop-down-profile"
+      ],
+      "@/components/protected/admin/create-derivation/create-derivation-form": [
+        "./src/features/derivations/ui/create-derivation-form"
+      ],
+      "@/components/protected/admin/create-technician/register-technician-form": [
+        "./src/features/users/ui/register-technician-form"
+      ],
       "@/components/dashboard/shell": ["./src/widgets/dashboard/ui/shell"],
-      "@/components/dashboard/form-status-cards": ["./src/widgets/dashboard/ui/form-status-cards"],
-      "@/components/dashboard/form-status-chart": ["./src/widgets/dashboard/ui/form-status-chart"],
-      "@/components/dashboard/forms-list": ["./src/widgets/dashboard/ui/forms-list"],
-      "@/components/dashboard/users-data-table/columns": ["./src/features/users/ui/users-data-table/columns"],
-      "@/components/dashboard/users-data-table/data-table": ["./src/features/users/ui/users-data-table/data-table"],
+      "@/components/dashboard/form-status-cards": [
+        "./src/widgets/dashboard/ui/form-status-cards"
+      ],
+      "@/components/dashboard/form-status-chart": [
+        "./src/widgets/dashboard/ui/form-status-chart"
+      ],
+      "@/components/dashboard/forms-list": [
+        "./src/widgets/dashboard/ui/forms-list"
+      ],
+      "@/components/dashboard/users-data-table/columns": [
+        "./src/features/users/ui/users-data-table/columns"
+      ],
+      "@/components/dashboard/users-data-table/data-table": [
+        "./src/features/users/ui/users-data-table/data-table"
+      ],
       "@/lib/utils": ["./src/shared/lib/utils"],
       "@/lib/decodeJwt": ["./src/shared/lib/decode-jwt"],
       "@/hooks/use-toast": ["./src/shared/ui/use-toast"],
       "@/hooks/use-auth": ["./src/features/auth/model/use-auth"],
       "@/hooks/use-auth-guard": ["./src/features/auth/model/use-auth-guard"],
       "@/hooks/use-user-store": ["./src/entities/user/model/use-user-store"],
-      "@/hooks/use-derivation-status.store": ["./src/entities/derivation/model/use-derivation-status.store"],
-      "@/hooks/use-derivation-submit": ["./src/features/derivations/model/use-derivation-submit"],
-      "@/hooks/use-form-steps": ["./src/features/derivations/model/use-form-steps"],
-      "@/hooks/queries/use-derivation": ["./src/features/derivations/model/use-derivation"],
-      "@/hooks/queries/use-completed-derivations": ["./src/features/derivations/model/use-completed-derivations"],
-      "@/hooks/queries/use-update-comment-derivation": ["./src/features/derivations/model/use-update-comment-derivation"],
-      "@/hooks/queries/use-technician": ["./src/entities/user/model/use-technician"],
+      "@/hooks/use-derivation-status.store": [
+        "./src/entities/derivation/model/use-derivation-status.store"
+      ],
+      "@/hooks/use-derivation-submit": [
+        "./src/features/derivations/model/use-derivation-submit"
+      ],
+      "@/hooks/use-form-steps": [
+        "./src/features/derivations/model/use-form-steps"
+      ],
+      "@/hooks/queries/use-derivation": [
+        "./src/features/derivations/model/use-derivation"
+      ],
+      "@/hooks/queries/use-completed-derivations": [
+        "./src/features/derivations/model/use-completed-derivations"
+      ],
+      "@/hooks/queries/use-update-comment-derivation": [
+        "./src/features/derivations/model/use-update-comment-derivation"
+      ],
+      "@/hooks/queries/use-technician": [
+        "./src/entities/user/model/use-technician"
+      ],
       "@/hooks/queries/use-user": ["./src/features/users/model/use-user"],
-      "@/hooks/queries/use-change-password": ["./src/features/users/model/use-change-password"],
-      "@/hooks/queries/use-users-groups": ["./src/features/user-groups/model/use-users-groups"],
+      "@/hooks/queries/use-change-password": [
+        "./src/features/users/model/use-change-password"
+      ],
+      "@/hooks/queries/use-users-groups": [
+        "./src/features/user-groups/model/use-users-groups"
+      ],
       "@/types/api-error": ["./src/shared/lib/api-error"],
-      "@/types/change-password.types": ["./src/entities/user/model/change-password.types"],
-      "@/types/completed-derivation.types": ["./src/entities/derivation/model/completed-derivation.types"],
-      "@/types/derivations.type": ["./src/entities/derivation/model/derivations.type"],
-      "@/types/update-derivation.types": ["./src/entities/derivation/model/update-derivation.types"],
+      "@/types/change-password.types": [
+        "./src/entities/user/model/change-password.types"
+      ],
+      "@/types/completed-derivation.types": [
+        "./src/entities/derivation/model/completed-derivation.types"
+      ],
+      "@/types/derivations.type": [
+        "./src/entities/derivation/model/derivations.type"
+      ],
+      "@/types/update-derivation.types": [
+        "./src/entities/derivation/model/update-derivation.types"
+      ],
       "@/types/navbar.types": ["./src/entities/user/model/navbar.types"],
-      "@/constants/derivation-status.config": ["./src/entities/derivation/model/derivation-status.config"],
-      "@/constants/derivation-form.defaults": ["./src/entities/derivation/model/derivation-form.defaults"],
-      "@/constants/derivation-step-fields": ["./src/entities/derivation/model/derivation-step-fields"],
-      "@/constants/derivations": ["./src/entities/derivation/model/derivations"],
+      "@/constants/derivation-status.config": [
+        "./src/entities/derivation/model/derivation-status.config"
+      ],
+      "@/constants/derivation-form.defaults": [
+        "./src/entities/derivation/model/derivation-form.defaults"
+      ],
+      "@/constants/derivation-step-fields": [
+        "./src/entities/derivation/model/derivation-step-fields"
+      ],
+      "@/constants/derivations": [
+        "./src/entities/derivation/model/derivations"
+      ],
       "@/services/api-client": ["./src/shared/api/api-client"],
-      "@/services/derivation.service": ["./src/entities/derivation/api/derivation.service"],
-      "@/services/completed-derivations.service": ["./src/entities/derivation/api/completed-derivations.service"],
-      "@/services/technician.service": ["./src/entities/user/api/technician.service"],
+      "@/services/derivation.service": [
+        "./src/entities/derivation/api/derivation.service"
+      ],
+      "@/services/completed-derivations.service": [
+        "./src/entities/derivation/api/completed-derivations.service"
+      ],
+      "@/services/technician.service": [
+        "./src/entities/user/api/technician.service"
+      ],
       "@/services/user.service": ["./src/entities/user/api/user.service"],
-      "@/services/change-password.service": ["./src/entities/user/api/change-password.service"],
-      "@/services/users-groups-service": ["./src/features/user-groups/model/users-groups-service"],
-      "@/validators/derivation-form.schema": ["./src/entities/derivation/model/derivation-form.schema"],
-      "@/validators/create-derivation.schema": ["./src/features/derivations/model/create-derivation.schema"],
-      "@/validators/change-password.schema": ["./src/features/auth/model/change-password.schema"],
+      "@/services/change-password.service": [
+        "./src/entities/user/api/change-password.service"
+      ],
+      "@/services/users-groups-service": [
+        "./src/features/user-groups/model/users-groups-service"
+      ],
+      "@/validators/derivation-form.schema": [
+        "./src/entities/derivation/model/derivation-form.schema"
+      ],
+      "@/validators/create-derivation.schema": [
+        "./src/features/derivations/model/create-derivation.schema"
+      ],
+      "@/validators/change-password.schema": [
+        "./src/features/auth/model/change-password.schema"
+      ],
       "@/contexts/query-provider": ["./src/shared/config/query-provider"],
       "@/contexts/auth-provider": ["./src/shared/config/auth-provider"],
       "@/*": ["./src/*"]

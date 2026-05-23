@@ -1,21 +1,21 @@
 'use client';
 
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { cn } from '@/shared/lib/utils';
+import { Button } from '@/shared/ui/button';
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from '@/components/ui/command';
+} from '@/shared/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { Input } from '@/components/ui/input';
+} from '@/shared/ui/popover';
+import { Input } from '@/shared/ui/input';
 import { CommandList } from 'cmdk';
 import { z } from 'zod';
 import { useState, useEffect } from 'react';
@@ -27,15 +27,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/shared/ui/form';
 import clsx from 'clsx';
 import { useQuery } from '@tanstack/react-query';
 import { Technician } from '@repo/types';
 import { toast } from 'sonner';
 import { apiClient } from '@/shared/api';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { formSchema } from '@/validators/create-derivation.schema';
+import { Label } from '@/shared/ui/label';
+import { Switch } from '@/shared/ui/switch';
+import { formSchema } from '../model/create-derivation.schema';
 import { useUserStore } from '@/entities/user';
 
 const fetchTechnicians = async () => {

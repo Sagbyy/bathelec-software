@@ -1,21 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@/shared/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/shared/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,8 +23,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
+} from '@/shared/ui/dropdown-menu';
+import { Input } from '@/shared/ui/input';
 import {
   Table,
   TableBody,
@@ -32,11 +32,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/shared/ui/table';
 import { DerivationStatus, Derivation, Technician } from '@repo/types';
 import { useDerivation } from '@/features/derivations';
 import { useTechnicians } from '@/entities/user';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 import { derivationStatusConfig } from '@/entities/derivation';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { DerivationStatusIcon } from '@/entities/derivation';

@@ -12,7 +12,7 @@ import {
   User,
 } from 'lucide-react';
 import { useUserStore } from '@/entities/user';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 
 const NAV_ITEMS = [
   {
@@ -103,7 +103,9 @@ export function TechnicianHome() {
             className="flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 shadow-sm transition-all duration-150 hover:shadow-md active:scale-95"
           >
             <User className="h-4 w-4 text-slate-600" strokeWidth={1.75} />
-            <span className="text-sm font-medium text-gray-900">Mon profil</span>
+            <span className="text-sm font-medium text-gray-900">
+              Mon profil
+            </span>
           </Link>
         </div>
       </div>
@@ -140,10 +142,12 @@ function NavCard({
       href={item.href}
       className={cn(
         'group flex flex-col items-center justify-center rounded-2xl border p-4 shadow-sm transition-all duration-200',
-        'active:scale-95 hover:shadow-md hover:-translate-y-0.5',
+        'hover:-translate-y-0.5 hover:shadow-md active:scale-95',
         item.bgLight,
         item.border,
-        fullWidth ? 'flex-row gap-4 py-5' : 'min-h-[120px] gap-3 sm:min-h-[140px]'
+        fullWidth
+          ? 'flex-row gap-4 py-5'
+          : 'min-h-[120px] gap-3 sm:min-h-[140px]'
       )}
     >
       <div

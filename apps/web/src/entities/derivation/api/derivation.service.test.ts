@@ -20,7 +20,10 @@ describe('derivationService', () => {
     it('throws when the server returns an error', async () => {
       server.use(
         http.get(`${BASE}/derivations`, () =>
-          HttpResponse.json({ message: 'Internal Server Error' }, { status: 500 })
+          HttpResponse.json(
+            { message: 'Internal Server Error' },
+            { status: 500 }
+          )
         )
       );
 

@@ -3,15 +3,15 @@
 import * as React from 'react';
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/shared/lib/utils';
+import { Button } from '@/shared/ui/button';
+import { Calendar } from '@/shared/ui/calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+} from '@/shared/ui/popover';
+import { ScrollArea, ScrollBar } from '@/shared/ui/scroll-area';
 import { ControllerRenderProps } from 'react-hook-form';
 import { fr } from 'date-fns/locale';
 import type { CreateCompletedDerivation } from '@/entities/derivation';

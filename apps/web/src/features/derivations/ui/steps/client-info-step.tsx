@@ -3,9 +3,9 @@
 import type { UseFormReturn } from 'react-hook-form';
 import type { CreateCompletedDerivation } from '@/entities/derivation';
 import { useDerivationStatusStore } from '@/entities/derivation';
-import { PhoneInput } from '@/components/ui/phone-input';
-import { LabeledInput } from '@/components/shared/labeled-input';
-import { LabeledField } from '@/components/shared/labeled-field';
+import { PhoneInput } from '@/shared/ui/phone-input';
+import { LabeledInput } from '@/shared/ui/labeled-input';
+import { LabeledField } from '@/shared/ui/labeled-field';
 
 interface ClientInfoStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
@@ -30,7 +30,11 @@ export function ClientInfoStep({ form }: ClientInfoStepProps) {
         transform={toUpper}
       />
 
-      <LabeledField control={form.control} name="clientInfo.phone" label="Téléphone">
+      <LabeledField
+        control={form.control}
+        name="clientInfo.phone"
+        label="Téléphone"
+      >
         {(field) => (
           <PhoneInput
             {...field}

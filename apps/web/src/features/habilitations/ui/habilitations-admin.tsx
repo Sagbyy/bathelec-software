@@ -1,6 +1,6 @@
 'use client';
 
-import { Switch } from '@/components/ui/switch';
+import { Switch } from '@/shared/ui/switch';
 import { Label } from '@/shared/ui/label';
 import {
   useHabilitation,

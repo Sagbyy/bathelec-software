@@ -1,14 +1,14 @@
 'use client';
 
-import CorrectionComment from '@/components/derivations/admin/correction-comment';
-import { InfoCard } from '@/components/derivations/info-derivation-card';
-import { MultiStepForm } from '@/components/derivations/multi-step-form';
-import { Button } from '@/components/ui/button';
-import { useDerivationById } from '@/hooks/queries/use-derivation';
+import CorrectionComment from '@/features/derivations/ui/admin/correction-comment';
+import { InfoCard } from '@/features/derivations/ui/info-derivation-card';
+import { MultiStepForm } from '@/features/derivations/ui/multi-step-form';
+import { Button } from '@/shared/ui/button';
+import { useDerivationById } from '@/features/derivations/model/use-derivation';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useDerivationStatusStore } from '@/hooks/use-derivation-status.store';
+import { useDerivationStatusStore } from '@/entities/derivation/model/use-derivation-status.store';
 
 export default function AdminDerivationPage() {
   const { derivationId } = useParams();

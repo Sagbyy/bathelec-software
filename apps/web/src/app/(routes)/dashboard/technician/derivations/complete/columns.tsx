@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/ui/button';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Derivation, DerivationStatus } from '@repo/types';
 import { ColumnDef } from '@tanstack/react-table';
@@ -10,9 +10,9 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from '@/components/ui/tooltip';
+} from '@/shared/ui/tooltip';
 import Link from 'next/link';
-import DerivationStatusIcon from '@/components/shared/derivation-status-icon';
+import DerivationStatusIcon from '@/entities/derivation/ui/derivation-status-icon';
 
 function getStatusAction(status: DerivationStatus) {
   switch (status) {

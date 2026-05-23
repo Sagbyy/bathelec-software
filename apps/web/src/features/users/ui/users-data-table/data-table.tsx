@@ -22,16 +22,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/shared/ui/table';
 import { useState } from 'react';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/shared/ui/input';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
+} from '@/shared/ui/dropdown-menu';
+import { Button } from '@/shared/ui/button';
 import { Icon } from '@iconify/react/dist/iconify.js';
 
 interface DataTableProps<TData, TValue> {

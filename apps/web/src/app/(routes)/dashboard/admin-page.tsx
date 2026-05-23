@@ -1,7 +1,7 @@
-import { DashboardShell } from '@/components/dashboard/shell';
-import { FormStatusCards } from '@/components/dashboard/form-status-cards';
-import { FormsList } from '@/components/dashboard/forms-list';
-import FormStatusChart from '@/components/dashboard/form-status-chart';
+import { DashboardShell } from '@/widgets/dashboard/ui/shell';
+import { FormStatusCards } from '@/widgets/dashboard/ui/form-status-cards';
+import { FormsList } from '@/widgets/dashboard/ui/forms-list';
+import FormStatusChart from '@/widgets/dashboard/ui/form-status-chart';
 
 export default function AdminPage() {
   return (

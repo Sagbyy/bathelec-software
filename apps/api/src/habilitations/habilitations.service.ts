@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
@@ -6,6 +6,7 @@ import {
   HabilitationDocument,
 } from './entities/habilitation.entity';
 import { UpdateHabilitationDto } from './dto/update-habilitation.dto';
+import { UsersService } from '../users/users.service';
 
 const DEFAULT_HABILITATIONS = {
   b0: false,
@@ -34,7 +35,8 @@ const DEFAULT_HABILITATIONS = {
 export class HabilitationsService {
   constructor(
     @InjectModel(Habilitation.name)
-    private readonly habilitationModel: Model<HabilitationDocument>
+    private readonly habilitationModel: Model<HabilitationDocument>,
+    private readonly usersService: UsersService
   ) {}
 
   async findByUserId(
@@ -50,6 +52,13 @@ export class HabilitationsService {
     userId: number,
     dto: UpdateHabilitationDto
   ): Promise<HabilitationDocument> {
+    const user = await this.usersService.findOneById(userId);
+    if (!user || user.role !== 'technician') {
+      throw new ForbiddenException(
+        "Les habilitations ne peuvent être assignées qu'à un technicien."
+      );
+    }
+
     return this.habilitationModel.findOneAndUpdate(
       { userId },
       { $set: dto },

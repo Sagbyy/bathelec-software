@@ -1,8 +1,13 @@
 'use client';
 
 import { HTMLAttributes, useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/shared/ui/card';
+import { cn } from '@/shared/lib/utils';
 import { DerivationStatus } from '@repo/types';
 import { useDerivation } from '@/features/derivations';
 import { derivationStatusConfig } from '@/entities/derivation';

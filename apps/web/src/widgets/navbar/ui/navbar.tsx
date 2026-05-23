@@ -3,12 +3,12 @@ import {
   SheetTrigger,
   SheetContent,
   SheetTitle,
-} from '@/components/ui/sheet';
+} from '@/shared/ui/sheet';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+} from '@/shared/ui/collapsible';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -16,7 +16,7 @@ import { useUserStore } from '@/entities/user';
 import React, { useState } from 'react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useAuth } from '@/features/auth';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/ui/button';
 import { DropdownMenuProfile } from './drop-down-profile';
 import {
   NavigationMenu,
@@ -26,7 +26,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from '@/components/ui/navigation-menu';
+} from '@/shared/ui/navigation-menu';
 import { NavbarLink } from '@/entities/user';
 
 const adminLinks: NavbarLink[] = [

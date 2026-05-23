@@ -7,8 +7,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+} from '@/shared/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import Link from 'next/link';
 

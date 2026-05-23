@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 import {
   DEFAULT_HABILITATIONS,
   HABILITATION_TABLE,
@@ -114,7 +114,8 @@ export function HabilitationsTable({ habilitations }: HabilitationsTableProps) {
             </tr>
             {/* Ligne images (colonnes avec label uniquement) */}
             <tr className="border-b bg-gray-50">
-              {HABILITATION_TABLE.columns.slice(1)
+              {HABILITATION_TABLE.columns
+                .slice(1)
                 .filter((col) => !NO_LABEL_COLUMNS.has(col.key))
                 .map((col) => (
                   <th

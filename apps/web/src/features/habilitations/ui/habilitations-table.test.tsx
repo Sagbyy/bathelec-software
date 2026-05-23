@@ -1,7 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { HabilitationsTable } from './habilitations-table';
-import { DEFAULT_HABILITATIONS, HabilitationCodes } from '@/entities/habilitation';
+import {
+  DEFAULT_HABILITATIONS,
+  HabilitationCodes,
+} from '@/entities/habilitation';
 
 const allEnabled: HabilitationCodes = Object.fromEntries(
   Object.keys(DEFAULT_HABILITATIONS).map((k) => [k, true])
@@ -35,7 +38,7 @@ describe('HabilitationsTable', () => {
       });
     });
 
-    it('les badges désactivés n\'ont pas la classe text-green-700', () => {
+    it("les badges désactivés n'ont pas la classe text-green-700", () => {
       render(<HabilitationsTable habilitations={null} />);
       const disabled = document.querySelectorAll('span.line-through');
       disabled.forEach((badge) => {
@@ -57,7 +60,7 @@ describe('HabilitationsTable', () => {
       expect(badges.length).toBeGreaterThan(0);
     });
 
-    it('les badges activés n\'ont pas la classe line-through', () => {
+    it("les badges activés n'ont pas la classe line-through", () => {
       render(<HabilitationsTable habilitations={allEnabled} />);
       const green = document.querySelectorAll('span.bg-green-100');
       green.forEach((badge) => {
@@ -65,7 +68,7 @@ describe('HabilitationsTable', () => {
       });
     });
 
-    it('les badges activés n\'ont pas la classe bg-amber-100', () => {
+    it("les badges activés n'ont pas la classe bg-amber-100", () => {
       render(<HabilitationsTable habilitations={allEnabled} />);
       const amber = document.querySelectorAll('span.bg-amber-100');
       expect(amber.length).toBe(0);
@@ -81,8 +84,12 @@ describe('HabilitationsTable', () => {
 
     it('affiche les en-têtes de colonnes', () => {
       render(<HabilitationsTable habilitations={null} />);
-      expect(screen.getByText('Opération d\'ordre non électrique')).toBeInTheDocument();
-      expect(screen.getByText('Opération d\'ordre électrique')).toBeInTheDocument();
+      expect(
+        screen.getByText("Opération d'ordre non électrique")
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText("Opération d'ordre électrique")
+      ).toBeInTheDocument();
     });
 
     it('affiche le badge B0', () => {
@@ -107,7 +114,7 @@ describe('HabilitationsTable', () => {
     });
   });
 
-  describe('rendu mixte (certaines activées, d\'autres non)', () => {
+  describe("rendu mixte (certaines activées, d'autres non)", () => {
     it('affiche B0 en vert et H0 en gris barré quand seul b0 est activé', () => {
       const partial: HabilitationCodes = { ...DEFAULT_HABILITATIONS, b0: true };
       render(<HabilitationsTable habilitations={partial} />);

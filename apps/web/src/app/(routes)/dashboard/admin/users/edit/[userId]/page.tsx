@@ -12,32 +12,32 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+} from '@/shared/ui/form';
+import { Input } from '@/shared/ui/input';
+import { Button } from '@/shared/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@/shared/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/shared/ui/select';
 import {
   useUserById,
   useUpdateUser,
   useDeleteUser,
-} from '@/hooks/queries/use-user';
+} from '@/features/users/model/use-user';
 import { toast } from 'sonner';
 import clsx from 'clsx';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { getApiErrorMessage } from '@/types/api-error';
+import { getApiErrorMessage } from '@/shared/lib/api-error';
 
 const updateUserSchema = z.object({
   firstName: z
@@ -66,7 +66,7 @@ import {
   DialogTrigger,
   DialogFooter,
   DialogClose,
-} from '@/components/ui/dialog';
+} from '@/shared/ui/dialog';
 
 type UpdateUserFormValues = z.infer<typeof updateUserSchema>;
 

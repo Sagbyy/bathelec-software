@@ -1,8 +1,8 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { Navbar } from '@/components/protected/navbar';
-import { useAuthGuard } from '@/hooks/use-auth-guard';
+import { Navbar } from '@/widgets/navbar/ui/navbar';
+import { useAuthGuard } from '@/features/auth/model/use-auth-guard';
 import { useUserStore } from '@/entities/user';
 
 export default function LayoutProtected({ children }: { children: ReactNode }) {

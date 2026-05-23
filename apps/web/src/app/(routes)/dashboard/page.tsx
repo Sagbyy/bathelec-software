@@ -1,6 +1,6 @@
 'use client';
 
-import { useUserStore } from '@/hooks/use-user-store';
+import { useUserStore } from '@/entities/user/model/use-user-store';
 import TechnicianPage from './technician-page';
 import AdminPage from './admin-page';
 

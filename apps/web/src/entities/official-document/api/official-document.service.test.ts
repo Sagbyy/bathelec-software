@@ -35,7 +35,10 @@ describe('officialDocumentService', () => {
     it('lève une erreur si le serveur répond 500', async () => {
       server.use(
         http.get(`${BASE}/official-documents/by-user/:userId`, () =>
-          HttpResponse.json({ message: 'Internal Server Error' }, { status: 500 })
+          HttpResponse.json(
+            { message: 'Internal Server Error' },
+            { status: 500 }
+          )
         )
       );
       await expect(officialDocumentService.getByUserId(1)).rejects.toThrow();
@@ -58,9 +61,10 @@ describe('officialDocumentService', () => {
     it('envoie un POST avec les trois champs', async () => {
       server.use(
         http.post(`${BASE}/official-documents`, async ({ request }) => {
-          const body = await request.json() as Record<string, unknown>;
+          const body = (await request.json()) as Record<string, unknown>;
           return HttpResponse.json({
-            _id: 'doc2', userId: 1,
+            _id: 'doc2',
+            userId: 1,
             idCard: body.idCard,
             btpCard: body.btpCard,
             mutualCard: body.mutualCard,
@@ -112,7 +116,10 @@ describe('officialDocumentService', () => {
     it('lève une erreur si le serveur répond 500', async () => {
       server.use(
         http.delete(`${BASE}/official-documents/by-user/:userId`, () =>
-          HttpResponse.json({ message: 'Internal Server Error' }, { status: 500 })
+          HttpResponse.json(
+            { message: 'Internal Server Error' },
+            { status: 500 }
+          )
         )
       );
       await expect(officialDocumentService.remove(1)).rejects.toThrow();

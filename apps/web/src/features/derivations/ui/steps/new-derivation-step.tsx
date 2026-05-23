@@ -7,21 +7,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@/shared/ui/form';
+import { Input } from '@/shared/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/shared/ui/select';
 import { CreateCompletedDerivation } from '@/entities/derivation';
 import { useDerivationStatusStore } from '@/entities/derivation';
-import { cn } from '@/lib/utils';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { cn } from '@/shared/lib/utils';
+import { Alert, AlertDescription } from '@/shared/ui/alert';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import InputNumberButtonsRounded from '@/components/ui/input-number-buttons';
+import InputNumberButtonsRounded from '@/shared/ui/input-number-buttons';
 
 interface NewDerivationStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;

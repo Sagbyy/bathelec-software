@@ -1,10 +1,10 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/ui/button';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { DataTable } from '@/components/dashboard/users-data-table/data-table';
-import { columns } from '@/components/dashboard/users-data-table/columns';
-import { useUsers } from '@/hooks/queries/use-user';
+import { DataTable } from '@/features/users/ui/users-data-table/data-table';
+import { columns } from '@/features/users/ui/users-data-table/columns';
+import { useUsers } from '@/features/users/model/use-user';
 
 export default function ListUsersPage() {
   const { data, isLoading, error } = useUsers();

@@ -126,4 +126,42 @@ export const handlers = [
       updatedAt: '2024-01-01T00:00:00.000Z',
     })
   ),
+
+  http.get(`${BASE}/special-habilitations/by-user/:userId`, ({ params }) =>
+    HttpResponse.json({
+      _id: 'hab1',
+      userId: Number(params.userId),
+      electricalTitle: true,
+      electricalTitleDoc: 'data:image/jpeg;base64,elecBase64',
+      ss4Title: false,
+      ss4TitleDoc: null,
+      leadTitle: false,
+      leadTitleDoc: null,
+      sstCertificate: true,
+      sstCertificateDoc: 'data:image/jpeg;base64,sstBase64',
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
+    })
+  ),
+
+  http.put(
+    `${BASE}/special-habilitations/by-user/:userId`,
+    async ({ params, request }) => {
+      const body = (await request.json()) as Record<string, unknown>;
+      return HttpResponse.json({
+        _id: 'hab1',
+        userId: Number(params.userId),
+        electricalTitle: body.electricalTitle ?? false,
+        electricalTitleDoc: body.electricalTitleDoc ?? null,
+        ss4Title: body.ss4Title ?? false,
+        ss4TitleDoc: body.ss4TitleDoc ?? null,
+        leadTitle: body.leadTitle ?? false,
+        leadTitleDoc: body.leadTitleDoc ?? null,
+        sstCertificate: body.sstCertificate ?? false,
+        sstCertificateDoc: body.sstCertificateDoc ?? null,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      });
+    }
+  ),
 ];

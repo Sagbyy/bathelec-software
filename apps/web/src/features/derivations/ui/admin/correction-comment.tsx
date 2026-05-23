@@ -6,7 +6,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-} from '@/components/ui/card';
+} from '@/shared/ui/card';
 import {
   FieldGroup,
   FieldSet,
@@ -14,24 +14,24 @@ import {
   FieldLabel,
   FieldError,
   FieldDescription,
-} from '@/components/ui/field';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
+} from '@/shared/ui/field';
+import { Textarea } from '@/shared/ui/textarea';
+import { Button } from '@/shared/ui/button';
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from '@/components/ui/select';
+} from '@/shared/ui/select';
 import { derivationStatusConfig } from '@/entities/derivation';
 import { Derivation, DerivationStatus } from '@repo/types';
 import { z } from 'zod';
 import { useForm } from '@tanstack/react-form';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { useUpdateCommentDerivation } from '@/hooks/queries/use-update-comment-derivation';
-import { Badge } from '@/components/ui/badge';
+import { useUpdateCommentDerivation } from '@/features/derivations/model/use-update-comment-derivation';
+import { Badge } from '@/shared/ui/badge';
 
 const formSchema = z.object({
   correctionComment: z.string().max(255, {

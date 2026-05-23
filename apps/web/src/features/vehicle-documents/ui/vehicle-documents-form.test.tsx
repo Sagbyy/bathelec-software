@@ -124,15 +124,24 @@ describe('VehicleDocumentsForm', () => {
       class MockFileReader {
         result = base64;
         onloadend: (() => void) | null = null;
-        readAsDataURL() { this.onloadend?.(); }
+        readAsDataURL() {
+          this.onloadend?.();
+        }
       }
       vi.stubGlobal('FileReader', MockFileReader);
 
       const { container } = render(<VehicleDocumentsForm />);
       const inputs = container.querySelectorAll('input[type="file"]');
-      fireEvent.change(inputs[0]!, { target: { files: [new File(['img'], 'carte.jpg', { type: 'image/jpeg' })] } });
+      fireEvent.change(inputs[0]!, {
+        target: {
+          files: [new File(['img'], 'carte.jpg', { type: 'image/jpeg' })],
+        },
+      });
 
-      expect(mockMutate).toHaveBeenCalledWith({ vehicleRegistration: base64, drivingLicense: null });
+      expect(mockMutate).toHaveBeenCalledWith({
+        vehicleRegistration: base64,
+        drivingLicense: null,
+      });
       vi.unstubAllGlobals();
     });
 
@@ -142,15 +151,24 @@ describe('VehicleDocumentsForm', () => {
       class MockFileReader {
         result = base64;
         onloadend: (() => void) | null = null;
-        readAsDataURL() { this.onloadend?.(); }
+        readAsDataURL() {
+          this.onloadend?.();
+        }
       }
       vi.stubGlobal('FileReader', MockFileReader);
 
       const { container } = render(<VehicleDocumentsForm />);
       const inputs = container.querySelectorAll('input[type="file"]');
-      fireEvent.change(inputs[1]!, { target: { files: [new File(['img'], 'permis.jpg', { type: 'image/jpeg' })] } });
+      fireEvent.change(inputs[1]!, {
+        target: {
+          files: [new File(['img'], 'permis.jpg', { type: 'image/jpeg' })],
+        },
+      });
 
-      expect(mockMutate).toHaveBeenCalledWith({ vehicleRegistration: null, drivingLicense: base64 });
+      expect(mockMutate).toHaveBeenCalledWith({
+        vehicleRegistration: null,
+        drivingLicense: base64,
+      });
       vi.unstubAllGlobals();
     });
   });
@@ -207,7 +225,9 @@ describe('VehicleDocumentsForm', () => {
       );
 
       render(<VehicleDocumentsForm />);
-      screen.getAllByRole('button').forEach((btn) => expect(btn).toBeDisabled());
+      screen
+        .getAllByRole('button')
+        .forEach((btn) => expect(btn).toBeDisabled());
     });
   });
 });

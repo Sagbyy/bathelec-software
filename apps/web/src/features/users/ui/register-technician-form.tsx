@@ -1,12 +1,12 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/ui/button';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@/shared/ui/form';
+import { Input } from '@/shared/ui/input';
 import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import clsx from 'clsx';

@@ -7,19 +7,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { LabeledField } from '@/components/shared/labeled-field';
-import { LabeledInput } from '@/components/shared/labeled-input';
-import { LabeledSelect } from '@/components/shared/labeled-select';
+} from '@/shared/ui/form';
+import { Input } from '@/shared/ui/input';
+import { Textarea } from '@/shared/ui/textarea';
+import { LabeledField } from '@/shared/ui/labeled-field';
+import { LabeledInput } from '@/shared/ui/labeled-input';
+import { LabeledSelect } from '@/shared/ui/labeled-select';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/shared/ui/select';
 import { DateTimePicker24h } from '../date-time-picker-hours';
 import { useTechnicians } from '@/entities/user';
 import type { CreateCompletedDerivation } from '@/entities/derivation';
@@ -286,7 +286,11 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
         )}
       />
 
-      <LabeledField control={form.control} name="generalInfo.comment" label="Commentaire">
+      <LabeledField
+        control={form.control}
+        name="generalInfo.comment"
+        label="Commentaire"
+      >
         {(field) => (
           <Textarea
             placeholder="Commentaires additionnels..."

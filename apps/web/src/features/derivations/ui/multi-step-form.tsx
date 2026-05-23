@@ -3,8 +3,8 @@
 import { useCallback, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, type DefaultValues } from 'react-hook-form';
-import { Form } from '@/components/ui/form';
-import { Card, CardContent } from '@/components/ui/card';
+import { Form } from '@/shared/ui/form';
+import { Card, CardContent } from '@/shared/ui/card';
 import { ClientInfoStep } from './steps/client-info-step';
 import { GeneralInfoStep } from './steps/general-info-step';
 import { PhotoBeforeStep } from './steps/photo-before-step';
@@ -15,12 +15,12 @@ import { CircuitBreakerStep } from './steps/circuit-breaker-step';
 import { PhotoAfterStep } from './steps/photo-after-step';
 import { ClientValidationStep } from './steps/client-validation-step';
 import { createCompletedDerivationSchema } from '@/entities/derivation';
-import { useCompletedDerivationsById } from '@/features/derivations';
+import { useCompletedDerivationsById } from '..';
 import { CreateCompletedDerivation } from '@/entities/derivation';
-import { useDerivationSubmit } from '@/features/derivations';
+import { useDerivationSubmit } from '..';
 import { DEFAULT_FORM_VALUES } from '@/entities/derivation';
 import { formatCompletedDerivation } from './utils/form-data-formatter';
-import { useFormSteps } from '@/features/derivations';
+import { useFormSteps } from '..';
 import { FormHeader } from './form-parts/form-header';
 import { FormNavigation } from './form-parts/form-navigation';
 import { Derivation, DerivationStatus } from '@repo/types';
@@ -58,9 +58,14 @@ export function MultiStepForm({
     }
   }, [derivation.status, setIsNotEditable, readOnly]);
 
-  const form = useForm<CreateCompletedDerivation, unknown, CreateCompletedDerivation>({
+  const form = useForm<
+    CreateCompletedDerivation,
+    unknown,
+    CreateCompletedDerivation
+  >({
     resolver: zodResolver(createCompletedDerivationSchema),
-    defaultValues: DEFAULT_FORM_VALUES as unknown as DefaultValues<CreateCompletedDerivation>,
+    defaultValues:
+      DEFAULT_FORM_VALUES as unknown as DefaultValues<CreateCompletedDerivation>,
     mode: 'onChange',
   });
 

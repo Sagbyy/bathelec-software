@@ -71,12 +71,16 @@ describe('OfficialDocumentsForm', () => {
 
   describe('rendu avec données', () => {
     beforeEach(() => {
-      mockUseOfficialDocument.mockReturnValue(asHook({ data: fullData, isLoading: false }));
+      mockUseOfficialDocument.mockReturnValue(
+        asHook({ data: fullData, isLoading: false })
+      );
     });
 
     it("affiche le label pièce d'identité", () => {
       render(<OfficialDocumentsForm />);
-      expect(screen.getByText("Pièce d'identité ou titre de séjour")).toBeInTheDocument();
+      expect(
+        screen.getByText("Pièce d'identité ou titre de séjour")
+      ).toBeInTheDocument();
     });
 
     it('affiche le label carte BTP', () => {
@@ -93,9 +97,18 @@ describe('OfficialDocumentsForm', () => {
       render(<OfficialDocumentsForm />);
       const images = screen.getAllByRole('img');
       expect(images).toHaveLength(3);
-      expect(images[0]).toHaveAttribute('src', 'data:image/jpeg;base64,pieceBase64');
-      expect(images[1]).toHaveAttribute('src', 'data:image/jpeg;base64,btpBase64');
-      expect(images[2]).toHaveAttribute('src', 'data:image/jpeg;base64,mutuelleBase64');
+      expect(images[0]).toHaveAttribute(
+        'src',
+        'data:image/jpeg;base64,pieceBase64'
+      );
+      expect(images[1]).toHaveAttribute(
+        'src',
+        'data:image/jpeg;base64,btpBase64'
+      );
+      expect(images[2]).toHaveAttribute(
+        'src',
+        'data:image/jpeg;base64,mutuelleBase64'
+      );
     });
   });
 
@@ -108,7 +121,9 @@ describe('OfficialDocumentsForm', () => {
 
     it('affiche 3 zones de dépôt si aucun document', () => {
       render(<OfficialDocumentsForm />);
-      const buttons = screen.getAllByRole('button', { name: /sélectionner un fichier/i });
+      const buttons = screen.getAllByRole('button', {
+        name: /sélectionner un fichier/i,
+      });
       expect(buttons).toHaveLength(3);
     });
   });
@@ -125,13 +140,19 @@ describe('OfficialDocumentsForm', () => {
       class MockFileReader {
         result = base64;
         onloadend: (() => void) | null = null;
-        readAsDataURL() { this.onloadend?.(); }
+        readAsDataURL() {
+          this.onloadend?.();
+        }
       }
       vi.stubGlobal('FileReader', MockFileReader);
 
       const { container } = render(<OfficialDocumentsForm />);
       const inputs = container.querySelectorAll('input[type="file"]');
-      fireEvent.change(inputs[0]!, { target: { files: [new File(['img'], 'piece.jpg', { type: 'image/jpeg' })] } });
+      fireEvent.change(inputs[0]!, {
+        target: {
+          files: [new File(['img'], 'piece.jpg', { type: 'image/jpeg' })],
+        },
+      });
 
       expect(mockMutate).toHaveBeenCalledWith({
         idCard: base64,
@@ -146,13 +167,19 @@ describe('OfficialDocumentsForm', () => {
       class MockFileReader {
         result = base64;
         onloadend: (() => void) | null = null;
-        readAsDataURL() { this.onloadend?.(); }
+        readAsDataURL() {
+          this.onloadend?.();
+        }
       }
       vi.stubGlobal('FileReader', MockFileReader);
 
       const { container } = render(<OfficialDocumentsForm />);
       const inputs = container.querySelectorAll('input[type="file"]');
-      fireEvent.change(inputs[1]!, { target: { files: [new File(['img'], 'btp.jpg', { type: 'image/jpeg' })] } });
+      fireEvent.change(inputs[1]!, {
+        target: {
+          files: [new File(['img'], 'btp.jpg', { type: 'image/jpeg' })],
+        },
+      });
 
       expect(mockMutate).toHaveBeenCalledWith({
         idCard: null,
@@ -167,13 +194,19 @@ describe('OfficialDocumentsForm', () => {
       class MockFileReader {
         result = base64;
         onloadend: (() => void) | null = null;
-        readAsDataURL() { this.onloadend?.(); }
+        readAsDataURL() {
+          this.onloadend?.();
+        }
       }
       vi.stubGlobal('FileReader', MockFileReader);
 
       const { container } = render(<OfficialDocumentsForm />);
       const inputs = container.querySelectorAll('input[type="file"]');
-      fireEvent.change(inputs[2]!, { target: { files: [new File(['img'], 'mutuelle.jpg', { type: 'image/jpeg' })] } });
+      fireEvent.change(inputs[2]!, {
+        target: {
+          files: [new File(['img'], 'mutuelle.jpg', { type: 'image/jpeg' })],
+        },
+      });
 
       expect(mockMutate).toHaveBeenCalledWith({
         idCard: null,
@@ -186,7 +219,9 @@ describe('OfficialDocumentsForm', () => {
 
   describe('suppression automatique', () => {
     beforeEach(() => {
-      mockUseOfficialDocument.mockReturnValue(asHook({ data: fullData, isLoading: false }));
+      mockUseOfficialDocument.mockReturnValue(
+        asHook({ data: fullData, isLoading: false })
+      );
     });
 
     it("appelle mutate avec idCard=null quand on supprime la pièce d'identité", async () => {
@@ -239,7 +274,9 @@ describe('OfficialDocumentsForm', () => {
       );
 
       render(<OfficialDocumentsForm />);
-      screen.getAllByRole('button').forEach((btn) => expect(btn).toBeDisabled());
+      screen
+        .getAllByRole('button')
+        .forEach((btn) => expect(btn).toBeDisabled());
     });
   });
 });

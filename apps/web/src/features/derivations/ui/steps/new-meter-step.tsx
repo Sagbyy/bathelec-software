@@ -10,12 +10,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { SelectItem } from '@/components/ui/select';
-import { LabeledInput } from '@/components/shared/labeled-input';
-import { LabeledSelect } from '@/components/shared/labeled-select';
-import { Button } from '@/components/ui/button';
+} from '@/shared/ui/form';
+import { Input } from '@/shared/ui/input';
+import { SelectItem } from '@/shared/ui/select';
+import { LabeledInput } from '@/shared/ui/labeled-input';
+import { LabeledSelect } from '@/shared/ui/labeled-select';
+import { Button } from '@/shared/ui/button';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import { CreateCompletedDerivation } from '@/entities/derivation';

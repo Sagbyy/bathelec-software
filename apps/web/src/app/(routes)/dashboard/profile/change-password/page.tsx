@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/shared/ui/alert';
+import { Button } from '@/shared/ui/button';
 import {
   Card,
   CardContent,
@@ -11,14 +11,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+} from '@/shared/ui/card';
+import { Input } from '@/shared/ui/input';
 
 import Link from 'next/link';
-import { changePasswordSchema } from '@/validators/change-password.schema';
+import { changePasswordSchema } from '@/features/auth/model/change-password.schema';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { Separator } from '@/components/ui/separator';
-import { useChangePassword } from '@/hooks/queries/use-change-password';
+import { Separator } from '@/shared/ui/separator';
+import { useChangePassword } from '@/features/users/model/use-change-password';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -29,7 +29,7 @@ import {
   FormLabel,
   FormMessage,
   Form,
-} from '@/components/ui/form';
+} from '@/shared/ui/form';
 
 export default function ChangePassword() {
   const [showPassword, setShowPassword] = useState({

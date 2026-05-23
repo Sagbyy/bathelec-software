@@ -1,8 +1,8 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/shared/ui/card';
+import { Badge } from '@/shared/ui/badge';
 import { CalendarIcon, MapPinIcon } from 'lucide-react';
 import { DerivationStatus } from '@repo/types';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 import { derivationStatusConfig } from '@/entities/derivation';
 
 interface InfoCardProps {

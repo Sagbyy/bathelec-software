@@ -22,7 +22,9 @@ describe('vehicleDocumentService', () => {
       const data = await vehicleDocumentService.getByUserId(1);
 
       expect(data).toMatchObject({ userId: 1 });
-      expect(data.vehicleRegistration).toBe('data:image/jpeg;base64,vehicleRegistrationBase64');
+      expect(data.vehicleRegistration).toBe(
+        'data:image/jpeg;base64,vehicleRegistrationBase64'
+      );
       expect(data.drivingLicense).toBe('data:image/jpeg;base64,permisBase64');
     });
 
@@ -45,7 +47,10 @@ describe('vehicleDocumentService', () => {
     it('lève une erreur si le serveur répond 500', async () => {
       server.use(
         http.get(`${BASE}/vehicle-documents/by-user/:userId`, () =>
-          HttpResponse.json({ message: 'Internal Server Error' }, { status: 500 })
+          HttpResponse.json(
+            { message: 'Internal Server Error' },
+            { status: 500 }
+          )
         )
       );
 
@@ -69,7 +74,7 @@ describe('vehicleDocumentService', () => {
     it('envoie un POST avec les deux champs', async () => {
       server.use(
         http.post(`${BASE}/vehicle-documents`, async ({ request }) => {
-          const body = await request.json() as Record<string, unknown>;
+          const body = (await request.json()) as Record<string, unknown>;
           return HttpResponse.json({ ...mockDocument, ...body });
         })
       );
@@ -93,7 +98,9 @@ describe('vehicleDocumentService', () => {
       );
 
       await expect(
-        vehicleDocumentService.createOrUpdate({ vehicleRegistration: 'invalid' })
+        vehicleDocumentService.createOrUpdate({
+          vehicleRegistration: 'invalid',
+        })
       ).rejects.toThrow();
     });
   });
@@ -116,7 +123,10 @@ describe('vehicleDocumentService', () => {
     it('lève une erreur si le serveur répond 500', async () => {
       server.use(
         http.delete(`${BASE}/vehicle-documents/by-user/:userId`, () =>
-          HttpResponse.json({ message: 'Internal Server Error' }, { status: 500 })
+          HttpResponse.json(
+            { message: 'Internal Server Error' },
+            { status: 500 }
+          )
         )
       );
 

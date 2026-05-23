@@ -110,9 +110,15 @@ describe('useUpsertOfficialDocument', () => {
     const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
     const wrapper = ({ children }: { children: React.ReactNode }) =>
-      React.createElement(QueryClientProvider, { client: queryClient }, children);
+      React.createElement(
+        QueryClientProvider,
+        { client: queryClient },
+        children
+      );
 
-    const { result } = renderHook(() => useUpsertOfficialDocument(1), { wrapper });
+    const { result } = renderHook(() => useUpsertOfficialDocument(1), {
+      wrapper,
+    });
 
     await act(async () => {
       result.current.mutate({ idCard: 'data:image/jpeg;base64,test' });

@@ -10,17 +10,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Button } from '@/components/ui/button';
+} from '@/shared/ui/form';
+import { Textarea } from '@/shared/ui/textarea';
+import { Switch } from '@/shared/ui/switch';
+import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group';
+import { Button } from '@/shared/ui/button';
 import { Star, Trash2 } from 'lucide-react';
 import SignatureCanvas from 'react-signature-canvas';
 import ReactSignatureCanvas from 'react-signature-canvas';
 import type { CreateCompletedDerivation } from '@/entities/derivation';
 import { useDerivationStatusStore } from '@/entities/derivation';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 interface ClientValidationStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }

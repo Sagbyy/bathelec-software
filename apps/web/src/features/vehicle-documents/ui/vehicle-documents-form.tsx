@@ -16,7 +16,9 @@ export function VehicleDocumentsForm() {
   const { data, isLoading } = useVehicleDocument(userId!);
   const { mutate, isPending } = useUpsertVehicleDocument(userId!);
 
-  const [vehicleRegistration, setVehicleRegistration] = useState<string | null>(null);
+  const [vehicleRegistration, setVehicleRegistration] = useState<string | null>(
+    null
+  );
   const [drivingLicense, setDrivingLicense] = useState<string | null>(null);
   const initialized = useRef(false);
 

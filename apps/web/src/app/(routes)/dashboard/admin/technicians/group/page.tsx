@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/ui/button';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import {
   Card,
@@ -9,7 +9,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@/shared/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -18,16 +18,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+} from '@/shared/ui/dialog';
+import { Input } from '@/shared/ui/input';
+import { Textarea } from '@/shared/ui/textarea';
+import { Badge } from '@/shared/ui/badge';
+import { Separator } from '@/shared/ui/separator';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@/shared/ui/popover';
 import {
   Command,
   CommandEmpty,
@@ -35,7 +35,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
+} from '@/shared/ui/command';
 import {
   useUsersGroupsWithUsers,
   useCreateUserGroup,
@@ -43,15 +43,15 @@ import {
   useDeleteUserGroup,
   useAddUserToGroup,
   useRemoveUserFromGroup,
-} from '@/hooks/queries/use-users-groups';
-import { useUsers } from '@/hooks/queries/use-user';
+} from '@/features/user-groups/model/use-users-groups';
+import { useUsers } from '@/features/users/model/use-user';
 import { toast } from 'sonner';
 import {
   CreateUserGroupDto,
   UpdateUserGroupDto,
   UserGroupWithUsers,
-} from '@/services/users-groups-service';
-import { getApiErrorMessage } from '@/types/api-error';
+} from '@/features/user-groups/model/users-groups-service';
+import { getApiErrorMessage } from '@/shared/lib/api-error';
 
 export default function TechniciansGroupPage() {
   const { data: groups, isLoading, error } = useUsersGroupsWithUsers();

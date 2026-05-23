@@ -11,6 +11,7 @@ import { UsersGroupsModule } from './users-groups/users-groups.module';
 import { VehicleDocumentsModule } from './vehicle-documents/vehicle-documents.module';
 import { OfficialDocumentsModule } from './official-documents/official-documents.module';
 import { HabilitationsModule } from './habilitations/habilitations.module';
+import { SpecialHabilitationsModule } from './special-habilitations/special-habilitations.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { HabilitationsModule } from './habilitations/habilitations.module';
     VehicleDocumentsModule,
     OfficialDocumentsModule,
     HabilitationsModule,
+    SpecialHabilitationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

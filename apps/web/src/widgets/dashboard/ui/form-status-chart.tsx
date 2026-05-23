@@ -4,14 +4,14 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+} from '@/shared/ui/card';
+import { cn } from '@/shared/lib/utils';
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@/components/ui/chart';
+} from '@/shared/ui/chart';
 import { Label, Pie, PieChart } from 'recharts';
 import { useDerivation } from '@/features/derivations';
 import { useEffect, useState } from 'react';

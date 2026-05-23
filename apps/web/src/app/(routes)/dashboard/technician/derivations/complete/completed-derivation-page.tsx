@@ -1,7 +1,7 @@
 'use client';
 
-import { useDerivationByUser } from '@/hooks/queries/use-derivation';
-import { useUserStore } from '@/hooks/use-user-store';
+import { useDerivationByUser } from '@/features/derivations/model/use-derivation';
+import { useUserStore } from '@/entities/user/model/use-user-store';
 import { DataTable } from './data-table';
 import { columns } from './columns';
 

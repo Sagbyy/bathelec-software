@@ -107,12 +107,20 @@ describe('useUpsertVehicleDocument', () => {
     const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
     const wrapper = ({ children }: { children: React.ReactNode }) =>
-      React.createElement(QueryClientProvider, { client: queryClient }, children);
+      React.createElement(
+        QueryClientProvider,
+        { client: queryClient },
+        children
+      );
 
-    const { result } = renderHook(() => useUpsertVehicleDocument(1), { wrapper });
+    const { result } = renderHook(() => useUpsertVehicleDocument(1), {
+      wrapper,
+    });
 
     await act(async () => {
-      result.current.mutate({ vehicleRegistration: 'data:image/jpeg;base64,test' });
+      result.current.mutate({
+        vehicleRegistration: 'data:image/jpeg;base64,test',
+      });
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));

@@ -1,4 +1,4 @@
-import { Progress } from '@/components/ui/progress';
+import { Progress } from '@/shared/ui/progress';
 
 type FormHeaderProps = {
   step: number;

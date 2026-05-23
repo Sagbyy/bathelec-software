@@ -1,10 +1,10 @@
 'use client';
 
-import { useDerivationById } from '@/hooks/queries/use-derivation';
+import { useDerivationById } from '@/features/derivations/model/use-derivation';
 import { useParams, useRouter } from 'next/navigation';
-import { MultiStepForm } from '@/components/derivations/multi-step-form';
-import { InfoCard } from '@/components/derivations/info-derivation-card';
-import { Button } from '@/components/ui/button';
+import { MultiStepForm } from '@/features/derivations/ui/multi-step-form';
+import { InfoCard } from '@/features/derivations/ui/info-derivation-card';
+import { Button } from '@/shared/ui/button';
 import { Icon } from '@iconify/react/dist/iconify.js';
 
 export default function CompleteDerivationPage() {

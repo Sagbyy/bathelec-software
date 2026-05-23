@@ -1,16 +1,17 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@/shared/ui/badge';
+import { Button } from '@/shared/ui/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from '@/shared/ui/tooltip';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
+import { ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export type User = {
@@ -176,11 +177,13 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'edit',
     header: 'Actions',
-    cell: ({ row }) => <ActionCell userId={row.original.id} />,
+    cell: ({ row }) => (
+      <ActionCell userId={row.original.id} role={row.original.role} />
+    ),
   },
 ];
 
-function ActionCell({ userId }: { userId: number }) {
+function ActionCell({ userId, role }: { userId: number; role: string }) {
   const router = useRouter();
   return (
     <div className="flex items-center gap-1">
@@ -192,16 +195,18 @@ function ActionCell({ userId }: { userId: number }) {
       >
         <Icon icon="material-symbols:edit-rounded" />
       </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() =>
-          router.push(`/dashboard/admin/technicians/${userId}/habilitations`)
-        }
-        title="Habilitations"
-      >
-        <Icon icon="material-symbols:shield-check-outline-rounded" />
-      </Button>
+      {role === 'technician' && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() =>
+            router.push(`/dashboard/admin/technicians/${userId}/habilitations`)
+          }
+          title="Habilitations"
+        >
+          <ShieldCheck className="h-4 w-4" />
+        </Button>
+      )}
     </div>
   );
 }

@@ -1,4 +1,7 @@
-import { changePasswordService, type ChangePassword } from '@/entities/user';
+import {
+  changePasswordService,
+  type ChangePassword,
+} from '@/entities/user';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 
 export const useChangePassword = (): UseMutationResult<

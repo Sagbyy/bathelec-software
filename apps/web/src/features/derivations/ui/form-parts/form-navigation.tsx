@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/ui/button';
 import { useDerivationStatusStore } from '@/entities/derivation';
 import { CreateCompletedDerivation } from '@/entities/derivation';
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react';

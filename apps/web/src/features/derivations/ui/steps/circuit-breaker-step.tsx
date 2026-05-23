@@ -7,13 +7,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { SelectItem } from '@/components/ui/select';
-import { LabeledInput } from '@/components/shared/labeled-input';
-import { LabeledSelect } from '@/components/shared/labeled-select';
-import { Switch } from '@/components/ui/switch';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+} from '@/shared/ui/form';
+import { SelectItem } from '@/shared/ui/select';
+import { LabeledInput } from '@/shared/ui/labeled-input';
+import { LabeledSelect } from '@/shared/ui/labeled-select';
+import { Switch } from '@/shared/ui/switch';
+import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group';
+import { Alert, AlertDescription } from '@/shared/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 import type { CreateCompletedDerivation } from '@/entities/derivation';
 import { useDerivationStatusStore } from '@/entities/derivation';
