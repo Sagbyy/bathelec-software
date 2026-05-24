@@ -11,6 +11,7 @@
   "scripts": {
     "build": "nest build",
     "seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
+    "seed:undo": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts --undo",
     "dev": "nest start --watch",
     "vercel-build": "npx prisma generate && npx prisma migrate deploy && turbo run build",
     "postinstall": "npx prisma generate",
@@ -44,6 +45,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",
+    "dotenv": "^17.4.2",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jest": "^28.11.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",

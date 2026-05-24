@@ -41,33 +41,34 @@ export function MultiStepForm({
   );
   const { setIsNotEditable } = useDerivationStatusStore();
 
-  useEffect(() => {
-    if (readOnly) {
-      setIsNotEditable(true);
-      return;
-    }
+  const isStatusDisabled =
+    derivation.status === DerivationStatus.COMPLETED ||
+    derivation.status === DerivationStatus.REVIEWING ||
+    derivation.status === DerivationStatus.INCORRECT;
+  const isFormDisabled = readOnly || isStatusDisabled;
 
-    if (
-      derivation.status === DerivationStatus.COMPLETED ||
-      derivation.status === DerivationStatus.REVIEWING ||
-      derivation.status === DerivationStatus.INCORRECT
-    ) {
-      setIsNotEditable(true);
-    } else {
-      setIsNotEditable(false);
-    }
-  }, [derivation.status, setIsNotEditable, readOnly]);
+  useEffect(() => {
+    setIsNotEditable(isFormDisabled);
+  }, [isFormDisabled, setIsNotEditable]);
 
   const form = useForm<
     CreateCompletedDerivation,
     unknown,
     CreateCompletedDerivation
   >({
-    resolver: zodResolver(createCompletedDerivationSchema),
+    resolver: isFormDisabled
+      ? undefined
+      : zodResolver(createCompletedDerivationSchema),
     defaultValues:
       DEFAULT_FORM_VALUES as unknown as DefaultValues<CreateCompletedDerivation>,
     mode: 'onChange',
   });
+
+  useEffect(() => {
+    if (isFormDisabled) {
+      form.clearErrors();
+    }
+  }, [form, isFormDisabled]);
 
   useEffect(() => {
     if (completedDerivation) {
@@ -79,7 +80,7 @@ export function MultiStepForm({
     useFormSteps({
       form,
       onSubmit: submit,
-      readOnly,
+      readOnly: isFormDisabled,
     });
 
   const renderStep = useCallback(() => {
@@ -117,7 +118,7 @@ export function MultiStepForm({
       <Form {...form}>
         <form
           onSubmit={(e) => {
-            if (readOnly) {
+            if (isFormDisabled) {
               e.preventDefault();
               return false;
             }
@@ -133,7 +134,7 @@ export function MultiStepForm({
                 totalSteps={totalSteps}
                 onNext={nextStep}
                 onPrev={prevStep}
-                readOnly={readOnly}
+                readOnly={isFormDisabled}
               />
             </CardContent>
           </Card>

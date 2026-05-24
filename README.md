@@ -16,7 +16,7 @@ cp apps/api/.env.example apps/api/.env
 #### API (`apps/api/.env`)
 
 - `DATABASE_POSTGRES_URL` - Connection string pour PostgreSQL (utilisé avec Prisma)
-- `DATABASE_MONGO_URL` - Connection string pour MongoDB (utilisé avec Mongoose) 
+- `DATABASE_MONGO_URL` - Connection string pour MongoDB (utilisé avec Mongoose)
 - `JWT_SECRET` - Secret pour la signature des tokens JWT
 - `PORT` - Port d'écoute du serveur API (défaut: 3002)
 
@@ -62,6 +62,29 @@ npx prisma studio
 MongoDB est utilisé pour stocker les données non-relationnelles. La connexion est configurée automatiquement via `@nestjs/mongoose` dans le module principal de l'API.
 
 Assurez-vous que la variable d'environnement `DATABASE_MONGO_URL` est correctement configurée dans `apps/api/.env`.
+
+#### Seeder
+
+Le seeder est défini dans `apps/api/prisma/seed.ts`. Il ne se lance pas automatiquement au démarrage de l'API ni pendant le build : il doit être exécuté explicitement.
+
+```bash
+pnpm --dir apps/api seed
+```
+
+Pour supprimer les données générées par ce seeder :
+
+```bash
+pnpm --dir apps/api seed:undo
+```
+
+Le seeder charge les variables depuis `apps/api/.env` et utilise :
+
+- `DATABASE_POSTGRES_URL` pour créer les données relationnelles via Prisma : marchés, chantiers et dérivations.
+- `DATABASE_MONGO_URL` pour créer ou mettre à jour les documents MongoDB via Mongoose : habilitations, habilitations spéciales, documents officiels, documents véhicule et dérivations complétées.
+
+Avant de lancer le seeder, assurez-vous qu'un utilisateur avec le rôle `technician` existe déjà en base PostgreSQL. Le seeder utilise ce technicien pour rattacher les dérivations et les documents MongoDB.
+
+La commande `seed:undo` supprime uniquement les fixtures connues du seeder : les marchés/chantiers définis dans `seed.ts`, les dérivations rattachées à ces chantiers, les dérivations complétées MongoDB associées et les documents utilisateur MongoDB qui correspondent aux valeurs générées par le seed.
 
 ## What's inside?
 
