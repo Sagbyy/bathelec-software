@@ -15,6 +15,7 @@ export default function FinishedMarketChantiersPage() {
       basePath="/dashboard/technician/derivations/complete"
       isLoading={isLoading}
       error={error}
+      folderImageSrc="/images/green-folder.png"
     />
   );
 }

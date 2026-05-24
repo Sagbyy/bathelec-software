@@ -1,11 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import { HardHat } from 'lucide-react';
 import { Chantier } from '@repo/types';
-import { Button } from '@/shared/ui/button';
-import { Icon } from '@iconify/react/dist/iconify.js';
 import { DataTable } from '@/shared/ui/data-table';
 import { useCompletedDerivationsByIds } from '@/features/derivations/model/use-completed-derivations';
 import { derivationColumns } from './derivation-columns';
@@ -24,8 +21,6 @@ export function ChantierDerivationsView({
   isLoading,
   error,
 }: ChantierDerivationsViewProps) {
-  const router = useRouter();
-
   const chantier = useMemo(
     () => chantiers.find((c) => c.id === chantierId),
     [chantiers, chantierId]
@@ -52,16 +47,6 @@ export function ChantierDerivationsView({
 
   return (
     <div className="mx-2 py-10 sm:mx-10">
-      <Button
-        variant="secondary"
-        size="sm"
-        onClick={() => router.back()}
-        className="mb-4"
-      >
-        <Icon icon="mdi:arrow-left" />
-        <span>Retour</span>
-      </Button>
-
       <div className="mb-6 flex items-start gap-6 rounded-2xl border bg-white p-6 shadow-sm">
         <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-blue-500 sm:h-24 sm:w-24">
           <HardHat

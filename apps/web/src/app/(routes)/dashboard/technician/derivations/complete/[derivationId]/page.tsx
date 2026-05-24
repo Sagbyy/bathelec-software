@@ -1,15 +1,12 @@
 'use client';
 
 import { useDerivationById } from '@/features/derivations/model/use-derivation';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { MultiStepForm } from '@/features/derivations/ui/multi-step-form';
 import { InfoCard } from '@/features/derivations/ui/info-derivation-card';
-import { Button } from '@/shared/ui/button';
-import { Icon } from '@iconify/react/dist/iconify.js';
 
 export default function CompleteDerivationPage() {
   const { derivationId } = useParams();
-  const router = useRouter();
 
   const {
     data: derivation,
@@ -23,10 +20,6 @@ export default function CompleteDerivationPage() {
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-10 md:px-6">
-      <Button variant="secondary" size="sm" onClick={() => router.back()}>
-        <Icon icon="mdi:arrow-left" />
-        <p>Retour</p>
-      </Button>
       <h1 className="mb-8 text-center text-3xl font-bold">
         Formulaire d'Intervention
       </h1>

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useFinishedChantiers } from '@/entities/chantier';
 import { MarketGrid } from '@/features/chantiers';
 
@@ -11,11 +12,21 @@ export default function ChantiersTerminesPage() {
 
   return (
     <div className="mx-2 py-10 sm:mx-10">
-      <h1 className="mb-6 text-2xl font-bold">Chantiers terminés</h1>
+      <div className="mb-6 flex items-center gap-3">
+        <Image
+          src="/images/green-folder.png"
+          alt=""
+          width={40}
+          height={40}
+          className="object-contain"
+        />
+        <h1 className="text-2xl font-bold">Chantiers terminés</h1>
+      </div>
       <MarketGrid
         chantiers={chantiers ?? []}
         basePath="/dashboard/technician/derivations/complete"
         emptyMessage="Aucun marché avec chantier terminé."
+        folderImageSrc="/images/green-folder.png"
       />
     </div>
   );

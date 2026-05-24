@@ -1,20 +1,44 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   Trophy,
-  HardHat,
-  ClipboardCheck,
   FileText,
   ShieldCheck,
   Car,
   PhoneCall,
   User,
 } from 'lucide-react';
+import { type LucideIcon } from 'lucide-react';
 import { useUserStore } from '@/entities/user';
 import { cn } from '@/shared/lib/utils';
 
-const NAV_ITEMS = [
+type NavItemIcon = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+  imageSrc?: never;
+  color: string;
+  textColor: string;
+  bgLight: string;
+  border: string;
+};
+
+type NavItemImage = {
+  label: string;
+  href: string;
+  icon?: never;
+  imageSrc: string;
+  color?: never;
+  textColor: string;
+  bgLight: string;
+  border: string;
+};
+
+type NavItem = NavItemIcon | NavItemImage;
+
+const NAV_ITEMS: NavItem[] = [
   {
     label: 'Top Chantiers',
     href: '/dashboard/technician/top-chantiers',
@@ -27,20 +51,18 @@ const NAV_ITEMS = [
   {
     label: 'Chantiers en cours',
     href: '/dashboard/technician/derivations',
-    icon: HardHat,
-    color: 'bg-blue-500',
-    textColor: 'text-blue-600',
-    bgLight: 'bg-blue-50',
-    border: 'border-blue-200',
+    imageSrc: '/images/red-folder.png',
+    textColor: 'text-gray-700',
+    bgLight: 'bg-white',
+    border: 'border-gray-200',
   },
   {
     label: 'Chantiers terminés',
     href: '/dashboard/technician/derivations/complete',
-    icon: ClipboardCheck,
-    color: 'bg-green-500',
-    textColor: 'text-green-600',
-    bgLight: 'bg-green-50',
-    border: 'border-green-200',
+    imageSrc: '/images/green-folder.png',
+    textColor: 'text-gray-700',
+    bgLight: 'bg-white',
+    border: 'border-gray-200',
   },
   {
     label: 'Mes documents officiels',
@@ -78,7 +100,7 @@ const NAV_ITEMS = [
     bgLight: 'bg-red-50',
     border: 'border-red-200',
   },
-] as const;
+];
 
 export function TechnicianHome() {
   const { user } = useUserStore();
@@ -121,15 +143,13 @@ export function TechnicianHome() {
 
           {/* Numéros d'urgence — pleine largeur en bas */}
           <div className="col-span-2 md:col-span-3 lg:col-span-4">
-            <NavCard item={NAV_ITEMS[6]} fullWidth />
+            <NavCard item={NAV_ITEMS[6]!} fullWidth />
           </div>
         </div>
       </div>
     </div>
   );
 }
-
-type NavItem = (typeof NAV_ITEMS)[number];
 
 function NavCard({
   item,
@@ -153,21 +173,33 @@ function NavCard({
           : 'min-h-[120px] gap-3 sm:min-h-[140px]'
       )}
     >
-      <div
-        className={cn(
-          'flex shrink-0 items-center justify-center rounded-xl',
-          item.color,
-          fullWidth ? 'h-12 w-12' : 'h-14 w-14 sm:h-16 sm:w-16'
-        )}
-      >
-        <Icon
-          className={cn(
-            'text-white',
-            fullWidth ? 'h-6 w-6' : 'h-7 w-7 sm:h-8 sm:w-8'
-          )}
-          strokeWidth={1.75}
+      {item.imageSrc ? (
+        <Image
+          src={item.imageSrc}
+          alt={item.label}
+          width={fullWidth ? 48 : 64}
+          height={fullWidth ? 48 : 64}
+          className="shrink-0 object-contain"
         />
-      </div>
+      ) : (
+        <div
+          className={cn(
+            'flex shrink-0 items-center justify-center rounded-xl',
+            item.color,
+            fullWidth ? 'h-12 w-12' : 'h-14 w-14 sm:h-16 sm:w-16'
+          )}
+        >
+          {Icon && (
+            <Icon
+              className={cn(
+                'text-white',
+                fullWidth ? 'h-6 w-6' : 'h-7 w-7 sm:h-8 sm:w-8'
+              )}
+              strokeWidth={1.75}
+            />
+          )}
+        </div>
+      )}
       <span
         className={cn(
           'font-semibold leading-tight',
