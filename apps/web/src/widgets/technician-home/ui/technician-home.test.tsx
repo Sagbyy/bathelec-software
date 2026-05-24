@@ -17,7 +17,7 @@ describe('TechnicianHome', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseUserStore.mockReturnValue({
-      user: { id: 1, username: 'jean.dupont', role: 'technician' },
+      user: { id: 1, username: 'jean.dupont', firstName: 'Jean', lastName: 'Dupont', role: 'technician' },
     });
   });
 
@@ -57,10 +57,10 @@ describe('TechnicianHome', () => {
   });
 
   describe('salutation utilisateur', () => {
-    it("affiche le username dans la salutation", () => {
+    it("affiche le prénom et nom dans la salutation", () => {
       render(<TechnicianHome />);
 
-      expect(screen.getByText(/jean\.dupont/)).toBeInTheDocument();
+      expect(screen.getByText(/Jean Dupont/)).toBeInTheDocument();
     });
 
     it('affiche "Technicien" quand user est undefined', () => {
