@@ -9,13 +9,13 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from '@/shared/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/shared/ui/popover';
-import { CommandList } from 'cmdk';
 import { z } from 'zod';
 import { useState, useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
