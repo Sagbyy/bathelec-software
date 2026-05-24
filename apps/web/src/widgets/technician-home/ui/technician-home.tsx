@@ -140,7 +140,7 @@ export function TechnicianHome() {
 
           {/* Numéros d'urgence — pleine largeur en bas */}
           <div className="col-span-2 md:col-span-3 lg:col-span-4">
-            <NavCard item={NAV_ITEMS[6]} fullWidth />
+            <NavCard item={NAV_ITEMS[6]!} fullWidth />
           </div>
         </div>
       </div>
