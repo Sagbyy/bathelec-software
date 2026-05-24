@@ -36,32 +36,38 @@ export function buildChantierColumns(basePath: string): ColumnDef<Chantier>[] {
   return [
     {
       accessorKey: 'address',
+      meta: { label: 'Adresse' },
       header: ({ column }) => <SortableHeader column={column} label="Adresse" />,
     },
     {
       accessorFn: (row) => row.market?.name ?? '—',
       id: 'market',
+      meta: { label: 'Marché' },
       header: ({ column }) => <SortableHeader column={column} label="Marché" />,
     },
     {
       accessorKey: 'enedisAffaireNumber',
+      meta: { label: 'N° Enedis' },
       header: ({ column }) => (
         <SortableHeader column={column} label="N° Enedis" />
       ),
     },
     {
       accessorKey: 'internalAffaireNumber',
+      meta: { label: 'N° Interne' },
       header: ({ column }) => (
         <SortableHeader column={column} label="N° Interne" />
       ),
     },
     {
       accessorKey: 'status',
+      meta: { label: 'Statut' },
       header: ({ column }) => <SortableHeader column={column} label="Statut" />,
       cell: ({ row }) => <ChantierStatusBadge chantier={row.original} />,
     },
     {
       id: 'action',
+      meta: { label: 'Action' },
       header: 'Action',
       cell: ({ row }) => (
         <Link
