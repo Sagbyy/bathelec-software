@@ -83,7 +83,10 @@ const NAV_ITEMS = [
 export function TechnicianHome() {
   const { user } = useUserStore();
 
-  const firstName = user?.username ?? 'Technicien';
+  const fullName =
+    user?.firstName && user?.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : (user?.firstName ?? user?.lastName ?? 'Technicien');
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
@@ -94,7 +97,7 @@ export function TechnicianHome() {
               Tableau de bord
             </p>
             <h1 className="mt-1 text-2xl font-bold text-gray-900 md:text-3xl">
-              Bonjour, {firstName} 👋
+              Bonjour, {fullName} 👋
             </h1>
             <p className="mt-1 text-gray-500">Que souhaitez-vous faire ?</p>
           </div>
