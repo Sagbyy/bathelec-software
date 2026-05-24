@@ -6,6 +6,7 @@ import { CompletedDerivation } from '@repo/types';
 import {
   useMutation,
   UseMutationResult,
+  useQueries,
   useQuery,
 } from '@tanstack/react-query';
 
@@ -40,4 +41,24 @@ export const useCompletedDerivationsById = (derivationId: number) => {
   });
 
   return { data, isLoading, error };
+};
+
+export const useCompletedDerivationsByIds = (derivationIds: number[]) => {
+  const results = useQueries({
+    queries: derivationIds.map((id) => ({
+      queryKey: ['completed-derivations', id],
+      queryFn: () =>
+        completedDerivationsService.getCompletedDerivationsById(id),
+    })),
+  });
+
+  const byId = new Map<number, CompletedDerivation | undefined>();
+  derivationIds.forEach((id, index) => {
+    byId.set(id, results[index]?.data as CompletedDerivation | undefined);
+  });
+
+  return {
+    byId,
+    isLoading: results.some((r) => r.isLoading),
+  };
 };
