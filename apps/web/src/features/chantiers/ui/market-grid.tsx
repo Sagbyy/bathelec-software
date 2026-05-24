@@ -1,7 +1,7 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import { Folder } from 'lucide-react';
 import { Chantier } from '@repo/types';
 import { groupByMarket } from '../lib/group-by-market';
 
@@ -9,12 +9,14 @@ interface MarketGridProps {
   chantiers: Chantier[];
   basePath: string;
   emptyMessage?: string;
+  folderImageSrc: string;
 }
 
 export function MarketGrid({
   chantiers,
   basePath,
   emptyMessage = 'Aucun marché.',
+  folderImageSrc,
 }: MarketGridProps) {
   const markets = groupByMarket(chantiers);
 
@@ -32,13 +34,17 @@ export function MarketGrid({
         <Link
           key={market.marketId}
           href={`${basePath}/markets/${market.marketId}`}
-          className="group flex flex-col items-center justify-center gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-6 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-95"
+          className="group flex flex-col items-center justify-center gap-3 rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-95"
         >
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-500 transition-colors group-hover:bg-blue-600">
-            <Folder className="h-10 w-10 text-white" strokeWidth={1.75} />
-          </div>
+          <Image
+            src={folderImageSrc}
+            alt=""
+            width={80}
+            height={80}
+            className="object-contain"
+          />
           <div className="flex flex-col gap-1">
-            <span className="text-lg font-semibold text-blue-700">
+            <span className="text-lg font-semibold text-gray-800">
               {market.marketName}
             </span>
             <span className="text-muted-foreground text-sm">

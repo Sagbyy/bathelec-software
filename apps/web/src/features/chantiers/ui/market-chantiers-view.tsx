@@ -1,10 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Chantier } from '@repo/types';
-import { Button } from '@/shared/ui/button';
-import { Icon } from '@iconify/react/dist/iconify.js';
 import { DataTable } from '@/shared/ui/data-table';
 import { buildChantierColumns } from './chantier-columns';
 
@@ -14,6 +12,7 @@ interface MarketChantiersViewProps {
   basePath: string;
   isLoading: boolean;
   error: unknown;
+  folderImageSrc: string;
 }
 
 export function MarketChantiersView({
@@ -22,9 +21,8 @@ export function MarketChantiersView({
   basePath,
   isLoading,
   error,
+  folderImageSrc,
 }: MarketChantiersViewProps) {
-  const router = useRouter();
-
   const filtered = useMemo(
     () => chantiers.filter((c) => c.marketId === marketId),
     [chantiers, marketId]
@@ -37,18 +35,18 @@ export function MarketChantiersView({
 
   return (
     <div className="mx-2 py-10 sm:mx-10">
-      <Button
-        variant="secondary"
-        size="sm"
-        onClick={() => router.back()}
-        className="mb-4"
-      >
-        <Icon icon="mdi:arrow-left" />
-        <span>Retour</span>
-      </Button>
-      <h1 className="mb-2 text-2xl font-bold">
-        {marketName ?? 'Marché'} — Chantiers
-      </h1>
+      <div className="mb-6 flex items-center gap-3">
+        <Image
+          src={folderImageSrc}
+          alt=""
+          width={40}
+          height={40}
+          className="object-contain"
+        />
+        <h1 className="text-2xl font-bold">
+          {marketName ?? 'Marché'} — Chantiers
+        </h1>
+      </div>
       <DataTable
         columns={columns}
         data={filtered}

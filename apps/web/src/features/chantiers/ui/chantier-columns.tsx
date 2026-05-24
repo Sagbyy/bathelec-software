@@ -35,6 +35,13 @@ function SortableHeader({
 export function buildChantierColumns(basePath: string): ColumnDef<Chantier>[] {
   return [
     {
+      id: 'folder',
+      header: '',
+      cell: () => (
+        <Icon icon="mdi:folder" className="h-6 w-6 text-gray-400" />
+      ),
+    },
+    {
       accessorKey: 'address',
       header: ({ column }) => <SortableHeader column={column} label="Adresse" />,
     },
