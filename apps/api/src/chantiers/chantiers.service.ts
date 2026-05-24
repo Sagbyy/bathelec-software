@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { DerivationStatus } from '../types/derivations-status.enum';
 import { CreateChantierDto } from './dto/request/create-chantier.dto';
 import { UpdateChantierDto } from './dto/request/update-chantier.dto';
 
@@ -20,6 +21,34 @@ export class ChantiersService {
 
   findAll() {
     return this.prisma.chantier.findMany({ include: { market: true } });
+  }
+
+  findOngoing() {
+    return this.prisma.chantier.findMany({
+      where: {
+        OR: [
+          { derivations: { none: {} } },
+          {
+            derivations: {
+              some: { status: { not: DerivationStatus.COMPLETED } },
+            },
+          },
+        ],
+      },
+      include: { market: true, derivations: true },
+    });
+  }
+
+  findFinished() {
+    return this.prisma.chantier.findMany({
+      where: {
+        derivations: {
+          some: {},
+          every: { status: DerivationStatus.COMPLETED },
+        },
+      },
+      include: { market: true, derivations: true },
+    });
   }
 
   async findOne(id: number) {

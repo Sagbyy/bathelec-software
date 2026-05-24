@@ -18,6 +18,8 @@ const mockChantier = {
 const mockChantiersService = {
   create: jest.fn(),
   findAll: jest.fn(),
+  findOngoing: jest.fn(),
+  findFinished: jest.fn(),
   findOne: jest.fn(),
   update: jest.fn(),
   remove: jest.fn(),
@@ -72,6 +74,33 @@ describe('ChantiersController', () => {
 
       expect(result).toEqual([mockChantier]);
       expect(mockChantiersService.findAll).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('findOngoing', () => {
+    it('retourne les chantiers en cours', async () => {
+      const ongoing = { ...mockChantier, derivations: [] };
+      mockChantiersService.findOngoing.mockResolvedValue([ongoing]);
+
+      const result = await controller.findOngoing();
+
+      expect(result).toEqual([ongoing]);
+      expect(mockChantiersService.findOngoing).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('findFinished', () => {
+    it('retourne les chantiers terminés', async () => {
+      const finished = {
+        ...mockChantier,
+        derivations: [{ id: 1, status: 'Completed' }],
+      };
+      mockChantiersService.findFinished.mockResolvedValue([finished]);
+
+      const result = await controller.findFinished();
+
+      expect(result).toEqual([finished]);
+      expect(mockChantiersService.findFinished).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -155,6 +184,24 @@ describe('ChantiersController', () => {
         Reflect.getMetadata(
           '__guards__',
           ChantiersController.prototype.findOne
+        ) ?? [];
+      expect(guards).not.toContain(RoleGuard);
+    });
+
+    it("n'applique pas RoleGuard sur findOngoing", () => {
+      const guards =
+        Reflect.getMetadata(
+          '__guards__',
+          ChantiersController.prototype.findOngoing
+        ) ?? [];
+      expect(guards).not.toContain(RoleGuard);
+    });
+
+    it("n'applique pas RoleGuard sur findFinished", () => {
+      const guards =
+        Reflect.getMetadata(
+          '__guards__',
+          ChantiersController.prototype.findFinished
         ) ?? [];
       expect(guards).not.toContain(RoleGuard);
     });

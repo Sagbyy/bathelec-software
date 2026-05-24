@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { ChantiersService } from './chantiers.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { DerivationStatus } from '../types/derivations-status.enum';
 
 const mockMarket = {
   id: 1,
@@ -102,6 +103,72 @@ describe('ChantiersService', () => {
       mockPrismaService.chantier.findMany.mockResolvedValue([]);
 
       const result = await service.findAll();
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('findOngoing', () => {
+    it('retourne les chantiers avec au moins une dérivation non Completed ou sans dérivations', async () => {
+      const ongoingChantier = { ...mockChantier, derivations: [] };
+      mockPrismaService.chantier.findMany.mockResolvedValue([ongoingChantier]);
+
+      const result = await service.findOngoing();
+
+      expect(result).toEqual([ongoingChantier]);
+      expect(mockPrismaService.chantier.findMany).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            { derivations: { none: {} } },
+            {
+              derivations: {
+                some: { status: { not: DerivationStatus.COMPLETED } },
+              },
+            },
+          ],
+        },
+        include: { market: true, derivations: true },
+      });
+    });
+
+    it('retourne un tableau vide si aucun chantier en cours', async () => {
+      mockPrismaService.chantier.findMany.mockResolvedValue([]);
+
+      const result = await service.findOngoing();
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('findFinished', () => {
+    it('retourne les chantiers dont toutes les dérivations sont Completed', async () => {
+      const finishedChantier = {
+        ...mockChantier,
+        derivations: [
+          { id: 1, status: DerivationStatus.COMPLETED },
+          { id: 2, status: DerivationStatus.COMPLETED },
+        ],
+      };
+      mockPrismaService.chantier.findMany.mockResolvedValue([finishedChantier]);
+
+      const result = await service.findFinished();
+
+      expect(result).toEqual([finishedChantier]);
+      expect(mockPrismaService.chantier.findMany).toHaveBeenCalledWith({
+        where: {
+          derivations: {
+            some: {},
+            every: { status: DerivationStatus.COMPLETED },
+          },
+        },
+        include: { market: true, derivations: true },
+      });
+    });
+
+    it('retourne un tableau vide si aucun chantier terminé', async () => {
+      mockPrismaService.chantier.findMany.mockResolvedValue([]);
+
+      const result = await service.findFinished();
 
       expect(result).toEqual([]);
     });

@@ -43,6 +43,23 @@ export class ChantiersController {
     return this.chantiersService.findAll();
   }
 
+  @Get('ongoing')
+  @ApiOperation({
+    summary:
+      'Get ongoing chantiers (at least one derivation not Completed, or no derivations)',
+  })
+  findOngoing() {
+    return this.chantiersService.findOngoing();
+  }
+
+  @Get('finished')
+  @ApiOperation({
+    summary: 'Get finished chantiers (all derivations Completed)',
+  })
+  findFinished() {
+    return this.chantiersService.findFinished();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get a chantier by id' })
   @ApiParam({ name: 'id', type: Number })
