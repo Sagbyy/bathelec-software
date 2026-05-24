@@ -1,8 +1,14 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Chantier } from '@repo/types';
-import { chantierService } from '../api/chantier.service';
+import { chantierService, CreateChantierDto } from '../api/chantier.service';
+
+export const useChantiers = () =>
+  useQuery<Chantier[]>({
+    queryKey: ['chantiers'],
+    queryFn: () => chantierService.getAll(),
+  });
 
 export const useOngoingChantiers = () =>
   useQuery<Chantier[]>({
@@ -15,3 +21,15 @@ export const useFinishedChantiers = () =>
     queryKey: ['chantiers', 'finished'],
     queryFn: () => chantierService.getFinished(),
   });
+
+export const useCreateChantier = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (dto: CreateChantierDto) => chantierService.create(dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chantiers'] });
+      queryClient.invalidateQueries({ queryKey: ['markets'] });
+    },
+  });
+};

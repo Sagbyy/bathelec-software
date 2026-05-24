@@ -1,6 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import {
   Card,
@@ -246,58 +252,74 @@ export function FormsList() {
                 ))}
               </TableBody>
             </Table>
-            <div className="mt-4 flex items-center justify-between">
+            <div className="mt-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
               <div className="text-muted-foreground text-sm">
-                Afficher {filteredForms.length === 0 ? 0 : indexOfFirstItem + 1} à{' '}
-                {Math.min(indexOfLastItem, filteredForms.length)} sur{' '}
-                {filteredForms.length} entrées
+                {filteredForms.length} résultat
+                {filteredForms.length > 1 ? 's' : ''}
               </div>
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  Précédent
-                </Button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => handlePageChange(page)}
+              <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium">Lignes par page</p>
+                  <select
+                    className="border-input bg-background h-8 rounded-md border px-2 text-sm"
+                    value={itemsPerPage}
+                    onChange={(e) => {
+                      setItemsPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
                   >
-                    {page}
+                    {[5, 10, 20, 50].map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="text-sm font-medium">
+                  Page {currentPage} sur {totalPages || 1}
+                </div>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => handlePageChange(1)}
+                    disabled={currentPage === 1}
+                    aria-label="Première page"
+                  >
+                    <ChevronsLeft className="h-4 w-4" />
                   </Button>
-                ))}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages || totalPages === 0}
-                >
-                  Suivant
-                </Button>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-muted-foreground text-sm">
-                  Dérivations par page:
-                </span>
-                <select
-                  className="border-input bg-background h-8 rounded-md border px-2 text-sm"
-                  value={itemsPerPage}
-                  onChange={(e) => {
-                    setItemsPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                >
-                  {[5, 10, 20, 50].map((value) => (
-                    <option key={value} value={value}>
-                      {value}
-                    </option>
-                  ))}
-                </select>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    aria-label="Page précédente"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    aria-label="Page suivante"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => handlePageChange(totalPages)}
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    aria-label="Dernière page"
+                  >
+                    <ChevronsRight className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
           </>

@@ -81,6 +81,25 @@ const adminLinks: NavbarLink[] = [
       },
     ],
   },
+  {
+    label: 'Chantiers',
+    href: '#',
+    type: 'folder',
+    pages: [
+      {
+        label: 'Créer un marché',
+        href: '/dashboard/admin/markets/new',
+        type: 'page',
+        description: 'Ajouter un marché',
+      },
+      {
+        label: 'Créer un chantier',
+        href: '/dashboard/admin/chantiers/new',
+        type: 'page',
+        description: 'Ajouter un chantier à un marché',
+      },
+    ],
+  },
 ];
 
 const technicianLinks: NavbarLink[] = [

@@ -2,6 +2,8 @@ import { http, HttpResponse } from 'msw';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 
+type JsonBody = { [key: string]: unknown };
+
 export const handlers = [
   http.get(`${BASE}/derivations`, () =>
     HttpResponse.json([
@@ -91,6 +93,41 @@ export const handlers = [
     ])
   ),
 
+  http.post(`${BASE}/markets`, async ({ request }) => {
+    const body = (await request.json()) as JsonBody;
+    return HttpResponse.json(
+      {
+        id: 2,
+        name: body.name,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+      { status: 201 }
+    );
+  }),
+
+  http.post(`${BASE}/chantiers`, async ({ request }) => {
+    const body = (await request.json()) as JsonBody;
+    return HttpResponse.json(
+      {
+        id: 2,
+        address: body.address,
+        enedisAffaireNumber: body.enedisAffaireNumber,
+        internalAffaireNumber: body.internalAffaireNumber,
+        marketId: body.marketId,
+        market: {
+          id: body.marketId,
+          name: 'Marché Test',
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+      { status: 201 }
+    );
+  }),
+
   http.get(`${BASE}/users/technicians`, () => HttpResponse.json([])),
 
   http.post(`${BASE}/auth/login`, () =>
@@ -113,7 +150,7 @@ export const handlers = [
   ),
 
   http.post(`${BASE}/vehicle-documents`, async ({ request }) => {
-    const body = await request.json() as Record<string, unknown>;
+    const body = (await request.json()) as JsonBody;
     return HttpResponse.json({
       _id: 'doc1',
       userId: 1,
@@ -148,7 +185,7 @@ export const handlers = [
   ),
 
   http.post(`${BASE}/official-documents`, async ({ request }) => {
-    const body = await request.json() as Record<string, unknown>;
+    const body = (await request.json()) as JsonBody;
     return HttpResponse.json({
       _id: 'doc2',
       userId: 1,
@@ -192,7 +229,7 @@ export const handlers = [
   http.put(
     `${BASE}/special-habilitations/by-user/:userId`,
     async ({ params, request }) => {
-      const body = (await request.json()) as Record<string, unknown>;
+      const body = (await request.json()) as JsonBody;
       return HttpResponse.json({
         _id: 'hab1',
         userId: Number(params.userId),
