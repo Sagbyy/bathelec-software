@@ -54,21 +54,23 @@ vi.mock('@/components/ui/phone-input', () => ({
 const mockDerivation: Derivation = {
   id: 1,
   userId: 1,
-  address: '1 rue de la Paix',
-  city: 'Paris',
-  postalCode: '75001',
+  chantierId: null,
+  chantier: null,
   createdAt: '2024-01-01T00:00:00.000Z',
   status: DerivationStatus.PENDING,
   correctionComment: null,
 };
 
-function renderForm(derivation = mockDerivation) {
+function renderForm(
+  derivation = mockDerivation,
+  options: { readOnly?: boolean } = {}
+) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
   return render(
     <QueryClientProvider client={queryClient}>
-      <MultiStepForm derivation={derivation} />
+      <MultiStepForm derivation={derivation} readOnly={options.readOnly} />
     </QueryClientProvider>
   );
 }
@@ -131,5 +133,57 @@ describe('MultiStepForm — intégration', () => {
     inputs.forEach((input) => {
       expect(input).toBeDisabled();
     });
+  });
+
+  it.each([
+    DerivationStatus.COMPLETED,
+    DerivationStatus.REVIEWING,
+    DerivationStatus.INCORRECT,
+  ])(
+    'navigue sans validation Zod quand la dérivation est désactivée avec le statut %s',
+    async (status) => {
+      const user = userEvent.setup();
+
+      renderForm({
+        ...mockDerivation,
+        status,
+      });
+
+      await user.click(
+        screen.getAllByRole('button', { name: /Suivant/i })[0]!
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText(/Étape 2 sur/)).toBeInTheDocument();
+      });
+    }
+  );
+
+  it('navigue sans validation Zod quand le formulaire est en readOnly', async () => {
+    const user = userEvent.setup();
+
+    renderForm(mockDerivation, { readOnly: true });
+
+    await user.click(screen.getAllByRole('button', { name: /Suivant/i })[0]!);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Étape 2 sur/)).toBeInTheDocument();
+    });
+  });
+
+  it('garde la validation Zod active pour une dérivation à corriger', async () => {
+    const user = userEvent.setup();
+
+    renderForm({
+      ...mockDerivation,
+      status: DerivationStatus.REVISING,
+    });
+
+    await user.click(screen.getAllByRole('button', { name: /Suivant/i })[0]!);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Étape 1 sur/)).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/Étape 2 sur/)).not.toBeInTheDocument();
   });
 });
