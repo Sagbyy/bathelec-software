@@ -27,6 +27,7 @@ export type User = {
 export const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'id',
+    meta: { label: 'ID' },
     header: ({ column }) => {
       return (
         <Button
@@ -47,6 +48,7 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: 'username',
+    meta: { label: "Nom d'utilisateur" },
     header: ({ column }) => {
       return (
         <Button
@@ -67,6 +69,7 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: 'email',
+    meta: { label: 'Email' },
     header: ({ column }) => {
       return (
         <Button
@@ -87,6 +90,7 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: 'firstName',
+    meta: { label: 'Prénom' },
     header: ({ column }) => {
       return (
         <Button
@@ -107,6 +111,7 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: 'lastName',
+    meta: { label: 'Nom' },
     header: ({ column }) => {
       return (
         <Button
@@ -127,6 +132,7 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: 'role',
+    meta: { label: 'Rôle' },
     header: 'Role',
     cell: ({ row }) => {
       const role = row.original.role;
@@ -140,6 +146,7 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: 'createdAt',
+    meta: { label: 'Date de création' },
     header: ({ column }) => {
       return (
         <Button
@@ -176,6 +183,7 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: 'edit',
+    meta: { label: 'Actions' },
     header: 'Actions',
     cell: ({ row }) => (
       <ActionCell userId={row.original.id} role={row.original.role} />

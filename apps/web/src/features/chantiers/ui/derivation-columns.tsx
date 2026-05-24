@@ -81,6 +81,7 @@ const placeholder = (value: string) => value || '—';
 export const derivationColumns: ColumnDef<DerivationRow>[] = [
   {
     accessorKey: 'building',
+    meta: { label: 'Bâtiment' },
     header: ({ column }) => (
       <SortableHeader column={column} label="Bâtiment" />
     ),
@@ -88,6 +89,7 @@ export const derivationColumns: ColumnDef<DerivationRow>[] = [
   },
   {
     accessorKey: 'cmIdentification',
+    meta: { label: 'CM' },
     header: ({ column }) => <SortableHeader column={column} label="CM" />,
     cell: ({ row }) => {
       const cm = row.original.cmIdentification;
@@ -106,16 +108,19 @@ export const derivationColumns: ColumnDef<DerivationRow>[] = [
   },
   {
     accessorKey: 'folio',
+    meta: { label: 'Folio' },
     header: ({ column }) => <SortableHeader column={column} label="Folio" />,
     cell: ({ row }) => placeholder(row.original.folio),
   },
   {
     accessorKey: 'floor',
+    meta: { label: 'Étage' },
     header: ({ column }) => <SortableHeader column={column} label="Étage" />,
     cell: ({ row }) => placeholder(row.original.floor),
   },
   {
     accessorKey: 'electricianName',
+    meta: { label: 'Électricien' },
     header: ({ column }) => (
       <SortableHeader column={column} label="Électricien" />
     ),
@@ -123,11 +128,13 @@ export const derivationColumns: ColumnDef<DerivationRow>[] = [
   },
   {
     accessorKey: 'clientName',
+    meta: { label: 'Client' },
     header: ({ column }) => <SortableHeader column={column} label="Client" />,
     cell: ({ row }) => placeholder(row.original.clientName),
   },
   {
     accessorKey: 'completedAt',
+    meta: { label: 'Terminée le' },
     header: ({ column }) => (
       <SortableHeader column={column} label="Terminée le" />
     ),
@@ -139,6 +146,7 @@ export const derivationColumns: ColumnDef<DerivationRow>[] = [
   },
   {
     accessorKey: 'status',
+    meta: { label: 'Statut' },
     header: ({ column }) => <SortableHeader column={column} label="Statut" />,
     cell: ({ row }) => (
       <DerivationStatusIcon derivationStatus={row.original.status} />
@@ -146,6 +154,7 @@ export const derivationColumns: ColumnDef<DerivationRow>[] = [
   },
   {
     id: 'action',
+    meta: { label: 'Action' },
     header: 'Action',
     cell: ({ row }) => (
       <Link
