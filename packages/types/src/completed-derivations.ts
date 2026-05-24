@@ -91,4 +91,6 @@ export interface CompletedDerivation {
   circuitBreaker: CircuitBreaker;
   photoAfterWork: PhotoAfterWork;
   clientValidation: ClientValidation;
+  createdAt?: string;
+  updatedAt?: string;
 }

@@ -1,15 +1,22 @@
-import { HardHat } from 'lucide-react';
+'use client';
+
+import { useOngoingChantiers } from '@/entities/chantier';
+import { MarketGrid } from '@/features/chantiers';
 
 export default function ChantiersEnCoursPage() {
+  const { data: chantiers, isLoading, error } = useOngoingChantiers();
+
+  if (isLoading) return <div className="p-8">Chargement...</div>;
+  if (error) return <div className="p-8">Une erreur est survenue</div>;
+
   return (
-    <div className="flex min-h-[calc(100vh-5rem)] flex-col items-center justify-center gap-4 p-8 text-center">
-      <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-100">
-        <HardHat className="h-10 w-10 text-blue-600" strokeWidth={1.75} />
-      </div>
-      <h1 className="text-2xl font-bold text-gray-900">Chantiers en cours</h1>
-      <p className="text-muted-foreground max-w-sm">
-        Vos chantiers actifs et interventions en attente apparaîtront ici.
-      </p>
+    <div className="mx-2 py-10 sm:mx-10">
+      <h1 className="mb-6 text-2xl font-bold">Chantiers en cours</h1>
+      <MarketGrid
+        chantiers={chantiers ?? []}
+        basePath="/dashboard/technician/derivations"
+        emptyMessage="Aucun marché avec chantier en cours."
+      />
     </div>
   );
 }

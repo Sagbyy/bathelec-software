@@ -1,4 +1,5 @@
 import { Market } from './market.js';
+import { Derivation } from './derivation.js';
 
 export interface Chantier {
   id: number;
@@ -7,6 +8,7 @@ export interface Chantier {
   internalAffaireNumber: string;
   marketId: number;
   market?: Market;
+  derivations?: Derivation[];
   createdAt: string;
   updatedAt: string;
 }
