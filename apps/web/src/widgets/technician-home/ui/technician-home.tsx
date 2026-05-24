@@ -155,6 +155,8 @@ function NavCard({
   item: NavItem;
   fullWidth?: boolean;
 }) {
+  const Icon = item.icon;
+
   return (
     <Link
       href={item.href}
@@ -184,13 +186,15 @@ function NavCard({
             fullWidth ? 'h-12 w-12' : 'h-14 w-14 sm:h-16 sm:w-16'
           )}
         >
-          <item.icon
-            className={cn(
-              'text-white',
-              fullWidth ? 'h-6 w-6' : 'h-7 w-7 sm:h-8 sm:w-8'
-            )}
-            strokeWidth={1.75}
-          />
+          {Icon && (
+            <Icon
+              className={cn(
+                'text-white',
+                fullWidth ? 'h-6 w-6' : 'h-7 w-7 sm:h-8 sm:w-8'
+              )}
+              strokeWidth={1.75}
+            />
+          )}
         </div>
       )}
       <span
