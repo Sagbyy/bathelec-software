@@ -27,6 +27,7 @@ import { useDerivationStatusStore } from '@/entities/derivation';
 import { useUserStore } from '@/entities/user';
 import { useEffect, useState } from 'react';
 import { Derivation } from '@repo/types';
+import { PageLoader } from '@/shared/ui/page-loader';
 
 interface GeneralInfoStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
@@ -72,7 +73,7 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
     }
   }, [technicians, user, form]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <PageLoader />;
   if (error) return <div>Error: {error.message}</div>;
 
   return (
