@@ -1,4 +1,3 @@
-import { Car } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -19,9 +18,13 @@ export default function VehiculePage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 md:px-8">
       <div className="mb-8 flex items-center gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-100">
-          <Car className="h-6 w-6 text-slate-600" strokeWidth={1.75} />
-        </div>
+        <Image
+          src="/images/vehicle-inspection-page.png"
+          alt=""
+          width={48}
+          height={48}
+          className="shrink-0 object-contain"
+        />
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Mon véhicule</h1>
           <p className="text-muted-foreground text-sm">

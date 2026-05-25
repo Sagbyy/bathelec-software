@@ -1,6 +1,7 @@
 'use client';
 
-import { ShieldCheck, Loader2 } from 'lucide-react';
+import Image from 'next/image';
+import { Loader2 } from 'lucide-react';
 import { useUserStore } from '@/entities/user';
 import { useHabilitation } from '@/entities/habilitation';
 import { useSpecialHabilitation } from '@/entities/special-habilitation';
@@ -21,9 +22,13 @@ export default function HabilitationsPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 md:px-8">
       <div className="mb-8 flex items-center gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-100">
-          <ShieldCheck className="h-6 w-6 text-indigo-600" strokeWidth={1.75} />
-        </div>
+        <Image
+          src="/images/habilitation-page.png"
+          alt=""
+          width={48}
+          height={48}
+          className="shrink-0 object-contain"
+        />
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
             Mes habilitations

@@ -1,4 +1,5 @@
-import { PhoneCall } from 'lucide-react';
+import Image from 'next/image';
+import { TriangleAlert } from 'lucide-react';
 
 const EMERGENCY_CONTACTS = [
   {
@@ -36,12 +37,16 @@ const COLOR_CLASSES = {
 
 export default function UrgencesPage() {
   return (
-    <div className="min-h-[calc(100vh-5rem)] bg-gray-50 px-4 py-8 md:px-8">
+    <div className="min-h-[calc(100vh-5rem)] bg-white px-4 py-8 md:px-8">
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 flex items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-red-500">
-            <PhoneCall className="h-7 w-7 text-white" strokeWidth={1.75} />
-          </div>
+          <Image
+            src="/images/emergency-phone.png"
+            alt=""
+            width={56}
+            height={56}
+            className="shrink-0 object-contain"
+          />
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
               Numéros d'urgence
@@ -70,6 +75,23 @@ export default function UrgencesPage() {
               </p>
             </a>
           ))}
+        </div>
+
+        <div className="mt-6 flex gap-3 rounded-2xl border border-yellow-300 bg-yellow-50 p-4">
+          <TriangleAlert
+            className="mt-0.5 h-5 w-5 shrink-0 text-yellow-600"
+            strokeWidth={1.75}
+          />
+          <div>
+            <p className="text-sm font-semibold text-yellow-800">
+              En cas de danger sur chantier
+            </p>
+            <p className="mt-1 text-sm text-yellow-700">
+              Sécuriser la zone, alertez les secours, ne déplacer pas la victime
+              sauf danger immédiat. Restez en ligne avec les secours jusqu'à
+              leur arrivée.
+            </p>
+          </div>
         </div>
       </div>
     </div>
