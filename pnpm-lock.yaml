@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  buffer-equal-constant-time@1.0.1:
+    hash: w7tm5uxhbgyu3fcvigaigp7azm
+    path: patches/buffer-equal-constant-time@1.0.1.patch
+
 importers:
 
   .:
@@ -14209,7 +14214,7 @@ snapshots:
 
   bson@6.10.3: {}
 
-  buffer-equal-constant-time@1.0.1: {}
+  buffer-equal-constant-time@1.0.1(patch_hash=w7tm5uxhbgyu3fcvigaigp7azm): {}
 
   buffer-from@1.1.2: {}
 
@@ -16676,7 +16681,7 @@ snapshots:
 
   jwa@1.4.1:
     dependencies:
-      buffer-equal-constant-time: 1.0.1
+      buffer-equal-constant-time: 1.0.1(patch_hash=w7tm5uxhbgyu3fcvigaigp7azm)
       ecdsa-sig-formatter: 1.0.11
       safe-buffer: 5.2.1
 
