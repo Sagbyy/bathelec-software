@@ -16,7 +16,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: 'Top Chantiers',
     href: '/dashboard/technician/top-chantiers',
-    imageSrc: '/images/red-folder.png',
+    imageSrc: '/images/top-chantier.png',
   },
   {
     label: 'Chantiers en cours',
@@ -31,22 +31,22 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: 'Mes documents officiels',
     href: '/dashboard/technician/documents',
-    imageSrc: '/images/red-folder.png',
+    imageSrc: '/images/identity-card-page.png',
   },
   {
     label: 'Mes habilitations',
     href: '/dashboard/technician/habilitations',
-    imageSrc: '/images/red-folder.png',
+    imageSrc: '/images/habilitation-page.png',
   },
   {
     label: 'Mon véhicule',
     href: '/dashboard/technician/vehicule',
-    imageSrc: '/images/red-folder.png',
+    imageSrc: '/images/vehicle-inspection-page.png',
   },
   {
     label: "Numéros d'urgence",
     href: '/dashboard/technician/urgences',
-    imageSrc: '/images/red-folder.png',
+    imageSrc: '/images/emergency-phone.png',
   },
 ];
 
