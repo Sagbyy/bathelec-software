@@ -65,13 +65,15 @@ export function ChantierDerivationsView({
           <h1 className="text-2xl font-bold sm:text-3xl">{chantier.address}</h1>
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-px overflow-hidden rounded-xl bg-black">
+        <div className="mt-4 flex flex-wrap gap-4">
           {fields.map(({ label, value }) => (
-            <div key={label} className="flex flex-1 flex-col gap-1 bg-black px-5 py-4 min-w-[160px]">
-              <span className="text-xs font-medium uppercase tracking-wide text-white/60">
+            <div key={label} className="inline-flex flex-col">
+              <span className="rounded-xl bg-black px-4 py-1.5 text-xs font-medium uppercase tracking-wide text-white whitespace-nowrap">
                 {label}
               </span>
-              <span className="text-sm font-semibold text-white">{value}</span>
+              <span className="px-4 py-2 text-sm font-semibold text-black whitespace-nowrap">
+                {value}
+              </span>
             </div>
           ))}
         </div>
