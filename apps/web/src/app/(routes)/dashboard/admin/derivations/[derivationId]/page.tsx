@@ -9,6 +9,7 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useDerivationStatusStore } from '@/entities/derivation/model/use-derivation-status.store';
+import { PageLoader } from '@/shared/ui/page-loader';
 
 export default function AdminDerivationPage() {
   const { derivationId } = useParams();
@@ -28,7 +29,7 @@ export default function AdminDerivationPage() {
     };
   }, [setIsNotEditable]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <PageLoader />;
   if (error) return <div>Error: {error.message}</div>;
   if (!derivation) return <div>Derivation not found</div>;
 

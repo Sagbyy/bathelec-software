@@ -4,6 +4,7 @@ import { useDerivationById } from '@/features/derivations/model/use-derivation';
 import { useParams } from 'next/navigation';
 import { MultiStepForm } from '@/features/derivations/ui/multi-step-form';
 import { InfoCard } from '@/features/derivations/ui/info-derivation-card';
+import { PageLoader } from '@/shared/ui/page-loader';
 
 export default function CompleteDerivationPage() {
   const { derivationId } = useParams();
@@ -14,7 +15,7 @@ export default function CompleteDerivationPage() {
     error,
   } = useDerivationById(parseInt(derivationId as string));
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <PageLoader />;
   if (error) return <div>Error: {error.message}</div>;
   if (!derivation) return <div>Derivation not found</div>;
 
