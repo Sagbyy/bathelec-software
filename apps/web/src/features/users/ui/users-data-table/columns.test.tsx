@@ -7,6 +7,10 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
+vi.mock('@iconify/react/dist/iconify.js', () => ({
+  Icon: () => null,
+}));
+
 import { columns } from './columns';
 
 function renderActionCell(userId: number, role: string) {
