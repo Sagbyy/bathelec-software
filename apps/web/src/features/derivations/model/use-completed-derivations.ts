@@ -8,6 +8,7 @@ import {
   UseMutationResult,
   useQueries,
   useQuery,
+  useQueryClient,
 } from '@tanstack/react-query';
 
 export const useCompletedDerivations = (): UseMutationResult<
@@ -15,6 +16,8 @@ export const useCompletedDerivations = (): UseMutationResult<
   Error,
   CreateCompletedDerivation
 > => {
+  const queryClient = useQueryClient();
+
   return useMutation<
     CreateCompletedDerivation,
     Error,
@@ -24,8 +27,11 @@ export const useCompletedDerivations = (): UseMutationResult<
       completedDerivationsService.createCompletedDerivation(
         completedDerivation
       ),
-    onSuccess: (data) => {
-      console.log('Completed derivation created successfully with data:', data);
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['derivation', variables.requestedDerivationId],
+      });
+      queryClient.invalidateQueries({ queryKey: ['derivations'] });
     },
     onError: (error) => {
       console.error('Error creating completed derivation', error);
