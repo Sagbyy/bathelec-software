@@ -24,7 +24,6 @@ interface PhotoAfterStepProps {
 type PhotoFieldName = 'photo' | 'secondPhoto' | 'thirdPhoto' | 'fourthPhoto';
 
 interface PhotoPreview {
-  url: string | null;
   fieldName: PhotoFieldName;
   label: string;
   required: boolean;
@@ -40,25 +39,21 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
       fieldName: 'photo',
       label: "Vue d'ensemble platine comptage",
       required: true,
-      url: null,
     },
     {
       fieldName: 'secondPhoto',
       label: 'Photo supplémentaire 1 (optionnelle)',
       required: false,
-      url: null,
     },
     {
       fieldName: 'thirdPhoto',
       label: 'Photo supplémentaire 2 (optionnelle)',
       required: false,
-      url: null,
     },
     {
       fieldName: 'fourthPhoto',
       label: 'Photo supplémentaire 3 (optionnelle)',
       required: false,
-      url: null,
     },
   ];
 
@@ -79,6 +74,11 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
       initialUrls[fieldName] = value || null;
     });
     setPreviewUrls(initialUrls);
+
+    const filledCount = photoFields.filter(
+      (fieldName) => initialUrls[fieldName]
+    ).length;
+    setNumberOfPhotos(Math.max(1, filledCount));
   }, [form]);
 
   const handleFileChange = (
