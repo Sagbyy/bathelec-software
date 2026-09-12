@@ -81,9 +81,6 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
           disabled={isCompleted}
           required
         >
-          <SelectItem value="other" className="uppercase">
-            Pas de generation - Compteur SBE
-          </SelectItem>
           <SelectItem value="g1">G1</SelectItem>
           <SelectItem value="g2">G2</SelectItem>
           <SelectItem value="g3">G3</SelectItem>
