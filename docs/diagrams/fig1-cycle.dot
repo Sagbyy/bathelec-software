@@ -1,0 +1,28 @@
+digraph cycle {
+  rankdir=TB; bgcolor="white"; splines=true; nodesep=0.45; ranksep=0.55;
+  node [shape=box style="rounded,filled" fontname="Avenir Next" fontsize=12
+        color="#E7E0DE" fillcolor="#F4F0EE" fontcolor="#201D1D" penwidth=1.4 margin="0.22,0.13"];
+  edge [fontname="Avenir Next" fontsize=9.5 color="#9A8F8C" fontcolor="#6E6462" penwidth=1.3 arrowsize=0.8];
+
+  start [shape=circle width=0.22 label="" fillcolor="#201D1D" color="#201D1D"];
+  end   [shape=doublecircle width=0.20 label="" fillcolor="#CD2C35" color="#CD2C35"];
+
+  completer  [label="À compléter"];
+  encours    [label="En cours"];
+  validation [label="En attente\nde validation" fillcolor="#FBEDEE" color="#CD2C35" penwidth=1.8];
+  correction [label="En attente\nde correction" fillcolor="white" color="#CD2C35" style="rounded,filled,dashed"];
+  incorrect  [label="Incorrect" fillcolor="white" color="#CD2C35" style="rounded,filled,dashed"];
+  termine    [label="Terminé" fillcolor="#CD2C35" fontcolor="white" color="#CD2C35"];
+
+  start -> completer [label="Création"];
+  completer -> encours [label="Début de saisie"];
+  encours -> validation [label="Soumission"];
+  completer -> validation [label="Soumission directe" style=dashed];
+  validation -> termine [label="Validation bureau" color="#CD2C35" fontcolor="#8F1E25" penwidth=1.6];
+  validation -> correction [label="Renvoi + commentaire" color="#CD2C35" fontcolor="#8F1E25"];
+  validation -> incorrect [label="Rejet" color="#CD2C35" fontcolor="#8F1E25"];
+  correction -> validation [label="Re-soumission" constraint=false];
+  termine -> end;
+
+  { rank=same; correction; termine; }
+}

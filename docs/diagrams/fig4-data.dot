@@ -1,0 +1,31 @@
+digraph data {
+  rankdir=TB; bgcolor="white"; nodesep=0.4; ranksep=0.6; splines=true;
+  node [shape=box style="filled" fontname="Avenir Next" fontsize=11.5
+        color="#E7E0DE" fillcolor="white" fontcolor="#201D1D" penwidth=1.5 margin="0.2,0.12"];
+  edge [fontname="Avenir Next" fontsize=9 color="#9A8F8C" fontcolor="#8F1E25" penwidth=1.3 arrowsize=0.7 dir=none];
+
+  marche   [label="Marché" fillcolor="#CD2C35" fontcolor="white" color="#CD2C35"];
+  chantier [label="Chantier"];
+  deriv    [label="Dérivation" fillcolor="#FBEDEE" color="#CD2C35" penwidth=1.8];
+  releve   [label="Relevé\n(fin de travaux)"];
+  signature[label="Signature client"];
+  tech     [label="Technicien" fillcolor="#F4F0EE"];
+  groupe   [label="Groupe"];
+  hab      [label="Habilitations\nNF C 18-510"];
+  cert     [label="Titres &\ncertificats"];
+  docoff   [label="Documents\nofficiels"];
+  docveh   [label="Documents\nvéhicule"];
+
+  marche   -> chantier [taillabel="1" headlabel="N"];
+  chantier -> deriv    [taillabel="1" headlabel="N"];
+  tech     -> deriv    [taillabel="1" headlabel="N"];
+  deriv    -> releve   [taillabel="1" headlabel="1"];
+  releve   -> signature[taillabel="1" headlabel="0..1"];
+  tech     -> hab      [taillabel="1" headlabel="1"];
+  tech     -> cert     [taillabel="1" headlabel="1"];
+  tech     -> docoff   [taillabel="1" headlabel="1"];
+  tech     -> docveh   [taillabel="1" headlabel="1"];
+  groupe   -> tech     [taillabel="N" headlabel="N" style=dashed];
+
+  { rank=same; hab; cert; docoff; docveh; }
+}

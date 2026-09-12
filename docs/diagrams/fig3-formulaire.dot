@@ -1,0 +1,22 @@
+digraph form {
+  rankdir=TB; bgcolor="white"; nodesep=0.35; ranksep=0.38;
+  node [shape=box style="rounded,filled" fontname="Avenir Next" fontsize=12
+        color="#E7E0DE" fillcolor="#F4F0EE" fontcolor="#201D1D" penwidth=1.4 margin="0.2,0.12"];
+  edge [fontname="Avenir Next" fontsize=10 color="#9A8F8C" fontcolor="#8F1E25" penwidth=1.2 arrowsize=0.8];
+
+  s1 [label="1 · Informations client"];
+  s2 [label="2 · Informations générales"];
+  s3 [label="3 · Photo avant travaux  📷" fillcolor="#FBEDEE" color="#CD2C35"];
+  s4 [label="4 · Ancien compteur  📷" fillcolor="#FBEDEE" color="#CD2C35"];
+  s5 [label="5 · Nouvelle dérivation"];
+  dec [shape=diamond label="Compteur\nconservé ?" fillcolor="white" color="#CD2C35" fontsize=11 margin="0.04,0.0"];
+  s6 [label="6 · Nouveau compteur  📷" fillcolor="#FBEDEE" color="#CD2C35"];
+  s7 [label="7 · Disjoncteur"];
+  s8 [label="8 · Photo après travaux  📷" fillcolor="#FBEDEE" color="#CD2C35"];
+  s9 [label="9 · Validation client  ✒" fillcolor="#CD2C35" fontcolor="white" color="#CD2C35"];
+
+  s1 -> s2 -> s3 -> s4 -> s5 -> dec;
+  dec -> s6 [label="  Non"];
+  dec -> s7 [label="  Oui — étape 6 sautée" style=dashed color="#CD2C35" fontcolor="#8F1E25"];
+  s6 -> s7 -> s8 -> s9;
+}

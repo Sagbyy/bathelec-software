@@ -1,0 +1,18 @@
+digraph acteurs {
+  rankdir=TB; bgcolor="white"; nodesep=0.5; ranksep=0.5;
+  node [shape=box style="rounded,filled" fontname="Avenir Next" fontsize=12
+        fontcolor="#201D1D" penwidth=1.5 margin="0.24,0.14"];
+  edge [fontname="Avenir Next" fontsize=10 color="#9A8F8C" fontcolor="#6E6462" penwidth=1.3 arrowsize=0.8];
+
+  b1 [label="BUREAU\nCrée la dérivation et l'affecte" fillcolor="#CD2C35" fontcolor="white" color="#CD2C35"];
+  t1 [label="TECHNICIEN\nRemplit le relevé (9 étapes)" fillcolor="#F4F0EE" color="#E7E0DE"];
+  c1 [label="CLIENT\nValide et signe sur l'écran" fillcolor="white" color="#201D1D" style="rounded,filled,dashed"];
+  t2 [label="TECHNICIEN\nSoumet le relevé" fillcolor="#F4F0EE" color="#E7E0DE"];
+  b2 [label="BUREAU\nContrôle le relevé" fillcolor="#CD2C35" fontcolor="white" color="#CD2C35"];
+  dec [shape=diamond label="Conforme ?" fillcolor="#FBEDEE" color="#CD2C35" fontsize=11 margin="0.06,0.0"];
+  ok  [label="Terminé" fillcolor="#CD2C35" fontcolor="white" color="#CD2C35"];
+
+  b1 -> t1 -> c1 -> t2 -> b2 -> dec;
+  dec -> ok [label="  Oui — validation" color="#CD2C35" fontcolor="#8F1E25" penwidth=1.6];
+  dec -> t1 [label="Non — correction (commentaire)" style=dashed color="#CD2C35" fontcolor="#8F1E25" constraint=false];
+}
