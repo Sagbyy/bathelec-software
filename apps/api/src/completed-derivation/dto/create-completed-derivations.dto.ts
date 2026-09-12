@@ -301,6 +301,15 @@ class PhotoAfterWorkDto {
     description: 'The third optional photo after work',
   })
   thirdPhoto?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    example:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=',
+    description: 'The fourth optional photo after work',
+  })
+  fourthPhoto?: string;
 }
 
 class ClientValidationDto {

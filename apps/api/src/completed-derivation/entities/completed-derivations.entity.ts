@@ -82,6 +82,7 @@ export class CompletedDerivation {
     photo: string;
     secondPhoto?: string;
     thirdPhoto?: string;
+    fourthPhoto?: string;
   };
 
   @Prop({ type: Object, required: true })

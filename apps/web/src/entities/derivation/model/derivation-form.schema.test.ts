@@ -344,4 +344,39 @@ describe('createCompletedDerivationSchema', () => {
       expect(hasIssueAt(result, 'newMeter', 'key')).toBe(false);
     });
   });
+
+  describe('photoAfterWork (DTA-65)', () => {
+    it('accepts up to four photos', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        photoAfterWork: {
+          photo: 'data:image/jpeg;base64,p1',
+          secondPhoto: 'data:image/jpeg;base64,p2',
+          thirdPhoto: 'data:image/jpeg;base64,p3',
+          fourthPhoto: 'data:image/jpeg;base64,p4',
+        },
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('keeps the extra photos optional', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        photoAfterWork: { photo: 'data:image/jpeg;base64,p1' },
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('still requires the main photo', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        photoAfterWork: {
+          photo: null,
+          fourthPhoto: 'data:image/jpeg;base64,p4',
+        },
+      });
+      expect(result.success).toBe(false);
+      expect(hasIssueAt(result, 'photoAfterWork', 'photo')).toBe(true);
+    });
+  });
 });

@@ -21,9 +21,10 @@ interface PhotoAfterStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }
 
+type PhotoFieldName = 'photo' | 'secondPhoto' | 'thirdPhoto' | 'fourthPhoto';
+
 interface PhotoPreview {
-  url: string | null;
-  fieldName: 'photo' | 'secondPhoto' | 'thirdPhoto';
+  fieldName: PhotoFieldName;
   label: string;
   required: boolean;
 }
@@ -38,19 +39,21 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
       fieldName: 'photo',
       label: "Vue d'ensemble platine comptage",
       required: true,
-      url: null,
     },
     {
       fieldName: 'secondPhoto',
       label: 'Photo supplémentaire 1 (optionnelle)',
       required: false,
-      url: null,
     },
     {
       fieldName: 'thirdPhoto',
       label: 'Photo supplémentaire 2 (optionnelle)',
       required: false,
-      url: null,
+    },
+    {
+      fieldName: 'fourthPhoto',
+      label: 'Photo supplémentaire 3 (optionnelle)',
+      required: false,
     },
   ];
 
@@ -60,21 +63,27 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
 
   useEffect(() => {
     const initialUrls: Record<string, string | null> = {};
-    const photoFields: Array<'photo' | 'secondPhoto' | 'thirdPhoto'> = [
+    const photoFields: PhotoFieldName[] = [
       'photo',
       'secondPhoto',
       'thirdPhoto',
+      'fourthPhoto',
     ];
     photoFields.forEach((fieldName) => {
       const value = form.getValues(`photoAfterWork.${fieldName}`);
       initialUrls[fieldName] = value || null;
     });
     setPreviewUrls(initialUrls);
+
+    const filledCount = photoFields.filter(
+      (fieldName) => initialUrls[fieldName]
+    ).length;
+    setNumberOfPhotos(Math.max(1, filledCount));
   }, [form]);
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    fieldName: 'photo' | 'secondPhoto' | 'thirdPhoto',
+    fieldName: PhotoFieldName,
     onChange: (value: string | null) => void
   ) => {
     const file = e.target.files?.[0];
@@ -91,7 +100,7 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
   };
 
   const clearFile = (
-    fieldName: 'photo' | 'secondPhoto' | 'thirdPhoto',
+    fieldName: PhotoFieldName,
     onChange: (value: null) => void
   ) => {
     onChange(null);

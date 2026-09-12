@@ -69,6 +69,7 @@ export interface PhotoAfterWork {
   photo: string;
   secondPhoto?: string;
   thirdPhoto?: string;
+  fourthPhoto?: string;
 }
 
 export interface ClientValidation {

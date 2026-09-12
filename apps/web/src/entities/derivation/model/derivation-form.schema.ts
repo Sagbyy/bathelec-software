@@ -169,6 +169,7 @@ export const createCompletedDerivationSchema = z.object({
       .refine((val) => val !== null, { message: 'La photo est requise' }),
     secondPhoto: z.any().optional(),
     thirdPhoto: z.any().optional(),
+    fourthPhoto: z.any().optional(),
   }),
 
   clientValidation: z
