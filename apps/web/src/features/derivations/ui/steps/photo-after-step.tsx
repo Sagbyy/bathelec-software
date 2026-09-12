@@ -21,9 +21,11 @@ interface PhotoAfterStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }
 
+type PhotoFieldName = 'photo' | 'secondPhoto' | 'thirdPhoto' | 'fourthPhoto';
+
 interface PhotoPreview {
   url: string | null;
-  fieldName: 'photo' | 'secondPhoto' | 'thirdPhoto';
+  fieldName: PhotoFieldName;
   label: string;
   required: boolean;
 }
@@ -52,6 +54,12 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
       required: false,
       url: null,
     },
+    {
+      fieldName: 'fourthPhoto',
+      label: 'Photo supplémentaire 3 (optionnelle)',
+      required: false,
+      url: null,
+    },
   ];
 
   const [previewUrls, setPreviewUrls] = useState<Record<string, string | null>>(
@@ -60,10 +68,11 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
 
   useEffect(() => {
     const initialUrls: Record<string, string | null> = {};
-    const photoFields: Array<'photo' | 'secondPhoto' | 'thirdPhoto'> = [
+    const photoFields: PhotoFieldName[] = [
       'photo',
       'secondPhoto',
       'thirdPhoto',
+      'fourthPhoto',
     ];
     photoFields.forEach((fieldName) => {
       const value = form.getValues(`photoAfterWork.${fieldName}`);
@@ -74,7 +83,7 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    fieldName: 'photo' | 'secondPhoto' | 'thirdPhoto',
+    fieldName: PhotoFieldName,
     onChange: (value: string | null) => void
   ) => {
     const file = e.target.files?.[0];
@@ -91,7 +100,7 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
   };
 
   const clearFile = (
-    fieldName: 'photo' | 'secondPhoto' | 'thirdPhoto',
+    fieldName: PhotoFieldName,
     onChange: (value: null) => void
   ) => {
     onChange(null);
