@@ -92,6 +92,26 @@ JWT_SECRET=        # must match API
 - Do not push directly to `main` or `develop`
 - `@repo/types` must be built before `api` — already handled by `turbo.json` task order
 
+## Code Comments
+
+Never add code comments. Write self-documenting code (clear names, small functions) instead. This applies to all agents working in this repository, including newly generated code. Existing comments may be kept or removed, but do not introduce new ones. The only exceptions are comments that carry machine-readable meaning (e.g. ESLint directives such as `// eslint-disable-next-line`, TypeScript pragmas, or codegen markers).
+
+## Testing
+
+Every new feature, bug fix, or behavioral change must ship with tests. No change is considered complete without them, and existing tests must stay green.
+
+Follow the **test pyramid** — most coverage at the bottom, least at the top:
+
+- **Unit tests (base, majority)** — pure logic in isolation: Zod schemas, `lib`/`model` helpers, pure functions, DTO validation, NestJS services and providers (dependencies mocked). Fast, no I/O.
+- **Integration tests (middle)** — units working together: NestJS controllers with their module wiring, React components/widgets with their hooks and stores, API clients against mocked HTTP (MSW).
+- **End-to-end tests (top, few)** — critical user journeys only, through the real UI: Playwright (`apps/web`) and Jest e2e (`apps/api`).
+
+Guidelines:
+- `apps/web` uses **Vitest** (+ Testing Library, MSW) for unit/integration and **Playwright** for e2e; `apps/api` uses **Jest** for unit/integration and **Jest e2e** (`test:e2e`).
+- Colocate unit/integration tests next to the code they cover (`*.test.ts(x)` in web, `*.spec.ts` in api).
+- Test behavior and edge cases, not implementation details. Cover the failure paths, not just the happy path.
+- Do not push most of the coverage into slow e2e tests — prefer the lowest layer that can meaningfully verify the change.
+
 ## Language
 
 All code, variable names, function names, comments, file names, and git artifacts (branches, commits, PR titles) must be in **English**. The only exception is user-facing displayed text (UI labels, messages shown to the user), which may be in French.

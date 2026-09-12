@@ -97,7 +97,7 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
             </Zoom>
             <FormControl>
               <Input
-                placeholder="Les 3 derniers chiffres du dernier groupe de 5 numéros"
+                placeholder="Le matricule (12 chiffres)"
                 {...field}
                 disabled={isCompleted}
               />
@@ -105,6 +105,15 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
             <FormMessage />
           </FormItem>
         )}
+      />
+
+      <LabeledInput
+        control={form.control}
+        name="newMeter.key"
+        label="Clé"
+        placeholder="La clé (2 chiffres)"
+        disabled={isCompleted}
+        required
       />
 
       <LabeledInput

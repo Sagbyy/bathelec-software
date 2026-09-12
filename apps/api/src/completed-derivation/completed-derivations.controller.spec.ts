@@ -47,6 +47,7 @@ describe('CompletedDerivationController', () => {
     newMeter: {
       generation: 'g1',
       serialNumber: '1234567890',
+      key: '34',
       dayIndex: '1234567890',
       nightIndex: '1234567890',
       indexPhoto: 'photo',

@@ -60,6 +60,7 @@ export class CompletedDerivation {
   newMeter: {
     generation: string;
     serialNumber: string;
+    key: string;
     dayIndex: string;
     nightIndex: string;
     indexPhoto: string;

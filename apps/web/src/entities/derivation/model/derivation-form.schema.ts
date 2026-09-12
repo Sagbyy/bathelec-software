@@ -3,6 +3,24 @@ import { z } from 'zod';
 
 type PhotoValue = File | Blob | string | null;
 
+const THREE_DIGITS = /^\d{3}$/;
+const TWELVE_DIGITS = /^\d{12}$/;
+const TWO_DIGITS = /^\d{2}$/;
+
+const METER_TYPES_WITH_KEY = ['cbe', 'linky'];
+
+export function oldMeterRequiresKey(oldMeter: {
+  type?: string;
+  preserved?: boolean;
+  linkyRefusal?: boolean;
+}): boolean {
+  const keptWithLinkyRefusal = !!oldMeter.preserved && !!oldMeter.linkyRefusal;
+  return (
+    !keptWithLinkyRefusal &&
+    METER_TYPES_WITH_KEY.includes(oldMeter.type ?? '')
+  );
+}
+
 photoBeforeWork: z.object({
   photo: z
     .union([z.instanceof(File), z.instanceof(Blob), z.string()])
@@ -51,12 +69,7 @@ export const createCompletedDerivationSchema = z.object({
       generation: z.string().optional(),
       preserved: z.boolean(),
       linkyRefusal: z.boolean().optional(),
-      serialNumber: z
-        .string()
-        .regex(/^\d{3}$/, {
-          message: 'Le matricule doit contenir exactement 3 chiffres',
-        })
-        .optional(),
+      serialNumber: z.string().optional(),
       key: z.string().optional(),
       dayIndex: z.string().optional(),
       nightIndex: z.string().optional(),
@@ -72,6 +85,29 @@ export const createCompletedDerivationSchema = z.object({
           code: 'custom',
         });
       }
+
+      if (oldMeterRequiresKey(data)) {
+        if (!data.serialNumber || !TWELVE_DIGITS.test(data.serialNumber)) {
+          ctx.addIssue({
+            path: ['serialNumber'],
+            message: 'Le matricule doit contenir exactement 12 chiffres',
+            code: 'custom',
+          });
+        }
+        if (!data.key || !TWO_DIGITS.test(data.key)) {
+          ctx.addIssue({
+            path: ['key'],
+            message: 'La clé doit contenir exactement 2 chiffres',
+            code: 'custom',
+          });
+        }
+      } else if (data.serialNumber && !THREE_DIGITS.test(data.serialNumber)) {
+        ctx.addIssue({
+          path: ['serialNumber'],
+          message: 'Le matricule doit contenir exactement 3 chiffres',
+          code: 'custom',
+        });
+      }
     }),
 
   newDerivation: z.object({
@@ -82,8 +118,11 @@ export const createCompletedDerivationSchema = z.object({
 
   newMeter: z.object({
     generation: z.string().min(1, { message: 'La génération est requise' }),
-    serialNumber: z.string().regex(/^\d{3}$/, {
-      message: 'Le matricule doit contenir exactement 3 chiffres',
+    serialNumber: z.string().regex(TWELVE_DIGITS, {
+      message: 'Le matricule doit contenir exactement 12 chiffres',
+    }),
+    key: z.string().regex(TWO_DIGITS, {
+      message: 'La clé doit contenir exactement 2 chiffres',
     }),
     dayIndex: z.string().min(1, { message: "L'index jour est requis" }),
     nightIndex: z.string().optional(),

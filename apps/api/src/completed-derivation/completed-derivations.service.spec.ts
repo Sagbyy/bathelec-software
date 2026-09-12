@@ -31,6 +31,7 @@ const mockDto = {
   newMeter: {
     generation: '1',
     serialNumber: '1234567890',
+    key: '1',
     dayIndex: '1',
     nightIndex: '1',
     indexPhoto: '1234567890',

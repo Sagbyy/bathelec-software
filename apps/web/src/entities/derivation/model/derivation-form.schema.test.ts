@@ -1,5 +1,17 @@
 import { describe, it, expect } from 'vitest';
-import { createCompletedDerivationSchema } from './derivation-form.schema';
+import {
+  createCompletedDerivationSchema,
+  oldMeterRequiresKey,
+} from './derivation-form.schema';
+
+const hasIssueAt = (
+  result: ReturnType<typeof createCompletedDerivationSchema.safeParse>,
+  segment: string,
+  field: string
+) =>
+  result.error?.issues.some(
+    (i) => i.path[0] === segment && i.path.includes(field)
+  ) ?? false;
 
 const validClientInfo = {
   name: 'M. DUPONT',
@@ -44,7 +56,8 @@ const validData = {
   },
   newMeter: {
     generation: '1ère',
-    serialNumber: '456',
+    serialNumber: '123456789012',
+    key: '34',
     dayIndex: '0',
     indexPhoto: 'data:image/jpeg;base64,abc',
   },
@@ -189,6 +202,8 @@ describe('createCompletedDerivationSchema', () => {
           ...validData.oldMeter,
           type: 'linky',
           generation: '3ème génération',
+          serialNumber: '123456789012',
+          key: '34',
         },
       });
       const linkyErrors =
@@ -196,6 +211,137 @@ describe('createCompletedDerivationSchema', () => {
           (i) => i.path[0] === 'oldMeter' && i.message.includes('génération')
         ) ?? [];
       expect(linkyErrors).toHaveLength(0);
+    });
+  });
+
+  describe('oldMeterRequiresKey helper', () => {
+    it('requires a key for CBE meters', () => {
+      expect(oldMeterRequiresKey({ type: 'cbe' })).toBe(true);
+    });
+
+    it('requires a key for Linky meters', () => {
+      expect(oldMeterRequiresKey({ type: 'linky' })).toBe(true);
+    });
+
+    it('does not require a key for electromecanique meters', () => {
+      expect(oldMeterRequiresKey({ type: 'electromecanique' })).toBe(false);
+    });
+
+    it('falls back to no key when kept and Linky refused', () => {
+      expect(
+        oldMeterRequiresKey({
+          type: 'cbe',
+          preserved: true,
+          linkyRefusal: true,
+        })
+      ).toBe(false);
+    });
+  });
+
+  describe('oldMeter matricule format (DTA-69)', () => {
+    it('accepts a 3-digit matricule without key for electromecanique', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        oldMeter: {
+          ...validData.oldMeter,
+          type: 'electromecanique',
+          serialNumber: '123',
+          key: '',
+        },
+      });
+      expect(hasIssueAt(result, 'oldMeter', 'serialNumber')).toBe(false);
+      expect(hasIssueAt(result, 'oldMeter', 'key')).toBe(false);
+    });
+
+    it('rejects a 3-digit matricule for CBE meters', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        oldMeter: {
+          ...validData.oldMeter,
+          type: 'cbe',
+          serialNumber: '123',
+          key: '34',
+        },
+      });
+      expect(result.success).toBe(false);
+      expect(hasIssueAt(result, 'oldMeter', 'serialNumber')).toBe(true);
+    });
+
+    it('requires a 2-digit key for CBE meters', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        oldMeter: {
+          ...validData.oldMeter,
+          type: 'cbe',
+          serialNumber: '123456789012',
+          key: '',
+        },
+      });
+      expect(result.success).toBe(false);
+      expect(hasIssueAt(result, 'oldMeter', 'key')).toBe(true);
+    });
+
+    it('accepts a 12-digit matricule + 2-digit key for CBE meters', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        oldMeter: {
+          ...validData.oldMeter,
+          type: 'cbe',
+          serialNumber: '123456789012',
+          key: '34',
+        },
+      });
+      expect(hasIssueAt(result, 'oldMeter', 'serialNumber')).toBe(false);
+      expect(hasIssueAt(result, 'oldMeter', 'key')).toBe(false);
+    });
+
+    it('accepts a 3-digit matricule without key when kept and Linky refused', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        oldMeter: {
+          ...validData.oldMeter,
+          type: 'cbe',
+          preserved: true,
+          linkyRefusal: true,
+          serialNumber: '123',
+          key: '',
+        },
+      });
+      expect(hasIssueAt(result, 'oldMeter', 'serialNumber')).toBe(false);
+      expect(hasIssueAt(result, 'oldMeter', 'key')).toBe(false);
+    });
+  });
+
+  describe('newMeter matricule format (DTA-69)', () => {
+    it('rejects a 3-digit matricule', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        newMeter: { ...validData.newMeter, serialNumber: '456' },
+      });
+      expect(result.success).toBe(false);
+      expect(hasIssueAt(result, 'newMeter', 'serialNumber')).toBe(true);
+    });
+
+    it('requires a 2-digit key', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        newMeter: { ...validData.newMeter, key: '' },
+      });
+      expect(result.success).toBe(false);
+      expect(hasIssueAt(result, 'newMeter', 'key')).toBe(true);
+    });
+
+    it('accepts a 12-digit matricule + 2-digit key', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        newMeter: {
+          ...validData.newMeter,
+          serialNumber: '123456789012',
+          key: '34',
+        },
+      });
+      expect(hasIssueAt(result, 'newMeter', 'serialNumber')).toBe(false);
+      expect(hasIssueAt(result, 'newMeter', 'key')).toBe(false);
     });
   });
 });

@@ -40,6 +40,7 @@ export const DEFAULT_FORM_VALUES = {
   newMeter: {
     generation: '',
     serialNumber: '',
+    key: '',
     dayIndex: '',
     nightIndex: '',
     indexPhoto: null,

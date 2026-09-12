@@ -31,6 +31,7 @@ export const STEP_FIELDS_TO_VALIDATE: {
   6: [
     'newMeter.generation',
     'newMeter.serialNumber',
+    'newMeter.key',
     'newMeter.dayIndex',
     'newMeter.indexPhoto',
   ],

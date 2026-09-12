@@ -189,10 +189,17 @@ class NewMeterDto {
 
   @IsString()
   @ApiProperty({
-    example: '1234567890',
-    description: 'The serial number of the meter',
+    example: '123456789012',
+    description: 'The serial number of the meter (12 digits)',
   })
   serialNumber: string;
+
+  @IsString()
+  @ApiProperty({
+    example: '34',
+    description: 'The key of the meter (2 digits)',
+  })
+  key: string;
 
   @IsString()
   @ApiProperty({

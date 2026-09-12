@@ -19,7 +19,10 @@ import { Button } from '@/shared/ui/button';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import type { CreateCompletedDerivation } from '@/entities/derivation';
-import { useDerivationStatusStore } from '@/entities/derivation';
+import {
+  useDerivationStatusStore,
+  oldMeterRequiresKey,
+} from '@/entities/derivation';
 interface OldMeterStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }
@@ -27,7 +30,15 @@ interface OldMeterStepProps {
 export function OldMeterStep({ form }: OldMeterStepProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const oldMeterType = form.watch('oldMeter.type');
+  const oldMeterPreserved = form.watch('oldMeter.preserved');
+  const oldMeterLinkyRefusal = form.watch('oldMeter.linkyRefusal');
   const { isNotEditable: isCompleted } = useDerivationStatusStore();
+
+  const requiresKey = oldMeterRequiresKey({
+    type: oldMeterType,
+    preserved: oldMeterPreserved,
+    linkyRefusal: oldMeterLinkyRefusal,
+  });
 
   useEffect(() => {
     setPreviewUrl(form.getValues('oldMeter.indexPhoto'));
@@ -133,17 +144,23 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
         control={form.control}
         name="oldMeter.serialNumber"
         label="Matricule"
-        placeholder="Les 3 derniers chiffres du dernier groupe de 5 numéros"
+        placeholder={
+          requiresKey
+            ? 'Le matricule (12 chiffres)'
+            : 'Les 3 derniers chiffres du dernier groupe de 5 numéros'
+        }
         disabled={isCompleted}
       />
 
-      <LabeledInput
-        control={form.control}
-        name="oldMeter.key"
-        label="Clé"
-        placeholder="Ex: 2 chiffres"
-        disabled={isCompleted}
-      />
+      {requiresKey && (
+        <LabeledInput
+          control={form.control}
+          name="oldMeter.key"
+          label="Clé"
+          placeholder="La clé (2 chiffres)"
+          disabled={isCompleted}
+        />
+      )}
 
       <LabeledInput
         control={form.control}
