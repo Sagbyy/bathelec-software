@@ -39,6 +39,18 @@ describe('isCableLengthValidForSection (RG-08)', () => {
     });
   });
 
+  describe('non-integer lengths stay covered (no coherence gap)', () => {
+    it('assigns 10.5 m to 2x25, not 2x16', () => {
+      expect(isCableLengthValidForSection(10.5, '2x16')).toBe(false);
+      expect(isCableLengthValidForSection(10.5, '2x25')).toBe(true);
+    });
+
+    it('assigns 20.5 m to 2x35, not 2x25', () => {
+      expect(isCableLengthValidForSection(20.5, '2x25')).toBe(false);
+      expect(isCableLengthValidForSection(20.5, '2x35')).toBe(true);
+    });
+  });
+
   describe('no or unknown section', () => {
     it.each(['', '2x50', 'unknown'])(
       'does not raise an alert for %p',

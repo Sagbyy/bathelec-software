@@ -2,30 +2,34 @@ export const CABLE_SECTIONS = ['2x16', '2x25', '2x35'] as const;
 
 export type CableSection = (typeof CABLE_SECTIONS)[number];
 
-interface CableLengthRange {
-  min: number;
-  max: number | null;
-}
-
-export const CABLE_LENGTH_RANGES: Record<CableSection, CableLengthRange> = {
-  '2x16': { min: 0, max: 10 },
-  '2x25': { min: 11, max: 20 },
-  '2x35': { min: 21, max: null },
+const CABLE_SECTION_MAX_LENGTHS: Record<CableSection, number | null> = {
+  '2x16': 10,
+  '2x25': 20,
+  '2x35': null,
 };
+
+function isCableSection(section: string): section is CableSection {
+  return (CABLE_SECTIONS as readonly string[]).includes(section);
+}
 
 export function isCableLengthValidForSection(
   length: number,
   section: string
 ): boolean {
-  const range = CABLE_LENGTH_RANGES[section as CableSection];
-
-  if (!range) {
+  if (!isCableSection(section)) {
     return true;
   }
 
-  if (length < range.min) {
+  const index = CABLE_SECTIONS.indexOf(section);
+  const previousSection = index > 0 ? CABLE_SECTIONS[index - 1] : null;
+  const lowerExclusive = previousSection
+    ? CABLE_SECTION_MAX_LENGTHS[previousSection]
+    : null;
+  const upperInclusive = CABLE_SECTION_MAX_LENGTHS[section];
+
+  if (lowerExclusive !== null && length <= lowerExclusive) {
     return false;
   }
 
-  return range.max === null || length <= range.max;
+  return upperInclusive === null || length <= upperInclusive;
 }

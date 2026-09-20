@@ -8,7 +8,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/shared/ui/form';
-import { Input } from '@/shared/ui/input';
 import {
   Select,
   SelectContent,
@@ -18,6 +17,7 @@ import {
 } from '@/shared/ui/select';
 import { CreateCompletedDerivation } from '@/entities/derivation';
 import {
+  CABLE_SECTIONS,
   isCableLengthValidForSection,
   useDerivationStatusStore,
 } from '@/entities/derivation';
@@ -60,9 +60,11 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="2x16">2x16 mm²</SelectItem>
-                <SelectItem value="2x25">2x25 mm²</SelectItem>
-                <SelectItem value="2x35">2x35 mm²</SelectItem>
+                {CABLE_SECTIONS.map((sectionOption) => (
+                  <SelectItem key={sectionOption} value={sectionOption}>
+                    {sectionOption} mm²
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <FormMessage />
@@ -116,15 +118,6 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
                 }
                 disabled={isCompleted}
               />
-              {/*<Input
-                type="number"
-                placeholder="Indiquer la longueur de câble posée"
-                {...field}
-                onChange={(e) =>
-                  field.onChange(Number.parseFloat(e.target.value) || 0)
-                }
-                disabled={isCompleted}
-              />*/}
             </FormControl>
             <FormMessage />
           </FormItem>

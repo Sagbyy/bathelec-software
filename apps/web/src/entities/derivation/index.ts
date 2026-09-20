@@ -13,10 +13,8 @@ export {
 } from './model/derivation-form.schema';
 export {
   CABLE_SECTIONS,
-  CABLE_LENGTH_RANGES,
   isCableLengthValidForSection,
 } from './model/cable-length';
-export type { CableSection } from './model/cable-length';
 export { default as DerivationStatusIcon } from './ui/derivation-status-icon';
 export type { CreateCompletedDerivation } from './model/completed-derivation.types';
 export type { UpdateDerivation } from './model/update-derivation.types';
