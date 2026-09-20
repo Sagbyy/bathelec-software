@@ -40,6 +40,7 @@ export function ClientInfoStep({ form }: ClientInfoStepProps) {
             {...field}
             disabled={isCompleted}
             defaultCountry="FR"
+            international
             placeholder="Ex: +33 6 12 34 56 78"
           />
         )}

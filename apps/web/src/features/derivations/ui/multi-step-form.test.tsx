@@ -32,14 +32,16 @@ type PhoneInputMockProps = {
   disabled?: boolean;
   placeholder?: string;
   defaultCountry?: string;
+  international?: boolean;
 };
 
 vi.mock('@/components/ui/phone-input', () => ({
   PhoneInput: React.forwardRef<HTMLInputElement, PhoneInputMockProps>(
-    ({ onChange, value, name, onBlur, disabled, placeholder }, ref) => (
+    ({ onChange, value, name, onBlur, disabled, placeholder, international }, ref) => (
       <input
         ref={ref}
         data-testid="phone-input"
+        data-international={international ? 'true' : 'false'}
         name={name}
         value={value ?? ''}
         onChange={(e) => onChange?.(e.target.value)}
@@ -87,12 +89,12 @@ describe('MultiStepForm — intégration', () => {
     expect(screen.getByText(/Étape 1 sur/)).toBeInTheDocument();
   });
 
-  it('affiche le téléphone avec un exemple au format international (DTA-53)', () => {
+  it('affiche le téléphone au format international (DTA-53)', () => {
     renderForm();
 
-    expect(
-      screen.getByPlaceholderText('Ex: +33 6 12 34 56 78')
-    ).toBeInTheDocument();
+    const phoneInput = screen.getByPlaceholderText('Ex: +33 6 12 34 56 78');
+    expect(phoneInput).toBeInTheDocument();
+    expect(phoneInput).toHaveAttribute('data-international', 'true');
   });
 
   it("le bouton Précédent est désactivé à l'étape 1", () => {
