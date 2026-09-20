@@ -109,6 +109,31 @@ describe('createCompletedDerivationSchema', () => {
       );
     });
 
+    it('accepts a phone number in international format (DTA-53)', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        clientInfo: { ...validClientInfo, phone: '+33612345678' },
+      });
+      expect(hasIssueAt(result, 'clientInfo', 'phone')).toBe(false);
+    });
+
+    it('accepts a non-French international phone number (DTA-53)', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        clientInfo: { ...validClientInfo, phone: '+32470123456' },
+      });
+      expect(hasIssueAt(result, 'clientInfo', 'phone')).toBe(false);
+    });
+
+    it('rejects a phone number in French national format (DTA-53)', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        clientInfo: { ...validClientInfo, phone: '0612345678' },
+      });
+      expect(result.success).toBe(false);
+      expect(hasIssueAt(result, 'clientInfo', 'phone')).toBe(true);
+    });
+
     it('rejects empty folio', () => {
       const result = createCompletedDerivationSchema.safeParse({
         ...validData,
