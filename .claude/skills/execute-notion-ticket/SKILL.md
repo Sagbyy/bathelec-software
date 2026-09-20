@@ -24,6 +24,7 @@ Read `CLAUDE.md` before coding and honor it. In particular:
 - **Tests are mandatory** for every change, following the test pyramid (see the Testing section of `CLAUDE.md`). No change is complete without them.
 - **Never add code comments** (only machine-readable ones like `// eslint-disable-next-line`).
 - **FSD** layering in `apps/web`; one module per domain in `apps/api`. Never import upward or cross-slice.
+- **Front/back conformity is mandatory, in both directions.** A change on one side is not complete until the other side still agrees with it. The shared contract lives in `packages/types` (`@repo/types`), the NestJS DTOs / `class-validator` rules / Prisma models on the API side, and the Zod schemas / API clients (TanStack Query fetchers in `api` segments) on the web side. Field names, types, optionality, enums, and validation rules must line up end to end. See the conformity step in Phase 3.
 - All code and git artifacts in **English**; user-facing text may be French.
 - **Never push to `main` or `develop`.** Work on a `feat/…` / `fix/…` branch.
 - **Do not add `Co-Authored-By` lines** to commits (project rule).
@@ -54,10 +55,16 @@ Read `CLAUDE.md` before coding and honor it. In particular:
 ## Phase 3 — Implement with tests
 
 1. Make the code change following the conventions above.
-2. Add or update tests at the **lowest meaningful layer** (unit first), covering happy path **and** failure/edge cases. Keep any existing tests green — update fixtures the change legitimately affects.
+2. **Check front/back conformity — always, in both directions.** Even when the ticket's `Side` is only `Front` or only `Back`, verify the other side still agrees before considering the change done:
+   - **Trace the contract end to end** for every field/endpoint you touch: `packages/types` (`@repo/types`) ↔ NestJS DTO + `class-validator` decorators + Prisma model (API) ↔ Zod schema + API client / TanStack Query fetcher (web). Field names, types, optionality, enums, defaults, and validation rules must match on both sides.
+   - **Front ticket:** confirm the API actually exposes/accepts what the UI now sends or reads (DTO shape, required vs optional, validation, response type). If the frontend needs a field the API does not provide or validate, the ticket is not done — extend the API side (and `@repo/types`) too, or stop and ask if that is out of scope.
+   - **Back ticket:** confirm every frontend consumer still compiles and behaves against the new contract (renamed/removed/added fields, changed types or validation). Update the web-side types, Zod schemas, and clients accordingly.
+   - `@repo/types` is the source of truth for shared shapes — change it there once and have both apps consume it; never duplicate a divergent shape on one side. Run `turbo build --filter=@repo/types` (or `pnpm build`) so both apps type-check against the updated contract.
+   - Add tests that pin the contract on **both** sides when the change spans them (e.g. a DTO validation `*.spec.ts` in `apps/api` and a Zod schema `*.test.ts` in `apps/web`).
+3. Add or update tests at the **lowest meaningful layer** (unit first), covering happy path **and** failure/edge cases. Keep any existing tests green — update fixtures the change legitimately affects.
    - `apps/web`: Vitest (`*.test.ts(x)`), colocated. Playwright only for a critical journey.
    - `apps/api`: Jest (`*.spec.ts`), colocated. `test:e2e` only for a critical flow.
-3. Run the relevant checks until clean:
+4. Run the relevant checks until clean:
    ```bash
    # scope to the touched app(s)
    cd apps/web && pnpm test && pnpm lint          # + pnpm build if config/build affected
