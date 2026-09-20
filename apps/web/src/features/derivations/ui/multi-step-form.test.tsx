@@ -87,6 +87,14 @@ describe('MultiStepForm — intégration', () => {
     expect(screen.getByText(/Étape 1 sur/)).toBeInTheDocument();
   });
 
+  it('affiche le téléphone avec un exemple au format international (DTA-53)', () => {
+    renderForm();
+
+    expect(
+      screen.getByPlaceholderText('Ex: +33 6 12 34 56 78')
+    ).toBeInTheDocument();
+  });
+
   it("le bouton Précédent est désactivé à l'étape 1", () => {
     renderForm();
 
