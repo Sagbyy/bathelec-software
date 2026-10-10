@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsString } from 'class-validator';
+import { IsDate, IsIn, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
+import { Role, ROLE_VALUES } from '@repo/types';
 
 export class UserInformationsDto {
   @ApiProperty({
@@ -32,11 +33,12 @@ export class UserInformationsDto {
   lastName: string;
 
   @ApiProperty({
-    example: 'admin',
+    example: Role.ADMIN,
+    enum: Role,
     description: 'The role of the user',
   })
-  @IsString()
-  role: string;
+  @IsIn(ROLE_VALUES)
+  role: Role;
 
   @ApiProperty({
     example: '2021-01-01',

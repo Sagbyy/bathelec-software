@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
-import { User } from '@repo/types';
+import { Role, User } from '@repo/types';
 import { userService, useUserStore } from '@/entities/user';
 
 export function useAuthGuard() {
@@ -31,10 +31,13 @@ export function useAuthGuard() {
 
     setUser(user);
 
-    if (user.role === 'admin' && pathname.startsWith('/dashboard/technician')) {
+    if (
+      user.role === Role.ADMIN &&
+      pathname.startsWith('/dashboard/technician')
+    ) {
       router.push('/dashboard');
     } else if (
-      user.role === 'technician' &&
+      user.role === Role.TECHNICIAN &&
       pathname.startsWith('/dashboard/admin')
     ) {
       router.push('/dashboard');

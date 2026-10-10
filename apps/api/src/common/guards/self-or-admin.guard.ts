@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
+import { Role } from '@repo/types';
 
 @Injectable()
 export class SelfOrAdminGuard implements CanActivate {
@@ -12,7 +13,7 @@ export class SelfOrAdminGuard implements CanActivate {
     const user = request.user;
     const paramUserId = +request.params.userId;
 
-    if (user.role === 'admin' || user.userId === paramUserId) {
+    if (user.role === Role.ADMIN || user.userId === paramUserId) {
       return true;
     }
 

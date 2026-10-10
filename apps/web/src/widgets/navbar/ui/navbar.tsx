@@ -13,6 +13,7 @@ import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useUserStore } from '@/entities/user';
+import { Role } from '@repo/types';
 import React, { useState } from 'react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useAuth } from '@/features/auth';
@@ -220,7 +221,7 @@ export function Navbar() {
             ))}
 
             {/* Admin Links with Collapsible */}
-            {user?.role === 'admin' &&
+            {user?.role === Role.ADMIN &&
               adminLinks.map((link, index) => (
                 <div key={index}>
                   {link.type === 'folder' ? (
@@ -266,7 +267,7 @@ export function Navbar() {
               ))}
 
             {/* Technician Links */}
-            {user?.role === 'technician' &&
+            {user?.role === Role.TECHNICIAN &&
               technicianLinks.map((link, index) => (
                 <div key={index}>
                   {link.type === 'folder' ? (
@@ -346,7 +347,7 @@ export function Navbar() {
           ))}
 
           {/* Admin Links */}
-          {user?.role === 'admin' &&
+          {user?.role === Role.ADMIN &&
             adminLinks.map((link, index) => (
               <NavigationMenuItem key={index}>
                 {link.type === 'folder' ? (
@@ -381,7 +382,7 @@ export function Navbar() {
             ))}
 
           {/* Technician Links */}
-          {user?.role === 'technician' &&
+          {user?.role === Role.TECHNICIAN &&
             technicianLinks.map((link, index) => (
               <NavigationMenuItem key={index}>
                 {link.type === 'folder' ? (

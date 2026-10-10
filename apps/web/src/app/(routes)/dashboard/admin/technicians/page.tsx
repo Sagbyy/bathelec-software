@@ -5,6 +5,7 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import { DataTable } from '@/features/users/ui/users-data-table/data-table';
 import { columns } from '@/features/users/ui/users-data-table/columns';
 import { useUsers } from '@/features/users/model/use-user';
+import { Role } from '@repo/types';
 
 export default function ListTechnicianPage() {
   const { data, isLoading, error } = useUsers();
@@ -32,7 +33,8 @@ export default function ListTechnicianPage() {
     );
   }
 
-  const technicians = data?.filter((user) => user.role === 'technician') || [];
+  const technicians =
+    data?.filter((user) => user.role === Role.TECHNICIAN) || [];
 
   return (
     <div className="flex flex-col gap-4 p-8">

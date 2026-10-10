@@ -13,6 +13,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { Role, ROLE_LABELS } from '@repo/types';
 
 export type User = {
   id: number;
@@ -138,8 +139,8 @@ export const columns: ColumnDef<User>[] = [
       const role = row.original.role;
 
       return (
-        <Badge variant={role === 'admin' ? 'destructive' : 'secondary'}>
-          {row.original.role}
+        <Badge variant={role === Role.ADMIN ? 'destructive' : 'secondary'}>
+          {ROLE_LABELS[role as Role] ?? role}
         </Badge>
       );
     },
@@ -203,7 +204,7 @@ function ActionCell({ userId, role }: { userId: number; role: string }) {
       >
         <Icon icon="material-symbols:edit-rounded" />
       </Button>
-      {role === 'technician' && (
+      {role === Role.TECHNICIAN && (
         <Button
           variant="ghost"
           size="icon"

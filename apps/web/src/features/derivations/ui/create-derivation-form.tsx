@@ -29,7 +29,7 @@ import {
 } from '@/shared/ui/form';
 import clsx from 'clsx';
 import { useQuery } from '@tanstack/react-query';
-import { Technician, Chantier } from '@repo/types';
+import { Technician, Chantier, Role } from '@repo/types';
 import { toast } from 'sonner';
 import { apiClient } from '@/shared/api';
 import { formSchema } from '../model/create-derivation.schema';
@@ -69,7 +69,7 @@ export default function CreateDerivationForm() {
   });
 
   useEffect(() => {
-    if (user?.role === 'technician') {
+    if (user?.role === Role.TECHNICIAN) {
       form.setValue('user', `${user.firstName} ${user.lastName}`);
     }
   }, [user, form]);
@@ -116,7 +116,7 @@ export default function CreateDerivationForm() {
                       role="combobox"
                       aria-expanded={technicianOpen}
                       className="w-full justify-between"
-                      disabled={user?.role === 'technician'}
+                      disabled={user?.role === Role.TECHNICIAN}
                     >
                       {value || 'Sélectionner un technicien...'}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

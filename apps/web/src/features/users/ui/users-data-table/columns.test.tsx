@@ -68,3 +68,37 @@ describe('ActionCell (columns.tsx)', () => {
     expect(mockPush).toHaveBeenCalledWith('/dashboard/admin/users/edit/3');
   });
 });
+
+function renderRoleCell(role: string) {
+  const roleColumn = columns.find(
+    (c) => (c as { accessorKey?: string }).accessorKey === 'role'
+  );
+  if (!roleColumn || !('cell' in roleColumn) || !roleColumn.cell) {
+    throw new Error('Column role not found');
+  }
+  const cell = roleColumn.cell as (ctx: {
+    row: { original: { role: string } };
+  }) => React.ReactNode;
+  render(<div>{cell({ row: { original: { role } } })}</div>);
+}
+
+describe('Role column (columns.tsx)', () => {
+  it('affiche le libellé français pour chaque rôle', () => {
+    renderRoleCell('admin');
+    expect(screen.getByText('Administrateur')).toBeInTheDocument();
+
+    renderRoleCell('supervisor');
+    expect(screen.getByText('Encadrant')).toBeInTheDocument();
+
+    renderRoleCell('site_manager');
+    expect(screen.getByText('Chef de chantier')).toBeInTheDocument();
+
+    renderRoleCell('technician');
+    expect(screen.getByText('Technicien')).toBeInTheDocument();
+  });
+
+  it('affiche la valeur brute pour un rôle inconnu', () => {
+    renderRoleCell('unknown');
+    expect(screen.getByText('unknown')).toBeInTheDocument();
+  });
+});

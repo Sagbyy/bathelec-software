@@ -22,6 +22,7 @@ import {
 import { Input } from '@/shared/ui/input';
 import { Textarea } from '@/shared/ui/textarea';
 import { Badge } from '@/shared/ui/badge';
+import { Role } from '@repo/types';
 import { Separator } from '@/shared/ui/separator';
 import {
   Popover,
@@ -77,7 +78,8 @@ export default function TechniciansGroupPage() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const technicians = users?.filter((user) => user.role === 'technician') || [];
+  const technicians =
+    users?.filter((user) => user.role === Role.TECHNICIAN) || [];
 
   const handleCreateGroup = () => {
     if (!formData.name.trim() || !formData.description.trim()) {
