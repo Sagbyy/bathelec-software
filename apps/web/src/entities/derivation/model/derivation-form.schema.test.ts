@@ -4,10 +4,19 @@ import {
   oldMeterRequiresKey,
 } from './derivation-form.schema';
 
-const hasIssueAt = (result: ReturnType, segment: string, field: string) =>
+type ParseResult = ReturnType<
+  typeof createCompletedDerivationSchema.safeParse
+>;
+
+const hasIssueAt = (result: ParseResult, segment: string, field: string) =>
   result.error?.issues.some(
     (i) => i.path[0] === segment && i.path.includes(field)
   ) ?? false;
+
+const messageAt = (result: ParseResult, segment: string, field: string) =>
+  result.error?.issues.find(
+    (i) => i.path[0] === segment && i.path.includes(field)
+  )?.message;
 
 const validClientInfo = {
   name: 'M. DUPONT',
@@ -62,7 +71,7 @@ const validData = {
     voltage: 'mono',
     brand: 'Schneider',
     type: 'differentiel',
-    power: '60A',
+    power: '60',
     calibrationPower: '45A',
     commissioningDone: true,
     sealed: true,
@@ -216,6 +225,39 @@ describe('createCompletedDerivationSchema', () => {
       });
       expect(result.success).toBe(false);
       expect(hasIssueAt(result, 'circuitBreaker', 'power')).toBe(true);
+    });
+
+    it('rejects a breaker power outside the allowed values (DTA-44)', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        circuitBreaker: { ...validData.circuitBreaker, power: '999' },
+      });
+      expect(result.success).toBe(false);
+      expect(hasIssueAt(result, 'circuitBreaker', 'power')).toBe(true);
+    });
+
+    it('shows the French message when power is missing, not the Zod default (DTA-44)', () => {
+      const { power, ...circuitBreaker } = validData.circuitBreaker;
+      void power;
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        circuitBreaker,
+      });
+      expect(messageAt(result, 'circuitBreaker', 'power')).toBe(
+        'La puissance du disjoncteur est requise'
+      );
+    });
+
+    it('shows the French message when calibration power is missing, not the Zod default (DTA-44)', () => {
+      const { calibrationPower, ...circuitBreaker } = validData.circuitBreaker;
+      void calibrationPower;
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        circuitBreaker,
+      });
+      expect(messageAt(result, 'circuitBreaker', 'calibrationPower')).toBe(
+        'La puissance du calibrage est requise'
+      );
     });
   });
 

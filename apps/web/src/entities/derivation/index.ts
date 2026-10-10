@@ -15,6 +15,8 @@ export {
   CABLE_SECTIONS,
   isCableLengthValidForSection,
 } from './model/cable-length';
+export { CIRCUIT_BREAKER_POWERS } from './model/circuit-breaker';
+export type { CircuitBreakerPower } from './model/circuit-breaker';
 export { default as DerivationStatusIcon } from './ui/derivation-status-icon';
 export type { CreateCompletedDerivation } from './model/completed-derivation.types';
 export type { UpdateDerivation } from './model/update-derivation.types';

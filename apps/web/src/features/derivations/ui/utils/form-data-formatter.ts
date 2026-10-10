@@ -1,5 +1,6 @@
 import { CircuitBreakerType, VoltageType } from '@repo/types';
 import { CompletedDerivation } from '@repo/types';
+import type { CircuitBreakerPower } from '@/entities/derivation';
 
 export const formatCompletedDerivation = (
   completedDerivation: CompletedDerivation
@@ -26,6 +27,7 @@ export const formatCompletedDerivation = (
       ...completedDerivation.circuitBreaker,
       type: completedDerivation.circuitBreaker.type as CircuitBreakerType,
       voltage: completedDerivation.circuitBreaker.voltage as VoltageType,
+      power: completedDerivation.circuitBreaker.power as CircuitBreakerPower,
     },
     photoAfterWork: completedDerivation.photoAfterWork,
     clientValidation: completedDerivation.clientValidation,

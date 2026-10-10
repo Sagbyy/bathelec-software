@@ -16,7 +16,10 @@ import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group';
 import { Alert, AlertDescription } from '@/shared/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 import type { CreateCompletedDerivation } from '@/entities/derivation';
-import { useDerivationStatusStore } from '@/entities/derivation';
+import {
+  CIRCUIT_BREAKER_POWERS,
+  useDerivationStatusStore,
+} from '@/entities/derivation';
 
 interface CircuitBreakerStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
@@ -160,17 +163,11 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         disabled={isCompleted}
         required
       >
-        <SelectItem value="10-30">10-30 A</SelectItem>
-        <SelectItem value="15-45">15-45 A</SelectItem>
-        <SelectItem value="30-60">30-60 A</SelectItem>
-        <SelectItem value="60-90">60-90 A</SelectItem>
-        <SelectItem value="10">10 A</SelectItem>
-        <SelectItem value="15">15 A</SelectItem>
-        <SelectItem value="20">20 A</SelectItem>
-        <SelectItem value="30">30 A</SelectItem>
-        <SelectItem value="40">40 A</SelectItem>
-        <SelectItem value="50">50 A</SelectItem>
-        <SelectItem value="60">60 A</SelectItem>
+        {CIRCUIT_BREAKER_POWERS.map((power) => (
+          <SelectItem key={power} value={power}>
+            {power} A
+          </SelectItem>
+        ))}
       </LabeledSelect>
 
       <LabeledInput
