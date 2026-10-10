@@ -1,7 +1,5 @@
-import {
-  IsBase64DocumentConstraint,
-  decodedByteLength,
-} from './is-base64-document.validator';
+import { IsBase64DocumentConstraint } from './is-base64-document.validator';
+import { decodedByteLength } from './base64-file';
 
 describe('decodedByteLength', () => {
   it('computes the byte size without padding', () => {

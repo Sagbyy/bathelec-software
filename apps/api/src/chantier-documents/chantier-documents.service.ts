@@ -6,7 +6,7 @@ import {
   ChantierDocumentDocument,
 } from './entities/chantier-document.entity';
 import { CreateChantierDocumentDto } from './dto/create-chantier-document.dto';
-import { decodedByteLength } from '../common/validators/is-base64-document.validator';
+import { decodedByteLength } from '../common/validators/base64-file';
 
 const METADATA_PROJECTION = '-file';
 const BASE64_MARKER = ';base64,';
