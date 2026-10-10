@@ -20,16 +20,18 @@ import { UsersGroupsService } from './users-groups.service';
 import { CreateUsersGroupDto } from './dto/create-users-group.dto';
 import { UpdateUsersGroupDto } from './dto/update-users-group.dto';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
+import { RoleGuard } from '../role/role.guard';
 import { Role } from '../role/role.decorator';
+import { Role as UserRole } from '@repo/types';
 
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RoleGuard)
+@Role(UserRole.ADMIN, UserRole.SUPERVISOR)
 @Controller('users-groups')
 export class UsersGroupsController {
   constructor(private readonly usersGroupsService: UsersGroupsService) {}
 
   @Post()
-  @Role('admin')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new group' })
   @ApiResponse({ status: 201, description: 'Group created successfully' })
@@ -68,7 +70,6 @@ export class UsersGroupsController {
   }
 
   @Get(':id/with-users')
-  @Role('admin')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get a group by ID with its users' })
   @ApiParam({ name: 'id', type: Number, description: 'Group ID' })
@@ -79,7 +80,6 @@ export class UsersGroupsController {
   }
 
   @Get(':id/users')
-  @Role('admin')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get all users in a group' })
   @ApiParam({ name: 'id', type: Number, description: 'Group ID' })
@@ -90,7 +90,6 @@ export class UsersGroupsController {
   }
 
   @Patch(':id')
-  @Role('admin')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Update a group' })
   @ApiParam({ name: 'id', type: Number, description: 'Group ID' })
@@ -105,7 +104,6 @@ export class UsersGroupsController {
   }
 
   @Delete(':id')
-  @Role('admin')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Delete a group' })
   @ApiParam({ name: 'id', type: Number, description: 'Group ID' })
@@ -116,7 +114,6 @@ export class UsersGroupsController {
   }
 
   @Post(':id/users/:userId')
-  @Role('admin')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Add a user to a group' })
   @ApiParam({ name: 'id', type: Number, description: 'Group ID' })
@@ -132,7 +129,6 @@ export class UsersGroupsController {
   }
 
   @Delete(':id/users/:userId')
-  @Role('admin')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Remove a user from a group' })
   @ApiParam({ name: 'id', type: Number, description: 'Group ID' })
@@ -150,7 +146,6 @@ export class UsersGroupsController {
   }
 
   @Get('user/:userId/groups')
-  @Role('admin')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get all groups for a user' })
   @ApiParam({ name: 'userId', type: Number, description: 'User ID' })

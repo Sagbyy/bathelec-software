@@ -38,6 +38,7 @@ import { toast } from 'sonner';
 import clsx from 'clsx';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { getApiErrorMessage } from '@/shared/lib/api-error';
+import { useUserStore } from '@/entities/user';
 import { Role, ROLE_VALUES, ROLE_LABELS } from '@repo/types';
 
 const updateUserSchema = z.object({
@@ -79,6 +80,8 @@ export default function UserDetailsPage() {
   const { data: user, isLoading, error } = useUserById(userIdNumber);
   const { mutate: updateUser, isPending: isUpdating } = useUpdateUser();
   const { mutate: deleteUser, isPending: isDeleting } = useDeleteUser();
+  const { user: currentUser } = useUserStore();
+  const canEditRole = currentUser?.role === Role.ADMIN;
 
   const form = useForm<UpdateUserFormValues>({
     resolver: zodResolver(updateUserSchema),
@@ -312,6 +315,7 @@ export default function UserDetailsPage() {
                       key={`role-${user?.id}-${field.value}`}
                       onValueChange={field.onChange}
                       value={field.value}
+                      disabled={!canEditRole}
                     >
                       <FormControl>
                         <SelectTrigger

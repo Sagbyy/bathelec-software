@@ -18,7 +18,9 @@ export default function LayoutProtected({ children }: { children: ReactNode }) {
 
   return (
     <>
-      {user?.role === Role.ADMIN && <Navbar />}
+      {(user?.role === Role.ADMIN || user?.role === Role.SUPERVISOR) && (
+        <Navbar />
+      )}
       {children}
     </>
   );

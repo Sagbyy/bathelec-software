@@ -1,3 +1,5 @@
+import { Role } from '@repo/types';
+
 export type NavbarLinkType = 'page' | 'folder';
 
 export interface NavbarLink {
@@ -6,4 +8,5 @@ export interface NavbarLink {
   type: NavbarLinkType;
   description?: string;
   pages?: NavbarLink[];
+  allowedRoles?: Role[];
 }

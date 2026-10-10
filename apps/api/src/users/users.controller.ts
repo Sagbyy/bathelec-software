@@ -27,6 +27,7 @@ import {
 import { ChangePasswordResponseSuccessDto } from './dto/response/change-password-success.response.dto';
 import { RoleGuard } from '../role/role.guard';
 import { Role } from '../role/role.decorator';
+import { Role as UserRole } from '@repo/types';
 import { UserInformationsDto } from './dto/request/user-informations';
 import { NotFoundDto } from './dto/response/not-found.response.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
@@ -40,7 +41,7 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @Get()
   @UseGuards(RoleGuard)
-  @Role('admin')
+  @Role(UserRole.ADMIN, UserRole.SUPERVISOR)
   async findAll() {
     this.logger.log('Finding all users');
     return this.usersService.findAll();
@@ -88,7 +89,7 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @Put(':userId')
   @UseGuards(RoleGuard)
-  @Role('admin')
+  @Role(UserRole.ADMIN, UserRole.SUPERVISOR)
   @ApiOperation({ summary: 'Update user by ID' })
   @ApiParam({ name: 'userId', type: Number, description: 'The ID of the user' })
   @ApiOkResponse({
@@ -103,8 +104,13 @@ export class UsersController {
   @ApiBody({ type: UpdateUserDto })
   async updateUser(
     @Param('userId') userId: string,
-    @Body(new ValidationPipe()) updateUserDto: UpdateUserDto
+    @Body(new ValidationPipe()) updateUserDto: UpdateUserDto,
+    @Request() req
   ) {
+    if (req.user.role !== UserRole.ADMIN) {
+      delete updateUserDto.role;
+    }
+
     const user = await this.usersService.updateUser(
       parseInt(userId),
       updateUserDto
@@ -119,7 +125,7 @@ export class UsersController {
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(RoleGuard)
-  @Role('admin')
+  @Role(UserRole.ADMIN, UserRole.SUPERVISOR)
   @Get(':userId')
   @ApiOperation({ summary: 'Find user by ID' })
   @ApiParam({ name: 'userId', type: Number, description: 'The ID of the user' })
@@ -144,7 +150,7 @@ export class UsersController {
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(RoleGuard)
-  @Role('admin')
+  @Role(UserRole.ADMIN, UserRole.SUPERVISOR)
   @Delete(':userId')
   @ApiOperation({ summary: 'Delete user by ID' })
   @ApiParam({ name: 'userId', type: Number, description: 'The ID of the user' })
