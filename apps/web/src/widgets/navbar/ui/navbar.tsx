@@ -29,79 +29,7 @@ import {
   navigationMenuTriggerStyle,
 } from '@/shared/ui/navigation-menu';
 import { NavbarLink } from '@/entities/user';
-
-const adminLinks: NavbarLink[] = [
-  {
-    label: 'Utilisateurs',
-    href: '#',
-    type: 'folder',
-    pages: [
-      {
-        label: 'Liste des utilisateurs',
-        href: '/dashboard/admin/users',
-        description: 'Voir la liste des utilisateurs',
-        type: 'page',
-      },
-    ],
-  },
-  {
-    label: 'Techniciens',
-    href: '#',
-    type: 'folder',
-    pages: [
-      {
-        label: 'Liste des techniciens',
-        href: '/dashboard/admin/technicians',
-        type: 'page',
-        description: 'Voir la liste des techniciens',
-      },
-      {
-        label: 'Créez un technicien',
-        href: '/dashboard/admin/technicians/new',
-        type: 'page',
-        description: "Création d'un nouveau compte technicien",
-      },
-      {
-        label: 'Groupes de techniciens',
-        href: '/dashboard/admin/technicians/group',
-        type: 'page',
-        description: 'Voir la liste des groupes de techniciens',
-      },
-    ],
-  },
-  {
-    label: 'Relevés de dérivation',
-    href: '#',
-    type: 'folder',
-    pages: [
-      {
-        label: 'Créez un relevé de dérivation',
-        href: '/dashboard/admin/derivations/new',
-        type: 'page',
-        description: "Création d'un nouveau relevé de dérivation",
-      },
-    ],
-  },
-  {
-    label: 'Chantiers',
-    href: '#',
-    type: 'folder',
-    pages: [
-      {
-        label: 'Créer un marché',
-        href: '/dashboard/admin/markets/new',
-        type: 'page',
-        description: 'Ajouter un marché',
-      },
-      {
-        label: 'Créer un chantier',
-        href: '/dashboard/admin/chantiers/new',
-        type: 'page',
-        description: 'Ajouter un chantier à un marché',
-      },
-    ],
-  },
-];
+import { getVisibleAdminLinks } from '../lib/navbar-links';
 
 const technicianLinks: NavbarLink[] = [
   {
@@ -184,6 +112,8 @@ export function Navbar() {
 
   if (!user) return;
 
+  const visibleAdminLinks = getVisibleAdminLinks(user.role);
+
   return (
     <header className="flex h-20 w-full shrink-0 items-center px-4 shadow-sm md:px-6">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -221,8 +151,7 @@ export function Navbar() {
             ))}
 
             {/* Admin Links with Collapsible */}
-            {user?.role === Role.ADMIN &&
-              adminLinks.map((link, index) => (
+            {visibleAdminLinks.map((link, index) => (
                 <div key={index}>
                   {link.type === 'folder' ? (
                     <Collapsible>
@@ -347,8 +276,7 @@ export function Navbar() {
           ))}
 
           {/* Admin Links */}
-          {user?.role === Role.ADMIN &&
-            adminLinks.map((link, index) => (
+          {visibleAdminLinks.map((link, index) => (
               <NavigationMenuItem key={index}>
                 {link.type === 'folder' ? (
                   <>

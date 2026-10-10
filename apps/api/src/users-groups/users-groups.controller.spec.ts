@@ -4,6 +4,8 @@ import { UsersGroupsService } from './users-groups.service';
 import { CreateUsersGroupDto } from './dto/create-users-group.dto';
 import { UpdateUsersGroupDto } from './dto/update-users-group.dto';
 import { UserGroup, UserGroupMembership } from '@prisma/client';
+import { RoleGuard } from '../role/role.guard';
+import { Role } from '@repo/types';
 
 describe('UsersGroupsController', () => {
   let controller: UsersGroupsController;
@@ -72,6 +74,18 @@ describe('UsersGroupsController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  describe('access control', () => {
+    it('applies RoleGuard on the controller', () => {
+      const guards = Reflect.getMetadata('__guards__', UsersGroupsController);
+      expect(guards).toContain(RoleGuard);
+    });
+
+    it('restricts group management to admin and supervisor', () => {
+      const roles = Reflect.getMetadata('role', UsersGroupsController);
+      expect(roles).toEqual([Role.ADMIN, Role.SUPERVISOR]);
+    });
   });
 
   describe('create', () => {
