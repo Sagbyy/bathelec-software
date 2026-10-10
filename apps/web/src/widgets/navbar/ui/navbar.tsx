@@ -12,7 +12,7 @@ import {
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useUserStore, isManagementRole } from '@/entities/user';
+import { useUserStore } from '@/entities/user';
 import { Role } from '@repo/types';
 import React, { useState } from 'react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
@@ -221,7 +221,7 @@ export function Navbar() {
             ))}
 
             {/* Admin Links with Collapsible */}
-            {user && isManagementRole(user.role) &&
+            {user?.role === Role.ADMIN &&
               adminLinks.map((link, index) => (
                 <div key={index}>
                   {link.type === 'folder' ? (
@@ -347,7 +347,7 @@ export function Navbar() {
           ))}
 
           {/* Admin Links */}
-          {user && isManagementRole(user.role) &&
+          {user?.role === Role.ADMIN &&
             adminLinks.map((link, index) => (
               <NavigationMenuItem key={index}>
                 {link.type === 'folder' ? (

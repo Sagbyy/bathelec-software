@@ -2,8 +2,9 @@
 
 import { ReactNode } from 'react';
 import { Navbar } from '@/widgets/navbar/ui/navbar';
+import { Role } from '@repo/types';
 import { useAuthGuard } from '@/features/auth/model/use-auth-guard';
-import { useUserStore, isManagementRole } from '@/entities/user';
+import { useUserStore } from '@/entities/user';
 import { PageLoader } from '@/shared/ui/page-loader';
 
 export default function LayoutProtected({ children }: { children: ReactNode }) {
@@ -17,7 +18,7 @@ export default function LayoutProtected({ children }: { children: ReactNode }) {
 
   return (
     <>
-      {user && isManagementRole(user.role) && <Navbar />}
+      {user?.role === Role.ADMIN && <Navbar />}
       {children}
     </>
   );

@@ -31,11 +31,15 @@ export function useAuthGuard() {
 
     setUser(user);
 
-    const isTechnician = user.role === Role.TECHNICIAN;
-
-    if (!isTechnician && pathname.startsWith('/dashboard/technician')) {
+    if (
+      user.role === Role.ADMIN &&
+      pathname.startsWith('/dashboard/technician')
+    ) {
       router.push('/dashboard');
-    } else if (isTechnician && pathname.startsWith('/dashboard/admin')) {
+    } else if (
+      user.role === Role.TECHNICIAN &&
+      pathname.startsWith('/dashboard/admin')
+    ) {
       router.push('/dashboard');
     }
   }, [user, router, isClient, pathname, setUser]);

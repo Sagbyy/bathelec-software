@@ -2,14 +2,13 @@
 
 import { Role } from '@repo/types';
 import { useUserStore } from '@/entities/user/model/use-user-store';
-import { isManagementRole } from '@/entities/user';
 import TechnicianPage from './technician-page';
 import AdminPage from './admin-page';
 
 export default function DashboardPage() {
   const { user } = useUserStore();
 
-  if (user && isManagementRole(user.role)) {
+  if (user?.role === Role.ADMIN) {
     return <AdminPage />;
   }
 
