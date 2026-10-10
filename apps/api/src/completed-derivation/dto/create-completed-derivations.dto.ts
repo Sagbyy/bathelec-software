@@ -255,10 +255,17 @@ class CircuitBreakerDto {
 
   @IsString()
   @ApiProperty({
-    example: '100A',
-    description: 'The power',
+    example: '15-45',
+    description: 'The circuit breaker power (calibre)',
   })
   power: string;
+
+  @IsString()
+  @ApiProperty({
+    example: '45A',
+    description: 'The calibration power (réglage)',
+  })
+  calibrationPower: string;
 
   @IsBoolean()
   @ApiProperty({

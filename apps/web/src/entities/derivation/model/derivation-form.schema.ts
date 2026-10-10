@@ -1,7 +1,6 @@
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { z } from 'zod';
-
-type PhotoValue = File | Blob | string | null;
+import { CIRCUIT_BREAKER_POWERS } from './circuit-breaker';
 
 const THREE_DIGITS = /^\d{3}$/;
 const TWELVE_DIGITS = /^\d{12}$/;
@@ -161,7 +160,17 @@ export const createCompletedDerivationSchema = z.object({
           { message: 'Le type doit être sélectionné' }
         )
     ),
-    power: z.string().min(1, { message: 'La puissance est requise' }),
+    power: z.enum(CIRCUIT_BREAKER_POWERS, {
+      errorMap: () => ({
+        message: 'La puissance du disjoncteur est requise',
+      }),
+    }),
+    calibrationPower: z
+      .string({
+        required_error: 'La puissance du calibrage est requise',
+        invalid_type_error: 'La puissance du calibrage est requise',
+      })
+      .min(1, 'La puissance du calibrage est requise'),
     commissioningDone: z.boolean(),
     sealed: z.boolean().refine((val) => val === true, {
       message: 'Le disjoncteur doit être scellé',

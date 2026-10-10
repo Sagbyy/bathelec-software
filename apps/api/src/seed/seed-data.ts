@@ -187,6 +187,7 @@ export function buildCompletedDerivationData(
       brand: 'Schneider',
       type: 'selectif',
       power: '60A',
+      calibrationPower: '45A',
       commissioningDone: true,
       sealed: true,
     },
