@@ -78,8 +78,8 @@ export const adminLinks: NavbarLink[] = [
   },
 ];
 
-export function getVisibleAdminLinks(role: string): NavbarLink[] {
+export function getVisibleAdminLinks(role: Role): NavbarLink[] {
   return adminLinks.filter((link) =>
-    (link.allowedRoles ?? [Role.ADMIN]).includes(role as Role)
+    (link.allowedRoles ?? [Role.ADMIN]).includes(role)
   );
 }

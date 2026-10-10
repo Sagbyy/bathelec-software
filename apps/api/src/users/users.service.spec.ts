@@ -1,8 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
+import { Role } from '@repo/types';
 import * as bcrypt from 'bcryptjs';
 import { ChangePasswordDto } from './dto/request/change-password.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
@@ -686,6 +692,51 @@ describe('UsersService', () => {
         },
       });
     });
+
+    it('strips the role field when a non-admin updates a non-admin user', async () => {
+      const technician = { ...mockUser, role: Role.TECHNICIAN };
+      mockPrismaService.user.findUnique.mockResolvedValue(technician);
+      mockPrismaService.user.update.mockResolvedValue(technician);
+
+      await service.updateUser(
+        userId,
+        { firstName: 'X', role: Role.ADMIN },
+        Role.SUPERVISOR
+      );
+
+      expect(mockPrismaService.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: { firstName: 'X' },
+        omit: { password: true },
+      });
+    });
+
+    it('keeps the role field when an admin updates a user', async () => {
+      const technician = { ...mockUser, role: Role.TECHNICIAN };
+      mockPrismaService.user.findUnique.mockResolvedValue(technician);
+      mockPrismaService.user.update.mockResolvedValue(technician);
+
+      await service.updateUser(
+        userId,
+        { firstName: 'X', role: Role.ADMIN },
+        Role.ADMIN
+      );
+
+      expect(mockPrismaService.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: { firstName: 'X', role: Role.ADMIN },
+        omit: { password: true },
+      });
+    });
+
+    it('forbids a non-admin from modifying an admin account', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+
+      await expect(
+        service.updateUser(userId, { firstName: 'X' }, Role.SUPERVISOR)
+      ).rejects.toThrow(ForbiddenException);
+      expect(mockPrismaService.user.update).not.toHaveBeenCalled();
+    });
   });
 
   describe('deleteUser', () => {
@@ -756,6 +807,28 @@ describe('UsersService', () => {
       );
 
       expect(mockPrismaService.user.delete).toHaveBeenCalled();
+    });
+
+    it('forbids a non-admin from deleting an admin account', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+
+      await expect(
+        service.deleteUser(userId, Role.SUPERVISOR)
+      ).rejects.toThrow(ForbiddenException);
+      expect(mockPrismaService.user.delete).not.toHaveBeenCalled();
+    });
+
+    it('allows a non-admin to delete a non-admin user', async () => {
+      const technician = { ...mockUser, role: Role.TECHNICIAN };
+      mockPrismaService.user.findUnique.mockResolvedValue(technician);
+      mockPrismaService.user.delete.mockResolvedValue(technician);
+
+      const result = await service.deleteUser(userId, Role.SUPERVISOR);
+
+      expect(result).toEqual(technician);
+      expect(mockPrismaService.user.delete).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
     });
   });
 });
