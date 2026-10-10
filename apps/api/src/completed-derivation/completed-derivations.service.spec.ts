@@ -42,6 +42,7 @@ const mockDto = {
     brand: '1',
     type: '1',
     power: '1',
+    calibrationPower: '1',
     commissioningDone: true,
     sealed: true,
   },

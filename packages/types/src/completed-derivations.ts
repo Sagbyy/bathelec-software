@@ -61,6 +61,7 @@ export interface CircuitBreaker {
   brand: string;
   type: CircuitBreakerType;
   power: string;
+  calibrationPower: string;
   commissioningDone: boolean;
   sealed: boolean;
 }

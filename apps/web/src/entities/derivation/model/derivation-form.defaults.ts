@@ -51,6 +51,7 @@ export const DEFAULT_FORM_VALUES = {
     brand: '',
     type: undefined,
     power: '',
+    calibrationPower: '',
     commissioningDone: false,
     sealed: false,
   },

@@ -58,6 +58,7 @@ describe('CompletedDerivationController', () => {
       brand: 'brand 1',
       type: 'type 1',
       power: '1000',
+      calibrationPower: '900',
       commissioningDone: false,
       sealed: false,
     },

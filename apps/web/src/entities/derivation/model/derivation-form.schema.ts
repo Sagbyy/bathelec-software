@@ -16,8 +16,7 @@ export function oldMeterRequiresKey(oldMeter: {
 }): boolean {
   const keptWithLinkyRefusal = !!oldMeter.preserved && !!oldMeter.linkyRefusal;
   return (
-    !keptWithLinkyRefusal &&
-    METER_TYPES_WITH_KEY.includes(oldMeter.type ?? '')
+    !keptWithLinkyRefusal && METER_TYPES_WITH_KEY.includes(oldMeter.type ?? '')
   );
 }
 
@@ -156,7 +155,12 @@ export const createCompletedDerivationSchema = z.object({
           { message: 'Le type doit être sélectionné' }
         )
     ),
-    power: z.string().min(1, { message: 'La puissance est requise' }),
+    power: z
+      .string()
+      .min(1, { message: 'La puissance du disjoncteur est requise' }),
+    calibrationPower: z
+      .string()
+      .min(1, { message: 'La puissance du calibrage est requise' }),
     commissioningDone: z.boolean(),
     sealed: z.boolean().refine((val) => val === true, {
       message: 'Le disjoncteur doit être scellé',

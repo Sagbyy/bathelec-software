@@ -155,7 +155,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
       <LabeledSelect
         control={form.control}
         name="circuitBreaker.power"
-        label="Puissance"
+        label="Puissance du disjoncteur"
         placeholder="Sélectionner une puissance"
         disabled={isCompleted}
         required
@@ -172,6 +172,15 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         <SelectItem value="50">50 A</SelectItem>
         <SelectItem value="60">60 A</SelectItem>
       </LabeledSelect>
+
+      <LabeledInput
+        control={form.control}
+        name="circuitBreaker.calibrationPower"
+        label="Puissance du calibrage"
+        placeholder="Ex: 45 A"
+        disabled={isCompleted}
+        required
+      />
 
       <FormField
         control={form.control}

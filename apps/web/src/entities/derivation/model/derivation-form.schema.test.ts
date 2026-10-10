@@ -4,11 +4,7 @@ import {
   oldMeterRequiresKey,
 } from './derivation-form.schema';
 
-const hasIssueAt = (
-  result: ReturnType<typeof createCompletedDerivationSchema.safeParse>,
-  segment: string,
-  field: string
-) =>
+const hasIssueAt = (result: ReturnType, segment: string, field: string) =>
   result.error?.issues.some(
     (i) => i.path[0] === segment && i.path.includes(field)
   ) ?? false;
@@ -67,6 +63,7 @@ const validData = {
     brand: 'Schneider',
     type: 'differentiel',
     power: '60A',
+    calibrationPower: '45A',
     commissioningDone: true,
     sealed: true,
   },
@@ -200,6 +197,26 @@ describe('createCompletedDerivationSchema', () => {
       });
       expect(result.success).toBe(true);
     });
+
+    it('requires the calibration power (DTA-44)', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        circuitBreaker: { ...validData.circuitBreaker, calibrationPower: '' },
+      });
+      expect(result.success).toBe(false);
+      expect(hasIssueAt(result, 'circuitBreaker', 'calibrationPower')).toBe(
+        true
+      );
+    });
+
+    it('requires the breaker power (DTA-44)', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        circuitBreaker: { ...validData.circuitBreaker, power: '' },
+      });
+      expect(result.success).toBe(false);
+      expect(hasIssueAt(result, 'circuitBreaker', 'power')).toBe(true);
+    });
   });
 
   describe('oldMeter linky validation', () => {
@@ -214,8 +231,7 @@ describe('createCompletedDerivationSchema', () => {
       });
       expect(result.success).toBe(false);
       const linkyError = result.error?.issues.find(
-        (i) =>
-          i.path[0] === 'oldMeter' && i.message.includes('génération')
+        (i) => i.path[0] === 'oldMeter' && i.message.includes('génération')
       );
       expect(linkyError).toBeDefined();
     });

@@ -73,6 +73,7 @@ export class CompletedDerivation {
     brand: string;
     type: string;
     power: string;
+    calibrationPower: string;
     commissioningDone: boolean;
     sealed: boolean;
   };
