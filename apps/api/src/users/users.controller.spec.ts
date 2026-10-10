@@ -32,9 +32,12 @@ describe('UsersController', () => {
   });
 });
 
-describe('UsersController updateUser role protection', () => {
+describe('UsersController requester-role forwarding', () => {
   let controller: UsersController;
-  const mockUsersService = { updateUser: jest.fn() };
+  const mockUsersService = {
+    updateUser: jest.fn(),
+    deleteUser: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,30 +48,24 @@ describe('UsersController updateUser role protection', () => {
     controller = module.get<UsersController>(UsersController);
     jest.clearAllMocks();
     mockUsersService.updateUser.mockResolvedValue({ id: 1 });
+    mockUsersService.deleteUser.mockResolvedValue({ id: 1 });
   });
 
-  it('keeps the role field when an admin performs the update', async () => {
-    await controller.updateUser(
-      '1',
-      { firstName: 'Jane', role: Role.ADMIN },
-      { user: { role: Role.ADMIN } }
-    );
+  it('forwards the requester role to updateUser', async () => {
+    const dto = { firstName: 'Jane', role: Role.ADMIN };
 
-    expect(mockUsersService.updateUser).toHaveBeenCalledWith(1, {
-      firstName: 'Jane',
-      role: Role.ADMIN,
-    });
+    await controller.updateUser('1', dto, { user: { role: Role.SUPERVISOR } });
+
+    expect(mockUsersService.updateUser).toHaveBeenCalledWith(
+      1,
+      dto,
+      Role.SUPERVISOR
+    );
   });
 
-  it('strips the role field when a supervisor performs the update', async () => {
-    await controller.updateUser(
-      '1',
-      { firstName: 'Jane', role: Role.ADMIN },
-      { user: { role: Role.SUPERVISOR } }
-    );
+  it('forwards the requester role to deleteUser', async () => {
+    await controller.deleteUser('1', { user: { role: Role.SUPERVISOR } });
 
-    expect(mockUsersService.updateUser).toHaveBeenCalledWith(1, {
-      firstName: 'Jane',
-    });
+    expect(mockUsersService.deleteUser).toHaveBeenCalledWith(1, Role.SUPERVISOR);
   });
 });

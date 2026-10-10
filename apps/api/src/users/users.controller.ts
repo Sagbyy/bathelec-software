@@ -104,16 +104,13 @@ export class UsersController {
   @ApiBody({ type: UpdateUserDto })
   async updateUser(
     @Param('userId') userId: string,
-    @Body(new ValidationPipe()) updateUserDto: UpdateUserDto,
+    @Body(new ValidationPipe({ whitelist: true })) updateUserDto: UpdateUserDto,
     @Request() req
   ) {
-    if (req.user.role !== UserRole.ADMIN) {
-      delete updateUserDto.role;
-    }
-
     const user = await this.usersService.updateUser(
       parseInt(userId),
-      updateUserDto
+      updateUserDto,
+      req.user.role
     );
 
     if (!user) {
@@ -162,8 +159,11 @@ export class UsersController {
     description: 'User not found',
     type: NotFoundDto,
   })
-  async deleteUser(@Param('userId') userId: string) {
-    const user = await this.usersService.deleteUser(parseInt(userId));
+  async deleteUser(@Param('userId') userId: string, @Request() req) {
+    const user = await this.usersService.deleteUser(
+      parseInt(userId),
+      req.user.role
+    );
 
     if (!user) {
       throw new NotFoundException('User not found');
