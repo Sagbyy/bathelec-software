@@ -214,8 +214,7 @@ describe('createCompletedDerivationSchema', () => {
       });
       expect(result.success).toBe(false);
       const linkyError = result.error?.issues.find(
-        (i) =>
-          i.path[0] === 'oldMeter' && i.message.includes('génération')
+        (i) => i.path[0] === 'oldMeter' && i.message.includes('génération')
       );
       expect(linkyError).toBeDefined();
     });
@@ -260,6 +259,45 @@ describe('createCompletedDerivationSchema', () => {
           linkyRefusal: true,
         })
       ).toBe(false);
+    });
+
+    it('does not require a key for a preserved meter (DTA-42)', () => {
+      expect(oldMeterRequiresKey({ type: 'linky', preserved: true })).toBe(
+        false
+      );
+      expect(oldMeterRequiresKey({ type: 'cbe', preserved: true })).toBe(false);
+    });
+  });
+
+  describe('oldMeter preserved: no key nor index (DTA-42)', () => {
+    it('accepts a preserved Linky without key, index nor index photo', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        oldMeter: {
+          type: 'linky',
+          generation: 'g1',
+          preserved: true,
+          serialNumber: '',
+          key: '',
+          dayIndex: '',
+          indexPhoto: null,
+        },
+      });
+      expect(hasIssueAt(result, 'oldMeter', 'key')).toBe(false);
+      expect(hasIssueAt(result, 'oldMeter', 'serialNumber')).toBe(false);
+      expect(hasIssueAt(result, 'oldMeter', 'indexPhoto')).toBe(false);
+    });
+
+    it('still requires the index photo when the meter is not preserved', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        oldMeter: {
+          ...validData.oldMeter,
+          preserved: false,
+          indexPhoto: null,
+        },
+      });
+      expect(hasIssueAt(result, 'oldMeter', 'indexPhoto')).toBe(true);
     });
   });
 
