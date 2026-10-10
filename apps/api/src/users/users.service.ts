@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -7,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
+import { Role } from '@repo/types';
 import { ChangePasswordDto } from './dto/request/change-password.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
 
@@ -141,7 +143,11 @@ export class UsersService {
     return users;
   }
 
-  async updateUser(userId: number, updateUserDto: UpdateUserDto) {
+  async updateUser(
+    userId: number,
+    updateUserDto: UpdateUserDto,
+    requesterRole?: string
+  ) {
     if (!userId) throw new BadRequestException('No ID specified');
 
     const user = await this.prisma.user.findUnique({
@@ -151,6 +157,15 @@ export class UsersService {
     if (!user) {
       this.logger.error(`User with ID ${userId} not found`);
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (requesterRole && requesterRole !== Role.ADMIN) {
+      if (user.role === Role.ADMIN) {
+        throw new ForbiddenException(
+          'Only an admin can modify an admin account'
+        );
+      }
+      delete updateUserDto.role;
     }
 
     try {
@@ -175,7 +190,7 @@ export class UsersService {
     }
   }
 
-  async deleteUser(userId: number) {
+  async deleteUser(userId: number, requesterRole?: string) {
     if (!userId) throw new BadRequestException('No ID specified');
 
     const user = await this.prisma.user.findUnique({
@@ -185,6 +200,14 @@ export class UsersService {
     if (!user) {
       this.logger.error(`User with ID ${userId} not found`);
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (
+      requesterRole &&
+      requesterRole !== Role.ADMIN &&
+      user.role === Role.ADMIN
+    ) {
+      throw new ForbiddenException('Only an admin can delete an admin account');
     }
 
     try {
