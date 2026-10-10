@@ -14,11 +14,10 @@ export function oldMeterRequiresKey(oldMeter: {
   preserved?: boolean;
   linkyRefusal?: boolean;
 }): boolean {
-  const keptWithLinkyRefusal = !!oldMeter.preserved && !!oldMeter.linkyRefusal;
-  return (
-    !keptWithLinkyRefusal &&
-    METER_TYPES_WITH_KEY.includes(oldMeter.type ?? '')
-  );
+  if (oldMeter.preserved) {
+    return false;
+  }
+  return METER_TYPES_WITH_KEY.includes(oldMeter.type ?? '');
 }
 
 photoBeforeWork: z.object({
@@ -73,11 +72,17 @@ export const createCompletedDerivationSchema = z.object({
       key: z.string().optional(),
       dayIndex: z.string().optional(),
       nightIndex: z.string().optional(),
-      indexPhoto: z
-        .any()
-        .refine((val) => val !== null, { message: 'La photo est requise' }),
+      indexPhoto: z.any().optional(),
     })
     .superRefine((data, ctx) => {
+      if (!data.preserved && data.indexPhoto === null) {
+        ctx.addIssue({
+          path: ['indexPhoto'],
+          message: 'La photo est requise',
+          code: 'custom',
+        });
+      }
+
       if (data.type === 'linky' && !data.generation) {
         ctx.addIssue({
           path: ['generation'],

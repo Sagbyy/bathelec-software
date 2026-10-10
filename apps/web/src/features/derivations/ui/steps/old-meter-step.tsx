@@ -162,90 +162,94 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
         />
       )}
 
-      <LabeledInput
-        control={form.control}
-        name="oldMeter.dayIndex"
-        label="Index jour - HP"
-        placeholder="Index à relever pour tous type de contrat"
-        disabled={isCompleted}
-      />
+      {!oldMeterPreserved && (
+        <>
+          <LabeledInput
+            control={form.control}
+            name="oldMeter.dayIndex"
+            label="Index jour - HP"
+            placeholder="Index à relever pour tous type de contrat"
+            disabled={isCompleted}
+          />
 
-      <LabeledInput
-        control={form.control}
-        name="oldMeter.nightIndex"
-        label="Index nuit - HC"
-        placeholder="Si le client a souscrit un contrat double tarif"
-        disabled={isCompleted}
-      />
+          <LabeledInput
+            control={form.control}
+            name="oldMeter.nightIndex"
+            label="Index nuit - HC"
+            placeholder="Si le client a souscrit un contrat double tarif"
+            disabled={isCompleted}
+          />
 
-      <FormField
-        control={form.control}
-        name="oldMeter.indexPhoto"
-        render={({ field: { value, onChange, ...field } }) => (
-          <FormItem>
-            <FormLabel>
-              Photo relevé index ancien compteur
-              <span className="ml-1 text-red-500">*</span>
-            </FormLabel>
-            <FormControl>
-              <div className="flex flex-col items-center gap-4">
-                {previewUrl ? (
-                  <div className="relative w-full max-w-md">
-                    <Image
-                      src={previewUrl || '/placeholder.svg'}
-                      alt="Aperçu de la photo"
-                      width={400}
-                      height={300}
-                      className="h-auto w-full rounded-md object-cover"
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      className="absolute right-2 top-2"
-                      onClick={() => clearFile(onChange)}
-                      disabled={isCompleted}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+          <FormField
+            control={form.control}
+            name="oldMeter.indexPhoto"
+            render={({ field: { value, onChange, ...field } }) => (
+              <FormItem>
+                <FormLabel>
+                  Photo relevé index ancien compteur
+                  <span className="ml-1 text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <div className="flex flex-col items-center gap-4">
+                    {previewUrl ? (
+                      <div className="relative w-full max-w-md">
+                        <Image
+                          src={previewUrl || '/placeholder.svg'}
+                          alt="Aperçu de la photo"
+                          width={400}
+                          height={300}
+                          className="h-auto w-full rounded-md object-cover"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="absolute right-2 top-2"
+                          onClick={() => clearFile(onChange)}
+                          disabled={isCompleted}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="w-full max-w-md rounded-md border-2 border-dashed border-gray-300 p-8 text-center">
+                        <div className="flex flex-col items-center">
+                          <Upload className="mb-2 h-10 w-10 text-gray-400" />
+                          <p className="mb-2 text-sm text-gray-600">
+                            Cliquez ou glissez-déposez une photo
+                          </p>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            id="old-meter-photo-upload"
+                            onChange={(e) => handleFileChange(e, onChange)}
+                            {...field}
+                            disabled={isCompleted}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() =>
+                              document
+                                .getElementById('old-meter-photo-upload')
+                                ?.click()
+                            }
+                            disabled={isCompleted}
+                          >
+                            Sélectionner une photo
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="w-full max-w-md rounded-md border-2 border-dashed border-gray-300 p-8 text-center">
-                    <div className="flex flex-col items-center">
-                      <Upload className="mb-2 h-10 w-10 text-gray-400" />
-                      <p className="mb-2 text-sm text-gray-600">
-                        Cliquez ou glissez-déposez une photo
-                      </p>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        id="old-meter-photo-upload"
-                        onChange={(e) => handleFileChange(e, onChange)}
-                        {...field}
-                        disabled={isCompleted}
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() =>
-                          document
-                            .getElementById('old-meter-photo-upload')
-                            ?.click()
-                        }
-                        disabled={isCompleted}
-                      >
-                        Sélectionner une photo
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </>
+      )}
     </div>
   );
 }
