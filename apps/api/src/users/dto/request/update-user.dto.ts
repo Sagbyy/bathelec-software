@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsIn } from 'class-validator';
+import { Role, ROLE_VALUES } from '@repo/types';
 
 export class UpdateUserDto {
   @ApiProperty({
@@ -39,11 +40,12 @@ export class UpdateUserDto {
   lastName?: string;
 
   @ApiProperty({
-    example: 'admin',
+    example: Role.ADMIN,
+    enum: Role,
     description: 'The role of the user',
     required: false,
   })
-  @IsString()
+  @IsIn(ROLE_VALUES)
   @IsOptional()
-  role?: string;
+  role?: Role;
 }

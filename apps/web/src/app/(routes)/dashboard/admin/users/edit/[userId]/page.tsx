@@ -38,6 +38,7 @@ import { toast } from 'sonner';
 import clsx from 'clsx';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { getApiErrorMessage } from '@/shared/lib/api-error';
+import { Role, ROLE_VALUES, ROLE_LABELS } from '@repo/types';
 
 const updateUserSchema = z.object({
   firstName: z
@@ -53,8 +54,8 @@ const updateUserSchema = z.object({
     .string()
     .min(2, "Le nom d'utilisateur doit avoir au moins 2 caractères")
     .max(50, "Le nom d'utilisateur doit avoir au maximum 50 caractères"),
-  role: z.enum(['admin', 'technician'], {
-    errorMap: () => ({ message: 'Le rôle doit être admin ou technician' }),
+  role: z.nativeEnum(Role, {
+    errorMap: () => ({ message: 'Rôle invalide' }),
   }),
 });
 import {
@@ -86,19 +87,18 @@ export default function UserDetailsPage() {
       lastName: '',
       email: '',
       username: '',
-      role: 'admin',
+      role: Role.ADMIN,
     },
   });
 
   useEffect(() => {
     if (user) {
-      console.log(user.role);
       form.reset({
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         username: user.username,
-        role: user.role as 'admin' | 'technician',
+        role: user.role,
       });
     }
   }, [user, form]);
@@ -323,8 +323,11 @@ export default function UserDetailsPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="admin">Administrateur</SelectItem>
-                        <SelectItem value="technician">Technicien</SelectItem>
+                        {ROLE_VALUES.map((role) => (
+                          <SelectItem key={role} value={role}>
+                            {ROLE_LABELS[role]}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />

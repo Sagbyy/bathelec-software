@@ -1,17 +1,19 @@
 'use client';
 
+import { Role } from '@repo/types';
 import { useUserStore } from '@/entities/user/model/use-user-store';
+import { isManagementRole } from '@/entities/user';
 import TechnicianPage from './technician-page';
 import AdminPage from './admin-page';
 
 export default function DashboardPage() {
   const { user } = useUserStore();
 
-  if (user?.role === 'admin') {
+  if (user && isManagementRole(user.role)) {
     return <AdminPage />;
   }
 
-  if (user?.role === 'technician') {
+  if (user?.role === Role.TECHNICIAN) {
     return <TechnicianPage />;
   }
 
