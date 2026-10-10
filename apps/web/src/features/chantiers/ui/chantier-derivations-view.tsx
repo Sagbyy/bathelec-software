@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { Chantier } from '@repo/types';
 import { DataTable } from '@/shared/ui/data-table';
 import { useCompletedDerivationsByIds } from '@/features/derivations/model/use-completed-derivations';
+import { ChantierDocumentsSection } from '@/entities/chantier-document';
 import { derivationColumns } from './derivation-columns';
 import { toDerivationRow } from '../lib/derivation-row';
 
@@ -85,6 +86,8 @@ export function ChantierDerivationsView({
         searchPlaceholder="Rechercher une dérivation..."
         emptyMessage="Aucune dérivation."
       />
+
+      <ChantierDocumentsSection chantierId={chantierId} />
     </div>
   );
 }

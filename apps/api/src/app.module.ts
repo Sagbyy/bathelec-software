@@ -14,6 +14,7 @@ import { HabilitationsModule } from './habilitations/habilitations.module';
 import { SpecialHabilitationsModule } from './special-habilitations/special-habilitations.module';
 import { MarketModule } from './market/market.module';
 import { ChantiersModule } from './chantiers/chantiers.module';
+import { ChantierDocumentsModule } from './chantier-documents/chantier-documents.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ChantiersModule } from './chantiers/chantiers.module';
     SpecialHabilitationsModule,
     MarketModule,
     ChantiersModule,
+    ChantierDocumentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
