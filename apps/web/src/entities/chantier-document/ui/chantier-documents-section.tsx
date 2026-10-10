@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import {
   CHANTIER_DOCUMENT_TYPE_LABELS,
   ChantierDocumentType,
@@ -8,9 +7,10 @@ import {
 import { Button } from '@/shared/ui/button';
 import { Badge } from '@/shared/ui/badge';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { toast } from 'sonner';
-import { chantierDocumentService } from '../api/chantier-document.service';
-import { useChantierDocuments } from '../model/use-chantier-documents';
+import {
+  useChantierDocuments,
+  useChantierDocumentDownload,
+} from '../model/use-chantier-documents';
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} o`;
@@ -20,29 +20,12 @@ function formatSize(bytes: number): string {
 
 export function ChantierDocumentsSection({
   chantierId,
-}: {
+}: Readonly<{
   chantierId: number;
-}) {
+}>) {
   const { data: documents, isLoading, error } =
     useChantierDocuments(chantierId);
-  const [downloadingId, setDownloadingId] = useState<string | null>(null);
-
-  const handleDownload = async (id: string, name: string) => {
-    try {
-      setDownloadingId(id);
-      const file = await chantierDocumentService.getOne(id);
-      const link = document.createElement('a');
-      link.href = file.file;
-      link.download = name;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch {
-      toast.error('Échec du téléchargement du document');
-    } finally {
-      setDownloadingId(null);
-    }
-  };
+  const { download, downloadingId } = useChantierDocumentDownload();
 
   return (
     <section className="mt-10">
@@ -60,7 +43,7 @@ export function ChantierDocumentsSection({
       <ul className="flex flex-col gap-2">
         {documents?.map((documentItem) => (
           <li
-            key={documentItem.id}
+            key={documentItem._id}
             className="flex items-center justify-between rounded-lg border p-3"
           >
             <div className="flex flex-col gap-1">
@@ -78,8 +61,8 @@ export function ChantierDocumentsSection({
               variant="ghost"
               size="icon"
               title="Télécharger"
-              onClick={() => handleDownload(documentItem.id, documentItem.name)}
-              disabled={downloadingId === documentItem.id}
+              onClick={() => download(documentItem)}
+              disabled={downloadingId === documentItem._id}
             >
               <Icon icon="mdi:download" className="h-4 w-4" />
             </Button>

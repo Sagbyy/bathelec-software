@@ -23,7 +23,7 @@ export const CHANTIER_DOCUMENT_TYPE_LABELS: Record<
 };
 
 export interface ChantierDocument {
-  id: string;
+  _id: string;
   chantierId: number;
   name: string;
   type: ChantierDocumentType;

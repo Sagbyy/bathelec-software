@@ -1,4 +1,21 @@
-import { IsBase64DocumentConstraint } from './is-base64-document.validator';
+import {
+  IsBase64DocumentConstraint,
+  decodedByteLength,
+} from './is-base64-document.validator';
+
+describe('decodedByteLength', () => {
+  it('computes the byte size without padding', () => {
+    expect(decodedByteLength('QUJD')).toBe(3);
+  });
+
+  it('accounts for one padding character', () => {
+    expect(decodedByteLength('QUI=')).toBe(2);
+  });
+
+  it('accounts for two padding characters', () => {
+    expect(decodedByteLength('QQ==')).toBe(1);
+  });
+});
 
 describe('IsBase64DocumentConstraint', () => {
   let validator: IsBase64DocumentConstraint;
@@ -66,14 +83,14 @@ describe('IsBase64DocumentConstraint', () => {
     });
   });
 
-  describe('protection DoS (taille)', () => {
-    it('should reject a base64 string exceeding 10MB', () => {
+  describe('protection DoS (taille décodée)', () => {
+    it('should reject a file whose decoded size exceeds 10MB', () => {
       const oversized =
-        'data:application/pdf;base64,' + 'A'.repeat(10 * 1024 * 1024 + 1);
+        'data:application/pdf;base64,' + 'A'.repeat(14 * 1024 * 1024);
       expect(validator.validate(oversized)).toBe(false);
     });
 
-    it('should accept a base64 string within the 10MB limit', () => {
+    it('should accept a file whose decoded size is within 10MB', () => {
       const withinLimit = 'data:application/pdf;base64,' + 'A'.repeat(100);
       expect(validator.validate(withinLimit)).toBe(true);
     });

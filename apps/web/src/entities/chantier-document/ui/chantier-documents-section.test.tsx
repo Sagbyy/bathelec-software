@@ -2,15 +2,16 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@iconify/react/dist/iconify.js', () => ({ Icon: () => null }));
-vi.mock('sonner', () => ({ toast: { error: vi.fn() } }));
 
 const mockUseChantierDocuments = vi.fn();
+const mockDownload = vi.fn();
 vi.mock('../model/use-chantier-documents', () => ({
   useChantierDocuments: (chantierId: number) =>
     mockUseChantierDocuments(chantierId),
-}));
-vi.mock('../api/chantier-document.service', () => ({
-  chantierDocumentService: { getOne: vi.fn() },
+  useChantierDocumentDownload: () => ({
+    download: mockDownload,
+    downloadingId: null,
+  }),
 }));
 
 import { ChantierDocumentsSection } from './chantier-documents-section';
@@ -32,7 +33,7 @@ describe('ChantierDocumentsSection', () => {
     mockUseChantierDocuments.mockReturnValue({
       data: [
         {
-          id: 'a',
+          _id: 'a',
           name: 'Étude 2026',
           type: 'market_study',
           size: 2048,
