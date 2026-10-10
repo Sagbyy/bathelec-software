@@ -20,6 +20,7 @@ import {
   AuthenticatedUser,
   CurrentUser,
 } from '../common/decorators/current-user.decorator';
+import { SelfAdminOrSupervisorGuard } from '../common/guards/self-admin-or-supervisor.guard';
 import { SelfOrAdminGuard } from '../common/guards/self-or-admin.guard';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import { CreateOfficialDocumentDto } from './dto/create-official-document.dto';
@@ -49,7 +50,7 @@ export class OfficialDocumentsController {
   }
 
   @Get('by-user/:userId')
-  @UseGuards(SelfOrAdminGuard)
+  @UseGuards(SelfAdminOrSupervisorGuard)
   @ApiOperation({ summary: 'Récupérer les documents officiels par userId' })
   @ApiParam({ name: 'userId', type: Number })
   @ApiResponse({ status: 200, description: 'Documents récupérés.' })
