@@ -24,6 +24,7 @@ describe('UsersService', () => {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
     },
   };
 
@@ -50,6 +51,7 @@ describe('UsersService', () => {
 
     // Reset all mocks
     jest.clearAllMocks();
+    mockPrismaService.user.count.mockResolvedValue(2);
   });
 
   it('should be defined', () => {
@@ -737,6 +739,39 @@ describe('UsersService', () => {
       ).rejects.toThrow(ForbiddenException);
       expect(mockPrismaService.user.update).not.toHaveBeenCalled();
     });
+
+    it('forbids removing the admin role from the last administrator', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+      mockPrismaService.user.count.mockResolvedValue(1);
+
+      await expect(
+        service.updateUser(userId, { role: Role.TECHNICIAN }, Role.ADMIN)
+      ).rejects.toThrow(ForbiddenException);
+      expect(mockPrismaService.user.count).toHaveBeenCalledWith({
+        where: { role: Role.ADMIN },
+      });
+      expect(mockPrismaService.user.update).not.toHaveBeenCalled();
+    });
+
+    it('allows demoting an admin while another administrator remains', async () => {
+      const demoted = { ...mockUser, role: Role.TECHNICIAN };
+      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+      mockPrismaService.user.count.mockResolvedValue(2);
+      mockPrismaService.user.update.mockResolvedValue(demoted);
+
+      const result = await service.updateUser(
+        userId,
+        { role: Role.TECHNICIAN },
+        Role.ADMIN
+      );
+
+      expect(result).toEqual(demoted);
+      expect(mockPrismaService.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: { role: Role.TECHNICIAN },
+        omit: { password: true },
+      });
+    });
   });
 
   describe('deleteUser', () => {
@@ -826,6 +861,32 @@ describe('UsersService', () => {
       const result = await service.deleteUser(userId, Role.SUPERVISOR);
 
       expect(result).toEqual(technician);
+      expect(mockPrismaService.user.delete).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
+    });
+
+    it('forbids deleting the last administrator', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+      mockPrismaService.user.count.mockResolvedValue(1);
+
+      await expect(service.deleteUser(userId, Role.ADMIN)).rejects.toThrow(
+        ForbiddenException
+      );
+      expect(mockPrismaService.user.count).toHaveBeenCalledWith({
+        where: { role: Role.ADMIN },
+      });
+      expect(mockPrismaService.user.delete).not.toHaveBeenCalled();
+    });
+
+    it('allows deleting an admin while another administrator remains', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+      mockPrismaService.user.count.mockResolvedValue(2);
+      mockPrismaService.user.delete.mockResolvedValue(mockUser);
+
+      const result = await service.deleteUser(userId, Role.ADMIN);
+
+      expect(result).toEqual(mockUser);
       expect(mockPrismaService.user.delete).toHaveBeenCalledWith({
         where: { id: userId },
       });

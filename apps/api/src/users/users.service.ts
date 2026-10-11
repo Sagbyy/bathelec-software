@@ -168,6 +168,22 @@ export class UsersService {
       delete updateUserDto.role;
     }
 
+    if (
+      user.role === Role.ADMIN &&
+      updateUserDto.role &&
+      updateUserDto.role !== Role.ADMIN
+    ) {
+      const adminCount = await this.prisma.user.count({
+        where: { role: Role.ADMIN },
+      });
+
+      if (adminCount <= 1) {
+        throw new ForbiddenException(
+          'Impossible de retirer le rôle du dernier administrateur'
+        );
+      }
+    }
+
     try {
       const updatedUser = await this.prisma.user.update({
         where: { id: userId },
@@ -208,6 +224,18 @@ export class UsersService {
       user.role === Role.ADMIN
     ) {
       throw new ForbiddenException('Only an admin can delete an admin account');
+    }
+
+    if (user.role === Role.ADMIN) {
+      const adminCount = await this.prisma.user.count({
+        where: { role: Role.ADMIN },
+      });
+
+      if (adminCount <= 1) {
+        throw new ForbiddenException(
+          'Impossible de supprimer le dernier administrateur'
+        );
+      }
     }
 
     try {
