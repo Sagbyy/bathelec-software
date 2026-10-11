@@ -63,6 +63,12 @@ export const adminLinks: NavbarLink[] = [
     allowedRoles: [Role.ADMIN, Role.SUPERVISOR],
     pages: [
       {
+        label: 'Liste des chantiers',
+        href: '/dashboard/admin/chantiers',
+        type: 'page',
+        description: 'Consulter les chantiers et gérer leurs documents',
+      },
+      {
         label: 'Créer un marché',
         href: '/dashboard/admin/markets/new',
         type: 'page',

@@ -1,7 +1,9 @@
 'use client';
 
+import { ReactNode } from 'react';
 import {
   CHANTIER_DOCUMENT_TYPE_LABELS,
+  ChantierDocument,
   ChantierDocumentType,
 } from '@repo/types';
 import { Button } from '@/shared/ui/button';
@@ -20,8 +22,12 @@ function formatSize(bytes: number): string {
 
 export function ChantierDocumentsSection({
   chantierId,
+  toolbar,
+  renderItemAction,
 }: Readonly<{
   chantierId: number;
+  toolbar?: ReactNode;
+  renderItemAction?: (document: ChantierDocument) => ReactNode;
 }>) {
   const { data: documents, isLoading, error } =
     useChantierDocuments(chantierId);
@@ -30,6 +36,8 @@ export function ChantierDocumentsSection({
   return (
     <section className="mt-10">
       <h2 className="mb-4 text-xl font-bold">Documents du chantier</h2>
+
+      {toolbar && <div className="mb-6">{toolbar}</div>}
 
       {isLoading && <p>Chargement...</p>}
       {error && <p className="text-destructive">Une erreur est survenue</p>}
@@ -57,15 +65,18 @@ export function ChantierDocumentsSection({
                 {formatSize(documentItem.size)}
               </span>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              title="Télécharger"
-              onClick={() => download(documentItem)}
-              disabled={downloadingId === documentItem._id}
-            >
-              <Icon icon="mdi:download" className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                title="Télécharger"
+                onClick={() => download(documentItem)}
+                disabled={downloadingId === documentItem._id}
+              >
+                <Icon icon="mdi:download" className="h-4 w-4" />
+              </Button>
+              {renderItemAction?.(documentItem)}
+            </div>
           </li>
         ))}
       </ul>
