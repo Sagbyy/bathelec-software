@@ -6,10 +6,12 @@ import { Derivation, Role } from '@repo/types';
 import { Button } from '@/shared/ui/button';
 import { DerivationStatusIcon } from '@/entities/derivation';
 import { useUserStore } from '@/entities/user';
+import { NativeSelect } from '@/shared/ui/native-select';
 import {
   formatMemberName,
   getTeamMembers,
   siteTeamQueries,
+  withCurrentAssignee,
   type SiteTeamWithMembers,
 } from '@/entities/site-team';
 import {
@@ -73,7 +75,15 @@ function DerivationAssignmentControl({
 }: DerivationAssignmentControlProps) {
   const claim = useClaimDerivation();
   const assignUser = useAssignDerivationUser();
-  const action = getAssignmentAction(derivation, currentUser);
+  const memberTeamIds = teams?.map((team) => team.id) ?? [];
+  const action = getAssignmentAction(derivation, currentUser, memberTeamIds);
+  const isMine = derivation.userId === currentUser.id;
+
+  const openLink = (
+    <Button asChild variant="outline">
+      <Link href={`${COMPLETE_PATH}/${derivation.id}`}>Ouvrir</Link>
+    </Button>
+  );
 
   if (action === 'claim') {
     return (
@@ -86,20 +96,19 @@ function DerivationAssignmentControl({
     );
   }
 
-  const openLink = (
-    <Button asChild variant="outline">
-      <Link href={`${COMPLETE_PATH}/${derivation.id}`}>Ouvrir</Link>
-    </Button>
-  );
-
   if (action === 'open') return openLink;
 
   if (action === 'assign') {
+    const options = withCurrentAssignee(
+      getTeamMembers(teams, derivation.teamId),
+      derivation.user
+    );
+
     return (
       <div className="flex items-center gap-2">
-        <select
+        <NativeSelect
           aria-label={`Attribuer la dérivation ${derivation.id}`}
-          className="border-input bg-background h-10 rounded-md border px-3 text-sm"
+          className="w-auto"
           value={derivation.userId ?? ''}
           disabled={assignUser.isPending}
           onChange={(event) =>
@@ -111,15 +120,15 @@ function DerivationAssignmentControl({
           }
         >
           <option value="">Non attribuée</option>
-          {getTeamMembers(teams, derivation.teamId).map((member) => (
+          {options.map((member) => (
             <option key={member.id} value={member.id}>
               {member.id === currentUser.id
                 ? `${formatMemberName(member)} (moi)`
                 : formatMemberName(member)}
             </option>
           ))}
-        </select>
-        {derivation.userId === currentUser.id && openLink}
+        </NativeSelect>
+        {isMine && openLink}
       </div>
     );
   }

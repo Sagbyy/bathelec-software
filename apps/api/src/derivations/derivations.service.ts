@@ -16,22 +16,38 @@ import { AuthenticatedUser } from '../common/decorators/current-user.decorator';
 const CHANTIER_INCLUDE = {
   chantier: { include: { market: true } },
   team: { select: { id: true, name: true } },
+  user: { select: { id: true, firstName: true, lastName: true } },
 } as const;
+
+const MANAGEMENT_ROLES: Role[] = [Role.ADMIN, Role.SUPERVISOR];
 
 @Injectable()
 export class DerivationsService {
   constructor(private readonly prisma: PrismaService) {}
   private readonly logger = new Logger(DerivationsService.name);
 
-  async createDerivation(createDerivationDto: CreateDerivationDto) {
-    await this.ensureTeamExists(createDerivationDto.teamId);
+  async createDerivation(
+    createDerivationDto: CreateDerivationDto,
+    actor: AuthenticatedUser
+  ) {
+    const { teamId } = createDerivationDto;
+    await this.ensureTeamExists(teamId);
 
-    if (createDerivationDto.userId !== undefined) {
-      await this.ensureUserExists(createDerivationDto.userId);
-      await this.ensureTeamMember(
-        createDerivationDto.teamId,
-        createDerivationDto.userId
+    const isManagement = MANAGEMENT_ROLES.includes(actor.role as Role);
+    if (!isManagement && !(await this.isTeamMember(teamId, actor.userId))) {
+      throw new ForbiddenException(
+        'Only a member of the team can create a derivation for it'
       );
+    }
+
+    const userId =
+      actor.role === Role.TECHNICIAN
+        ? actor.userId
+        : createDerivationDto.userId;
+
+    if (userId !== undefined) {
+      await this.ensureUserExists(userId);
+      await this.ensureTeamMember(teamId, userId);
     }
 
     if (createDerivationDto.chantierId) {
@@ -47,8 +63,8 @@ export class DerivationsService {
 
     return this.prisma.derivation.create({
       data: {
-        teamId: createDerivationDto.teamId,
-        userId: createDerivationDto.userId ?? null,
+        teamId,
+        userId: userId ?? null,
         chantierId: createDerivationDto.chantierId ?? null,
         correctionComment: createDerivationDto.correctionComment ?? null,
         status: DerivationStatus.PENDING,
@@ -122,21 +138,12 @@ export class DerivationsService {
 
     this.logger.log(`Updating derivation with ID: ${parsedDerivationId}`);
 
-    const { teamId, userId, ...editableFields } =
-      updateDerivationDto as UpdateDerivationDto & {
-        teamId?: unknown;
-        userId?: unknown;
-      };
-
-    if (teamId !== undefined || userId !== undefined) {
-      throw new BadRequestException(
-        'Use the dedicated assignment endpoints to change the team or the assignee'
-      );
-    }
-
     return this.prisma.derivation.update({
       where: { id: parsedDerivationId },
-      data: editableFields,
+      data: {
+        correctionComment: updateDerivationDto.correctionComment,
+        status: updateDerivationDto.status,
+      },
       include: CHANTIER_INCLUDE,
     });
   }

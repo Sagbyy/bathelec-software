@@ -8,6 +8,18 @@ export function getTeamMembers(
   return team?.teamMemberships.map((membership) => membership.user) ?? [];
 }
 
-export function formatMemberName(member: SiteTeamMember) {
+export function withCurrentAssignee(
+  members: SiteTeamMember[],
+  assignee: Omit<SiteTeamMember, 'role'> | null | undefined
+): Array<Omit<SiteTeamMember, 'role'>> {
+  if (!assignee || members.some((member) => member.id === assignee.id)) {
+    return members;
+  }
+  return [...members, assignee];
+}
+
+export function formatMemberName(
+  member: Pick<SiteTeamMember, 'firstName' | 'lastName'>
+) {
   return `${member.firstName} ${member.lastName}`;
 }

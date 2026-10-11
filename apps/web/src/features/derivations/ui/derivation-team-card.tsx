@@ -4,18 +4,17 @@ import { useQuery } from '@tanstack/react-query';
 import { Derivation } from '@repo/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import { useUserStore } from '@/entities/user';
+import { NativeSelect } from '@/shared/ui/native-select';
 import {
   formatMemberName,
   getTeamMembers,
   siteTeamQueries,
+  withCurrentAssignee,
 } from '@/entities/site-team';
 import {
   useAssignDerivationTeam,
   useAssignDerivationUser,
 } from '../model/use-derivation-assignment';
-
-const SELECT_CLASS_NAME =
-  'border-input bg-background h-10 w-full rounded-md border px-3 text-sm';
 
 interface DerivationTeamCardProps {
   derivation: Derivation;
@@ -28,7 +27,10 @@ export function DerivationTeamCard({ derivation }: DerivationTeamCardProps) {
   );
   const assignTeam = useAssignDerivationTeam(derivation.id);
   const assignUser = useAssignDerivationUser();
-  const members = getTeamMembers(teams, derivation.teamId);
+  const members = withCurrentAssignee(
+    getTeamMembers(teams, derivation.teamId),
+    derivation.user
+  );
 
   return (
     <Card>
@@ -38,8 +40,7 @@ export function DerivationTeamCard({ derivation }: DerivationTeamCardProps) {
       <CardContent className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-2 text-sm font-medium">
           Équipe chantier
-          <select
-            className={SELECT_CLASS_NAME}
+          <NativeSelect
             value={derivation.teamId ?? ''}
             disabled={isLoading || assignTeam.isPending}
             onChange={(event) => assignTeam.mutate(Number(event.target.value))}
@@ -54,12 +55,11 @@ export function DerivationTeamCard({ derivation }: DerivationTeamCardProps) {
                 {team.name}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </label>
         <label className="flex flex-col gap-2 text-sm font-medium">
           Technicien
-          <select
-            className={SELECT_CLASS_NAME}
+          <NativeSelect
             value={derivation.userId ?? ''}
             disabled={derivation.teamId === null || assignUser.isPending}
             onChange={(event) =>
@@ -76,7 +76,7 @@ export function DerivationTeamCard({ derivation }: DerivationTeamCardProps) {
                 {formatMemberName(member)}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </label>
       </CardContent>
     </Card>

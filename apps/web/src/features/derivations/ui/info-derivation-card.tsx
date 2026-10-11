@@ -29,14 +29,15 @@ export function InfoCard({ status, chantier, createdAt }: InfoCardProps) {
             <div className="flex items-center gap-2">
               <MapPinIcon className="text-muted-foreground h-4 w-4" />
               <span className="text-sm font-medium">
-                {chantier?.address ?? "Pas de chantier renseigné."}
+                {chantier?.address ?? 'Pas de chantier renseigné.'}
               </span>
             </div>
             {chantier && (
               <div className="flex items-center gap-2">
                 <HashIcon className="text-muted-foreground h-4 w-4" />
                 <span className="text-muted-foreground text-xs">
-                  Enedis: {chantier.enedisAffaireNumber} · Interne: {chantier.internalAffaireNumber}
+                  Enedis: {chantier.enedisAffaireNumber} · Interne:{' '}
+                  {chantier.internalAffaireNumber}
                   {chantier.market && ` · ${chantier.market.name}`}
                 </span>
               </div>

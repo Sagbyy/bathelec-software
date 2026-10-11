@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { Role } from '@repo/types';
-import { formatMemberName, getTeamMembers } from './team-members';
+import {
+  formatMemberName,
+  getTeamMembers,
+  withCurrentAssignee,
+} from './team-members';
 import { SiteTeamWithMembers } from '../model/site-team.types';
 
 const alice = {
@@ -39,5 +43,21 @@ describe('getTeamMembers', () => {
 describe('formatMemberName', () => {
   it('joins first and last names', () => {
     expect(formatMemberName(alice)).toBe('Alice Martin');
+  });
+});
+
+describe('withCurrentAssignee', () => {
+  const former = { id: 9, firstName: 'Ex', lastName: 'Membre' };
+
+  it('keeps the members untouched when the assignee is one of them', () => {
+    expect(withCurrentAssignee([alice, bob], alice)).toEqual([alice, bob]);
+  });
+
+  it('appends an assignee who left the team so the selection stays visible', () => {
+    expect(withCurrentAssignee([alice], former)).toEqual([alice, former]);
+  });
+
+  it('keeps the members untouched without assignee', () => {
+    expect(withCurrentAssignee([alice], null)).toEqual([alice]);
   });
 });

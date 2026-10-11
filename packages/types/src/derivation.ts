@@ -14,6 +14,12 @@ export interface DerivationTeam {
   name: string;
 }
 
+export interface DerivationAssignee {
+  id: number;
+  firstName: string;
+  lastName: string;
+}
+
 export interface Derivation {
   id: number;
   userId: number | null;
@@ -24,4 +30,5 @@ export interface Derivation {
   correctionComment: string | null;
   teamId: number | null;
   team?: DerivationTeam | null;
+  user?: DerivationAssignee | null;
 }

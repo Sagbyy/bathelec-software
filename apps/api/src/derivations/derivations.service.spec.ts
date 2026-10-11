@@ -22,7 +22,10 @@ const mockChantier = {
 const DERIVATION_INCLUDE = {
   chantier: { include: { market: true } },
   team: { select: { id: true, name: true } },
+  user: { select: { id: true, firstName: true, lastName: true } },
 };
+
+const admin = { userId: 1, username: 'admin', role: Role.ADMIN };
 
 const technician = { userId: 42, username: 'tech', role: Role.TECHNICIAN };
 const siteManager = { userId: 7, username: 'lead', role: Role.SITE_MANAGER };
@@ -87,7 +90,7 @@ describe('DerivationsService', () => {
       mockPrismaService.chantier.findUnique.mockResolvedValue(mockChantier);
       mockPrismaService.derivation.create.mockResolvedValue(mockDerivation);
 
-      const result = await service.createDerivation(createDto);
+      const result = await service.createDerivation(createDto, admin);
 
       expect(result).toEqual(mockDerivation);
       expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
@@ -120,7 +123,7 @@ describe('DerivationsService', () => {
         derivationSansChantier
       );
 
-      const result = await service.createDerivation(dto);
+      const result = await service.createDerivation(dto, admin);
 
       expect(result).toEqual(derivationSansChantier);
       expect(mockPrismaService.chantier.findUnique).not.toHaveBeenCalled();
@@ -142,7 +145,7 @@ describe('DerivationsService', () => {
         userId: null,
       });
 
-      await service.createDerivation({ teamId: 3 });
+      await service.createDerivation({ teamId: 3 }, admin);
 
       expect(mockPrismaService.user.findUnique).not.toHaveBeenCalled();
       expect(mockPrismaService.derivation.create).toHaveBeenCalledWith({
@@ -160,7 +163,7 @@ describe('DerivationsService', () => {
     it("lève NotFoundException si l'équipe n'existe pas", async () => {
       mockPrismaService.siteTeam.findUnique.mockResolvedValue(null);
 
-      await expect(service.createDerivation(createDto)).rejects.toThrow(
+      await expect(service.createDerivation(createDto, admin)).rejects.toThrow(
         'Team not found'
       );
       expect(mockPrismaService.derivation.create).not.toHaveBeenCalled();
@@ -170,7 +173,7 @@ describe('DerivationsService', () => {
       mockPrismaService.user.findUnique.mockResolvedValue({ id: 42 });
       mockPrismaService.siteTeamMembership.findUnique.mockResolvedValue(null);
 
-      await expect(service.createDerivation(createDto)).rejects.toThrow(
+      await expect(service.createDerivation(createDto, admin)).rejects.toThrow(
         BadRequestException
       );
       expect(mockPrismaService.derivation.create).not.toHaveBeenCalled();
@@ -179,10 +182,10 @@ describe('DerivationsService', () => {
     it("lève NotFoundException si l'utilisateur n'existe pas", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.createDerivation(createDto)).rejects.toThrow(
+      await expect(service.createDerivation(createDto, admin)).rejects.toThrow(
         NotFoundException
       );
-      await expect(service.createDerivation(createDto)).rejects.toThrow(
+      await expect(service.createDerivation(createDto, admin)).rejects.toThrow(
         'User not found'
       );
       expect(mockPrismaService.derivation.create).not.toHaveBeenCalled();
@@ -192,10 +195,10 @@ describe('DerivationsService', () => {
       mockPrismaService.user.findUnique.mockResolvedValue({ id: 42 });
       mockPrismaService.chantier.findUnique.mockResolvedValue(null);
 
-      await expect(service.createDerivation(createDto)).rejects.toThrow(
+      await expect(service.createDerivation(createDto, admin)).rejects.toThrow(
         NotFoundException
       );
-      await expect(service.createDerivation(createDto)).rejects.toThrow(
+      await expect(service.createDerivation(createDto, admin)).rejects.toThrow(
         'Chantier not found'
       );
       expect(mockPrismaService.derivation.create).not.toHaveBeenCalled();
@@ -278,7 +281,7 @@ describe('DerivationsService', () => {
       expect(result).toEqual(updated);
       expect(mockPrismaService.derivation.update).toHaveBeenCalledWith({
         where: { id: 1 },
-        data: { correctionComment: 'Revoir section 3' },
+        data: { correctionComment: 'Revoir section 3', status: undefined },
         include: DERIVATION_INCLUDE,
       });
     });
@@ -294,13 +297,62 @@ describe('DerivationsService', () => {
   });
 
   describe('updateDerivation (assignment protection)', () => {
-    it("refuse de modifier l'équipe ou l'attributaire via la mise à jour générique", async () => {
+    it('ne transmet à Prisma que le commentaire et le statut', async () => {
       mockPrismaService.derivation.findUnique.mockResolvedValue(mockDerivation);
 
+      await service.updateDerivation(1, {
+        status: DerivationStatus.REVISING,
+        userId: 99,
+        user: { connect: { id: 99 } },
+      } as never);
+
+      expect(mockPrismaService.derivation.update).toHaveBeenCalledWith({
+        where: { id: 1 },
+        data: {
+          correctionComment: undefined,
+          status: DerivationStatus.REVISING,
+        },
+        include: DERIVATION_INCLUDE,
+      });
+    });
+  });
+
+  describe('createDerivation (permissions)', () => {
+    beforeEach(() => {
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue({ id: 3 });
+      mockPrismaService.user.findUnique.mockResolvedValue({ id: 42 });
+      mockPrismaService.derivation.create.mockResolvedValue(mockDerivation);
+    });
+
+    it("force l'attribution au technicien qui crée la dérivation", async () => {
+      mockPrismaService.siteTeamMembership.findUnique.mockResolvedValue({
+        id: 1,
+      });
+
+      await service.createDerivation({ teamId: 3, userId: 99 }, technician);
+
+      expect(mockPrismaService.derivation.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ teamId: 3, userId: 42 }),
+        })
+      );
+    });
+
+    it("refuse à un technicien de créer pour une équipe dont il n'est pas membre", async () => {
+      mockPrismaService.siteTeamMembership.findUnique.mockResolvedValue(null);
+
       await expect(
-        service.updateDerivation(1, { userId: 99 } as never)
-      ).rejects.toThrow(BadRequestException);
-      expect(mockPrismaService.derivation.update).not.toHaveBeenCalled();
+        service.createDerivation({ teamId: 3 }, technician)
+      ).rejects.toThrow(ForbiddenException);
+      expect(mockPrismaService.derivation.create).not.toHaveBeenCalled();
+    });
+
+    it('refuse à un chef de chantier de créer pour une autre équipe', async () => {
+      mockPrismaService.siteTeamMembership.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.createDerivation({ teamId: 3 }, siteManager)
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -353,8 +405,6 @@ describe('DerivationsService', () => {
   });
 
   describe('assignUser', () => {
-    const admin = { userId: 1, username: 'admin', role: Role.ADMIN };
-
     it("permet à un admin d'attribuer à un membre de l'équipe", async () => {
       mockPrismaService.derivation.findUnique.mockResolvedValue({
         ...mockDerivation,

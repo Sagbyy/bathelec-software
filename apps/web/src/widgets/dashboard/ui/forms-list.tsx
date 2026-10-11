@@ -78,10 +78,10 @@ export function FormsList() {
 
   const getTechnicianName = (userId: number | null) => {
     if (userId === null) return 'Non attribuée';
-    const technician = technicians.find((t) => t.id === userId);
-    return technician
-      ? technician.firstName + ' ' + technician.lastName
-      : 'Unknown';
+    const assignee =
+      derivations.find((d) => d.userId === userId)?.user ??
+      technicians.find((t) => t.id === userId);
+    return assignee ? assignee.firstName + ' ' + assignee.lastName : 'Unknown';
   };
 
   const uniqueTechnicians = Array.from(

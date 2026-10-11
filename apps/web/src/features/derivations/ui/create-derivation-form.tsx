@@ -25,6 +25,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/shared/ui/form';
+import { NativeSelect } from '@/shared/ui/native-select';
 import { useUserStore } from '@/entities/user';
 import { useChantiers } from '@/entities/chantier';
 import {
@@ -37,9 +38,6 @@ import {
   siteTeamQueries,
 } from '@/entities/site-team';
 import { useCreateDerivation } from '../model/use-derivation-assignment';
-
-const SELECT_CLASS_NAME =
-  'border-input bg-background h-10 w-full rounded-md border px-3 text-sm';
 
 const parseOptionalId = (value: string) =>
   value === '' ? undefined : Number(value);
@@ -86,8 +84,7 @@ export function CreateDerivationForm() {
                 Équipe chantier
               </FormLabel>
               <FormControl>
-                <select
-                  className={SELECT_CLASS_NAME}
+                <NativeSelect
                   value={field.value ?? ''}
                   disabled={loadingTeams}
                   onChange={(event) => {
@@ -101,7 +98,7 @@ export function CreateDerivationForm() {
                       {team.name}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -116,8 +113,7 @@ export function CreateDerivationForm() {
               <FormItem className="w-full">
                 <FormLabel>Technicien (optionnel)</FormLabel>
                 <FormControl>
-                  <select
-                    className={SELECT_CLASS_NAME}
+                  <NativeSelect
                     value={field.value ?? ''}
                     disabled={selectedTeamId === undefined}
                     onChange={(event) =>
@@ -132,7 +128,7 @@ export function CreateDerivationForm() {
                         {formatMemberName(member)}
                       </option>
                     ))}
-                  </select>
+                  </NativeSelect>
                 </FormControl>
                 <FormMessage />
               </FormItem>

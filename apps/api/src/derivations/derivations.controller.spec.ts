@@ -1,5 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DerivationsController } from './derivations.controller';
+import { ArgumentMetadata } from '@nestjs/common';
+import {
+  DerivationsController,
+  STRICT_VALIDATION,
+} from './derivations.controller';
+import { UpdateDerivationDto } from './dto/request/update-derivation.dto';
+import { CreateDerivationDto } from './dto/request/create-derivation.dto';
 import { DerivationsService } from './derivations.service';
 import { Reflector } from '@nestjs/core';
 import { Role } from '@repo/types';
@@ -67,10 +73,13 @@ describe('DerivationsController', () => {
       mockDerivationsService.createDerivation.mockResolvedValue(mockDerivation);
       const dto = { teamId: 3, userId: 42, chantierId: 1 };
 
-      const result = await controller.createDerivation(dto);
+      const result = await controller.createDerivation(dto, currentUser);
 
       expect(result).toEqual(mockDerivation);
-      expect(mockDerivationsService.createDerivation).toHaveBeenCalledWith(dto);
+      expect(mockDerivationsService.createDerivation).toHaveBeenCalledWith(
+        dto,
+        currentUser
+      );
     });
   });
 
@@ -180,6 +189,10 @@ describe('DerivationsController', () => {
       ['assignUser', [Role.ADMIN, Role.SUPERVISOR, Role.SITE_MANAGER]],
       ['claimDerivation', [Role.TECHNICIAN, Role.SITE_MANAGER]],
       ['findMyDerivations', [Role.TECHNICIAN, Role.SITE_MANAGER]],
+      [
+        'createDerivation',
+        [Role.ADMIN, Role.SUPERVISOR, Role.SITE_MANAGER, Role.TECHNICIAN],
+      ],
     ] as const)('restreint %s aux rôles %j', (handler, roles) => {
       const allowed = new Reflector().get(
         ROLE_METADATA_KEY,
@@ -187,6 +200,41 @@ describe('DerivationsController', () => {
       );
 
       expect(allowed).toEqual(roles);
+    });
+  });
+
+  describe('body validation', () => {
+    const asBody = (metatype: ArgumentMetadata['metatype']) =>
+      ({ type: 'body', metatype }) as ArgumentMetadata;
+
+    it('accepte le commentaire et le statut sur la mise à jour', async () => {
+      const body = { correctionComment: 'Revoir', status: 'Revising' };
+
+      await expect(
+        STRICT_VALIDATION.transform(body, asBody(UpdateDerivationDto))
+      ).resolves.toEqual(body);
+    });
+
+    it.each([
+      [{ userId: 7 }],
+      [{ teamId: 3 }],
+      [{ user: { connect: { id: 7 } } }],
+    ])(
+      "rejette les champs d'attribution sur la mise à jour : %j",
+      async (body) => {
+        await expect(
+          STRICT_VALIDATION.transform(body, asBody(UpdateDerivationDto))
+        ).rejects.toThrow();
+      }
+    );
+
+    it('exige une équipe à la création', async () => {
+      await expect(
+        STRICT_VALIDATION.transform(
+          { chantierId: 1 },
+          asBody(CreateDerivationDto)
+        )
+      ).rejects.toThrow();
     });
   });
 });

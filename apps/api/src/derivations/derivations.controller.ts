@@ -35,14 +35,25 @@ import { UpdateDerivationDto } from './dto/request/update-derivation.dto';
 import { AssignDerivationTeamDto } from './dto/request/assign-derivation-team.dto';
 import { AssignDerivationUserDto } from './dto/request/assign-derivation-user.dto';
 
+export const STRICT_VALIDATION = new ValidationPipe({
+  whitelist: true,
+  forbidNonWhitelisted: true,
+});
+
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('derivations')
 export class DerivationsController {
   constructor(private readonly derivationsService: DerivationsService) {}
 
-  @Role('admin')
   @Post()
+  @UseGuards(RoleGuard)
+  @Role(
+    UserRole.ADMIN,
+    UserRole.SUPERVISOR,
+    UserRole.SITE_MANAGER,
+    UserRole.TECHNICIAN
+  )
   @ApiOperation({ summary: 'Create a new derivation' })
   @ApiResponse({
     status: 201,
@@ -51,9 +62,10 @@ export class DerivationsController {
   })
   @ApiBody({ type: CreateDerivationDto })
   createDerivation(
-    @Body(new ValidationPipe()) createDerivationDto: CreateDerivationDto
+    @Body(STRICT_VALIDATION) createDerivationDto: CreateDerivationDto,
+    @CurrentUser() user: AuthenticatedUser
   ) {
-    return this.derivationsService.createDerivation(createDerivationDto);
+    return this.derivationsService.createDerivation(createDerivationDto, user);
   }
 
   @Get()
@@ -124,7 +136,7 @@ export class DerivationsController {
   @ApiBody({ type: UpdateDerivationDto })
   updateDerivation(
     @Param('derivationId') derivationId: number,
-    @Body() updateDerivationDto: UpdateDerivationDto
+    @Body(STRICT_VALIDATION) updateDerivationDto: UpdateDerivationDto
   ) {
     return this.derivationsService.updateDerivation(
       derivationId,
@@ -142,7 +154,7 @@ export class DerivationsController {
   @ApiResponse({ status: 404, description: 'Derivation or team not found.' })
   assignTeam(
     @Param('derivationId') derivationId: number,
-    @Body(new ValidationPipe()) assignDerivationTeamDto: AssignDerivationTeamDto
+    @Body(STRICT_VALIDATION) assignDerivationTeamDto: AssignDerivationTeamDto
   ) {
     return this.derivationsService.assignTeam(
       derivationId,
@@ -161,7 +173,7 @@ export class DerivationsController {
   @ApiResponse({ status: 403, description: 'Not a manager of this team.' })
   assignUser(
     @Param('derivationId') derivationId: number,
-    @Body(new ValidationPipe())
+    @Body(STRICT_VALIDATION)
     assignDerivationUserDto: AssignDerivationUserDto,
     @CurrentUser() user: AuthenticatedUser
   ) {

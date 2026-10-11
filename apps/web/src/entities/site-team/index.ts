@@ -1,5 +1,9 @@
 export { siteTeamApi, siteTeamQueries } from './api/site-team.api';
-export { getTeamMembers, formatMemberName } from './lib/team-members';
+export {
+  getTeamMembers,
+  formatMemberName,
+  withCurrentAssignee,
+} from './lib/team-members';
 export type {
   SiteTeamMember,
   SiteTeamWithMembers,

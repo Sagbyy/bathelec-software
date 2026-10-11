@@ -6,11 +6,7 @@ import { format } from 'date-fns';
 import { cn } from '@/shared/lib/utils';
 import { Button } from '@/shared/ui/button';
 import { Calendar } from '@/shared/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/shared/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover';
 import { ScrollArea, ScrollBar } from '@/shared/ui/scroll-area';
 import { ControllerRenderProps } from 'react-hook-form';
 import { fr } from 'date-fns/locale';
