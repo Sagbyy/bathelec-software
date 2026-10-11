@@ -37,10 +37,7 @@ type PhoneInputMockProps = {
 
 vi.mock('@/components/ui/phone-input', () => ({
   PhoneInput: React.forwardRef<HTMLInputElement, PhoneInputMockProps>(
-    (
-      { onChange, value, name, onBlur, disabled, placeholder, international },
-      ref
-    ) => (
+    ({ onChange, value, name, onBlur, disabled, placeholder, international }, ref) => (
       <input
         ref={ref}
         data-testid="phone-input"
@@ -163,7 +160,9 @@ describe('MultiStepForm — intégration', () => {
         status,
       });
 
-      await user.click(screen.getAllByRole('button', { name: /Suivant/i })[0]!);
+      await user.click(
+        screen.getAllByRole('button', { name: /Suivant/i })[0]!
+      );
 
       await waitFor(() => {
         expect(screen.getByText(/Étape 2 sur/)).toBeInTheDocument();
