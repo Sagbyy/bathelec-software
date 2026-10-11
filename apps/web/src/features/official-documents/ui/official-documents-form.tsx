@@ -6,15 +6,23 @@ import { useUserStore } from '@/entities/user';
 import {
   useOfficialDocument,
   useUpsertOfficialDocument,
+  useUpdateOfficialDocumentByUser,
 } from '@/entities/official-document';
 import { DocumentUploadCard } from '@/shared/ui/document-upload-card';
 
-export function OfficialDocumentsForm() {
-  const user = useUserStore((s) => s.user);
-  const userId = user?.id;
+interface OfficialDocumentsFormProps {
+  userId?: number;
+}
 
-  const { data, isLoading } = useOfficialDocument(userId!);
-  const { mutate, isPending } = useUpsertOfficialDocument(userId!);
+export function OfficialDocumentsForm({ userId }: OfficialDocumentsFormProps = {}) {
+  const currentUser = useUserStore((s) => s.user);
+  const managed = userId != null;
+  const targetUserId = userId ?? currentUser?.id;
+
+  const { data, isLoading, error } = useOfficialDocument(targetUserId!);
+  const selfUpsert = useUpsertOfficialDocument(targetUserId!);
+  const managedUpdate = useUpdateOfficialDocumentByUser(targetUserId!);
+  const { mutate, isPending } = managed ? managedUpdate : selfUpsert;
 
   const [idCard, setIdCard] = useState<string | null>(null);
   const [btpCard, setBtpCard] = useState<string | null>(null);
@@ -50,6 +58,22 @@ export function OfficialDocumentsForm() {
       <div className="flex min-h-[200px] items-center justify-center">
         <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
       </div>
+    );
+  }
+
+  if (managed && error) {
+    return (
+      <p className="text-destructive text-sm">
+        Impossible de charger les documents de cet utilisateur.
+      </p>
+    );
+  }
+
+  if (managed && !data) {
+    return (
+      <p className="text-muted-foreground text-sm">
+        Ce technicien n&apos;a pas encore enregistré de documents officiels.
+      </p>
     );
   }
 

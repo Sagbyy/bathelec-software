@@ -20,6 +20,14 @@ export const officialDocumentService = {
     return data;
   },
 
+  updateByUserId: async (userId: number, dto: CreateOfficialDocumentDto) => {
+    const { data } = await apiClient.patch<OfficialDocument>(
+      `/official-documents/by-user/${userId}`,
+      dto
+    );
+    return data;
+  },
+
   remove: async (userId: number) => {
     const { data } = await apiClient.delete<OfficialDocument>(
       `/official-documents/by-user/${userId}`

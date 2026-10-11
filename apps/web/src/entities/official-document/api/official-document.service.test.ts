@@ -125,4 +125,44 @@ describe('officialDocumentService', () => {
       await expect(officialDocumentService.remove(1)).rejects.toThrow();
     });
   });
+
+  describe('updateByUserId', () => {
+    it('envoie un PATCH by-user et retourne le document mis à jour', async () => {
+      server.use(
+        http.patch(
+          `${BASE}/official-documents/by-user/:userId`,
+          async ({ params, request }) => {
+            const body = (await request.json()) as Record<string, unknown>;
+            return HttpResponse.json({
+              _id: 'doc3',
+              userId: Number(params.userId),
+              idCard: body.idCard ?? null,
+              btpCard: body.btpCard ?? null,
+              mutualCard: body.mutualCard ?? null,
+              createdAt: '2024-01-01T00:00:00.000Z',
+              updatedAt: '2024-01-01T00:00:00.000Z',
+            });
+          }
+        )
+      );
+
+      const data = await officialDocumentService.updateByUserId(7, {
+        idCard: 'data:image/jpeg;base64,remplace',
+      });
+
+      expect(data.userId).toBe(7);
+      expect(data.idCard).toBe('data:image/jpeg;base64,remplace');
+    });
+
+    it('lève une erreur si le serveur répond 403', async () => {
+      server.use(
+        http.patch(`${BASE}/official-documents/by-user/:userId`, () =>
+          HttpResponse.json({ message: 'Forbidden' }, { status: 403 })
+        )
+      );
+      await expect(
+        officialDocumentService.updateByUserId(1, { idCard: null })
+      ).rejects.toThrow();
+    });
+  });
 });

@@ -7,6 +7,7 @@ import { server } from '@/test/msw/server';
 import {
   useOfficialDocument,
   useUpsertOfficialDocument,
+  useUpdateOfficialDocumentByUser,
   OFFICIAL_DOCUMENT_QUERY_KEY,
 } from './use-official-document';
 
@@ -128,6 +129,87 @@ describe('useUpsertOfficialDocument', () => {
 
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: [OFFICIAL_DOCUMENT_QUERY_KEY, 1],
+    });
+  });
+});
+
+describe('useUpdateOfficialDocumentByUser', () => {
+  afterEach(() => server.resetHandlers());
+
+  it('appelle le PATCH by-user et retourne le document mis à jour', async () => {
+    server.use(
+      http.patch(
+        `${BASE}/official-documents/by-user/:userId`,
+        async ({ params, request }) => {
+          const body = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json({
+            _id: 'doc3',
+            userId: Number(params.userId),
+            idCard: body.idCard ?? null,
+            btpCard: null,
+            mutualCard: null,
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
+          });
+        }
+      )
+    );
+
+    const { result } = renderHook(() => useUpdateOfficialDocumentByUser(7), {
+      wrapper: makeWrapper(),
+    });
+
+    await act(async () => {
+      result.current.mutate({ idCard: 'data:image/jpeg;base64,remplace' });
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data).toMatchObject({
+      userId: 7,
+      idCard: 'data:image/jpeg;base64,remplace',
+    });
+  });
+
+  it('invalide la query official-document du userId ciblé après un succès', async () => {
+    server.use(
+      http.patch(`${BASE}/official-documents/by-user/:userId`, ({ params }) =>
+        HttpResponse.json({
+          _id: 'doc3',
+          userId: Number(params.userId),
+          idCard: null,
+          btpCard: null,
+          mutualCard: null,
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        })
+      )
+    );
+
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+
+    const wrapper = ({ children }: { children: React.ReactNode }) =>
+      React.createElement(
+        QueryClientProvider,
+        { client: queryClient },
+        children
+      );
+
+    const { result } = renderHook(() => useUpdateOfficialDocumentByUser(7), {
+      wrapper,
+    });
+
+    await act(async () => {
+      result.current.mutate({ idCard: null });
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: [OFFICIAL_DOCUMENT_QUERY_KEY, 7],
     });
   });
 });

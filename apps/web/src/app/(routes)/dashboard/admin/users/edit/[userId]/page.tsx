@@ -39,6 +39,7 @@ import clsx from 'clsx';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { getApiErrorMessage } from '@/shared/lib/api-error';
 import { useUserStore } from '@/entities/user';
+import { OfficialDocumentsForm } from '@/features/official-documents';
 import { Role, ROLE_VALUES, ROLE_LABELS } from '@repo/types';
 
 const updateUserSchema = z.object({
@@ -82,6 +83,9 @@ export default function UserDetailsPage() {
   const { mutate: deleteUser, isPending: isDeleting } = useDeleteUser();
   const { user: currentUser } = useUserStore();
   const canEditRole = currentUser?.role === Role.ADMIN;
+  const canManageDocuments =
+    currentUser?.role === Role.ADMIN ||
+    (currentUser?.role === Role.SUPERVISOR && user?.role !== Role.ADMIN);
 
   const form = useForm<UpdateUserFormValues>({
     resolver: zodResolver(updateUserSchema),
@@ -392,6 +396,21 @@ export default function UserDetailsPage() {
           </Form>
         </CardContent>
       </Card>
+
+      {canManageDocuments && (
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Documents officiels</CardTitle>
+            <CardDescription>
+              Consultez, remplacez ou retirez les documents officiels de{' '}
+              {user.username}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <OfficialDocumentsForm userId={userIdNumber} />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
