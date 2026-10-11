@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { Role as UserRole } from '@repo/types';
 import { MarketController } from './market.controller';
 import { MarketService } from './market.service';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import { RoleGuard } from '../role/role.guard';
+import { ROLE_METADATA_KEY } from '../role/role.decorator';
 
 const mockMarket = {
   id: 1,
@@ -139,6 +141,25 @@ describe('MarketController', () => {
           MarketController.prototype.findOne
         ) ?? [];
       expect(guards).not.toContain(RoleGuard);
+    });
+  });
+
+  describe('rôles autorisés', () => {
+    it('ouvre la création de marché à admin et encadrant', () => {
+      const roles = Reflect.getMetadata(
+        ROLE_METADATA_KEY,
+        MarketController.prototype.create
+      );
+      expect(roles).toEqual([UserRole.ADMIN, UserRole.SUPERVISOR]);
+    });
+
+    it('réserve la mise à jour et la suppression aux admins', () => {
+      expect(
+        Reflect.getMetadata(ROLE_METADATA_KEY, MarketController.prototype.update)
+      ).not.toContain(UserRole.SUPERVISOR);
+      expect(
+        Reflect.getMetadata(ROLE_METADATA_KEY, MarketController.prototype.remove)
+      ).not.toContain(UserRole.SUPERVISOR);
     });
   });
 });

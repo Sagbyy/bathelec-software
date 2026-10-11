@@ -60,7 +60,7 @@ export const adminLinks: NavbarLink[] = [
     label: 'Chantiers',
     href: '#',
     type: 'folder',
-    allowedRoles: [Role.ADMIN],
+    allowedRoles: [Role.ADMIN, Role.SUPERVISOR],
     pages: [
       {
         label: 'Créer un marché',

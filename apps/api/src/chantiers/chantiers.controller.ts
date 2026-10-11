@@ -15,6 +15,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { Role as UserRole } from '@repo/types';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import { Role } from '../role/role.decorator';
 import { RoleGuard } from '../role/role.guard';
@@ -29,7 +30,7 @@ import { UpdateChantierDto } from './dto/request/update-chantier.dto';
 export class ChantiersController {
   constructor(private readonly chantiersService: ChantiersService) {}
 
-  @Role('admin')
+  @Role(UserRole.ADMIN, UserRole.SUPERVISOR)
   @UseGuards(RoleGuard)
   @Post()
   @ApiOperation({ summary: 'Create a chantier' })
