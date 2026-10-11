@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OfficialDocumentsController } from './official-documents.controller';
 import { OfficialDocumentsService } from './official-documents.service';
+import { SelfAdminOrSupervisorGuard } from '../common/guards/self-admin-or-supervisor.guard';
 import { SelfOrAdminGuard } from '../common/guards/self-or-admin.guard';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 
@@ -34,6 +35,8 @@ describe('OfficialDocumentsController', () => {
       .overrideGuard(JwtAuthGuard)
       .useValue({ canActivate: () => true })
       .overrideGuard(SelfOrAdminGuard)
+      .useValue({ canActivate: () => true })
+      .overrideGuard(SelfAdminOrSupervisorGuard)
       .useValue({ canActivate: () => true })
       .compile();
 
@@ -108,13 +111,14 @@ describe('OfficialDocumentsController', () => {
     });
   });
 
-  describe('protection IDOR via SelfOrAdminGuard', () => {
-    it('applique SelfOrAdminGuard sur findByUserId', () => {
+  describe('protection IDOR via guards self/role', () => {
+    it('applique SelfAdminOrSupervisorGuard sur findByUserId (lecture ouverte aux encadrants)', () => {
       const guards = Reflect.getMetadata(
         '__guards__',
         OfficialDocumentsController.prototype.findByUserId
       );
-      expect(guards).toContain(SelfOrAdminGuard);
+      expect(guards).toContain(SelfAdminOrSupervisorGuard);
+      expect(guards).not.toContain(SelfOrAdminGuard);
     });
 
     it('applique SelfOrAdminGuard sur update', () => {

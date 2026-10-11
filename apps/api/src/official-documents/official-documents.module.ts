@@ -6,6 +6,7 @@ import {
 } from './entities/official-document.entity';
 import { OfficialDocumentsController } from './official-documents.controller';
 import { OfficialDocumentsService } from './official-documents.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { OfficialDocumentsService } from './official-documents.service';
     ]),
   ],
   controllers: [OfficialDocumentsController],
-  providers: [OfficialDocumentsService],
+  providers: [OfficialDocumentsService, PrismaService],
 })
 export class OfficialDocumentsModule {}
