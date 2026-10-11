@@ -21,7 +21,6 @@ import {
   CurrentUser,
 } from '../common/decorators/current-user.decorator';
 import { SelfAdminOrSupervisorGuard } from '../common/guards/self-admin-or-supervisor.guard';
-import { SelfOrAdminGuard } from '../common/guards/self-or-admin.guard';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import { CreateOfficialDocumentDto } from './dto/create-official-document.dto';
 import { UpdateOfficialDocumentDto } from './dto/update-official-document.dto';
@@ -60,7 +59,7 @@ export class OfficialDocumentsController {
   }
 
   @Patch('by-user/:userId')
-  @UseGuards(SelfOrAdminGuard)
+  @UseGuards(SelfAdminOrSupervisorGuard)
   @ApiOperation({ summary: 'Mettre à jour les documents officiels' })
   @ApiParam({ name: 'userId', type: Number })
   @ApiBody({ type: UpdateOfficialDocumentDto })
@@ -76,7 +75,7 @@ export class OfficialDocumentsController {
   }
 
   @Delete('by-user/:userId')
-  @UseGuards(SelfOrAdminGuard)
+  @UseGuards(SelfAdminOrSupervisorGuard)
   @ApiOperation({ summary: 'Supprimer les documents officiels' })
   @ApiParam({ name: 'userId', type: Number })
   @ApiResponse({ status: 200, description: 'Documents supprimés.' })

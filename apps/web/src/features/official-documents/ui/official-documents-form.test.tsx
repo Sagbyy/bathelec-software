@@ -14,11 +14,16 @@ vi.mock('next/image', () => ({
 }));
 
 const mockMutate = vi.fn();
+const mockManagedMutate = vi.fn();
 
 vi.mock('@/entities/official-document', () => ({
   useOfficialDocument: vi.fn(),
   useUpsertOfficialDocument: vi.fn(() => ({
     mutate: mockMutate,
+    isPending: false,
+  })),
+  useUpdateOfficialDocumentByUser: vi.fn(() => ({
+    mutate: mockManagedMutate,
     isPending: false,
   })),
 }));
@@ -32,10 +37,14 @@ vi.mock('@/entities/user', () => ({
 import {
   useOfficialDocument,
   useUpsertOfficialDocument,
+  useUpdateOfficialDocumentByUser,
 } from '@/entities/official-document';
 
 const mockUseOfficialDocument = vi.mocked(useOfficialDocument);
 const mockUseUpsertOfficialDocument = vi.mocked(useUpsertOfficialDocument);
+const mockUseUpdateOfficialDocumentByUser = vi.mocked(
+  useUpdateOfficialDocumentByUser
+);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const asHook = (v: unknown) => v as any;
@@ -55,6 +64,9 @@ describe('OfficialDocumentsForm', () => {
     vi.clearAllMocks();
     mockUseUpsertOfficialDocument.mockReturnValue(
       asHook({ mutate: mockMutate, isPending: false })
+    );
+    mockUseUpdateOfficialDocumentByUser.mockReturnValue(
+      asHook({ mutate: mockManagedMutate, isPending: false })
     );
   });
 
@@ -277,6 +289,63 @@ describe('OfficialDocumentsForm', () => {
       screen
         .getAllByRole('button')
         .forEach((btn) => expect(btn).toBeDisabled());
+    });
+  });
+
+  describe('mode managé (admin/encadrant sur un autre utilisateur)', () => {
+    it("affiche une note quand le technicien n'a aucun document", () => {
+      mockUseOfficialDocument.mockReturnValue(
+        asHook({ data: null, isLoading: false })
+      );
+
+      render(<OfficialDocumentsForm userId={2} />);
+
+      expect(
+        screen.getByText(/n'a pas encore enregistré de documents officiels/i)
+      ).toBeInTheDocument();
+    });
+
+    it('utilise la mutation par utilisateur (PATCH) et non l’upsert courant', () => {
+      mockUseOfficialDocument.mockReturnValue(
+        asHook({
+          data: {
+            _id: 'doc2',
+            userId: 2,
+            idCard: null,
+            btpCard: null,
+            mutualCard: null,
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
+          },
+          isLoading: false,
+        })
+      );
+
+      const base64 = 'data:image/jpeg;base64,pieceManagee';
+      class MockFileReader {
+        result = base64;
+        onloadend: (() => void) | null = null;
+        readAsDataURL() {
+          this.onloadend?.();
+        }
+      }
+      vi.stubGlobal('FileReader', MockFileReader);
+
+      const { container } = render(<OfficialDocumentsForm userId={2} />);
+      const inputs = container.querySelectorAll('input[type="file"]');
+      fireEvent.change(inputs[0]!, {
+        target: {
+          files: [new File(['img'], 'piece.jpg', { type: 'image/jpeg' })],
+        },
+      });
+
+      expect(mockManagedMutate).toHaveBeenCalledWith({
+        idCard: base64,
+        btpCard: null,
+        mutualCard: null,
+      });
+      expect(mockMutate).not.toHaveBeenCalled();
+      vi.unstubAllGlobals();
     });
   });
 });

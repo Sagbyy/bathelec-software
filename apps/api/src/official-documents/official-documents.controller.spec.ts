@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { OfficialDocumentsController } from './official-documents.controller';
 import { OfficialDocumentsService } from './official-documents.service';
 import { SelfAdminOrSupervisorGuard } from '../common/guards/self-admin-or-supervisor.guard';
-import { SelfOrAdminGuard } from '../common/guards/self-or-admin.guard';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 
 const officialDocumentEntity = {
@@ -33,8 +32,6 @@ describe('OfficialDocumentsController', () => {
       ],
     })
       .overrideGuard(JwtAuthGuard)
-      .useValue({ canActivate: () => true })
-      .overrideGuard(SelfOrAdminGuard)
       .useValue({ canActivate: () => true })
       .overrideGuard(SelfAdminOrSupervisorGuard)
       .useValue({ canActivate: () => true })
@@ -111,39 +108,25 @@ describe('OfficialDocumentsController', () => {
     });
   });
 
-  describe('protection IDOR via guards self/role', () => {
-    it('applique SelfAdminOrSupervisorGuard sur findByUserId (lecture ouverte aux encadrants)', () => {
-      const guards = Reflect.getMetadata(
-        '__guards__',
-        OfficialDocumentsController.prototype.findByUserId
-      );
-      expect(guards).toContain(SelfAdminOrSupervisorGuard);
-      expect(guards).not.toContain(SelfOrAdminGuard);
-    });
+  describe('protection IDOR via SelfAdminOrSupervisorGuard', () => {
+    it.each(['findByUserId', 'update', 'remove'] as const)(
+      'applique SelfAdminOrSupervisorGuard sur %s (ouvert aux encadrants)',
+      (method) => {
+        const guards = Reflect.getMetadata(
+          '__guards__',
+          OfficialDocumentsController.prototype[method]
+        );
+        expect(guards).toContain(SelfAdminOrSupervisorGuard);
+      }
+    );
 
-    it('applique SelfOrAdminGuard sur update', () => {
-      const guards = Reflect.getMetadata(
-        '__guards__',
-        OfficialDocumentsController.prototype.update
-      );
-      expect(guards).toContain(SelfOrAdminGuard);
-    });
-
-    it('applique SelfOrAdminGuard sur remove', () => {
-      const guards = Reflect.getMetadata(
-        '__guards__',
-        OfficialDocumentsController.prototype.remove
-      );
-      expect(guards).toContain(SelfOrAdminGuard);
-    });
-
-    it("n'applique pas SelfOrAdminGuard sur createOrUpdate (userId vient du JWT)", () => {
+    it("n'applique pas de guard self/role sur createOrUpdate (userId vient du JWT)", () => {
       const guards =
         Reflect.getMetadata(
           '__guards__',
           OfficialDocumentsController.prototype.createOrUpdate
         ) ?? [];
-      expect(guards).not.toContain(SelfOrAdminGuard);
+      expect(guards).not.toContain(SelfAdminOrSupervisorGuard);
     });
   });
 });

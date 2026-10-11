@@ -28,3 +28,17 @@ export const useUpsertOfficialDocument = (userId: number) => {
     },
   });
 };
+
+export const useUpdateOfficialDocumentByUser = (userId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (dto: CreateOfficialDocumentDto) =>
+      officialDocumentService.updateByUserId(userId, dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [OFFICIAL_DOCUMENT_QUERY_KEY, userId],
+      });
+    },
+  });
+};
