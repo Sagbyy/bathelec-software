@@ -295,7 +295,7 @@ describe('OfficialDocumentsForm', () => {
   describe('mode managé (admin/encadrant sur un autre utilisateur)', () => {
     it("affiche une note quand le technicien n'a aucun document", () => {
       mockUseOfficialDocument.mockReturnValue(
-        asHook({ data: null, isLoading: false })
+        asHook({ data: null, isLoading: false, error: null })
       );
 
       render(<OfficialDocumentsForm userId={2} />);
@@ -303,6 +303,21 @@ describe('OfficialDocumentsForm', () => {
       expect(
         screen.getByText(/n'a pas encore enregistré de documents officiels/i)
       ).toBeInTheDocument();
+    });
+
+    it('affiche une erreur quand le chargement échoue (sans masquer en « aucun document »)', () => {
+      mockUseOfficialDocument.mockReturnValue(
+        asHook({ data: undefined, isLoading: false, error: new Error('boom') })
+      );
+
+      render(<OfficialDocumentsForm userId={2} />);
+
+      expect(
+        screen.getByText(/impossible de charger les documents/i)
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText(/n'a pas encore enregistré/i)
+      ).not.toBeInTheDocument();
     });
 
     it('utilise la mutation par utilisateur (PATCH) et non l’upsert courant', () => {

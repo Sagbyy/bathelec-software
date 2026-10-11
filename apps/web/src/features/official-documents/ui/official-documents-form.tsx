@@ -19,7 +19,7 @@ export function OfficialDocumentsForm({ userId }: OfficialDocumentsFormProps = {
   const managed = userId != null;
   const targetUserId = userId ?? currentUser?.id;
 
-  const { data, isLoading } = useOfficialDocument(targetUserId!);
+  const { data, isLoading, error } = useOfficialDocument(targetUserId!);
   const selfUpsert = useUpsertOfficialDocument(targetUserId!);
   const managedUpdate = useUpdateOfficialDocumentByUser(targetUserId!);
   const { mutate, isPending } = managed ? managedUpdate : selfUpsert;
@@ -58,6 +58,14 @@ export function OfficialDocumentsForm({ userId }: OfficialDocumentsFormProps = {
       <div className="flex min-h-[200px] items-center justify-center">
         <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
       </div>
+    );
+  }
+
+  if (managed && error) {
+    return (
+      <p className="text-destructive text-sm">
+        Impossible de charger les documents de cet utilisateur.
+      </p>
     );
   }
 

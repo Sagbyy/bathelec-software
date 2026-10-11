@@ -66,7 +66,8 @@ export class OfficialDocumentsController {
   @ApiResponse({ status: 403, description: 'Accès interdit.' })
   update(
     @Param('userId') userId: string,
-    @Body() updateOfficialDocumentDto: UpdateOfficialDocumentDto
+    @Body(new ValidationPipe({ whitelist: true }))
+    updateOfficialDocumentDto: UpdateOfficialDocumentDto
   ) {
     return this.officialDocumentsService.update(
       +userId,
