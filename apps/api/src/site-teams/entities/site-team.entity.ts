@@ -1,6 +1,6 @@
 import { User } from '@prisma/client';
 
-export class UsersGroup {
+export class SiteTeam {
   id: number;
   name: string;
   description: string;

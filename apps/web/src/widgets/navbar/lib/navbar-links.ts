@@ -35,10 +35,10 @@ export const adminLinks: NavbarLink[] = [
         description: "Création d'un nouveau compte technicien",
       },
       {
-        label: 'Groupes de techniciens',
-        href: '/dashboard/admin/technicians/group',
+        label: 'Équipes chantier',
+        href: '/dashboard/admin/site-teams',
         type: 'page',
-        description: 'Voir la liste des groupes de techniciens',
+        description: 'Voir et gérer les équipes chantier',
       },
     ],
   },

@@ -7,7 +7,7 @@ import { DerivationsModule } from './derivations/derivations.module';
 import { ConfigModule } from '@nestjs/config';
 import { CompletedDerivationModule } from './completed-derivation/completed-derivations.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsersGroupsModule } from './users-groups/users-groups.module';
+import { SiteTeamsModule } from './site-teams/site-teams.module';
 import { VehicleDocumentsModule } from './vehicle-documents/vehicle-documents.module';
 import { OfficialDocumentsModule } from './official-documents/official-documents.module';
 import { HabilitationsModule } from './habilitations/habilitations.module';
@@ -26,7 +26,7 @@ import { ChantierDocumentsModule } from './chantier-documents/chantier-documents
     UsersModule,
     DerivationsModule,
     CompletedDerivationModule,
-    UsersGroupsModule,
+    SiteTeamsModule,
     VehicleDocumentsModule,
     OfficialDocumentsModule,
     HabilitationsModule,

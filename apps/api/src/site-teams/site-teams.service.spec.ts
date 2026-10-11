@@ -5,16 +5,16 @@ import {
   HttpStatus,
   NotFoundException,
 } from '@nestjs/common';
-import { UsersGroupsService } from './users-groups.service';
+import { SiteTeamsService } from './site-teams.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserGroup, User, UserGroupMembership } from '@prisma/client';
-import { CreateUsersGroupDto } from './dto/create-users-group.dto';
-import { UpdateUsersGroupDto } from './dto/update-users-group.dto';
+import { SiteTeam, User, SiteTeamMembership } from '@prisma/client';
+import { CreateSiteTeamDto } from './dto/create-site-team.dto';
+import { UpdateSiteTeamDto } from './dto/update-site-team.dto';
 
-describe('UsersGroupsService', () => {
-  let service: UsersGroupsService;
+describe('SiteTeamsService', () => {
+  let service: SiteTeamsService;
   const mockPrismaService = {
-    userGroup: {
+    siteTeam: {
       findUnique: jest.fn(),
       findMany: jest.fn(),
       create: jest.fn(),
@@ -24,7 +24,7 @@ describe('UsersGroupsService', () => {
     user: {
       findUnique: jest.fn(),
     },
-    userGroupMembership: {
+    siteTeamMembership: {
       findUnique: jest.fn(),
       findMany: jest.fn(),
       create: jest.fn(),
@@ -44,30 +44,30 @@ describe('UsersGroupsService', () => {
     createdAt: new Date('2024-01-01'),
   };
 
-  const mockGroup: UserGroup = {
+  const mockTeam: SiteTeam = {
     id: 1,
-    name: 'Test Group',
+    name: 'Test Team',
     description: 'Test Description',
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
   };
 
-  const mockMembership: UserGroupMembership = {
+  const mockMembership: SiteTeamMembership = {
     id: 1,
     userId: 1,
-    groupId: 1,
+    teamId: 1,
     createdAt: new Date('2024-01-01'),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UsersGroupsService,
+        SiteTeamsService,
         { provide: PrismaService, useValue: mockPrismaService },
       ],
     }).compile();
 
-    service = module.get<UsersGroupsService>(UsersGroupsService);
+    service = module.get<SiteTeamsService>(SiteTeamsService);
 
     jest.clearAllMocks();
   });
@@ -77,22 +77,22 @@ describe('UsersGroupsService', () => {
   });
 
   describe('create', () => {
-    const createDto: CreateUsersGroupDto = {
-      name: 'New Group',
+    const createDto: CreateSiteTeamDto = {
+      name: 'New Team',
       description: 'New Description',
     };
 
-    it('should create a group successfully', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(null);
-      mockPrismaService.userGroup.create.mockResolvedValue(mockGroup);
+    it('should create a team successfully', async () => {
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(null);
+      mockPrismaService.siteTeam.create.mockResolvedValue(mockTeam);
 
       const result = await service.create(createDto);
 
-      expect(result).toEqual(mockGroup);
-      expect(mockPrismaService.userGroup.findUnique).toHaveBeenCalledWith({
+      expect(result).toEqual(mockTeam);
+      expect(mockPrismaService.siteTeam.findUnique).toHaveBeenCalledWith({
         where: { name: createDto.name },
       });
-      expect(mockPrismaService.userGroup.create).toHaveBeenCalledWith({
+      expect(mockPrismaService.siteTeam.create).toHaveBeenCalledWith({
         data: {
           name: createDto.name,
           description: createDto.description || null,
@@ -107,9 +107,9 @@ describe('UsersGroupsService', () => {
         BadRequestException
       );
       await expect(service.create(invalidDto)).rejects.toThrow(
-        'Group name is required'
+        'Team name is required'
       );
-      expect(mockPrismaService.userGroup.create).not.toHaveBeenCalled();
+      expect(mockPrismaService.siteTeam.create).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when name is null', async () => {
@@ -118,7 +118,7 @@ describe('UsersGroupsService', () => {
       await expect(service.create(invalidDto)).rejects.toThrow(
         BadRequestException
       );
-      expect(mockPrismaService.userGroup.create).not.toHaveBeenCalled();
+      expect(mockPrismaService.siteTeam.create).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when description is missing', async () => {
@@ -128,9 +128,9 @@ describe('UsersGroupsService', () => {
         BadRequestException
       );
       await expect(service.create(invalidDto)).rejects.toThrow(
-        'Group description is required'
+        'Team description is required'
       );
-      expect(mockPrismaService.userGroup.create).not.toHaveBeenCalled();
+      expect(mockPrismaService.siteTeam.create).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when description is null', async () => {
@@ -139,51 +139,51 @@ describe('UsersGroupsService', () => {
       await expect(service.create(invalidDto)).rejects.toThrow(
         BadRequestException
       );
-      expect(mockPrismaService.userGroup.create).not.toHaveBeenCalled();
+      expect(mockPrismaService.siteTeam.create).not.toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException when group with same name exists', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(mockGroup);
+    it('should throw BadRequestException when team with same name exists', async () => {
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(mockTeam);
 
       await expect(service.create(createDto)).rejects.toThrow(
         BadRequestException
       );
       await expect(service.create(createDto)).rejects.toThrow(
-        'Group with this name already exists'
+        'Team with this name already exists'
       );
-      expect(mockPrismaService.userGroup.create).not.toHaveBeenCalled();
+      expect(mockPrismaService.siteTeam.create).not.toHaveBeenCalled();
     });
 
     it('should throw HttpException when create fails', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(null);
-      mockPrismaService.userGroup.create.mockRejectedValue(
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(null);
+      mockPrismaService.siteTeam.create.mockRejectedValue(
         new Error('Database error')
       );
 
       await expect(service.create(createDto)).rejects.toThrow(HttpException);
       await expect(service.create(createDto)).rejects.toThrow(
-        'Error while creating group'
+        'Error while creating team'
       );
     });
   });
 
   describe('findAll', () => {
-    it('should return all groups', async () => {
-      const groups = [mockGroup];
-      mockPrismaService.userGroup.findMany.mockResolvedValue(groups);
+    it('should return all teams', async () => {
+      const teams = [mockTeam];
+      mockPrismaService.siteTeam.findMany.mockResolvedValue(teams);
 
       const result = await service.findAll();
 
-      expect(result).toEqual(groups);
-      expect(mockPrismaService.userGroup.findMany).toHaveBeenCalledWith({
+      expect(result).toEqual(teams);
+      expect(mockPrismaService.siteTeam.findMany).toHaveBeenCalledWith({
         orderBy: {
           createdAt: 'desc',
         },
       });
     });
 
-    it('should return empty array when no groups exist', async () => {
-      mockPrismaService.userGroup.findMany.mockResolvedValue([]);
+    it('should return empty array when no teams exist', async () => {
+      mockPrismaService.siteTeam.findMany.mockResolvedValue([]);
 
       const result = await service.findAll();
 
@@ -191,23 +191,23 @@ describe('UsersGroupsService', () => {
     });
 
     it('should throw HttpException when findMany fails', async () => {
-      mockPrismaService.userGroup.findMany.mockRejectedValue(
+      mockPrismaService.siteTeam.findMany.mockRejectedValue(
         new Error('Database error')
       );
 
       await expect(service.findAll()).rejects.toThrow(HttpException);
       await expect(service.findAll()).rejects.toThrow(
-        'Error while fetching groups'
+        'Error while fetching teams'
       );
     });
   });
 
   describe('findAllWithUsers', () => {
-    it('should return all groups with users', async () => {
-      const groupsWithUsers = [
+    it('should return all teams with users', async () => {
+      const teamsWithUsers = [
         {
-          ...mockGroup,
-          groupMemberships: [
+          ...mockTeam,
+          teamMemberships: [
             {
               user: {
                 id: 1,
@@ -222,34 +222,34 @@ describe('UsersGroupsService', () => {
           ],
         },
       ];
-      mockPrismaService.userGroup.findMany.mockResolvedValue(groupsWithUsers);
+      mockPrismaService.siteTeam.findMany.mockResolvedValue(teamsWithUsers);
 
       const result = await service.findAllWithUsers();
 
-      expect(result).toEqual(groupsWithUsers);
-      expect(mockPrismaService.userGroup.findMany).toHaveBeenCalled();
+      expect(result).toEqual(teamsWithUsers);
+      expect(mockPrismaService.siteTeam.findMany).toHaveBeenCalled();
     });
 
     it('should throw HttpException when findMany fails', async () => {
-      mockPrismaService.userGroup.findMany.mockRejectedValue(
+      mockPrismaService.siteTeam.findMany.mockRejectedValue(
         new Error('Database error')
       );
 
       await expect(service.findAllWithUsers()).rejects.toThrow(HttpException);
       await expect(service.findAllWithUsers()).rejects.toThrow(
-        'Error while fetching groups with users'
+        'Error while fetching teams with users'
       );
     });
   });
 
   describe('findOne', () => {
-    it('should return a group when id is valid', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(mockGroup);
+    it('should return a team when id is valid', async () => {
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(mockTeam);
 
       const result = await service.findOne(1);
 
-      expect(result).toEqual(mockGroup);
-      expect(mockPrismaService.userGroup.findUnique).toHaveBeenCalledWith({
+      expect(result).toEqual(mockTeam);
+      expect(mockPrismaService.siteTeam.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
       });
     });
@@ -259,34 +259,34 @@ describe('UsersGroupsService', () => {
         BadRequestException
       );
       await expect(service.findOne(null as any)).rejects.toThrow(
-        'Group ID is required'
+        'Team ID is required'
       );
-      expect(mockPrismaService.userGroup.findUnique).not.toHaveBeenCalled();
+      expect(mockPrismaService.siteTeam.findUnique).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when id is undefined', async () => {
       await expect(service.findOne(undefined as any)).rejects.toThrow(
         BadRequestException
       );
-      expect(mockPrismaService.userGroup.findUnique).not.toHaveBeenCalled();
+      expect(mockPrismaService.siteTeam.findUnique).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when id is 0', async () => {
       await expect(service.findOne(0)).rejects.toThrow(BadRequestException);
-      expect(mockPrismaService.userGroup.findUnique).not.toHaveBeenCalled();
+      expect(mockPrismaService.siteTeam.findUnique).not.toHaveBeenCalled();
     });
 
-    it('should throw NotFoundException when group is not found', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(null);
+    it('should throw NotFoundException when team is not found', async () => {
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(null);
 
       await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
       await expect(service.findOne(999)).rejects.toThrow(
-        'Group with ID 999 not found'
+        'Team with ID 999 not found'
       );
     });
 
     it('should throw HttpException when findUnique fails', async () => {
-      mockPrismaService.userGroup.findUnique.mockRejectedValue(
+      mockPrismaService.siteTeam.findUnique.mockRejectedValue(
         new Error('Database error')
       );
 
@@ -295,9 +295,9 @@ describe('UsersGroupsService', () => {
   });
 
   describe('findOneWithUsers', () => {
-    const groupWithUsers = {
-      ...mockGroup,
-      groupMemberships: [
+    const teamWithUsers = {
+      ...mockTeam,
+      teamMemberships: [
         {
           user: {
             id: 1,
@@ -312,16 +312,16 @@ describe('UsersGroupsService', () => {
       ],
     };
 
-    it('should return a group with users when id is valid', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(groupWithUsers);
+    it('should return a team with users when id is valid', async () => {
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(teamWithUsers);
 
       const result = await service.findOneWithUsers(1);
 
-      expect(result).toEqual(groupWithUsers);
-      expect(mockPrismaService.userGroup.findUnique).toHaveBeenCalledWith({
+      expect(result).toEqual(teamWithUsers);
+      expect(mockPrismaService.siteTeam.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
         include: {
-          groupMemberships: {
+          teamMemberships: {
             include: {
               user: {
                 select: {
@@ -346,8 +346,8 @@ describe('UsersGroupsService', () => {
       );
     });
 
-    it('should throw NotFoundException when group is not found', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(null);
+    it('should throw NotFoundException when team is not found', async () => {
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(null);
 
       await expect(service.findOneWithUsers(999)).rejects.toThrow(
         NotFoundException
@@ -355,7 +355,7 @@ describe('UsersGroupsService', () => {
     });
 
     it('should throw HttpException when findUnique fails', async () => {
-      mockPrismaService.userGroup.findUnique.mockRejectedValue(
+      mockPrismaService.siteTeam.findUnique.mockRejectedValue(
         new Error('Database error')
       );
 
@@ -364,76 +364,76 @@ describe('UsersGroupsService', () => {
   });
 
   describe('update', () => {
-    const updateDto: UpdateUsersGroupDto = {
-      name: 'Updated Group',
+    const updateDto: UpdateSiteTeamDto = {
+      name: 'Updated Team',
       description: 'Updated Description',
     };
 
-    it('should update a group successfully', async () => {
-      const updatedGroup = { ...mockGroup, ...updateDto };
-      mockPrismaService.userGroup.findUnique
-        .mockResolvedValueOnce(mockGroup)
+    it('should update a team successfully', async () => {
+      const updatedTeam = { ...mockTeam, ...updateDto };
+      mockPrismaService.siteTeam.findUnique
+        .mockResolvedValueOnce(mockTeam)
         .mockResolvedValueOnce(null);
-      mockPrismaService.userGroup.update.mockResolvedValue(updatedGroup);
+      mockPrismaService.siteTeam.update.mockResolvedValue(updatedTeam);
 
       const result = await service.update(1, updateDto);
 
-      expect(result).toEqual(updatedGroup);
-      expect(mockPrismaService.userGroup.update).toHaveBeenCalledWith({
+      expect(result).toEqual(updatedTeam);
+      expect(mockPrismaService.siteTeam.update).toHaveBeenCalledWith({
         where: { id: 1 },
         data: updateDto,
       });
     });
 
-    it('should update a group without changing name', async () => {
-      const updateDtoSameName: UpdateUsersGroupDto = {
+    it('should update a team without changing name', async () => {
+      const updateDtoSameName: UpdateSiteTeamDto = {
         description: 'Updated Description',
       };
-      const updatedGroup = { ...mockGroup, ...updateDtoSameName };
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(mockGroup);
-      mockPrismaService.userGroup.update.mockResolvedValue(updatedGroup);
+      const updatedTeam = { ...mockTeam, ...updateDtoSameName };
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(mockTeam);
+      mockPrismaService.siteTeam.update.mockResolvedValue(updatedTeam);
 
       const result = await service.update(1, updateDtoSameName);
 
-      expect(result).toEqual(updatedGroup);
+      expect(result).toEqual(updatedTeam);
     });
 
     it('should throw BadRequestException when id is null', async () => {
       await expect(service.update(null as any, updateDto)).rejects.toThrow(
         BadRequestException
       );
-      expect(mockPrismaService.userGroup.update).not.toHaveBeenCalled();
+      expect(mockPrismaService.siteTeam.update).not.toHaveBeenCalled();
     });
 
-    it('should throw NotFoundException when group is not found', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(null);
+    it('should throw NotFoundException when team is not found', async () => {
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(null);
 
       await expect(service.update(999, updateDto)).rejects.toThrow(
         NotFoundException
       );
-      expect(mockPrismaService.userGroup.update).not.toHaveBeenCalled();
+      expect(mockPrismaService.siteTeam.update).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when new name already exists', async () => {
-      const existingGroupWithName = { ...mockGroup, id: 2 };
-      mockPrismaService.userGroup.findUnique
-        .mockResolvedValueOnce(mockGroup)
-        .mockResolvedValueOnce(existingGroupWithName)
-        .mockResolvedValueOnce(mockGroup)
-        .mockResolvedValueOnce(existingGroupWithName);
+      const existingTeamWithName = { ...mockTeam, id: 2 };
+      mockPrismaService.siteTeam.findUnique
+        .mockResolvedValueOnce(mockTeam)
+        .mockResolvedValueOnce(existingTeamWithName)
+        .mockResolvedValueOnce(mockTeam)
+        .mockResolvedValueOnce(existingTeamWithName);
 
       await expect(service.update(1, updateDto)).rejects.toThrow(
         BadRequestException
       );
       await expect(service.update(1, updateDto)).rejects.toThrow(
-        'Group with this name already exists'
+        'Team with this name already exists'
       );
-      expect(mockPrismaService.userGroup.update).not.toHaveBeenCalled();
+      expect(mockPrismaService.siteTeam.update).not.toHaveBeenCalled();
     });
 
     it('should throw HttpException when update fails', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(mockGroup);
-      mockPrismaService.userGroup.update.mockRejectedValue(
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(mockTeam);
+      mockPrismaService.siteTeam.update.mockRejectedValue(
         new Error('Database error')
       );
 
@@ -442,23 +442,23 @@ describe('UsersGroupsService', () => {
   });
 
   describe('remove', () => {
-    it('should delete a group successfully', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(mockGroup);
-      mockPrismaService.userGroupMembership.deleteMany.mockResolvedValue({});
-      mockPrismaService.userGroup.delete.mockResolvedValue(mockGroup);
+    it('should delete a team successfully', async () => {
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(mockTeam);
+      mockPrismaService.siteTeamMembership.deleteMany.mockResolvedValue({});
+      mockPrismaService.siteTeam.delete.mockResolvedValue(mockTeam);
 
       const result = await service.remove(1);
 
       expect(result).toEqual({
         statusCode: HttpStatus.OK,
-        message: 'Group deleted successfully',
+        message: 'Team deleted successfully',
       });
       expect(
-        mockPrismaService.userGroupMembership.deleteMany
+        mockPrismaService.siteTeamMembership.deleteMany
       ).toHaveBeenCalledWith({
-        where: { groupId: 1 },
+        where: { teamId: 1 },
       });
-      expect(mockPrismaService.userGroup.delete).toHaveBeenCalledWith({
+      expect(mockPrismaService.siteTeam.delete).toHaveBeenCalledWith({
         where: { id: 1 },
       });
     });
@@ -467,20 +467,20 @@ describe('UsersGroupsService', () => {
       await expect(service.remove(null as any)).rejects.toThrow(
         BadRequestException
       );
-      expect(mockPrismaService.userGroup.delete).not.toHaveBeenCalled();
+      expect(mockPrismaService.siteTeam.delete).not.toHaveBeenCalled();
     });
 
-    it('should throw NotFoundException when group is not found', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(null);
+    it('should throw NotFoundException when team is not found', async () => {
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(null);
 
       await expect(service.remove(999)).rejects.toThrow(NotFoundException);
-      expect(mockPrismaService.userGroup.delete).not.toHaveBeenCalled();
+      expect(mockPrismaService.siteTeam.delete).not.toHaveBeenCalled();
     });
 
     it('should throw HttpException when delete fails', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(mockGroup);
-      mockPrismaService.userGroupMembership.deleteMany.mockResolvedValue({});
-      mockPrismaService.userGroup.delete.mockRejectedValue(
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(mockTeam);
+      mockPrismaService.siteTeamMembership.deleteMany.mockResolvedValue({});
+      mockPrismaService.siteTeam.delete.mockRejectedValue(
         new Error('Database error')
       );
 
@@ -488,8 +488,8 @@ describe('UsersGroupsService', () => {
     });
   });
 
-  describe('addUserToGroup', () => {
-    it('should add a user to a group successfully', async () => {
+  describe('addUserToTeam', () => {
+    it('should add a user to a team successfully', async () => {
       const membershipWithRelations = {
         ...mockMembership,
         user: {
@@ -500,26 +500,26 @@ describe('UsersGroupsService', () => {
           lastName: 'User',
           role: 'admin',
         },
-        group: {
+        team: {
           id: 1,
-          name: 'Test Group',
+          name: 'Test Team',
           description: 'Test Description',
         },
       };
 
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(mockGroup);
-      mockPrismaService.userGroupMembership.findUnique.mockResolvedValue(null);
-      mockPrismaService.userGroupMembership.create.mockResolvedValue(
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(mockTeam);
+      mockPrismaService.siteTeamMembership.findUnique.mockResolvedValue(null);
+      mockPrismaService.siteTeamMembership.create.mockResolvedValue(
         membershipWithRelations
       );
 
-      const result = await service.addUserToGroup(1, 1);
+      const result = await service.addUserToTeam(1, 1);
 
       expect(result).toEqual(membershipWithRelations);
-      expect(mockPrismaService.userGroupMembership.create).toHaveBeenCalledWith(
+      expect(mockPrismaService.siteTeamMembership.create).toHaveBeenCalledWith(
         {
-          data: { userId: 1, groupId: 1 },
+          data: { userId: 1, teamId: 1 },
           include: {
             user: {
               select: {
@@ -531,7 +531,7 @@ describe('UsersGroupsService', () => {
                 role: true,
               },
             },
-            group: {
+            team: {
               select: {
                 id: true,
                 name: true,
@@ -544,109 +544,109 @@ describe('UsersGroupsService', () => {
     });
 
     it('should throw BadRequestException when userId is null', async () => {
-      await expect(service.addUserToGroup(null as any, 1)).rejects.toThrow(
+      await expect(service.addUserToTeam(null as any, 1)).rejects.toThrow(
         BadRequestException
       );
-      await expect(service.addUserToGroup(null as any, 1)).rejects.toThrow(
+      await expect(service.addUserToTeam(null as any, 1)).rejects.toThrow(
         'User ID is required'
       );
       expect(
-        mockPrismaService.userGroupMembership.create
+        mockPrismaService.siteTeamMembership.create
       ).not.toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException when groupId is null', async () => {
-      await expect(service.addUserToGroup(1, null as any)).rejects.toThrow(
+    it('should throw BadRequestException when teamId is null', async () => {
+      await expect(service.addUserToTeam(1, null as any)).rejects.toThrow(
         BadRequestException
       );
-      await expect(service.addUserToGroup(1, null as any)).rejects.toThrow(
-        'Group ID is required'
+      await expect(service.addUserToTeam(1, null as any)).rejects.toThrow(
+        'Team ID is required'
       );
       expect(
-        mockPrismaService.userGroupMembership.create
+        mockPrismaService.siteTeamMembership.create
       ).not.toHaveBeenCalled();
     });
 
     it('should throw NotFoundException when user is not found', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.addUserToGroup(999, 1)).rejects.toThrow(
+      await expect(service.addUserToTeam(999, 1)).rejects.toThrow(
         NotFoundException
       );
-      await expect(service.addUserToGroup(999, 1)).rejects.toThrow(
+      await expect(service.addUserToTeam(999, 1)).rejects.toThrow(
         'User with ID 999 not found'
       );
       expect(
-        mockPrismaService.userGroupMembership.create
+        mockPrismaService.siteTeamMembership.create
       ).not.toHaveBeenCalled();
     });
 
-    it('should throw NotFoundException when group is not found', async () => {
+    it('should throw NotFoundException when team is not found', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(null);
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(null);
 
-      await expect(service.addUserToGroup(1, 999)).rejects.toThrow(
+      await expect(service.addUserToTeam(1, 999)).rejects.toThrow(
         NotFoundException
       );
-      await expect(service.addUserToGroup(1, 999)).rejects.toThrow(
-        'Group with ID 999 not found'
+      await expect(service.addUserToTeam(1, 999)).rejects.toThrow(
+        'Team with ID 999 not found'
       );
       expect(
-        mockPrismaService.userGroupMembership.create
+        mockPrismaService.siteTeamMembership.create
       ).not.toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException when user is already in group', async () => {
+    it('should throw BadRequestException when user is already in team', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(mockGroup);
-      mockPrismaService.userGroupMembership.findUnique.mockResolvedValue(
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(mockTeam);
+      mockPrismaService.siteTeamMembership.findUnique.mockResolvedValue(
         mockMembership
       );
 
-      await expect(service.addUserToGroup(1, 1)).rejects.toThrow(
+      await expect(service.addUserToTeam(1, 1)).rejects.toThrow(
         BadRequestException
       );
-      await expect(service.addUserToGroup(1, 1)).rejects.toThrow(
-        'User is already a member of this group'
+      await expect(service.addUserToTeam(1, 1)).rejects.toThrow(
+        'User is already a member of this team'
       );
       expect(
-        mockPrismaService.userGroupMembership.create
+        mockPrismaService.siteTeamMembership.create
       ).not.toHaveBeenCalled();
     });
 
     it('should throw HttpException when create fails', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(mockGroup);
-      mockPrismaService.userGroupMembership.findUnique.mockResolvedValue(null);
-      mockPrismaService.userGroupMembership.create.mockRejectedValue(
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(mockTeam);
+      mockPrismaService.siteTeamMembership.findUnique.mockResolvedValue(null);
+      mockPrismaService.siteTeamMembership.create.mockRejectedValue(
         new Error('Database error')
       );
 
-      await expect(service.addUserToGroup(1, 1)).rejects.toThrow(HttpException);
+      await expect(service.addUserToTeam(1, 1)).rejects.toThrow(HttpException);
     });
   });
 
-  describe('removeUserFromGroup', () => {
-    it('should remove a user from a group successfully', async () => {
-      mockPrismaService.userGroupMembership.findUnique.mockResolvedValue(
+  describe('removeUserFromTeam', () => {
+    it('should remove a user from a team successfully', async () => {
+      mockPrismaService.siteTeamMembership.findUnique.mockResolvedValue(
         mockMembership
       );
-      mockPrismaService.userGroupMembership.delete.mockResolvedValue(
+      mockPrismaService.siteTeamMembership.delete.mockResolvedValue(
         mockMembership
       );
 
-      const result = await service.removeUserFromGroup(1, 1);
+      const result = await service.removeUserFromTeam(1, 1);
 
       expect(result).toEqual({
         statusCode: HttpStatus.OK,
-        message: 'User removed from group successfully',
+        message: 'User removed from team successfully',
       });
-      expect(mockPrismaService.userGroupMembership.delete).toHaveBeenCalledWith(
+      expect(mockPrismaService.siteTeamMembership.delete).toHaveBeenCalledWith(
         {
           where: {
-            userId_groupId: {
+            userId_teamId: {
               userId: 1,
-              groupId: 1,
+              teamId: 1,
             },
           },
         }
@@ -654,53 +654,53 @@ describe('UsersGroupsService', () => {
     });
 
     it('should throw BadRequestException when userId is null', async () => {
-      await expect(service.removeUserFromGroup(null as any, 1)).rejects.toThrow(
+      await expect(service.removeUserFromTeam(null as any, 1)).rejects.toThrow(
         BadRequestException
       );
       expect(
-        mockPrismaService.userGroupMembership.delete
+        mockPrismaService.siteTeamMembership.delete
       ).not.toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException when groupId is null', async () => {
-      await expect(service.removeUserFromGroup(1, null as any)).rejects.toThrow(
+    it('should throw BadRequestException when teamId is null', async () => {
+      await expect(service.removeUserFromTeam(1, null as any)).rejects.toThrow(
         BadRequestException
       );
       expect(
-        mockPrismaService.userGroupMembership.delete
+        mockPrismaService.siteTeamMembership.delete
       ).not.toHaveBeenCalled();
     });
 
     it('should throw NotFoundException when membership is not found', async () => {
-      mockPrismaService.userGroupMembership.findUnique.mockResolvedValue(null);
+      mockPrismaService.siteTeamMembership.findUnique.mockResolvedValue(null);
 
-      await expect(service.removeUserFromGroup(1, 1)).rejects.toThrow(
+      await expect(service.removeUserFromTeam(1, 1)).rejects.toThrow(
         NotFoundException
       );
-      await expect(service.removeUserFromGroup(1, 1)).rejects.toThrow(
-        'User is not a member of this group'
+      await expect(service.removeUserFromTeam(1, 1)).rejects.toThrow(
+        'User is not a member of this team'
       );
       expect(
-        mockPrismaService.userGroupMembership.delete
+        mockPrismaService.siteTeamMembership.delete
       ).not.toHaveBeenCalled();
     });
 
     it('should throw HttpException when delete fails', async () => {
-      mockPrismaService.userGroupMembership.findUnique.mockResolvedValue(
+      mockPrismaService.siteTeamMembership.findUnique.mockResolvedValue(
         mockMembership
       );
-      mockPrismaService.userGroupMembership.delete.mockRejectedValue(
+      mockPrismaService.siteTeamMembership.delete.mockRejectedValue(
         new Error('Database error')
       );
 
-      await expect(service.removeUserFromGroup(1, 1)).rejects.toThrow(
+      await expect(service.removeUserFromTeam(1, 1)).rejects.toThrow(
         HttpException
       );
     });
   });
 
-  describe('getUsersInGroup', () => {
-    it('should return all users in a group', async () => {
+  describe('getUsersInTeam', () => {
+    it('should return all users in a team', async () => {
       const memberships = [
         {
           user: {
@@ -715,18 +715,18 @@ describe('UsersGroupsService', () => {
         },
       ];
 
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(mockGroup);
-      mockPrismaService.userGroupMembership.findMany.mockResolvedValue(
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(mockTeam);
+      mockPrismaService.siteTeamMembership.findMany.mockResolvedValue(
         memberships
       );
 
-      const result = await service.getUsersInGroup(1);
+      const result = await service.getUsersInTeam(1);
 
       expect(result).toEqual([memberships[0].user]);
       expect(
-        mockPrismaService.userGroupMembership.findMany
+        mockPrismaService.siteTeamMembership.findMany
       ).toHaveBeenCalledWith({
-        where: { groupId: 1 },
+        where: { teamId: 1 },
         include: {
           user: {
             select: {
@@ -746,58 +746,58 @@ describe('UsersGroupsService', () => {
       });
     });
 
-    it('should throw BadRequestException when groupId is null', async () => {
-      await expect(service.getUsersInGroup(null as any)).rejects.toThrow(
+    it('should throw BadRequestException when teamId is null', async () => {
+      await expect(service.getUsersInTeam(null as any)).rejects.toThrow(
         BadRequestException
       );
       expect(
-        mockPrismaService.userGroupMembership.findMany
+        mockPrismaService.siteTeamMembership.findMany
       ).not.toHaveBeenCalled();
     });
 
-    it('should throw NotFoundException when group is not found', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(null);
+    it('should throw NotFoundException when team is not found', async () => {
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(null);
 
-      await expect(service.getUsersInGroup(999)).rejects.toThrow(
+      await expect(service.getUsersInTeam(999)).rejects.toThrow(
         NotFoundException
       );
       expect(
-        mockPrismaService.userGroupMembership.findMany
+        mockPrismaService.siteTeamMembership.findMany
       ).not.toHaveBeenCalled();
     });
 
     it('should throw HttpException when findMany fails', async () => {
-      mockPrismaService.userGroup.findUnique.mockResolvedValue(mockGroup);
-      mockPrismaService.userGroupMembership.findMany.mockRejectedValue(
+      mockPrismaService.siteTeam.findUnique.mockResolvedValue(mockTeam);
+      mockPrismaService.siteTeamMembership.findMany.mockRejectedValue(
         new Error('Database error')
       );
 
-      await expect(service.getUsersInGroup(1)).rejects.toThrow(HttpException);
+      await expect(service.getUsersInTeam(1)).rejects.toThrow(HttpException);
     });
   });
 
-  describe('getGroupsForUser', () => {
-    it('should return all groups for a user', async () => {
+  describe('getTeamsForUser', () => {
+    it('should return all teams for a user', async () => {
       const memberships = [
         {
-          group: mockGroup,
+          team: mockTeam,
         },
       ];
 
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      mockPrismaService.userGroupMembership.findMany.mockResolvedValue(
+      mockPrismaService.siteTeamMembership.findMany.mockResolvedValue(
         memberships
       );
 
-      const result = await service.getGroupsForUser(1);
+      const result = await service.getTeamsForUser(1);
 
-      expect(result).toEqual([mockGroup]);
+      expect(result).toEqual([mockTeam]);
       expect(
-        mockPrismaService.userGroupMembership.findMany
+        mockPrismaService.siteTeamMembership.findMany
       ).toHaveBeenCalledWith({
         where: { userId: 1 },
         include: {
-          group: true,
+          team: true,
         },
         orderBy: {
           createdAt: 'desc',
@@ -806,35 +806,35 @@ describe('UsersGroupsService', () => {
     });
 
     it('should throw BadRequestException when userId is null', async () => {
-      await expect(service.getGroupsForUser(null as any)).rejects.toThrow(
+      await expect(service.getTeamsForUser(null as any)).rejects.toThrow(
         BadRequestException
       );
       expect(
-        mockPrismaService.userGroupMembership.findMany
+        mockPrismaService.siteTeamMembership.findMany
       ).not.toHaveBeenCalled();
     });
 
     it('should throw NotFoundException when user is not found', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.getGroupsForUser(999)).rejects.toThrow(
+      await expect(service.getTeamsForUser(999)).rejects.toThrow(
         NotFoundException
       );
-      await expect(service.getGroupsForUser(999)).rejects.toThrow(
+      await expect(service.getTeamsForUser(999)).rejects.toThrow(
         'User with ID 999 not found'
       );
       expect(
-        mockPrismaService.userGroupMembership.findMany
+        mockPrismaService.siteTeamMembership.findMany
       ).not.toHaveBeenCalled();
     });
 
     it('should throw HttpException when findMany fails', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      mockPrismaService.userGroupMembership.findMany.mockRejectedValue(
+      mockPrismaService.siteTeamMembership.findMany.mockRejectedValue(
         new Error('Database error')
       );
 
-      await expect(service.getGroupsForUser(1)).rejects.toThrow(HttpException);
+      await expect(service.getTeamsForUser(1)).rejects.toThrow(HttpException);
     });
   });
 });
