@@ -41,6 +41,6 @@ describe('ChantierDocumentDeleteButton', () => {
     fireEvent.click(within(dialog).getByRole('button', { name: 'Supprimer' }));
 
     expect(mockMutate).toHaveBeenCalledTimes(1);
-    expect(mockMutate.mock.calls[0][0]).toBe('doc-1');
+    expect(mockMutate.mock.calls[0]?.[0]).toBe('doc-1');
   });
 });

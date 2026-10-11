@@ -17,4 +17,5 @@ export interface Derivation {
   createdAt: string;
   status: DerivationStatus;
   correctionComment: string | null;
+  teamId: number | null;
 }

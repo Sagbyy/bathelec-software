@@ -61,6 +61,7 @@ const mockDerivation: Derivation = {
   createdAt: '2024-01-01T00:00:00.000Z',
   status: DerivationStatus.PENDING,
   correctionComment: null,
+  teamId: null,
 };
 
 function renderForm(

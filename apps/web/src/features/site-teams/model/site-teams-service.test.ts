@@ -42,8 +42,8 @@ describe('siteTeamsService', () => {
 
     const data = await siteTeamsService.getAllTeamsWithUsers();
 
-    expect(data[0].name).toBe('Équipe Nord');
-    expect(data[0].teamMemberships[0].user.id).toBe(7);
+    expect(data[0]?.name).toBe('Équipe Nord');
+    expect(data[0]?.teamMemberships[0]?.user.id).toBe(7);
   });
 
   it('creates a team with a POST to /site-teams', async () => {
