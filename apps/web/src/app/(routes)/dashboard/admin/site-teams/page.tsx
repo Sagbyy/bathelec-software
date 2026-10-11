@@ -38,40 +38,40 @@ import {
   CommandList,
 } from '@/shared/ui/command';
 import {
-  useUsersGroupsWithUsers,
-  useCreateUserGroup,
-  useUpdateUserGroup,
-  useDeleteUserGroup,
-  useAddUserToGroup,
-  useRemoveUserFromGroup,
-} from '@/features/user-groups/model/use-users-groups';
+  useSiteTeamsWithUsers,
+  useCreateSiteTeam,
+  useUpdateSiteTeam,
+  useDeleteSiteTeam,
+  useAddUserToTeam,
+  useRemoveUserFromTeam,
+} from '@/features/site-teams/model/use-site-teams';
 import { useUsers } from '@/features/users/model/use-user';
 import { toast } from 'sonner';
 import {
-  CreateUserGroupDto,
-  UpdateUserGroupDto,
-  UserGroupWithUsers,
-} from '@/features/user-groups/model/users-groups-service';
+  CreateSiteTeamDto,
+  UpdateSiteTeamDto,
+  SiteTeamWithUsers,
+} from '@/features/site-teams/model/site-teams-service';
 import { getApiErrorMessage } from '@/shared/lib/api-error';
 
-export default function TechniciansGroupPage() {
-  const { data: groups, isLoading, error } = useUsersGroupsWithUsers();
+export default function SiteTeamsPage() {
+  const { data: teams, isLoading, error } = useSiteTeamsWithUsers();
   const { data: users } = useUsers();
-  const createGroup = useCreateUserGroup();
-  const updateGroup = useUpdateUserGroup();
-  const deleteGroup = useDeleteUserGroup();
-  const addUserToGroup = useAddUserToGroup();
-  const removeUserFromGroup = useRemoveUserFromGroup();
+  const createTeam = useCreateSiteTeam();
+  const updateTeam = useUpdateSiteTeam();
+  const deleteTeam = useDeleteSiteTeam();
+  const addUserToTeam = useAddUserToTeam();
+  const removeUserFromTeam = useRemoveUserFromTeam();
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [manageGroupDialogOpen, setManageGroupDialogOpen] = useState(false);
-  const [deleteGroupDialogOpen, setDeleteGroupDialogOpen] = useState(false);
-  const [groupToDelete, setGroupToDelete] = useState<{
+  const [manageTeamDialogOpen, setManageTeamDialogOpen] = useState(false);
+  const [deleteTeamDialogOpen, setDeleteTeamDialogOpen] = useState(false);
+  const [teamToDelete, setTeamToDelete] = useState<{
     id: number;
     name: string;
   } | null>(null);
-  const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
-  const [formData, setFormData] = useState<CreateUserGroupDto>({
+  const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
+  const [formData, setFormData] = useState<CreateSiteTeamDto>({
     name: '',
     description: '',
   });
@@ -81,98 +81,98 @@ export default function TechniciansGroupPage() {
   const technicians =
     users?.filter((user) => user.role === Role.TECHNICIAN) || [];
 
-  const handleCreateGroup = () => {
+  const handleCreateTeam = () => {
     if (!formData.name.trim() || !formData.description.trim()) {
       toast.error('Veuillez remplir tous les champs');
       return;
     }
 
-    createGroup.mutate(formData, {
+    createTeam.mutate(formData, {
       onSuccess: () => {
-        toast.success('Groupe créé avec succès');
+        toast.success('Équipe créée avec succès');
         setCreateDialogOpen(false);
         setFormData({ name: '', description: '' });
       },
       onError: (error: Error) => {
         toast.error(
-          getApiErrorMessage(error) || 'Erreur lors de la création du groupe'
+          getApiErrorMessage(error) || "Erreur lors de la création de l'équipe"
         );
       },
     });
   };
 
-  const handleUpdateGroup = () => {
-    if (!selectedGroup) return;
+  const handleUpdateTeam = () => {
+    if (!selectedTeam) return;
 
     if (!formData.name.trim() || !formData.description.trim()) {
       toast.error('Veuillez remplir tous les champs');
       return;
     }
 
-    updateGroup.mutate(
-      { groupId: selectedGroup, updateDto: formData },
+    updateTeam.mutate(
+      { teamId: selectedTeam, updateDto: formData },
       {
         onSuccess: () => {
-          toast.success('Groupe modifié avec succès');
+          toast.success('Équipe modifiée avec succès');
         },
         onError: (error: Error) => {
           toast.error(
-            getApiErrorMessage(error) || 'Erreur lors de la modification du groupe'
+            getApiErrorMessage(error) || "Erreur lors de la modification de l'équipe"
           );
         },
       }
     );
   };
 
-  const handleDeleteGroup = (group: UserGroupWithUsers) => {
-    setGroupToDelete({ id: group.id, name: group.name });
-    setDeleteGroupDialogOpen(true);
+  const handleDeleteTeam = (team: SiteTeamWithUsers) => {
+    setTeamToDelete({ id: team.id, name: team.name });
+    setDeleteTeamDialogOpen(true);
   };
 
-  const confirmDeleteGroup = () => {
-    if (!groupToDelete) return;
+  const confirmDeleteTeam = () => {
+    if (!teamToDelete) return;
 
-    deleteGroup.mutate(groupToDelete.id, {
+    deleteTeam.mutate(teamToDelete.id, {
       onSuccess: () => {
-        toast.success('Groupe supprimé avec succès');
-        setDeleteGroupDialogOpen(false);
-        setGroupToDelete(null);
+        toast.success('Équipe supprimée avec succès');
+        setDeleteTeamDialogOpen(false);
+        setTeamToDelete(null);
       },
       onError: (error: Error) => {
         toast.error(
-          getApiErrorMessage(error) || 'Erreur lors de la suppression du groupe'
+          getApiErrorMessage(error) || "Erreur lors de la suppression de l'équipe"
         );
       },
     });
   };
 
-  const handleManageGroup = (group: UserGroupWithUsers) => {
-    setSelectedGroup(group.id);
+  const handleManageTeam = (team: SiteTeamWithUsers) => {
+    setSelectedTeam(team.id);
     setFormData({
-      name: group.name,
-      description: group.description || '',
+      name: team.name,
+      description: team.description || '',
     });
-    setManageGroupDialogOpen(true);
+    setManageTeamDialogOpen(true);
     setSearchQuery('');
     setSearchOpen(false);
   };
 
   const handleCloseManageDialog = () => {
-    setManageGroupDialogOpen(false);
-    setSelectedGroup(null);
+    setManageTeamDialogOpen(false);
+    setSelectedTeam(null);
     setFormData({ name: '', description: '' });
     setSearchQuery('');
     setSearchOpen(false);
   };
 
   const handleAddUser = (userId: number) => {
-    if (!selectedGroup) return;
+    if (!selectedTeam) return;
 
-    addUserToGroup.mutate(
-      { groupId: selectedGroup, userId },
+    addUserToTeam.mutate(
+      { teamId: selectedTeam, userId },
       {
         onSuccess: () => {
-          toast.success('Technicien ajouté au groupe');
+          toast.success("Technicien ajouté à l'équipe");
           setSearchOpen(false);
           setSearchQuery('');
         },
@@ -186,21 +186,15 @@ export default function TechniciansGroupPage() {
   };
 
   const handleRemoveUser = (userId: number) => {
-    if (!selectedGroup) {
-      console.error('No selected group');
-      return;
-    }
+    if (!selectedTeam) return;
 
-    console.log('Removing user', userId, 'from group', selectedGroup);
-
-    removeUserFromGroup.mutate(
-      { groupId: selectedGroup, userId },
+    removeUserFromTeam.mutate(
+      { teamId: selectedTeam, userId },
       {
         onSuccess: () => {
-          toast.success('Technicien retiré du groupe');
+          toast.success("Technicien retiré de l'équipe");
         },
         onError: (error: Error) => {
-          console.error('Error removing user:', error);
           toast.error(
             getApiErrorMessage(error) || 'Erreur lors du retrait du technicien'
           );
@@ -232,11 +226,11 @@ export default function TechniciansGroupPage() {
     );
   }
 
-  const selectedGroupData = groups?.find((g) => g.id === selectedGroup);
-  const selectedGroupUserIds =
-    selectedGroupData?.groupMemberships.map((m) => m.user.id) || [];
+  const selectedTeamData = teams?.find((g) => g.id === selectedTeam);
+  const selectedTeamUserIds =
+    selectedTeamData?.teamMemberships.map((m) => m.user.id) || [];
   const availableTechnicians = technicians.filter(
-    (t) => !selectedGroupUserIds.includes(t.id)
+    (t) => !selectedTeamUserIds.includes(t.id)
   );
 
   const filteredAvailableTechnicians = availableTechnicians.filter(
@@ -256,27 +250,27 @@ export default function TechniciansGroupPage() {
     <div className="flex flex-col gap-4 p-8">
       <div className="flex items-center justify-between">
         <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-          Groupes de techniciens
+          Équipes chantier
         </h2>
         <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Icon icon="hugeicons:add-circle-01" />
-              Créer un groupe
+              Créer une équipe
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Créer un nouveau groupe</DialogTitle>
+              <DialogTitle>Créer une nouvelle équipe</DialogTitle>
               <DialogDescription>
-                Remplissez les informations pour créer un nouveau groupe de
-                techniciens.
+                Remplissez les informations pour créer une nouvelle équipe
+                chantier.
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-4 py-4">
               <div className="flex flex-col gap-2">
                 <label htmlFor="name" className="text-sm font-medium">
-                  Nom du groupe *
+                  Nom de l&apos;équipe *
                 </label>
                 <Input
                   id="name"
@@ -297,7 +291,7 @@ export default function TechniciansGroupPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  placeholder="Description du groupe"
+                  placeholder="Description de l'équipe"
                   rows={3}
                 />
               </div>
@@ -313,17 +307,17 @@ export default function TechniciansGroupPage() {
                 Annuler
               </Button>
               <Button
-                onClick={handleCreateGroup}
-                disabled={createGroup.isPending}
+                onClick={handleCreateTeam}
+                disabled={createTeam.isPending}
               >
-                {createGroup.isPending ? 'Création...' : 'Créer'}
+                {createTeam.isPending ? 'Création...' : 'Créer'}
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
-      {groups && groups.length === 0 ? (
+      {teams && teams.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Icon
@@ -331,28 +325,28 @@ export default function TechniciansGroupPage() {
               className="text-muted-foreground mb-4 text-4xl"
             />
             <p className="text-muted-foreground">
-              Aucun groupe créé pour le moment
+              Aucune équipe créée pour le moment
             </p>
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {groups?.map((group) => (
-            <Card key={group.id}>
+          {teams?.map((team) => (
+            <Card key={team.id}>
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <CardTitle>{group.name}</CardTitle>
+                    <CardTitle>{team.name}</CardTitle>
                     <CardDescription className="mt-2">
-                      {group.description || 'Aucune description'}
+                      {team.description || 'Aucune description'}
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleDeleteGroup(group)}
-                      title="Supprimer le groupe"
+                      onClick={() => handleDeleteTeam(team)}
+                      title="Supprimer l'équipe"
                     >
                       <Icon icon="hugeicons:delete-01" />
                     </Button>
@@ -363,15 +357,15 @@ export default function TechniciansGroupPage() {
                 <div className="flex flex-col gap-4">
                   <div>
                     <p className="mb-2 text-sm font-medium">
-                      Techniciens ({group.groupMemberships.length})
+                      Techniciens ({team.teamMemberships.length})
                     </p>
-                    {group.groupMemberships.length === 0 ? (
+                    {team.teamMemberships.length === 0 ? (
                       <p className="text-muted-foreground text-sm">
-                        Aucun technicien dans ce groupe
+                        Aucun technicien dans cette équipe
                       </p>
                     ) : (
                       <div className="flex flex-wrap gap-2">
-                        {group.groupMemberships.map((membership) => (
+                        {team.teamMemberships.map((membership) => (
                           <Badge key={membership.user.id} variant="secondary">
                             {membership.user.firstName}{' '}
                             {membership.user.lastName}
@@ -383,11 +377,11 @@ export default function TechniciansGroupPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleManageGroup(group)}
+                    onClick={() => handleManageTeam(team)}
                     className="w-full"
                   >
                     <Icon icon="hugeicons:settings-01" />
-                    Gérer le groupe
+                    Gérer l&apos;équipe
                   </Button>
                 </div>
               </CardContent>
@@ -397,9 +391,9 @@ export default function TechniciansGroupPage() {
       )}
 
       <Dialog
-        open={manageGroupDialogOpen}
+        open={manageTeamDialogOpen}
         onOpenChange={(open) => {
-          setManageGroupDialogOpen(open);
+          setManageTeamDialogOpen(open);
           if (!open) {
             handleCloseManageDialog();
           }
@@ -408,23 +402,23 @@ export default function TechniciansGroupPage() {
         <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              Gérer le groupe - {selectedGroupData?.name}
+              Gérer l&apos;équipe - {selectedTeamData?.name}
             </DialogTitle>
             <DialogDescription>
-              Modifiez les informations du groupe et gérez les techniciens.
+              Modifiez les informations de l&apos;équipe et gérez les techniciens.
             </DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-col gap-6 py-4">
             <div className="flex flex-col gap-4">
-              <h3 className="text-lg font-semibold">Informations du groupe</h3>
+              <h3 className="text-lg font-semibold">Informations de l&apos;équipe</h3>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="group-name" className="text-sm font-medium">
-                    Nom du groupe *
+                  <label htmlFor="team-name" className="text-sm font-medium">
+                    Nom de l&apos;équipe *
                   </label>
                   <Input
-                    id="group-name"
+                    id="team-name"
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
@@ -434,27 +428,27 @@ export default function TechniciansGroupPage() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label
-                    htmlFor="group-description"
+                    htmlFor="team-description"
                     className="text-sm font-medium"
                   >
                     Description *
                   </label>
                   <Textarea
-                    id="group-description"
+                    id="team-description"
                     value={formData.description}
                     onChange={(e) =>
                       setFormData({ ...formData, description: e.target.value })
                     }
-                    placeholder="Description du groupe"
+                    placeholder="Description de l'équipe"
                     rows={3}
                   />
                 </div>
                 <Button
-                  onClick={handleUpdateGroup}
-                  disabled={updateGroup.isPending}
+                  onClick={handleUpdateTeam}
+                  disabled={updateTeam.isPending}
                   className="w-full sm:w-auto"
                 >
-                  {updateGroup.isPending
+                  {updateTeam.isPending
                     ? 'Modification...'
                     : 'Enregistrer les modifications'}
                 </Button>
@@ -468,15 +462,15 @@ export default function TechniciansGroupPage() {
 
               <div>
                 <p className="mb-3 text-sm font-medium">
-                  Techniciens dans le groupe ({selectedGroupUserIds.length})
+                  Techniciens dans l&apos;équipe ({selectedTeamUserIds.length})
                 </p>
-                {selectedGroupUserIds.length === 0 ? (
+                {selectedTeamUserIds.length === 0 ? (
                   <p className="text-muted-foreground text-sm">
-                    Aucun technicien dans ce groupe
+                    Aucun technicien dans cette équipe
                   </p>
                 ) : (
                   <div className="flex flex-col gap-2">
-                    {selectedGroupData?.groupMemberships.map((membership) => (
+                    {selectedTeamData?.teamMemberships.map((membership) => (
                       <div
                         key={membership.user.id}
                         className="flex items-center justify-between rounded-md border p-2"
@@ -490,8 +484,8 @@ export default function TechniciansGroupPage() {
                           size="sm"
                           onClick={() => handleRemoveUser(membership.user.id)}
                           className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8 p-0"
-                          title="Retirer du groupe"
-                          aria-label={`Retirer ${membership.user.firstName} ${membership.user.lastName} du groupe`}
+                          title="Retirer de l'équipe"
+                          aria-label={`Retirer ${membership.user.firstName} ${membership.user.lastName} de l'équipe`}
                         >
                           <Icon
                             icon="hugeicons:delete-01"
@@ -512,7 +506,7 @@ export default function TechniciansGroupPage() {
                 </p>
                 {availableTechnicians.length === 0 ? (
                   <p className="text-muted-foreground text-sm">
-                    Tous les techniciens sont déjà dans ce groupe
+                    Tous les techniciens sont déjà dans cette équipe
                   </p>
                 ) : (
                   <Popover open={searchOpen} onOpenChange={setSearchOpen}>
@@ -572,49 +566,49 @@ export default function TechniciansGroupPage() {
       </Dialog>
 
       <Dialog
-        open={deleteGroupDialogOpen}
+        open={deleteTeamDialogOpen}
         onOpenChange={(open) => {
-          setDeleteGroupDialogOpen(open);
+          setDeleteTeamDialogOpen(open);
           if (!open) {
-            setGroupToDelete(null);
+            setTeamToDelete(null);
           }
         }}
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Supprimer le groupe</DialogTitle>
+            <DialogTitle>Supprimer l&apos;équipe</DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir supprimer le groupe{' '}
-              <span className="font-semibold">"{groupToDelete?.name}" ?</span>
+              Êtes-vous sûr de vouloir supprimer l&apos;équipe{' '}
+              <span className="font-semibold">"{teamToDelete?.name}" ?</span>
               <br />
               <br />
               Cette action est irréversible. Tous les techniciens seront retirés
-              du groupe, mais les techniciens eux-mêmes ne seront pas supprimés.
+              de l&apos;équipe, mais les techniciens eux-mêmes ne seront pas supprimés.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button
               variant="outline"
               onClick={() => {
-                setDeleteGroupDialogOpen(false);
-                setGroupToDelete(null);
+                setDeleteTeamDialogOpen(false);
+                setTeamToDelete(null);
               }}
             >
               Annuler
             </Button>
             <Button
               variant="destructive"
-              onClick={confirmDeleteGroup}
-              disabled={deleteGroup.isPending}
+              onClick={confirmDeleteTeam}
+              disabled={deleteTeam.isPending}
             >
-              {deleteGroup.isPending ? 'Suppression...' : 'Supprimer'}
+              {deleteTeam.isPending ? 'Suppression...' : 'Supprimer'}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       <p className="text-muted-foreground text-sm">
-        <span className="font-bold">{groups?.length || 0}</span> groupe(s)
+        <span className="font-bold">{teams?.length || 0}</span> équipe(s)
         trouvé(s)
       </p>
     </div>

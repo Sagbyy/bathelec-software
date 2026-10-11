@@ -17,7 +17,7 @@ model User {
   firstName        String
   lastName         String
   Derivation       Derivation[]
-  groupMemberships UserGroupMembership[]
+  teamMemberships  SiteTeamMembership[]
 }
 
 model Market {
@@ -51,24 +51,27 @@ model Derivation {
   chantier          Chantier? @relation(fields: [chantierId], references: [id])
 }
 
-model UserGroup {
-  id               Int                   @id @default(autoincrement())
-  name             String                @unique
-  description      String?
-  createdAt        DateTime              @default(now())
-  updatedAt        DateTime              @updatedAt
-  groupMemberships UserGroupMembership[]
+model SiteTeam {
+  id              Int                  @id @default(autoincrement())
+  name            String               @unique
+  description     String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  teamMemberships SiteTeamMembership[]
+
+  @@map("UserGroup")
 }
 
-model UserGroupMembership {
-  id        Int       @id @default(autoincrement())
+model SiteTeamMembership {
+  id        Int      @id @default(autoincrement())
   userId    Int
-  groupId   Int
-  createdAt DateTime  @default(now())
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  group     UserGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  teamId    Int      @map("groupId")
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team      SiteTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, groupId])
+  @@unique([userId, teamId])
   @@index([userId])
-  @@index([groupId])
+  @@index([teamId])
+  @@map("UserGroupMembership")
 }
