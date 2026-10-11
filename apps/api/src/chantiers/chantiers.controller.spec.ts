@@ -224,13 +224,13 @@ describe('ChantiersController', () => {
           ROLE_METADATA_KEY,
           ChantiersController.prototype.update
         )
-      ).not.toContain(UserRole.SUPERVISOR);
+      ).toEqual([UserRole.ADMIN]);
       expect(
         Reflect.getMetadata(
           ROLE_METADATA_KEY,
           ChantiersController.prototype.remove
         )
-      ).not.toContain(UserRole.SUPERVISOR);
+      ).toEqual([UserRole.ADMIN]);
     });
   });
 });

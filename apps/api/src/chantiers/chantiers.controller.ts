@@ -68,7 +68,7 @@ export class ChantiersController {
     return this.chantiersService.findOne(+id);
   }
 
-  @Role('admin')
+  @Role(UserRole.ADMIN)
   @UseGuards(RoleGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Update a chantier' })
@@ -77,7 +77,7 @@ export class ChantiersController {
     return this.chantiersService.update(+id, dto);
   }
 
-  @Role('admin')
+  @Role(UserRole.ADMIN)
   @UseGuards(RoleGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a chantier' })

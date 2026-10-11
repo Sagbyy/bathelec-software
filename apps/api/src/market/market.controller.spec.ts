@@ -156,10 +156,10 @@ describe('MarketController', () => {
     it('réserve la mise à jour et la suppression aux admins', () => {
       expect(
         Reflect.getMetadata(ROLE_METADATA_KEY, MarketController.prototype.update)
-      ).not.toContain(UserRole.SUPERVISOR);
+      ).toEqual([UserRole.ADMIN]);
       expect(
         Reflect.getMetadata(ROLE_METADATA_KEY, MarketController.prototype.remove)
-      ).not.toContain(UserRole.SUPERVISOR);
+      ).toEqual([UserRole.ADMIN]);
     });
   });
 });

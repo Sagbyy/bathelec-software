@@ -51,7 +51,7 @@ export class MarketController {
     return this.marketService.findOne(+id);
   }
 
-  @Role('admin')
+  @Role(UserRole.ADMIN)
   @UseGuards(RoleGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Update a market' })
@@ -60,7 +60,7 @@ export class MarketController {
     return this.marketService.update(+id, dto);
   }
 
-  @Role('admin')
+  @Role(UserRole.ADMIN)
   @UseGuards(RoleGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a market' })
