@@ -168,6 +168,16 @@ export class UsersService {
       delete updateUserDto.role;
     }
 
+    if (
+      user.role === Role.ADMIN &&
+      updateUserDto.role &&
+      updateUserDto.role !== Role.ADMIN
+    ) {
+      await this.ensureNotLastAdmin(
+        'Cannot remove the role of the last administrator'
+      );
+    }
+
     try {
       const updatedUser = await this.prisma.user.update({
         where: { id: userId },
@@ -210,6 +220,10 @@ export class UsersService {
       throw new ForbiddenException('Only an admin can delete an admin account');
     }
 
+    if (user.role === Role.ADMIN) {
+      await this.ensureNotLastAdmin('Cannot delete the last administrator');
+    }
+
     try {
       await this.prisma.user.delete({
         where: { id: userId },
@@ -225,6 +239,16 @@ export class UsersService {
         'Error while deleting user',
         HttpStatus.INTERNAL_SERVER_ERROR
       );
+    }
+  }
+
+  private async ensureNotLastAdmin(message: string): Promise<void> {
+    const adminCount = await this.prisma.user.count({
+      where: { role: Role.ADMIN },
+    });
+
+    if (adminCount <= 1) {
+      throw new ForbiddenException(message);
     }
   }
 }
