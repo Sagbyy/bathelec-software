@@ -1,10 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChantierDocument } from '@repo/types';
 import { toast } from 'sonner';
-import { chantierDocumentService } from '../api/chantier-document.service';
+import {
+  chantierDocumentService,
+  CreateChantierDocumentInput,
+} from '../api/chantier-document.service';
 
 export const chantierDocumentsKey = (chantierId: number) =>
   ['chantier-documents', chantierId] as const;
@@ -15,6 +18,33 @@ export const useChantierDocuments = (chantierId: number) =>
     queryFn: () => chantierDocumentService.getByChantier(chantierId),
     enabled: Number.isFinite(chantierId),
   });
+
+export const useCreateChantierDocument = (chantierId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: CreateChantierDocumentInput) =>
+      chantierDocumentService.create(chantierId, input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: chantierDocumentsKey(chantierId),
+      });
+    },
+  });
+};
+
+export const useDeleteChantierDocument = (chantierId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => chantierDocumentService.remove(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: chantierDocumentsKey(chantierId),
+      });
+    },
+  });
+};
 
 const MIME_EXTENSIONS: Record<string, string> = {
   'application/pdf': '.pdf',
