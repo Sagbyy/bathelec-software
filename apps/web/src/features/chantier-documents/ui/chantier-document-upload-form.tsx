@@ -109,7 +109,10 @@ export function ChantierDocumentUploadForm({
             render={({ field }) => (
               <FormItem className="flex-1">
                 <FormLabel>Type</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value ?? ''}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionner un type" />

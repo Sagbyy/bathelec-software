@@ -10,7 +10,7 @@ describe('chantierDocumentService', () => {
   afterEach(() => server.resetHandlers());
 
   describe('create', () => {
-    it('envoie un POST by-chantier et retourne le document créé', async () => {
+    it('sends a POST to by-chantier and returns the created document', async () => {
       server.use(
         http.post(
           `${BASE}/chantier-documents/by-chantier/:chantierId`,
@@ -42,7 +42,7 @@ describe('chantierDocumentService', () => {
       expect(data.type).toBe(ChantierDocumentType.MARKET_STUDY);
     });
 
-    it('lève une erreur si le serveur répond 403', async () => {
+    it('throws when the server responds 403', async () => {
       server.use(
         http.post(`${BASE}/chantier-documents/by-chantier/:chantierId`, () =>
           HttpResponse.json({ message: 'Forbidden' }, { status: 403 })
@@ -60,7 +60,7 @@ describe('chantierDocumentService', () => {
   });
 
   describe('remove', () => {
-    it('envoie un DELETE sur le document', async () => {
+    it('sends a DELETE for the document', async () => {
       let called = false;
       server.use(
         http.delete(`${BASE}/chantier-documents/:id`, () => {
@@ -73,7 +73,7 @@ describe('chantierDocumentService', () => {
       expect(called).toBe(true);
     });
 
-    it('lève une erreur si le serveur répond 404', async () => {
+    it('throws when the server responds 404', async () => {
       server.use(
         http.delete(`${BASE}/chantier-documents/:id`, () =>
           HttpResponse.json({ message: 'Not found' }, { status: 404 })
