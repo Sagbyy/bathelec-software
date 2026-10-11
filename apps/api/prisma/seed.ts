@@ -282,6 +282,8 @@ async function undoSeed() {
   console.log(`   Mongo: ${deletedUserMongoDocuments} document(s) utilisateur`);
 }
 
+const SEED_TEAM_NAME = 'Équipe seed';
+
 async function main() {
   const technicianUser = await prisma.user.findFirst({
     where: { role: 'technician' },
@@ -295,6 +297,21 @@ async function main() {
   const userId = technicianUser.id;
 
   console.log(`\nUsing technician userId: ${userId}`);
+
+  const seedTeam = await prisma.siteTeam.upsert({
+    where: { name: SEED_TEAM_NAME },
+    update: {},
+    create: {
+      name: SEED_TEAM_NAME,
+      description: 'Équipe chantier générée par le seed',
+    },
+  });
+
+  await prisma.siteTeamMembership.upsert({
+    where: { userId_teamId: { userId, teamId: seedTeam.id } },
+    update: {},
+    create: { userId, teamId: seedTeam.id },
+  });
 
   let totalChantiers = 0;
   let totalDerivations = 0;
@@ -351,6 +368,7 @@ async function main() {
         await prisma.derivation.create({
           data: {
             userId,
+            teamId: seedTeam.id,
             chantierId: chantier.id,
             status: randomStatus(),
             correctionComment: null,

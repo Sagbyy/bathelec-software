@@ -1,7 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DerivationsController } from './derivations.controller';
 import { DerivationsService } from './derivations.service';
+import { Reflector } from '@nestjs/core';
+import { Role } from '@repo/types';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
+import { ROLE_METADATA_KEY } from '../role/role.decorator';
 import { DerivationStatus } from '../types/derivations-status.enum';
 
 const mockChantier = {
@@ -29,7 +32,13 @@ const mockDerivationsService = {
   findDerivationById: jest.fn(),
   findAllDerivations: jest.fn(),
   updateDerivation: jest.fn(),
+  findMyDerivations: jest.fn(),
+  assignTeam: jest.fn(),
+  assignUser: jest.fn(),
+  claimDerivation: jest.fn(),
 };
+
+const currentUser = { userId: 42, username: 'tech', role: Role.TECHNICIAN };
 
 describe('DerivationsController', () => {
   let controller: DerivationsController;
@@ -56,7 +65,7 @@ describe('DerivationsController', () => {
   describe('createDerivation', () => {
     it('crée une dérivation avec chantierId', async () => {
       mockDerivationsService.createDerivation.mockResolvedValue(mockDerivation);
-      const dto = { userId: 42, chantierId: 1 };
+      const dto = { teamId: 3, userId: 42, chantierId: 1 };
 
       const result = await controller.createDerivation(dto);
 
@@ -110,7 +119,10 @@ describe('DerivationsController', () => {
 
   describe('updateDerivation', () => {
     it("met à jour le commentaire de correction d'une dérivation", async () => {
-      const updated = { ...mockDerivation, correctionComment: 'Revoir section 3' };
+      const updated = {
+        ...mockDerivation,
+        correctionComment: 'Revoir section 3',
+      };
       mockDerivationsService.updateDerivation.mockResolvedValue(updated);
 
       const result = await controller.updateDerivation(1, {
@@ -121,6 +133,60 @@ describe('DerivationsController', () => {
       expect(mockDerivationsService.updateDerivation).toHaveBeenCalledWith(1, {
         correctionComment: 'Revoir section 3',
       });
+    });
+  });
+
+  describe('assignment endpoints', () => {
+    it('retourne les dérivations de l’utilisateur courant', async () => {
+      mockDerivationsService.findMyDerivations.mockResolvedValue([
+        mockDerivation,
+      ]);
+
+      const result = await controller.findMyDerivations(currentUser);
+
+      expect(result).toEqual([mockDerivation]);
+      expect(mockDerivationsService.findMyDerivations).toHaveBeenCalledWith(
+        currentUser
+      );
+    });
+
+    it('délègue l’affectation à une équipe', async () => {
+      await controller.assignTeam(1, { teamId: 3 });
+
+      expect(mockDerivationsService.assignTeam).toHaveBeenCalledWith(1, 3);
+    });
+
+    it('délègue l’attribution à un technicien avec l’acteur courant', async () => {
+      await controller.assignUser(1, { userId: 42 }, currentUser);
+
+      expect(mockDerivationsService.assignUser).toHaveBeenCalledWith(
+        1,
+        42,
+        currentUser
+      );
+    });
+
+    it('délègue l’auto-attribution avec l’acteur courant', async () => {
+      await controller.claimDerivation(1, currentUser);
+
+      expect(mockDerivationsService.claimDerivation).toHaveBeenCalledWith(
+        1,
+        currentUser
+      );
+    });
+
+    it.each([
+      ['assignTeam', [Role.ADMIN, Role.SUPERVISOR]],
+      ['assignUser', [Role.ADMIN, Role.SUPERVISOR, Role.SITE_MANAGER]],
+      ['claimDerivation', [Role.TECHNICIAN, Role.SITE_MANAGER]],
+      ['findMyDerivations', [Role.TECHNICIAN, Role.SITE_MANAGER]],
+    ] as const)('restreint %s aux rôles %j', (handler, roles) => {
+      const allowed = new Reflector().get(
+        ROLE_METADATA_KEY,
+        DerivationsController.prototype[handler]
+      );
+
+      expect(allowed).toEqual(roles);
     });
   });
 });

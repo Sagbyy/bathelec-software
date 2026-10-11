@@ -22,7 +22,7 @@ export default function DashboardPage() {
     return <AdminPage />;
   }
 
-  if (user?.role === Role.TECHNICIAN) {
+  if (user?.role === Role.TECHNICIAN || user?.role === Role.SITE_MANAGER) {
     return <TechnicianPage />;
   }
 

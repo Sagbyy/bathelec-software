@@ -9,13 +9,19 @@ export enum DerivationStatus {
   COMPLETED = 'Completed',
 }
 
+export interface DerivationTeam {
+  id: number;
+  name: string;
+}
+
 export interface Derivation {
   id: number;
-  userId: number;
+  userId: number | null;
   chantierId: number | null;
   chantier: Chantier | null;
   createdAt: string;
   status: DerivationStatus;
   correctionComment: string | null;
   teamId: number | null;
+  team?: DerivationTeam | null;
 }

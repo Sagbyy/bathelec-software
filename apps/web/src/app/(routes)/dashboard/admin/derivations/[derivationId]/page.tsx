@@ -2,6 +2,7 @@
 
 import CorrectionComment from '@/features/derivations/ui/admin/correction-comment';
 import { InfoCard } from '@/features/derivations/ui/info-derivation-card';
+import { DerivationTeamCard } from '@/features/derivations';
 import { MultiStepForm } from '@/features/derivations/ui/multi-step-form';
 import { Button } from '@/shared/ui/button';
 import { useDerivationById } from '@/features/derivations/model/use-derivation';
@@ -48,6 +49,7 @@ export default function AdminDerivationPage() {
         chantier={derivation?.chantier}
         createdAt={derivation?.createdAt}
       />
+      <DerivationTeamCard derivation={derivation} />
       <MultiStepForm derivation={derivation} readOnly={true} />
     </div>
   );

@@ -23,6 +23,10 @@ import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import { RoleGuard } from '../role/role.guard';
 import { Role } from '../role/role.decorator';
 import { Role as UserRole } from '@repo/types';
+import {
+  AuthenticatedUser,
+  CurrentUser,
+} from '../common/decorators/current-user.decorator';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RoleGuard)
@@ -57,6 +61,20 @@ export class SiteTeamsController {
   })
   findAllWithUsers() {
     return this.siteTeamsService.findAllWithUsers();
+  }
+
+  @Get('mine')
+  @Role(
+    UserRole.ADMIN,
+    UserRole.SUPERVISOR,
+    UserRole.SITE_MANAGER,
+    UserRole.TECHNICIAN
+  )
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get the teams of the current user with members' })
+  @ApiResponse({ status: 200, description: 'Teams of the current user' })
+  findMine(@CurrentUser() user: AuthenticatedUser) {
+    return this.siteTeamsService.findTeamsWithMembersForUser(user.userId);
   }
 
   @Get(':id')
@@ -121,10 +139,7 @@ export class SiteTeamsController {
   @ApiResponse({ status: 201, description: 'User added to team successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 404, description: 'User or team not found' })
-  addUserToTeam(
-    @Param('id') teamId: string,
-    @Param('userId') userId: string
-  ) {
+  addUserToTeam(@Param('id') teamId: string, @Param('userId') userId: string) {
     return this.siteTeamsService.addUserToTeam(+userId, +teamId);
   }
 

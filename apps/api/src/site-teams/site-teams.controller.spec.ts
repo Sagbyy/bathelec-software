@@ -23,6 +23,7 @@ describe('SiteTeamsController', () => {
     removeUserFromTeam: jest.fn(),
     getUsersInTeam: jest.fn(),
     getTeamsForUser: jest.fn(),
+    findTeamsWithMembersForUser: jest.fn(),
   };
 
   const mockTeam: SiteTeam = {
@@ -147,9 +148,7 @@ describe('SiteTeamsController', () => {
           ],
         },
       ];
-      mockSiteTeamsService.findAllWithUsers.mockResolvedValue(
-        teamsWithUsers
-      );
+      mockSiteTeamsService.findAllWithUsers.mockResolvedValue(teamsWithUsers);
 
       const result = await controller.findAllWithUsers();
 
@@ -333,9 +332,7 @@ describe('SiteTeamsController', () => {
         statusCode: 200,
         message: 'User removed from team successfully',
       };
-      mockSiteTeamsService.removeUserFromTeam.mockResolvedValue(
-        removeResult
-      );
+      mockSiteTeamsService.removeUserFromTeam.mockResolvedValue(removeResult);
 
       const result = await controller.removeUserFromTeam('1', '2');
 
@@ -349,9 +346,7 @@ describe('SiteTeamsController', () => {
         statusCode: 200,
         message: 'User removed from team successfully',
       };
-      mockSiteTeamsService.removeUserFromTeam.mockResolvedValue(
-        removeResult
-      );
+      mockSiteTeamsService.removeUserFromTeam.mockResolvedValue(removeResult);
 
       await controller.removeUserFromTeam('15', '25');
 
@@ -363,9 +358,7 @@ describe('SiteTeamsController', () => {
         statusCode: 200,
         message: 'User removed from team successfully',
       };
-      mockSiteTeamsService.removeUserFromTeam.mockResolvedValue(
-        removeResult
-      );
+      mockSiteTeamsService.removeUserFromTeam.mockResolvedValue(removeResult);
 
       await controller.removeUserFromTeam('7', '9');
 
@@ -400,6 +393,25 @@ describe('SiteTeamsController', () => {
 
       expect(result).toEqual([]);
       expect(service.getTeamsForUser).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('findMine', () => {
+    it("retourne les équipes de l'utilisateur courant", async () => {
+      mockSiteTeamsService.findTeamsWithMembersForUser.mockResolvedValue([
+        mockTeam,
+      ]);
+
+      const result = await controller.findMine({
+        userId: 7,
+        username: 'lead',
+        role: 'site_manager',
+      });
+
+      expect(result).toEqual([mockTeam]);
+      expect(
+        mockSiteTeamsService.findTeamsWithMembersForUser
+      ).toHaveBeenCalledWith(7);
     });
   });
 });

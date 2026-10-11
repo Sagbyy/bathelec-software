@@ -1,6 +1,12 @@
 'use client';
 
 import { Check, ChevronsUpDown } from 'lucide-react';
+import { useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
+import clsx from 'clsx';
+import { Chantier, Role } from '@repo/types';
 import { cn } from '@/shared/lib/utils';
 import { Button } from '@/shared/ui/button';
 import {
@@ -11,15 +17,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/shared/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/shared/ui/popover';
-import { z } from 'zod';
-import { useState, useEffect } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover';
 import {
   FormControl,
   FormField,
@@ -27,145 +25,131 @@ import {
   FormLabel,
   FormMessage,
 } from '@/shared/ui/form';
-import clsx from 'clsx';
-import { useQuery } from '@tanstack/react-query';
-import { Technician, Chantier, Role } from '@repo/types';
-import { toast } from 'sonner';
-import { apiClient } from '@/shared/api';
-import { formSchema } from '../model/create-derivation.schema';
 import { useUserStore } from '@/entities/user';
+import { useChantiers } from '@/entities/chantier';
+import {
+  createDerivationSchema,
+  type CreateDerivation,
+} from '@/entities/derivation';
+import {
+  formatMemberName,
+  getTeamMembers,
+  siteTeamQueries,
+} from '@/entities/site-team';
+import { useCreateDerivation } from '../model/use-derivation-assignment';
 
-const fetchTechnicians = async (): Promise<Technician[]> => {
-  const response = await apiClient.get('/users/technicians');
-  return response.data;
-};
+const SELECT_CLASS_NAME =
+  'border-input bg-background h-10 w-full rounded-md border px-3 text-sm';
 
-const fetchChantiers = async (): Promise<Chantier[]> => {
-  const response = await apiClient.get('/chantiers');
-  return response.data;
-};
+const parseOptionalId = (value: string) =>
+  value === '' ? undefined : Number(value);
 
-export default function CreateDerivationForm() {
-  const [technicianOpen, setTechnicianOpen] = useState(false);
+export function CreateDerivationForm() {
   const [chantierOpen, setChantierOpen] = useState(false);
   const { user } = useUserStore();
+  const isTechnician = user?.role === Role.TECHNICIAN;
 
-  const { data: technicians, isLoading: loadingTechnicians } = useQuery<Technician[]>({
-    queryKey: ['technicians'],
-    queryFn: fetchTechnicians,
-  });
+  const { data: teams, isLoading: loadingTeams } = useQuery(
+    siteTeamQueries.visibleTo(user?.role)
+  );
+  const { data: chantiers, isLoading: loadingChantiers } = useChantiers();
+  const createDerivation = useCreateDerivation();
 
-  const { data: chantiers, isLoading: loadingChantiers } = useQuery<Chantier[]>({
-    queryKey: ['chantiers'],
-    queryFn: fetchChantiers,
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<CreateDerivation>({
+    resolver: zodResolver(createDerivationSchema),
     defaultValues: {
-      user: '',
+      teamId: undefined,
+      userId: undefined,
       chantierId: undefined,
     },
   });
 
-  useEffect(() => {
-    if (user?.role === Role.TECHNICIAN) {
-      form.setValue('user', `${user.firstName} ${user.lastName}`);
-    }
-  }, [user, form]);
+  const selectedTeamId = form.watch('teamId');
+  const members = getTeamMembers(teams, selectedTeamId);
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const userId: number | undefined = technicians?.find(
-      (t) => `${t.firstName} ${t.lastName}` === data.user
-    )?.id;
-
-    try {
-      const response = await apiClient.post('/derivations', {
-        userId,
-        chantierId: data.chantierId,
-      });
-
-      if (response.status !== 201) {
-        throw new Error('Erreur lors de la création de la dérivation');
-      }
-
-      form.reset();
-      toast.success('Dérivation créée avec succès');
-    } catch {
-      toast.error("La dérivation n'a pas pu être créée");
-    }
+  const onSubmit = (data: CreateDerivation) => {
+    const payload = isTechnician && user ? { ...data, userId: user.id } : data;
+    createDerivation.mutate(payload, { onSuccess: () => form.reset() });
   };
 
   return (
     <FormProvider {...form}>
       <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-        {/* Technicien */}
         <FormField
           control={form.control}
-          name="user"
-          render={({ field: { onChange, value } }) => (
+          name="teamId"
+          render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel className={clsx(form.formState.errors.user && 'text-red-500')}>
-                Rechercher un technicien
+              <FormLabel
+                className={clsx(form.formState.errors.teamId && 'text-red-500')}
+              >
+                Équipe chantier
               </FormLabel>
               <FormControl>
-                <Popover open={technicianOpen} onOpenChange={setTechnicianOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={technicianOpen}
-                      className="w-full justify-between"
-                      disabled={user?.role === Role.TECHNICIAN}
-                    >
-                      {value || 'Sélectionner un technicien...'}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="popover-content-width-full p-0">
-                    <Command className="w-full">
-                      <CommandList className="w-full">
-                        <CommandInput placeholder="Rechercher un technicien..." />
-                        <CommandEmpty>Aucun technicien trouvé !</CommandEmpty>
-                        <CommandGroup>
-                          {loadingTechnicians && <CommandEmpty>Chargement...</CommandEmpty>}
-                          {technicians?.map((technician: Technician) => (
-                            <CommandItem
-                              key={technician.username}
-                              onSelect={(currentValue) => {
-                                onChange(currentValue === value ? '' : currentValue);
-                                setTechnicianOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  'mr-2 h-4 w-4',
-                                  value === `${technician.firstName} ${technician.lastName}`
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                              {technician.firstName} {technician.lastName}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                <select
+                  className={SELECT_CLASS_NAME}
+                  value={field.value ?? ''}
+                  disabled={loadingTeams}
+                  onChange={(event) => {
+                    field.onChange(parseOptionalId(event.target.value));
+                    form.setValue('userId', undefined);
+                  }}
+                >
+                  <option value="">Sélectionner une équipe...</option>
+                  {teams?.map((team) => (
+                    <option key={team.id} value={team.id}>
+                      {team.name}
+                    </option>
+                  ))}
+                </select>
               </FormControl>
-              <FormMessage>{form.formState.errors.user?.message}</FormMessage>
+              <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Chantier */}
+        {!isTechnician && (
+          <FormField
+            control={form.control}
+            name="userId"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Technicien (optionnel)</FormLabel>
+                <FormControl>
+                  <select
+                    className={SELECT_CLASS_NAME}
+                    value={field.value ?? ''}
+                    disabled={selectedTeamId === undefined}
+                    onChange={(event) =>
+                      field.onChange(parseOptionalId(event.target.value))
+                    }
+                  >
+                    <option value="">
+                      À attribuer par le chef de chantier
+                    </option>
+                    {members.map((member) => (
+                      <option key={member.id} value={member.id}>
+                        {formatMemberName(member)}
+                      </option>
+                    ))}
+                  </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
         <FormField
           control={form.control}
           name="chantierId"
           render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel className={clsx(form.formState.errors.chantierId && 'text-red-500')}>
+              <FormLabel
+                className={clsx(
+                  form.formState.errors.chantierId && 'text-red-500'
+                )}
+              >
                 Chantier
               </FormLabel>
               <FormControl>
@@ -177,10 +161,8 @@ export default function CreateDerivationForm() {
                       aria-expanded={chantierOpen}
                       className="w-full justify-between"
                     >
-                      {field.value
-                        ? chantiers?.find((c) => c.id === field.value)?.address ??
-                          'Sélectionner un chantier...'
-                        : 'Sélectionner un chantier...'}
+                      {chantiers?.find((c) => c.id === field.value)?.address ??
+                        'Sélectionner un chantier...'}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -190,7 +172,9 @@ export default function CreateDerivationForm() {
                         <CommandInput placeholder="Rechercher un chantier..." />
                         <CommandEmpty>Aucun chantier trouvé !</CommandEmpty>
                         <CommandGroup>
-                          {loadingChantiers && <CommandEmpty>Chargement...</CommandEmpty>}
+                          {loadingChantiers && (
+                            <CommandEmpty>Chargement...</CommandEmpty>
+                          )}
                           {chantiers?.map((chantier: Chantier) => (
                             <CommandItem
                               key={chantier.id}
@@ -203,13 +187,16 @@ export default function CreateDerivationForm() {
                               <Check
                                 className={cn(
                                   'mr-2 h-4 w-4',
-                                  field.value === chantier.id ? 'opacity-100' : 'opacity-0'
+                                  field.value === chantier.id
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
                                 )}
                               />
                               <span className="flex flex-col">
                                 <span>{chantier.address}</span>
                                 <span className="text-muted-foreground text-xs">
-                                  {chantier.internalAffaireNumber} · {chantier.market?.name}
+                                  {chantier.internalAffaireNumber} ·{' '}
+                                  {chantier.market?.name}
                                 </span>
                               </span>
                             </CommandItem>
@@ -220,12 +207,16 @@ export default function CreateDerivationForm() {
                   </PopoverContent>
                 </Popover>
               </FormControl>
-              <FormMessage>{form.formState.errors.chantierId?.message}</FormMessage>
+              <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit" className="w-full">
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={createDerivation.isPending}
+        >
           Créer la dérivation
         </Button>
       </form>

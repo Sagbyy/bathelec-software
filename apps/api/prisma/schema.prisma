@@ -42,13 +42,13 @@ model Chantier {
 
 model Derivation {
   id                Int       @id @default(autoincrement())
-  userId            Int
+  userId            Int?
   chantierId        Int?
   createdAt         DateTime  @default(now())
   status            String
   correctionComment String?
   teamId            Int?
-  user              User      @relation(fields: [userId], references: [id])
+  user              User?     @relation(fields: [userId], references: [id], onDelete: Restrict)
   chantier          Chantier? @relation(fields: [chantierId], references: [id])
   team              SiteTeam? @relation(fields: [teamId], references: [id], onDelete: SetNull)
 

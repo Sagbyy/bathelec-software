@@ -46,7 +46,7 @@ export const adminLinks: NavbarLink[] = [
     label: 'Relevés de dérivation',
     href: '#',
     type: 'folder',
-    allowedRoles: [Role.ADMIN],
+    allowedRoles: [Role.ADMIN, Role.SUPERVISOR],
     pages: [
       {
         label: 'Créez un relevé de dérivation',

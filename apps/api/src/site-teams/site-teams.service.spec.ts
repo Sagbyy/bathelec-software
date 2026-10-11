@@ -517,30 +517,28 @@ describe('SiteTeamsService', () => {
       const result = await service.addUserToTeam(1, 1);
 
       expect(result).toEqual(membershipWithRelations);
-      expect(mockPrismaService.siteTeamMembership.create).toHaveBeenCalledWith(
-        {
-          data: { userId: 1, teamId: 1 },
-          include: {
-            user: {
-              select: {
-                id: true,
-                email: true,
-                username: true,
-                firstName: true,
-                lastName: true,
-                role: true,
-              },
-            },
-            team: {
-              select: {
-                id: true,
-                name: true,
-                description: true,
-              },
+      expect(mockPrismaService.siteTeamMembership.create).toHaveBeenCalledWith({
+        data: { userId: 1, teamId: 1 },
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              firstName: true,
+              lastName: true,
+              role: true,
             },
           },
-        }
-      );
+          team: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+            },
+          },
+        },
+      });
     });
 
     it('should throw BadRequestException when userId is null', async () => {
@@ -641,16 +639,14 @@ describe('SiteTeamsService', () => {
         statusCode: HttpStatus.OK,
         message: 'User removed from team successfully',
       });
-      expect(mockPrismaService.siteTeamMembership.delete).toHaveBeenCalledWith(
-        {
-          where: {
-            userId_teamId: {
-              userId: 1,
-              teamId: 1,
-            },
+      expect(mockPrismaService.siteTeamMembership.delete).toHaveBeenCalledWith({
+        where: {
+          userId_teamId: {
+            userId: 1,
+            teamId: 1,
           },
-        }
-      );
+        },
+      });
     });
 
     it('should throw BadRequestException when userId is null', async () => {
@@ -835,6 +831,34 @@ describe('SiteTeamsService', () => {
       );
 
       await expect(service.getTeamsForUser(1)).rejects.toThrow(HttpException);
+    });
+  });
+
+  describe('findTeamsWithMembersForUser', () => {
+    it("retourne les équipes de l'utilisateur avec leurs membres sans données sensibles", async () => {
+      mockPrismaService.siteTeam.findMany.mockResolvedValue([mockTeam]);
+
+      const result = await service.findTeamsWithMembersForUser(7);
+
+      expect(result).toEqual([mockTeam]);
+      expect(mockPrismaService.siteTeam.findMany).toHaveBeenCalledWith({
+        where: { teamMemberships: { some: { userId: 7 } } },
+        include: {
+          teamMemberships: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  role: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: { name: 'asc' },
+      });
     });
   });
 });
