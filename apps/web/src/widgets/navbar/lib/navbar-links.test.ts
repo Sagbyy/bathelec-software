@@ -13,11 +13,11 @@ describe('getVisibleAdminLinks', () => {
     ]);
   });
 
-  it('shows only user and team management to a supervisor', () => {
+  it('shows user, team and chantier management to a supervisor but not derivations', () => {
     const labels = getVisibleAdminLinks(Role.SUPERVISOR).map(
       (link) => link.label
     );
-    expect(labels).toEqual(['Utilisateurs', 'Techniciens']);
+    expect(labels).toEqual(['Utilisateurs', 'Techniciens', 'Chantiers']);
   });
 
   it('shows nothing to a technician', () => {

@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { Role as UserRole } from '@repo/types';
 import { ChantiersController } from './chantiers.controller';
 import { ChantiersService } from './chantiers.service';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import { RoleGuard } from '../role/role.guard';
+import { ROLE_METADATA_KEY } from '../role/role.decorator';
 
 const mockChantier = {
   id: 1,
@@ -204,6 +206,31 @@ describe('ChantiersController', () => {
           ChantiersController.prototype.findFinished
         ) ?? [];
       expect(guards).not.toContain(RoleGuard);
+    });
+  });
+
+  describe('rôles autorisés', () => {
+    it('ouvre la création de chantier à admin et encadrant', () => {
+      const roles = Reflect.getMetadata(
+        ROLE_METADATA_KEY,
+        ChantiersController.prototype.create
+      );
+      expect(roles).toEqual([UserRole.ADMIN, UserRole.SUPERVISOR]);
+    });
+
+    it('réserve la mise à jour et la suppression aux admins', () => {
+      expect(
+        Reflect.getMetadata(
+          ROLE_METADATA_KEY,
+          ChantiersController.prototype.update
+        )
+      ).toEqual([UserRole.ADMIN]);
+      expect(
+        Reflect.getMetadata(
+          ROLE_METADATA_KEY,
+          ChantiersController.prototype.remove
+        )
+      ).toEqual([UserRole.ADMIN]);
     });
   });
 });

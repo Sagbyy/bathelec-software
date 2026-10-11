@@ -15,6 +15,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { Role as UserRole } from '@repo/types';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import { Role } from '../role/role.decorator';
 import { RoleGuard } from '../role/role.guard';
@@ -29,7 +30,7 @@ import { UpdateMarketDto } from './dto/request/update-market.dto';
 export class MarketController {
   constructor(private readonly marketService: MarketService) {}
 
-  @Role('admin')
+  @Role(UserRole.ADMIN, UserRole.SUPERVISOR)
   @UseGuards(RoleGuard)
   @Post()
   @ApiOperation({ summary: 'Create a market' })
@@ -50,7 +51,7 @@ export class MarketController {
     return this.marketService.findOne(+id);
   }
 
-  @Role('admin')
+  @Role(UserRole.ADMIN)
   @UseGuards(RoleGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Update a market' })
@@ -59,7 +60,7 @@ export class MarketController {
     return this.marketService.update(+id, dto);
   }
 
-  @Role('admin')
+  @Role(UserRole.ADMIN)
   @UseGuards(RoleGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a market' })
