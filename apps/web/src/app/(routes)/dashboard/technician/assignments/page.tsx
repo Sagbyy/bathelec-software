@@ -1,3 +1,5 @@
+'use client';
+
 import { TeamDerivationsList } from '@/features/derivations';
 
 export default function TechnicianAssignmentsPage() {

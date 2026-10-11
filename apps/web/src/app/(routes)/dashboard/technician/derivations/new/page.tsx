@@ -1,3 +1,5 @@
+'use client';
+
 import { CreateDerivationForm } from '@/features/derivations';
 
 export default function CreateDerivationPage() {
