@@ -186,12 +186,7 @@ export default function SiteTeamsPage() {
   };
 
   const handleRemoveUser = (userId: number) => {
-    if (!selectedTeam) {
-      console.error('No selected team');
-      return;
-    }
-
-    console.log('Removing user', userId, 'from team', selectedTeam);
+    if (!selectedTeam) return;
 
     removeUserFromTeam.mutate(
       { teamId: selectedTeam, userId },
@@ -200,7 +195,6 @@ export default function SiteTeamsPage() {
           toast.success("Technicien retiré de l'équipe");
         },
         onError: (error: Error) => {
-          console.error('Error removing user:', error);
           toast.error(
             getApiErrorMessage(error) || 'Erreur lors du retrait du technicien'
           );
@@ -327,7 +321,7 @@ export default function SiteTeamsPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Icon
-              icon="hugeicons:users-team"
+              icon="hugeicons:users-group"
               className="text-muted-foreground mb-4 text-4xl"
             />
             <p className="text-muted-foreground">

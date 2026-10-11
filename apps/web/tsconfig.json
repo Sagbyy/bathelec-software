@@ -87,8 +87,8 @@
       "@/hooks/queries/use-change-password": [
         "./src/features/users/model/use-change-password"
       ],
-      "@/hooks/queries/use-users-groups": [
-        "./src/features/user-groups/model/use-users-groups"
+      "@/hooks/queries/use-site-teams": [
+        "./src/features/site-teams/model/use-site-teams"
       ],
       "@/types/api-error": ["./src/shared/lib/api-error"],
       "@/types/change-password.types": [
@@ -130,8 +130,8 @@
       "@/services/change-password.service": [
         "./src/entities/user/api/change-password.service"
       ],
-      "@/services/users-groups-service": [
-        "./src/features/user-groups/model/users-groups-service"
+      "@/services/site-teams-service": [
+        "./src/features/site-teams/model/site-teams-service"
       ],
       "@/validators/derivation-form.schema": [
         "./src/entities/derivation/model/derivation-form.schema"

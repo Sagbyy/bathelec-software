@@ -18,7 +18,7 @@ export const useSiteTeams = () => {
 
 export const useSiteTeamsWithUsers = () => {
   const { data, isLoading, error } = useQuery<SiteTeamWithUsers[]>({
-    queryKey: ['site-teams-with-users'],
+    queryKey: ['site-teams', 'with-users'],
     queryFn: () => siteTeamsService.getAllTeamsWithUsers(),
   });
 
@@ -27,7 +27,7 @@ export const useSiteTeamsWithUsers = () => {
 
 export const useSiteTeamById = (teamId: number) => {
   const { data, isLoading, error } = useQuery<SiteTeam>({
-    queryKey: ['user-team', teamId],
+    queryKey: ['site-teams', teamId],
     queryFn: () => siteTeamsService.getTeamById(teamId),
     enabled: !!teamId,
   });
@@ -37,7 +37,7 @@ export const useSiteTeamById = (teamId: number) => {
 
 export const useSiteTeamWithUsers = (teamId: number) => {
   const { data, isLoading, error } = useQuery<SiteTeamWithUsers>({
-    queryKey: ['user-team-with-users', teamId],
+    queryKey: ['site-teams', teamId, 'with-users'],
     queryFn: () => siteTeamsService.getTeamWithUsers(teamId),
     enabled: !!teamId,
   });
@@ -47,7 +47,7 @@ export const useSiteTeamWithUsers = (teamId: number) => {
 
 export const useUsersInTeam = (teamId: number) => {
   const { data, isLoading, error } = useQuery({
-    queryKey: ['users-in-team', teamId],
+    queryKey: ['site-teams', teamId, 'users'],
     queryFn: () => siteTeamsService.getUsersInTeam(teamId),
     enabled: !!teamId,
   });
@@ -63,7 +63,7 @@ export const useCreateSiteTeam = () => {
       siteTeamsService.createTeam(createDto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['site-teams'] });
-      queryClient.invalidateQueries({ queryKey: ['site-teams-with-users'] });
+      queryClient.invalidateQueries({ queryKey: ['site-teams', 'with-users'] });
     },
   });
 };
@@ -80,11 +80,11 @@ export const useUpdateSiteTeam = () => {
       updateDto: UpdateSiteTeamDto;
     }) => siteTeamsService.updateTeam(teamId, updateDto),
     onSuccess: (updatedTeam, variables) => {
-      queryClient.setQueryData(['user-team', variables.teamId], updatedTeam);
+      queryClient.setQueryData(['site-teams', variables.teamId], updatedTeam);
       queryClient.invalidateQueries({ queryKey: ['site-teams'] });
-      queryClient.invalidateQueries({ queryKey: ['site-teams-with-users'] });
+      queryClient.invalidateQueries({ queryKey: ['site-teams', 'with-users'] });
       queryClient.invalidateQueries({
-        queryKey: ['user-team-with-users', variables.teamId],
+        queryKey: ['site-teams', variables.teamId, 'with-users'],
       });
     },
   });
@@ -97,7 +97,7 @@ export const useDeleteSiteTeam = () => {
     mutationFn: (teamId: number) => siteTeamsService.deleteTeam(teamId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['site-teams'] });
-      queryClient.invalidateQueries({ queryKey: ['site-teams-with-users'] });
+      queryClient.invalidateQueries({ queryKey: ['site-teams', 'with-users'] });
     },
   });
 };
@@ -110,13 +110,13 @@ export const useAddUserToTeam = () => {
       siteTeamsService.addUserToTeam(teamId, userId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['site-teams-with-users'],
+        queryKey: ['site-teams', 'with-users'],
       });
       queryClient.invalidateQueries({
-        queryKey: ['user-team-with-users', variables.teamId],
+        queryKey: ['site-teams', variables.teamId, 'with-users'],
       });
       queryClient.invalidateQueries({
-        queryKey: ['users-in-team', variables.teamId],
+        queryKey: ['site-teams', variables.teamId, 'users'],
       });
     },
   });
@@ -130,13 +130,13 @@ export const useRemoveUserFromTeam = () => {
       siteTeamsService.removeUserFromTeam(teamId, userId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['site-teams-with-users'],
+        queryKey: ['site-teams', 'with-users'],
       });
       queryClient.invalidateQueries({
-        queryKey: ['user-team-with-users', variables.teamId],
+        queryKey: ['site-teams', variables.teamId, 'with-users'],
       });
       queryClient.invalidateQueries({
-        queryKey: ['users-in-team', variables.teamId],
+        queryKey: ['site-teams', variables.teamId, 'users'],
       });
     },
   });

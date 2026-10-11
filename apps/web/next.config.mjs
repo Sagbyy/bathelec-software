@@ -1,5 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: '/dashboard/admin/technicians/group',
+        destination: '/dashboard/admin/site-teams',
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
