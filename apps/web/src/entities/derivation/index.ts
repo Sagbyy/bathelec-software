@@ -24,3 +24,4 @@ export { createDerivationSchema } from './model/create-derivation.schema';
 export type { CreateDerivation } from './model/create-derivation.schema';
 export { summarizeByInternalAffaire } from './lib/affaire-stats';
 export type { AffaireStats } from './lib/affaire-stats';
+export { getDerivationReference } from './lib/derivation-reference';

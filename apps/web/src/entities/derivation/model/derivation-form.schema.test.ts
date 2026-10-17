@@ -21,7 +21,7 @@ const messageAt = (result: ParseResult, segment: string, field: string) =>
 const validClientInfo = {
   name: 'M. DUPONT',
   phone: '+33612345678',
-  folio: 'SGX001',
+  folio: 'SGX001 - COM001 - ASC001 - 001 - 101',
 };
 
 const validGeneralInfo = {
@@ -143,6 +143,34 @@ describe('createCompletedDerivationSchema', () => {
       expect(result.success).toBe(false);
       expect(hasIssueAt(result, 'clientInfo', 'phone')).toBe(true);
     });
+
+    it('normalise le folio saisi (DTA-63)', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        clientInfo: {
+          ...validClientInfo,
+          folio: 'sgx001-com001- asc001 -001-101',
+        },
+      });
+
+      expect(result.success).toBe(true);
+      if (result.success)
+        expect(result.data.clientInfo.folio).toBe(
+          'SGX001 - COM001 - ASC001 - 001 - 101'
+        );
+    });
+
+    it.each(['SGX001', 'SGX001 - COM001 - ASC001 - 001', 'A - B - C D - E - F'])(
+      'rejette le folio mal formé %j (DTA-63)',
+      (folio) => {
+        const result = createCompletedDerivationSchema.safeParse({
+          ...validData,
+          clientInfo: { ...validClientInfo, folio },
+        });
+
+        expect(result.success).toBe(false);
+      }
+    );
 
     it('rejects empty folio', () => {
       const result = createCompletedDerivationSchema.safeParse({

@@ -6,11 +6,13 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Matches,
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { FOLIO_PATTERN } from '@repo/types';
 class ClientInfoDto {
   @IsString()
   @ApiProperty({ example: 'John Doe', description: 'The name of the client' })
@@ -24,7 +26,14 @@ class ClientInfoDto {
   phone: string;
 
   @IsString()
-  @ApiProperty({ example: '1234567890', description: 'The folio number' })
+  @Matches(FOLIO_PATTERN, {
+    message:
+      'folio must contain 5 alphanumeric segments separated by dashes (e.g. SGX001 - COM001 - ASC001 - 001 - 101)',
+  })
+  @ApiProperty({
+    example: 'SGX001 - COM001 - ASC001 - 001 - 101',
+    description: 'The folio, unique business identifier of the derivation',
+  })
   folio: string;
 }
 
@@ -431,7 +440,7 @@ export class CreateCompletedDerivationDto {
     example: {
       name: 'John Doe',
       phone: '06 06 06 06 06',
-      folio: '1234567890',
+      folio: 'SGX001 - COM001 - ASC001 - 001 - 101',
     },
   })
   clientInfo: ClientInfoDto;

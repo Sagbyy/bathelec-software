@@ -1,5 +1,6 @@
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { z } from 'zod';
+import { isValidFolio, normalizeFolio } from '@repo/types';
 import {
   CIRCUIT_BREAKER_POWERS,
   CIRCUIT_BREAKER_TEST_RESULTS,
@@ -35,7 +36,14 @@ export const createCompletedDerivationSchema = z.object({
     phone: z
       .string()
       .refine(isValidPhoneNumber, { message: 'Numéro de téléphone invalide' }),
-    folio: z.string().min(1, { message: 'Le folio est requis' }),
+    folio: z
+      .string()
+      .min(1, { message: 'Le folio est requis' })
+      .refine(isValidFolio, {
+        message:
+          'Format attendu : 5 segments séparés par des tirets (ex. SGX001 - COM001 - ASC001 - 001 - 101)',
+      })
+      .transform(normalizeFolio),
   }),
 
   generalInfo: z.object({

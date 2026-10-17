@@ -53,6 +53,7 @@ model Derivation {
   status            String
   correctionComment String?
   revisionCount     Int       @default(0)
+  folio             String?   @unique
   teamId            Int?
   user              User?     @relation(fields: [userId], references: [id], onDelete: Restrict)
   chantier          Chantier? @relation(fields: [chantierId], references: [id])

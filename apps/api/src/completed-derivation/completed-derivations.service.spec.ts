@@ -1,3 +1,4 @@
+import { ConflictException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { CompletedDerivationService } from './completed-derivations.service';
@@ -80,6 +81,7 @@ describe('CompletedDerivationService', () => {
   const mockPrismaService = {
     derivation: {
       update: jest.fn().mockResolvedValue({}),
+      findFirst: jest.fn().mockResolvedValue(null),
     },
   };
 
@@ -109,6 +111,7 @@ describe('CompletedDerivationService', () => {
       lean: jest.fn().mockResolvedValue(null),
     });
     mockPrismaService.derivation.update.mockResolvedValue({});
+    mockPrismaService.derivation.findFirst.mockResolvedValue(null);
   });
 
   it('should be defined', () => {
@@ -132,5 +135,53 @@ describe('CompletedDerivationService', () => {
     expect(completedDerivation.clientValidation).toEqual(
       mockDto.clientValidation
     );
+  });
+
+  describe('folio, identifiant de la dérivation (DTA-63)', () => {
+    const withFolio = (folio: string) => ({
+      ...mockDto,
+      clientInfo: { ...mockDto.clientInfo, folio },
+    });
+
+    it('normalise le folio et le recopie sur la dérivation', async () => {
+      const result = await service.create(
+        withFolio('sgx001-com001 -asc001-  001 - 101')
+      );
+
+      expect(result.clientInfo.folio).toBe(
+        'SGX001 - COM001 - ASC001 - 001 - 101'
+      );
+      expect(mockPrismaService.derivation.update).toHaveBeenCalledWith({
+        where: { id: mockDto.requestedDerivationId },
+        data: {
+          status: 'Reviewing',
+          folio: 'SGX001 - COM001 - ASC001 - 001 - 101',
+        },
+      });
+    });
+
+    it('refuse un folio déjà utilisé par une autre dérivation', async () => {
+      mockPrismaService.derivation.findFirst.mockResolvedValue({ id: 7 });
+
+      await expect(
+        service.create(withFolio('SGX001 - COM001 - ASC001 - 001 - 101'))
+      ).rejects.toThrow(ConflictException);
+      await expect(
+        service.create(withFolio('SGX001 - COM001 - ASC001 - 001 - 101'))
+      ).rejects.toThrow('Ce folio est déjà utilisé par la dérivation n°7');
+      expect(mockPrismaService.derivation.update).not.toHaveBeenCalled();
+    });
+
+    it('ignore la dérivation elle-même lors du contrôle d’unicité', async () => {
+      await service.create(withFolio('SGX001 - COM001 - ASC001 - 001 - 101'));
+
+      expect(mockPrismaService.derivation.findFirst).toHaveBeenCalledWith({
+        where: {
+          folio: 'SGX001 - COM001 - ASC001 - 001 - 101',
+          NOT: { id: mockDto.requestedDerivationId },
+        },
+        select: { id: true },
+      });
+    });
   });
 });
