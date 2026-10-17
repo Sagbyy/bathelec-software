@@ -165,7 +165,9 @@ describe('ChantiersService', () => {
 
   describe('findScheduledForUser', () => {
     beforeEach(() => {
-      jest.useFakeTimers().setSystemTime(new Date(2026, 9, 17, 15, 30));
+      jest
+        .useFakeTimers()
+        .setSystemTime(new Date('2026-10-17T23:30:00.000Z'));
     });
 
     afterEach(() => {
@@ -187,7 +189,7 @@ describe('ChantiersService', () => {
       );
       expect(mockPrismaService.chantier.findMany).toHaveBeenCalledWith({
         where: {
-          startDate: { gte: new Date(2026, 9, 17, 0, 0, 0, 0) },
+          startDate: { gte: new Date('2026-10-17T00:00:00.000Z') },
           derivations: {
             some: { OR: [{ userId: 42 }, { teamId: { in: [3, 5] } }] },
           },

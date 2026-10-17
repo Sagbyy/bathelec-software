@@ -13,9 +13,9 @@ type ScheduleInput = Pick<CreateChantierDto, 'startDate' | 'endDate'>;
 const toDate = (value: string | null | undefined) =>
   value ? new Date(value) : value;
 
-const startOfToday = () => {
+const startOfTodayUtc = () => {
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  today.setUTCHours(0, 0, 0, 0);
   return today;
 };
 
@@ -76,7 +76,7 @@ export class ChantiersService {
 
     return this.prisma.chantier.findMany({
       where: {
-        startDate: { gte: startOfToday() },
+        startDate: { gte: startOfTodayUtc() },
         derivations: {
           some: { OR: [{ userId }, { teamId: { in: teamIds } }] },
         },
