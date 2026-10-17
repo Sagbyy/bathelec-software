@@ -4,6 +4,7 @@ import { useDerivationById } from '@/features/derivations/model/use-derivation';
 import { useParams } from 'next/navigation';
 import { MultiStepForm } from '@/features/derivations/ui/multi-step-form';
 import { InfoCard } from '@/features/derivations/ui/info-derivation-card';
+import { getDerivationReference } from '@/entities/derivation';
 import { PageLoader } from '@/shared/ui/page-loader';
 
 export default function CompleteDerivationPage() {
@@ -25,6 +26,7 @@ export default function CompleteDerivationPage() {
         Formulaire d'Intervention
       </h1>
       <InfoCard
+        reference={getDerivationReference(derivation)}
         status={derivation?.status}
         chantier={derivation?.chantier}
         createdAt={derivation?.createdAt}

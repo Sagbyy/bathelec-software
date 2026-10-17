@@ -116,13 +116,31 @@ describe('MultiStepForm — intégration', () => {
 
     await user.type(screen.getByTestId('phone-input'), '+33612345678');
 
-    await user.type(screen.getByPlaceholderText(/SGX001/), 'SGX001');
+    await user.type(
+      screen.getByPlaceholderText(/SGX001/),
+      'SGX001 - COM001 - ASC001 - 001 - 101'
+    );
 
     await user.click(screen.getAllByRole('button', { name: /Suivant/i })[0]!);
 
     await waitFor(() => {
       expect(screen.getByText(/Étape 2 sur/)).toBeInTheDocument();
     });
+  });
+
+  it("reste à l'étape 1 si le folio n'a pas le format attendu (DTA-63)", async () => {
+    const user = userEvent.setup();
+    renderForm();
+
+    await user.type(screen.getByPlaceholderText('Ex: M. Dupont'), 'M. DUPONT');
+    await user.type(screen.getByTestId('phone-input'), '+33612345678');
+    await user.type(screen.getByPlaceholderText(/SGX001/), 'SGX001');
+    await user.click(screen.getAllByRole('button', { name: /Suivant/i })[0]!);
+
+    expect(
+      await screen.findByText(/Format attendu : 5 segments/)
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/Étape 2 sur/)).not.toBeInTheDocument();
   });
 
   it("reste à l'étape 1 si les champs requis sont vides", async () => {

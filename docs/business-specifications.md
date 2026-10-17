@@ -108,7 +108,7 @@ L'occupant ou propriétaire chez qui l'intervention est réalisée. Il n'a pas d
 | **Chantier** | Site d'intervention physique (adresse), rattaché à un marché, identifié par un **numéro d'affaire Enedis** (ex. `DC21/014312`) et un **numéro d'affaire interne** (ex. `BA570035`). |
 | **Dérivation** | Ordre de travail : intervention de raccordement ou de remplacement de la dérivation individuelle d'un logement, affectée à un technicien sur un chantier. |
 | **Relevé de dérivation** (formulaire d'intervention) | Compte rendu numérique de fin de travaux : informations client, photos avant et après, ancien et nouveau compteur, câble posé, disjoncteur, validation client avec signature. |
-| **Folio** | Référence du dossier logement (ex. `SGX001 - COM001 - ASC001 - 001 - 101`). |
+| **Folio** | Référence du dossier logement (ex. `SGX001 - COM001 - ASC001 - 001 - 101`). **Identifiant métier de la dérivation** : 5 segments alphanumériques séparés par des tirets, unique sur l'ensemble des dérivations. |
 | **CM / Identification CM** | Colonne montante : identification de la platine de comptage (ex. `1D001`, `2C101`). |
 | **Linky** | Compteur communicant Enedis, générations G1, G2 et G3. |
 | **Index HP / HC** | Relevés de consommation heures pleines (jour) et heures creuses (nuit). |
@@ -171,7 +171,7 @@ L'occupant ou propriétaire chez qui l'intervention est réalisée. Il n'a pas d
 
 Formulaire guidé avec barre de progression, pensé pour un usage sur smartphone. Certaines étapes sont automatiquement sautées selon les réponses (compteur conservé, refus de Linky), pour un total de 7 à 9 étapes effectives.
 
-1. **Informations client** : nom (majuscules), téléphone (format FR), folio.
+1. **Informations client** : nom (majuscules), téléphone (format FR), folio (format contrôlé, normalisé en majuscules, unique : un folio déjà utilisé par une autre dérivation est refusé).
 2. **Informations générales** : date et heure, technicien réalisateur, adresse du chantier (rue verrouillée depuis le chantier, code postal 5 chiffres, ville), bâtiment, identification CM, étage (RDC à 20), situation sur le palier (gauche, droite, en face, face gauche, face droite, autre), commentaire.
 3. **Photo avant travaux** : vue d'ensemble de la platine de comptage (obligatoire).
 4. **Ancien compteur** : type (électromécanique, CBE, Linky, autre), génération si Linky (SBE, G1, G2, G3), indicateurs **Conservé** et **Refus de Linky**, matricule (3 chiffres), clé (2 chiffres), index jour HP et nuit HC, photo du relevé d'index (obligatoire).

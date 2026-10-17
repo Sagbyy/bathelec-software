@@ -4,7 +4,11 @@ import { CreateCompletedDerivationDto } from './create-completed-derivations.dto
 
 const validPayload = {
   requestedDerivationId: 1,
-  clientInfo: { name: 'Mohamed', phone: '06 06 06 06 06', folio: '123' },
+  clientInfo: {
+    name: 'Mohamed',
+    phone: '06 06 06 06 06',
+    folio: 'SGX001 - COM001 - ASC001 - 001 - 101',
+  },
   generalInfo: {
     dateTime: new Date('2025-03-22T22:35:00.622Z'),
     derivationBy: '71',
@@ -180,5 +184,36 @@ describe('CreateCompletedDerivationDto technician validation (DTA-60)', () => {
     expect(
       await clientValidationErrors({ technicianNothingToReport: 'oui' })
     ).toContain('technicianNothingToReport');
+  });
+});
+
+describe('CreateCompletedDerivationDto folio format (DTA-63)', () => {
+  const clientInfoErrors = async (folio: string) => {
+    const dto = plainToInstance(CreateCompletedDerivationDto, {
+      ...validPayload,
+      clientInfo: { ...validPayload.clientInfo, folio },
+    });
+    const errors = await validate(dto);
+    return JSON.stringify(
+      errors.find((error) => error.property === 'clientInfo')?.children ?? []
+    );
+  };
+
+  it.each([
+    'SGX001 - COM001 - ASC001 - 001 - 101',
+    'sgx001-com001-asc001-001-101',
+    ' SGX001 -COM001- ASC001 - 001 - 101 ',
+  ])('accepts the folio %j', async (folio) => {
+    expect(await clientInfoErrors(folio)).toBe('[]');
+  });
+
+  it.each([
+    '1234567890',
+    'SGX001 - COM001 - ASC001 - 001',
+    'SGX001 - COM001 - ASC001 - 001 - 101 - 9',
+    'SGX001 - COM 001 - ASC001 - 001 - 101',
+    'SGX001 -  - ASC001 - 001 - 101',
+  ])('rejects the folio %j', async (folio) => {
+    expect(await clientInfoErrors(folio)).toContain('folio');
   });
 });

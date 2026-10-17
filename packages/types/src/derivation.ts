@@ -28,6 +28,7 @@ export interface Derivation {
   status: DerivationStatus;
   correctionComment: string | null;
   revisionCount?: number;
+  folio?: string | null;
   teamId: number | null;
   team?: DerivationTeam | null;
   user?: DerivationAssignee | null;

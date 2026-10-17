@@ -46,4 +46,11 @@ export class DerivationResponseDto {
     description: 'Number of times the derivation was sent back for correction',
   })
   revisionCount: number;
+
+  @ApiProperty({
+    example: 'SGX001 - COM001 - ASC001 - 001 - 101',
+    nullable: true,
+    description: 'Folio entered on the report, unique business identifier',
+  })
+  folio: string | null;
 }
