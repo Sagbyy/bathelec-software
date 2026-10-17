@@ -123,7 +123,11 @@ export function Navbar() {
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" aria-describedby={undefined}>
+        <SheetContent
+          side="left"
+          aria-describedby={undefined}
+          className="overflow-y-auto overscroll-contain"
+        >
           <VisuallyHidden>
             <SheetTitle>Abrisûr</SheetTitle>
           </VisuallyHidden>
@@ -258,7 +262,7 @@ export function Navbar() {
         <AbrisurLogo />
         <span className="sr-only">Abrisûr Software</span>
       </Link>
-      <NavigationMenu className="ml-auto hidden lg:block">
+      <NavigationMenu viewport={false} className="ml-auto hidden lg:block">
         <NavigationMenuList>
           {/* Common Links */}
           {commonLinks.map((link, index) => (
@@ -281,7 +285,7 @@ export function Navbar() {
                 {link.type === 'folder' ? (
                   <>
                     <NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
-                    <NavigationMenuContent>
+                    <NavigationMenuContent className="left-auto right-0">
                       <ul className="grid w-[400px] list-none gap-3 p-4">
                         {link.pages?.map((page, index) => (
                           <ListItem
@@ -316,7 +320,7 @@ export function Navbar() {
                 {link.type === 'folder' ? (
                   <>
                     <NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
-                    <NavigationMenuContent>
+                    <NavigationMenuContent className="left-auto right-0">
                       <ul className="grid w-[400px] list-none gap-3 p-4">
                         {link.pages?.map((page, pageIndex) => (
                           <ListItem
