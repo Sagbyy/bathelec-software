@@ -4,7 +4,10 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { Derivation, Role } from '@repo/types';
 import { Button } from '@/shared/ui/button';
-import { DerivationStatusIcon } from '@/entities/derivation';
+import {
+  DerivationStatusIcon,
+  getDerivationReference,
+} from '@/entities/derivation';
 import { useUserStore } from '@/entities/user';
 import { NativeSelect } from '@/shared/ui/native-select';
 import {
@@ -47,6 +50,7 @@ export function TeamDerivationsList() {
               {derivation.chantier?.address ?? `Dérivation #${derivation.id}`}
             </span>
             <span className="text-sm text-gray-500">
+              {getDerivationReference(derivation)} ·{' '}
               {derivation.team?.name ?? 'Sans équipe'}
             </span>
             <DerivationStatusIcon derivationStatus={derivation.status} />

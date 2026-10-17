@@ -87,7 +87,6 @@
     --chart-ongoing: oklch(55.4% 0.046 257.417);
     --chart-reviewing: oklch(62.3% 0.214 259.815);
     --chart-revising: oklch(70.5% 0.213 47.604);
-    --chart-incorrect: oklch(63.7% 0.237 25.331);
     --chart-completed: oklch(72.3% 0.219 149.579);
     --radius: 0.5rem;
   }

@@ -1,9 +1,10 @@
+import * as bcrypt from 'bcryptjs';
+
 export const STATUSES = [
   'Pending',
   'Ongoing',
   'Reviewing',
   'Revising',
-  'Incorrect',
   'Completed',
 ] as const;
 
@@ -15,6 +16,44 @@ export type SeededDerivation = {
 
 export const SAMPLE_IMAGE =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=';
+
+export const SEED_TECHNICIAN_USERNAME = 'jgoncalves';
+
+export type SeedAccount = {
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: 'admin' | 'technician';
+};
+
+export const SEED_ACCOUNTS: SeedAccount[] = [
+  {
+    username: 'admin',
+    email: 'admin@bathelec.fr',
+    firstName: 'Admin',
+    lastName: 'Bathelec',
+    role: 'admin',
+  },
+  {
+    username: SEED_TECHNICIAN_USERNAME,
+    email: 'jgoncalves@bathelec.fr',
+    firstName: 'J',
+    lastName: 'Goncalves',
+    role: 'technician',
+  },
+];
+
+export function seedPasswordOf(account: SeedAccount) {
+  return account.username;
+}
+
+export async function buildSeedUserData(account: SeedAccount) {
+  return {
+    ...account,
+    password: await bcrypt.hash(seedPasswordOf(account), 10),
+  };
+}
 
 export const MARKETS = [{ name: 'DR Paris' }, { name: 'DR Île-de-France' }];
 
@@ -190,6 +229,8 @@ export function buildCompletedDerivationData(
       calibrationPower: '45A',
       commissioningDone: true,
       sealed: true,
+      testButton: 'working',
+      replacementExplanation: '',
     },
     photoAfterWork: {
       photo: SAMPLE_IMAGE,
@@ -202,7 +243,9 @@ export function buildCompletedDerivationData(
       satisfactionLevel: '5',
       clientComment: 'Travaux valides',
       signature: SAMPLE_IMAGE,
-      technicianComment: 'RAS',
+      technicianComment: '',
+      technicianNothingToReport: true,
+      technicianSignature: SAMPLE_IMAGE,
     },
   };
 }

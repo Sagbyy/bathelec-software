@@ -54,6 +54,8 @@ export const DEFAULT_FORM_VALUES = {
     calibrationPower: '',
     commissioningDone: false,
     sealed: false,
+    testButton: null,
+    replacementExplanation: '',
   },
   photoAfterWork: {
     photo: null,
@@ -68,5 +70,7 @@ export const DEFAULT_FORM_VALUES = {
     clientComment: '',
     signature: null,
     technicianComment: '',
+    technicianNothingToReport: false,
+    technicianSignature: null,
   },
 };

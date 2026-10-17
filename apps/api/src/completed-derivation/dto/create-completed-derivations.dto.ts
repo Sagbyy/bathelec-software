@@ -1,13 +1,18 @@
 import {
   IsBoolean,
   IsDate,
+  IsIn,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  Matches,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { FOLIO_PATTERN } from '@repo/types';
 class ClientInfoDto {
   @IsString()
   @ApiProperty({ example: 'John Doe', description: 'The name of the client' })
@@ -21,7 +26,14 @@ class ClientInfoDto {
   phone: string;
 
   @IsString()
-  @ApiProperty({ example: '1234567890', description: 'The folio number' })
+  @Matches(FOLIO_PATTERN, {
+    message:
+      'folio must contain 5 alphanumeric segments separated by dashes (e.g. SGX001 - COM001 - ASC001 - 001 - 101)',
+  })
+  @ApiProperty({
+    example: 'SGX001 - COM001 - ASC001 - 001 - 101',
+    description: 'The folio, unique business identifier of the derivation',
+  })
   folio: string;
 }
 
@@ -280,6 +292,32 @@ class CircuitBreakerDto {
     description: 'The sealed',
   })
   sealed: boolean;
+
+  @ValidateIf(
+    (breaker: CircuitBreakerDto) =>
+      breaker.preserved || breaker.testButton != null
+  )
+  @IsIn(['working', 'faulty'])
+  @ApiProperty({
+    example: 'working',
+    enum: ['working', 'faulty'],
+    required: false,
+    nullable: true,
+    description:
+      'Result of the TEST button check after commissioning, required when the breaker is preserved',
+  })
+  testButton?: 'working' | 'faulty' | null;
+
+  @ValidateIf((breaker: CircuitBreakerDto) => breaker.testButton === 'faulty')
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: 'Bouton test inopérant, disjoncteur à remplacer',
+    required: false,
+    description:
+      'Explanation required when the TEST button is faulty and the breaker must be replaced',
+  })
+  replacementExplanation?: string;
 }
 
 class PhotoAfterWorkDto {
@@ -356,12 +394,36 @@ class ClientValidationDto {
   })
   signature: string;
 
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({
+    example: false,
+    required: false,
+    description:
+      'RAS toggle: the technician has nothing to report, the comment becomes optional',
+  })
+  technicianNothingToReport?: boolean;
+
   @IsString()
+  @ValidateIf(
+    (validation: ClientValidationDto) => !validation.technicianNothingToReport
+  )
+  @IsNotEmpty()
   @ApiProperty({
     example: 'Technician comment',
-    description: 'The technician comment',
+    description:
+      'The technician comment, required unless the RAS toggle is enabled',
   })
   technicianComment: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=',
+    description: 'The technician signature',
+  })
+  technicianSignature: string;
 }
 
 export class CreateCompletedDerivationDto {
@@ -378,7 +440,7 @@ export class CreateCompletedDerivationDto {
     example: {
       name: 'John Doe',
       phone: '06 06 06 06 06',
-      folio: '1234567890',
+      folio: 'SGX001 - COM001 - ASC001 - 001 - 101',
     },
   })
   clientInfo: ClientInfoDto;

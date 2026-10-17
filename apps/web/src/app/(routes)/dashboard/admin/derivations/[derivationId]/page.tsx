@@ -1,7 +1,9 @@
 'use client';
 
 import CorrectionComment from '@/features/derivations/ui/admin/correction-comment';
+import { ExportEnedisButton } from '@/features/enedis-export';
 import { InfoCard } from '@/features/derivations/ui/info-derivation-card';
+import { getDerivationReference } from '@/entities/derivation';
 import { DerivationTeamCard } from '@/features/derivations';
 import { MultiStepForm } from '@/features/derivations/ui/multi-step-form';
 import { Button } from '@/shared/ui/button';
@@ -43,8 +45,12 @@ export default function AdminDerivationPage() {
       <h1 className="text-center text-3xl font-bold">
         Formulaire d'Intervention
       </h1>
+      <div className="flex justify-end">
+        <ExportEnedisButton scope="derivations" id={derivation.id} />
+      </div>
       <CorrectionComment derivation={derivation} />
       <InfoCard
+        reference={getDerivationReference(derivation)}
         status={derivation?.status}
         chantier={derivation?.chantier}
         createdAt={derivation?.createdAt}

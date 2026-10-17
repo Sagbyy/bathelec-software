@@ -4,6 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { type CreateCompletedDerivation } from '@/entities/derivation';
+import { getApiErrorMessage } from '@/shared/lib/api-error';
 import { useCompletedDerivations } from './use-completed-derivations';
 
 export function useDerivationSubmit(derivationId: number) {
@@ -17,7 +18,8 @@ export function useDerivationSubmit(derivationId: number) {
     }
     if (status === 'error') {
       toast.error(
-        `Une erreur est survenue lors de la soumission du formulaire. ${error?.message}`
+        (error && getApiErrorMessage(error)) ||
+          `Une erreur est survenue lors de la soumission du formulaire. ${error?.message}`
       );
     }
   }, [status, error, router]);

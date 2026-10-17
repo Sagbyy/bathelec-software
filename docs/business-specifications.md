@@ -108,7 +108,7 @@ L'occupant ou propriétaire chez qui l'intervention est réalisée. Il n'a pas d
 | **Chantier** | Site d'intervention physique (adresse), rattaché à un marché, identifié par un **numéro d'affaire Enedis** (ex. `DC21/014312`) et un **numéro d'affaire interne** (ex. `BA570035`). |
 | **Dérivation** | Ordre de travail : intervention de raccordement ou de remplacement de la dérivation individuelle d'un logement, affectée à un technicien sur un chantier. |
 | **Relevé de dérivation** (formulaire d'intervention) | Compte rendu numérique de fin de travaux : informations client, photos avant et après, ancien et nouveau compteur, câble posé, disjoncteur, validation client avec signature. |
-| **Folio** | Référence du dossier logement (ex. `SGX001 - COM001 - ASC001 - 001 - 101`). |
+| **Folio** | Référence du dossier logement (ex. `SGX001 - COM001 - ASC001 - 001 - 101`). **Identifiant métier de la dérivation** : 5 segments alphanumériques séparés par des tirets, unique sur l'ensemble des dérivations. |
 | **CM / Identification CM** | Colonne montante : identification de la platine de comptage (ex. `1D001`, `2C101`). |
 | **Linky** | Compteur communicant Enedis, générations G1, G2 et G3. |
 | **Index HP / HC** | Relevés de consommation heures pleines (jour) et heures creuses (nuit). |
@@ -171,17 +171,17 @@ L'occupant ou propriétaire chez qui l'intervention est réalisée. Il n'a pas d
 
 Formulaire guidé avec barre de progression, pensé pour un usage sur smartphone. Certaines étapes sont automatiquement sautées selon les réponses (compteur conservé, refus de Linky), pour un total de 7 à 9 étapes effectives.
 
-1. **Informations client** : nom (majuscules), téléphone (format FR), folio.
+1. **Informations client** : nom (majuscules), téléphone (format FR), folio (format contrôlé, normalisé en majuscules, unique : un folio déjà utilisé par une autre dérivation est refusé).
 2. **Informations générales** : date et heure, technicien réalisateur, adresse du chantier (rue verrouillée depuis le chantier, code postal 5 chiffres, ville), bâtiment, identification CM, étage (RDC à 20), situation sur le palier (gauche, droite, en face, face gauche, face droite, autre), commentaire.
 3. **Photo avant travaux** : vue d'ensemble de la platine de comptage (obligatoire).
 4. **Ancien compteur** : type (électromécanique, CBE, Linky, autre), génération si Linky (SBE, G1, G2, G3), indicateurs **Conservé** et **Refus de Linky**, matricule (3 chiffres), clé (2 chiffres), index jour HP et nuit HC, photo du relevé d'index (obligatoire).
 5. **Nouvelle dérivation** : section posée (2x16, 2x25 ou 2x35 mm²), nature du câble (cuivre ou aluminium), longueur posée en mètres. **Règle de cohérence** : alerte si la longueur dépasse 10 m en 2x16 ou 20 m pour les autres sections (« Merci de confirmer la section, et de vérifier par rapport au projet »).
 6. **Nouveau compteur** *(sautée si l'ancien compteur est conservé)* : génération, matricule (3 chiffres, aide visuelle), index jour et nuit, photo avec index visible (obligatoire).
-7. **Disjoncteur** : consigne de sécurité affichée (test du bouton avant travaux, remplacement obligatoire sinon). Champs : conservé, voltage (mono ou tri), marque (BACO, GE, Schneider…), type (non différentiel, différentiel, sélectif), puissance, mise en service effectuée, **plombage obligatoire dans tous les cas**.
+7. **Disjoncteur** : consigne de sécurité affichée (test du bouton « TEST » après mise en service, remplacement obligatoire sinon). Champs : conservé, voltage (mono ou tri), marque (BACO, GE, Schneider…), type (non différentiel, différentiel, sélectif), puissance, mise en service effectuée, **plombage obligatoire dans tous les cas**. Si l'étude indique de **conserver** le disjoncteur, le résultat du test du bouton « TEST » est obligatoire (fonctionne / HS) ; si le bouton est **HS**, le disjoncteur est **à remplacer** et une **explication** est obligatoire.
 8. **Photo après travaux** : vue d'ensemble (obligatoire) et jusqu'à 2 photos complémentaires facultatives.
 9. **Validation client** : présence du client (présent ou absent).
    - Si le client est présent : validation des travaux, niveau de satisfaction (échelle de 0 à 4 étoiles), commentaire client et signature sur écran (avec effacement possible).
-   - Dans tous les cas : commentaire de l'électricien (obligatoire).
+   - Dans tous les cas : bouton **« RAS »** (rien à signaler) ; s'il n'est pas coché, le commentaire de l'électricien est obligatoire. **Signature du technicien** obligatoire.
 
 Contraintes transverses : les photos sont aux formats JPEG, PNG ou WebP, avec une taille limitée à environ 4 à 5 Mo par image. Le relevé complet (photos et signature incluses) est conservé de façon intègre et rattaché à la dérivation.
 
@@ -190,6 +190,7 @@ Contraintes transverses : les photos sont aux formats JPEG, PNG ou WebP, avec un
 - **EF-DASH-01** — Cartes d'indicateurs : nombre de dérivations par statut.
 - **EF-DASH-02** — Graphique circulaire de répartition des statuts avec total au centre.
 - **EF-DASH-03** — Liste des relevés : recherche, filtres par technicien et par statut, pagination (5, 10, 20 ou 50). Colonnes : ID, date de création, technicien, chantier, statut, action. Les relevés « En attente de validation » sont mis en avant avec un bouton « À vérifier ».
+- **EF-DASH-04** — Statistiques de revue : taux de dérivations **validées du premier coup** (terminées sans aucun renvoi en correction) et **taux de retour** (part des dérivations revues renvoyées au moins une fois en correction), avec le nombre total de renvois.
 
 ### 4.7 Dossier du technicien
 
@@ -241,8 +242,9 @@ Contraintes transverses : les photos sont aux formats JPEG, PNG ou WebP, avec un
   - la section, la nature et la longueur du câble posé,
   - les caractéristiques du disjoncteur (voltage, marque, type, puissance, mise en service, plombage),
   - la validation client (présence, satisfaction, commentaire).
+  - en fin de tableau : puissance du disjoncteur et puissance du calibrage (en ampères), résultat du test du bouton « TEST » (fonctionne / HS — à remplacer, avec l'explication), toggle « RAS » et commentaire de l'électricien, signature du technicien (image).
 - **EF-EXP-03** — Les unités et codifications (sections en mm², puissances en ampères, générations Linky, etc.) suivent la nomenclature Enedis afin de rendre l'export directement transmissible ou archivable, sans ressaisie.
-- **EF-EXP-04** — L'export peut porter sur une fiche unique ou sur l'ensemble des dérivations d'un chantier (export groupé).
+- **EF-EXP-04** — L'export peut porter sur une fiche unique ou sur l'ensemble des dérivations d'un chantier (export groupé). Accessible aux administrateurs et encadrants depuis la fiche de dérivation et la fiche chantier ; seules les dérivations disposant d'un relevé sont exportées.
 
 ---
 

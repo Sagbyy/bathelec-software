@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
+import { normalizeFolio } from '@repo/types';
 import {
   CompletedDerivation,
   CompletedDerivationDocument,
@@ -17,7 +18,14 @@ export class CompletedDerivationService {
     private readonly prisma: PrismaService
   ) {}
 
-  async create(createCompletedDerivationDto: CreateCompletedDerivationDto) {
+  async create(dto: CreateCompletedDerivationDto) {
+    const folio = normalizeFolio(dto.clientInfo.folio);
+    await this.ensureFolioAvailable(folio, dto.requestedDerivationId);
+    const createCompletedDerivationDto = {
+      ...dto,
+      clientInfo: { ...dto.clientInfo, folio },
+    };
+
     try {
       const completedDerivationOnDatabase = await this.completedDerivationModel
         .findOne({
@@ -33,6 +41,7 @@ export class CompletedDerivationService {
           },
           data: {
             status: DerivationStatus.REVIEWING,
+            folio,
           },
         });
 
@@ -56,6 +65,7 @@ export class CompletedDerivationService {
         },
         data: {
           status: DerivationStatus.REVIEWING,
+          folio,
         },
       });
 
@@ -76,24 +86,41 @@ export class CompletedDerivationService {
     });
   }
 
-  async update(
-    id: number,
-    updateCompletedDerivationDto: Partial<CompletedDerivation>
-  ) {
+  async update(id: number, dto: Partial<CompletedDerivation>) {
+    const folio = dto.clientInfo?.folio
+      ? normalizeFolio(dto.clientInfo.folio)
+      : undefined;
+    if (folio) {
+      await this.ensureFolioAvailable(folio, dto.requestedDerivationId);
+    }
+
     await this.prisma.derivation.update({
       where: {
-        id: updateCompletedDerivationDto.requestedDerivationId,
+        id: dto.requestedDerivationId,
       },
       data: {
         status: DerivationStatus.REVIEWING,
+        folio,
       },
     });
 
     return await this.completedDerivationModel.findByIdAndUpdate(
       id,
-      updateCompletedDerivationDto,
+      folio ? { ...dto, clientInfo: { ...dto.clientInfo, folio } } : dto,
       { new: true }
     );
+  }
+
+  private async ensureFolioAvailable(folio: string, derivationId: number) {
+    const owner = await this.prisma.derivation.findFirst({
+      where: { folio, NOT: { id: derivationId } },
+      select: { id: true },
+    });
+    if (owner) {
+      throw new ConflictException(
+        `Ce folio est déjà utilisé par la dérivation n°${owner.id}`
+      );
+    }
   }
 
   remove(id: number) {

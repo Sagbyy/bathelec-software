@@ -7,6 +7,8 @@ export interface Chantier {
   enedisAffaireNumber: string;
   internalAffaireNumber: string;
   marketId: number;
+  startDate?: string | null;
+  endDate?: string | null;
   market?: Market;
   derivations?: Derivation[];
   createdAt: string;

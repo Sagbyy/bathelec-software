@@ -36,10 +36,15 @@ model Chantier {
   enedisAffaireNumber   String
   internalAffaireNumber String
   marketId              Int
+  startDate             DateTime?
+  endDate               DateTime?
   createdAt             DateTime     @default(now())
   updatedAt             DateTime     @updatedAt
   market                Market       @relation(fields: [marketId], references: [id])
   derivations           Derivation[]
+
+  @@index([startDate])
+  @@index([internalAffaireNumber])
 }
 
 model Derivation {
@@ -49,6 +54,8 @@ model Derivation {
   createdAt         DateTime  @default(now())
   status            String
   correctionComment String?
+  revisionCount     Int       @default(0)
+  folio             String?   @unique
   teamId            Int?
   user              User?     @relation(fields: [userId], references: [id], onDelete: Restrict)
   chantier          Chantier? @relation(fields: [chantierId], references: [id])

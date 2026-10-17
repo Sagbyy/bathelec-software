@@ -7,6 +7,7 @@ import { DerivationsModule } from './derivations/derivations.module';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CompletedDerivationModule } from './completed-derivation/completed-derivations.module';
+import { DerivationExportsModule } from './derivation-exports/derivation-exports.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SiteTeamsModule } from './site-teams/site-teams.module';
 import { VehicleDocumentsModule } from './vehicle-documents/vehicle-documents.module';
@@ -29,6 +30,7 @@ import { ExpiryNotificationsModule } from './expiry-notifications/expiry-notific
     UsersModule,
     DerivationsModule,
     CompletedDerivationModule,
+    DerivationExportsModule,
     SiteTeamsModule,
     VehicleDocumentsModule,
     OfficialDocumentsModule,

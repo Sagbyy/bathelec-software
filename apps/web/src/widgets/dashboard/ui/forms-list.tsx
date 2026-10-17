@@ -45,7 +45,10 @@ import { useTechnicians } from '@/entities/user';
 import { cn } from '@/shared/lib/utils';
 import { derivationStatusConfig } from '@/entities/derivation';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { DerivationStatusIcon } from '@/entities/derivation';
+import {
+  DerivationStatusIcon,
+  getDerivationReference,
+} from '@/entities/derivation';
 import { useRouter } from 'next/navigation';
 import { formatDate } from 'date-fns';
 
@@ -91,11 +94,16 @@ export function FormsList() {
   );
   const filteredForms = derivations.filter((derivation) => {
     const chantierAddress = derivation.chantier?.address ?? '';
+    const affaireNumber = derivation.chantier?.internalAffaireNumber ?? '';
     const matchesSearch =
       getTechnicianName(derivation.userId)
         .toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
       chantierAddress.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      affaireNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      getDerivationReference(derivation)
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
       derivation.status.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesTechnician =
@@ -198,13 +206,14 @@ export function FormsList() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
+                  <TableHead>Folio</TableHead>
                   <TableHead>Créé le</TableHead>
                   <TableHead>Équipe</TableHead>
                   <TableHead>Technicien</TableHead>
                   <TableHead className="hidden md:table-cell">
                     Chantier
                   </TableHead>
+                  <TableHead>N° d'affaire</TableHead>
                   <TableHead>Statut</TableHead>
                   <TableHead className="text-right">Action</TableHead>
                 </TableRow>
@@ -213,7 +222,7 @@ export function FormsList() {
                 {currentItems.map((derivation) => (
                   <TableRow key={derivation.id}>
                     <TableCell className="font-medium">
-                      {derivation.id}
+                      {getDerivationReference(derivation)}
                     </TableCell>
                     <TableCell>
                       {formatDate(derivation.createdAt, 'dd/MM/yyyy')}
@@ -224,6 +233,9 @@ export function FormsList() {
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
                       {derivation.chantier?.address ?? '—'}
+                    </TableCell>
+                    <TableCell>
+                      {derivation.chantier?.internalAffaireNumber ?? '—'}
                     </TableCell>
                     <TableCell>
                       <DerivationStatusIcon

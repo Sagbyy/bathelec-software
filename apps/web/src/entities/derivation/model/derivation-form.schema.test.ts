@@ -21,7 +21,7 @@ const messageAt = (result: ParseResult, segment: string, field: string) =>
 const validClientInfo = {
   name: 'M. DUPONT',
   phone: '+33612345678',
-  folio: 'SGX001',
+  folio: 'SGX001 - COM001 - ASC001 - 001 - 101',
 };
 
 const validGeneralInfo = {
@@ -75,13 +75,17 @@ const validData = {
     calibrationPower: '45A',
     commissioningDone: true,
     sealed: true,
+    testButton: null,
+    replacementExplanation: '',
   },
   photoAfterWork: {
     photo: 'data:image/jpeg;base64,abc123',
   },
   clientValidation: {
     present: false,
-    technicianComment: 'RAS',
+    technicianComment: 'Câble remplacé',
+    technicianNothingToReport: false,
+    technicianSignature: 'data:image/png;base64,signature',
   },
 };
 
@@ -140,6 +144,34 @@ describe('createCompletedDerivationSchema', () => {
       expect(hasIssueAt(result, 'clientInfo', 'phone')).toBe(true);
     });
 
+    it('normalise le folio saisi (DTA-63)', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        clientInfo: {
+          ...validClientInfo,
+          folio: 'sgx001-com001- asc001 -001-101',
+        },
+      });
+
+      expect(result.success).toBe(true);
+      if (result.success)
+        expect(result.data.clientInfo.folio).toBe(
+          'SGX001 - COM001 - ASC001 - 001 - 101'
+        );
+    });
+
+    it.each(['SGX001', 'SGX001 - COM001 - ASC001 - 001', 'A - B - C D - E - F'])(
+      'rejette le folio mal formé %j (DTA-63)',
+      (folio) => {
+        const result = createCompletedDerivationSchema.safeParse({
+          ...validData,
+          clientInfo: { ...validClientInfo, folio },
+        });
+
+        expect(result.success).toBe(false);
+      }
+    );
+
     it('rejects empty folio', () => {
       const result = createCompletedDerivationSchema.safeParse({
         ...validData,
@@ -197,6 +229,58 @@ describe('createCompletedDerivationSchema', () => {
         circuitBreaker: { ...validData.circuitBreaker, type: 'invalid' },
       });
       expect(result.success).toBe(false);
+    });
+
+    const issuePaths = (circuitBreaker: Record<string, unknown>) => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        circuitBreaker: { ...validData.circuitBreaker, ...circuitBreaker },
+      });
+      return result.success
+        ? []
+        : result.error.issues.map((issue) => issue.path.join('.'));
+    };
+
+    it('exige le test du bouton « TEST » quand le disjoncteur est conservé (DTA-49)', () => {
+      expect(issuePaths({ preserved: true, testButton: null })).toContain(
+        'circuitBreaker.testButton'
+      );
+    });
+
+    it('accepte un disjoncteur conservé dont le bouton test fonctionne (DTA-49)', () => {
+      expect(issuePaths({ preserved: true, testButton: 'working' })).toEqual(
+        []
+      );
+    });
+
+    it('exige une explication quand le bouton test est HS (DTA-49)', () => {
+      expect(
+        issuePaths({
+          preserved: true,
+          testButton: 'faulty',
+          replacementExplanation: '   ',
+        })
+      ).toContain('circuitBreaker.replacementExplanation');
+    });
+
+    it('accepte un bouton test HS accompagné d’une explication (DTA-49)', () => {
+      expect(
+        issuePaths({
+          preserved: true,
+          testButton: 'faulty',
+          replacementExplanation: 'Bouton inopérant, disjoncteur remplacé',
+        })
+      ).toEqual([]);
+    });
+
+    it("n'exige pas le test quand le disjoncteur n'est pas conservé (DTA-49)", () => {
+      expect(issuePaths({ preserved: false, testButton: null })).toEqual([]);
+    });
+
+    it('rejette un résultat de test inconnu (DTA-49)', () => {
+      expect(issuePaths({ preserved: true, testButton: 'maybe' })).toContain(
+        'circuitBreaker.testButton'
+      );
     });
 
     it('accepts tri voltage', () => {
@@ -499,6 +583,54 @@ describe('createCompletedDerivationSchema', () => {
       });
       expect(result.success).toBe(false);
       expect(hasIssueAt(result, 'photoAfterWork', 'photo')).toBe(true);
+    });
+  });
+
+  describe('validation électricien (DTA-60)', () => {
+    const clientValidationIssues = (
+      clientValidation: Record<string, unknown>
+    ) => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        clientValidation: { ...validData.clientValidation, ...clientValidation },
+      });
+      return result.success
+        ? []
+        : result.error.issues.map((issue) => issue.path.join('.'));
+    };
+
+    it('exige un commentaire quand « RAS » n’est pas coché', () => {
+      expect(
+        clientValidationIssues({
+          technicianNothingToReport: false,
+          technicianComment: '  ',
+        })
+      ).toContain('clientValidation.technicianComment');
+    });
+
+    it('accepte un commentaire vide quand « RAS » est coché', () => {
+      expect(
+        clientValidationIssues({
+          technicianNothingToReport: true,
+          technicianComment: '',
+        })
+      ).toEqual([]);
+    });
+
+    it('exige la signature du technicien', () => {
+      expect(
+        clientValidationIssues({ technicianSignature: null })
+      ).toContain('clientValidation.technicianSignature');
+    });
+
+    it('exige la signature du technicien même avec « RAS »', () => {
+      expect(
+        clientValidationIssues({
+          technicianNothingToReport: true,
+          technicianComment: '',
+          technicianSignature: null,
+        })
+      ).toEqual(['clientValidation.technicianSignature']);
     });
   });
 });
