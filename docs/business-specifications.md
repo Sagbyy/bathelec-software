@@ -235,8 +235,9 @@ Contraintes transverses : les photos sont aux formats JPEG, PNG ou WebP, avec un
   - la section, la nature et la longueur du câble posé,
   - les caractéristiques du disjoncteur (voltage, marque, type, puissance, mise en service, plombage),
   - la validation client (présence, satisfaction, commentaire).
+  - en fin de tableau : puissance du disjoncteur et puissance du calibrage (en ampères), résultat du test du bouton « TEST » (fonctionne / HS — à remplacer, avec l'explication), toggle « RAS » et commentaire de l'électricien, signature du technicien (image).
 - **EF-EXP-03** — Les unités et codifications (sections en mm², puissances en ampères, générations Linky, etc.) suivent la nomenclature Enedis afin de rendre l'export directement transmissible ou archivable, sans ressaisie.
-- **EF-EXP-04** — L'export peut porter sur une fiche unique ou sur l'ensemble des dérivations d'un chantier (export groupé).
+- **EF-EXP-04** — L'export peut porter sur une fiche unique ou sur l'ensemble des dérivations d'un chantier (export groupé). Accessible aux administrateurs et encadrants depuis la fiche de dérivation et la fiche chantier ; seules les dérivations disposant d'un relevé sont exportées.
 
 ---
 
