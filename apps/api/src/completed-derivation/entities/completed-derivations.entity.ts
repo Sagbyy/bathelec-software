@@ -76,6 +76,8 @@ export class CompletedDerivation {
     calibrationPower: string;
     commissioningDone: boolean;
     sealed: boolean;
+    testButton?: 'working' | 'faulty' | null;
+    replacementExplanation?: string;
   };
 
   @Prop({ type: Object, required: true })

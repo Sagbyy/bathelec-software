@@ -229,6 +229,8 @@ export function buildCompletedDerivationData(
       calibrationPower: '45A',
       commissioningDone: true,
       sealed: true,
+      testButton: 'working',
+      replacementExplanation: '',
     },
     photoAfterWork: {
       photo: SAMPLE_IMAGE,

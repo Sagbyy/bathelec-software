@@ -1,9 +1,12 @@
 import {
   IsBoolean,
   IsDate,
+  IsIn,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -280,6 +283,32 @@ class CircuitBreakerDto {
     description: 'The sealed',
   })
   sealed: boolean;
+
+  @ValidateIf(
+    (breaker: CircuitBreakerDto) =>
+      breaker.preserved || breaker.testButton != null
+  )
+  @IsIn(['working', 'faulty'])
+  @ApiProperty({
+    example: 'working',
+    enum: ['working', 'faulty'],
+    required: false,
+    nullable: true,
+    description:
+      'Result of the TEST button check after commissioning, required when the breaker is preserved',
+  })
+  testButton?: 'working' | 'faulty' | null;
+
+  @ValidateIf((breaker: CircuitBreakerDto) => breaker.testButton === 'faulty')
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: 'Bouton test inopérant, disjoncteur à remplacer',
+    required: false,
+    description:
+      'Explanation required when the TEST button is faulty and the breaker must be replaced',
+  })
+  replacementExplanation?: string;
 }
 
 class PhotoAfterWorkDto {

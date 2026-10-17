@@ -13,3 +13,8 @@ export const CIRCUIT_BREAKER_POWERS = [
 ] as const;
 
 export type CircuitBreakerPower = (typeof CIRCUIT_BREAKER_POWERS)[number];
+
+export const CIRCUIT_BREAKER_TEST_RESULTS = ['working', 'faulty'] as const;
+
+export type CircuitBreakerTestResult =
+  (typeof CIRCUIT_BREAKER_TEST_RESULTS)[number];

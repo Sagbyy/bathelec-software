@@ -41,6 +41,8 @@ export const STEP_FIELDS_TO_VALIDATE: {
     'circuitBreaker.type',
     'circuitBreaker.power',
     'circuitBreaker.calibrationPower',
+    'circuitBreaker.testButton',
+    'circuitBreaker.replacementExplanation',
   ],
   8: ['photoAfterWork.photo'],
   9: {

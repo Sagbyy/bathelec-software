@@ -28,6 +28,9 @@ export const formatCompletedDerivation = (
       type: completedDerivation.circuitBreaker.type as CircuitBreakerType,
       voltage: completedDerivation.circuitBreaker.voltage as VoltageType,
       power: completedDerivation.circuitBreaker.power as CircuitBreakerPower,
+      testButton: completedDerivation.circuitBreaker.testButton ?? null,
+      replacementExplanation:
+        completedDerivation.circuitBreaker.replacementExplanation ?? '',
     },
     photoAfterWork: completedDerivation.photoAfterWork,
     clientValidation: completedDerivation.clientValidation,
