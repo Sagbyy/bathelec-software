@@ -51,7 +51,11 @@ export const STEP_FIELDS_TO_VALIDATE: {
       'clientValidation.satisfactionLevel',
       'clientValidation.signature',
       'clientValidation.technicianComment',
+      'clientValidation.technicianSignature',
     ],
-    absent: ['clientValidation.technicianComment'],
+    absent: [
+      'clientValidation.technicianComment',
+      'clientValidation.technicianSignature',
+    ],
   },
 };

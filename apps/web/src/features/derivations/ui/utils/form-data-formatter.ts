@@ -33,6 +33,12 @@ export const formatCompletedDerivation = (
         completedDerivation.circuitBreaker.replacementExplanation ?? '',
     },
     photoAfterWork: completedDerivation.photoAfterWork,
-    clientValidation: completedDerivation.clientValidation,
+    clientValidation: {
+      ...completedDerivation.clientValidation,
+      technicianNothingToReport:
+        completedDerivation.clientValidation.technicianNothingToReport ?? false,
+      technicianSignature:
+        completedDerivation.clientValidation.technicianSignature ?? null,
+    },
   };
 };

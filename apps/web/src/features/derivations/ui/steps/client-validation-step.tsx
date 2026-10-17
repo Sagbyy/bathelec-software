@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
   FormControl,
@@ -14,10 +14,8 @@ import {
 import { Textarea } from '@/shared/ui/textarea';
 import { Switch } from '@/shared/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group';
-import { Button } from '@/shared/ui/button';
-import { Star, Trash2 } from 'lucide-react';
-import SignatureCanvas from 'react-signature-canvas';
-import ReactSignatureCanvas from 'react-signature-canvas';
+import { Star } from 'lucide-react';
+import { SignaturePad } from '@/shared/ui/signature-pad';
 import type { CreateCompletedDerivation } from '@/entities/derivation';
 import { useDerivationStatusStore } from '@/entities/derivation';
 import { cn } from '@/shared/lib/utils';
@@ -27,25 +25,13 @@ interface ClientValidationStepProps {
 
 export function ClientValidationStep({ form }: ClientValidationStepProps) {
   const oldMeterPreserved = form.watch('oldMeter.preserved');
-  const signatureRef = useRef<ReactSignatureCanvas>(null);
   const [clientPresent, setClientPresent] = useState(
     form.getValues('clientValidation.present')
   );
   const { isNotEditable: isCompleted } = useDerivationStatusStore();
-
-  useEffect(() => {
-    if (signatureRef.current) {
-      signatureRef.current.fromDataURL(
-        form.getValues('clientValidation.signature')
-      );
-    }
-  }, []);
-
-  const clearSignature = () => {
-    if (signatureRef.current) {
-      signatureRef.current.clear();
-    }
-  };
+  const nothingToReport = form.watch(
+    'clientValidation.technicianNothingToReport'
+  );
 
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
@@ -189,40 +175,11 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
               <FormItem>
                 <FormLabel>Signature du client ou du représentant</FormLabel>
                 <FormControl>
-                  <div className="space-y-2">
-                    <div
-                      className={cn(
-                        'h-64 rounded-md border bg-white p-2',
-                        isCompleted && 'pointer-events-none cursor-not-allowed'
-                      )}
-                    >
-                      <SignatureCanvas
-                        ref={signatureRef}
-                        penColor="black"
-                        canvasProps={{
-                          className: 'w-full h-full',
-                        }}
-                        onEnd={() => {
-                          field.onChange(
-                            signatureRef.current
-                              ?.getTrimmedCanvas()
-                              .toDataURL('image/png')
-                          );
-                        }}
-                      />
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={clearSignature}
-                      className="flex items-center"
-                      disabled={isCompleted}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Effacer la signature
-                    </Button>
-                  </div>
+                  <SignaturePad
+                    value={field.value}
+                    onChange={field.onChange}
+                    disabled={isCompleted}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -233,19 +190,69 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
 
       <FormField
         control={form.control}
-        name="clientValidation.technicianComment"
+        name="clientValidation.technicianNothingToReport"
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <FormLabel
+                htmlFor="technician-nothing-to-report"
+                className="text-base"
+              >
+                RAS — rien à signaler
+              </FormLabel>
+              <p className="text-muted-foreground text-xs">
+                Décochez pour saisir un commentaire de l&apos;électricien.
+              </p>
+            </div>
+            <FormControl>
+              <Switch
+                id="technician-nothing-to-report"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                disabled={isCompleted}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+
+      {!nothingToReport && (
+        <FormField
+          control={form.control}
+          name="clientValidation.technicianComment"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                {clientPresent
+                  ? 'Commentaire de notre électricien'
+                  : 'Commentaires de notre électricien'}
+              </FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Commentaires de l'électricien..."
+                  className="resize-none"
+                  {...field}
+                  disabled={isCompleted}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
+
+      <FormField
+        control={form.control}
+        name="clientValidation.technicianSignature"
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              {clientPresent
-                ? 'Commentaire de notre électricien'
-                : 'Commentaires de notre électricien'}
+              Signature du technicien <span className="text-red-500">*</span>
             </FormLabel>
             <FormControl>
-              <Textarea
-                placeholder="Commentaires de l'électricien..."
-                className="resize-none"
-                {...field}
+              <SignaturePad
+                value={field.value}
+                onChange={field.onChange}
                 disabled={isCompleted}
               />
             </FormControl>

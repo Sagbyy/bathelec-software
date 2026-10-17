@@ -72,6 +72,8 @@ describe('CompletedDerivationController', () => {
       clientComment: 'Comment 1',
       signature: 'signature',
       technicianComment: 'Comment 1',
+
+      technicianSignature: 'data:image/png;base64,signature',
     },
   };
 

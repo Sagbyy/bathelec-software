@@ -385,12 +385,36 @@ class ClientValidationDto {
   })
   signature: string;
 
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({
+    example: false,
+    required: false,
+    description:
+      'RAS toggle: the technician has nothing to report, the comment becomes optional',
+  })
+  technicianNothingToReport?: boolean;
+
   @IsString()
+  @ValidateIf(
+    (validation: ClientValidationDto) => !validation.technicianNothingToReport
+  )
+  @IsNotEmpty()
   @ApiProperty({
     example: 'Technician comment',
-    description: 'The technician comment',
+    description:
+      'The technician comment, required unless the RAS toggle is enabled',
   })
   technicianComment: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=',
+    description: 'The technician signature',
+  })
+  technicianSignature: string;
 }
 
 export class CreateCompletedDerivationDto {

@@ -181,7 +181,7 @@ Formulaire guidé avec barre de progression, pensé pour un usage sur smartphone
 8. **Photo après travaux** : vue d'ensemble (obligatoire) et jusqu'à 2 photos complémentaires facultatives.
 9. **Validation client** : présence du client (présent ou absent).
    - Si le client est présent : validation des travaux, niveau de satisfaction (échelle de 0 à 4 étoiles), commentaire client et signature sur écran (avec effacement possible).
-   - Dans tous les cas : commentaire de l'électricien (obligatoire).
+   - Dans tous les cas : bouton **« RAS »** (rien à signaler) ; s'il n'est pas coché, le commentaire de l'électricien est obligatoire. **Signature du technicien** obligatoire.
 
 Contraintes transverses : les photos sont aux formats JPEG, PNG ou WebP, avec une taille limitée à environ 4 à 5 Mo par image. Le relevé complet (photos et signature incluses) est conservé de façon intègre et rattaché à la dérivation.
 

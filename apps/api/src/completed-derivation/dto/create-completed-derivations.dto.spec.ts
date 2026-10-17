@@ -56,6 +56,7 @@ const validPayload = {
     clientComment: 'Comment 1',
     signature: 'signature',
     technicianComment: 'Comment 1',
+    technicianSignature: 'data:image/png;base64,signature',
   },
 };
 
@@ -133,5 +134,51 @@ describe('CreateCompletedDerivationDto circuit breaker test button (DTA-49)', ()
     expect(
       await withBreaker({ preserved: false, testButton: null })
     ).toBeUndefined();
+  });
+});
+
+describe('CreateCompletedDerivationDto technician validation (DTA-60)', () => {
+  const clientValidationErrors = async (
+    clientValidation: Record<string, unknown>
+  ) => {
+    const dto = plainToInstance(CreateCompletedDerivationDto, {
+      ...validPayload,
+      clientValidation: {
+        ...validPayload.clientValidation,
+        ...clientValidation,
+      },
+    });
+    const errors = await validate(dto);
+    return JSON.stringify(
+      errors.find((error) => error.property === 'clientValidation')?.children ??
+        []
+    );
+  };
+
+  it('requires the technician comment when RAS is not enabled', async () => {
+    expect(await clientValidationErrors({ technicianComment: '' })).toContain(
+      'technicianComment'
+    );
+  });
+
+  it('accepts an empty comment when RAS is enabled', async () => {
+    expect(
+      await clientValidationErrors({
+        technicianComment: '',
+        technicianNothingToReport: true,
+      })
+    ).toBe('[]');
+  });
+
+  it('requires the technician signature', async () => {
+    expect(await clientValidationErrors({ technicianSignature: '' })).toContain(
+      'technicianSignature'
+    );
+  });
+
+  it('rejects a non boolean RAS toggle', async () => {
+    expect(
+      await clientValidationErrors({ technicianNothingToReport: 'oui' })
+    ).toContain('technicianNothingToReport');
   });
 });

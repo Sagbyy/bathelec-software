@@ -70,5 +70,7 @@ export const DEFAULT_FORM_VALUES = {
     clientComment: '',
     signature: null,
     technicianComment: '',
+    technicianNothingToReport: false,
+    technicianSignature: null,
   },
 };
