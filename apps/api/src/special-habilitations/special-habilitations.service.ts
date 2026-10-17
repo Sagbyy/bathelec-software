@@ -7,16 +7,28 @@ import {
 } from './entities/special-habilitation.entity';
 import { UpdateSpecialHabilitationDto } from './dto/update-special-habilitation.dto';
 import { UsersService } from '../users/users.service';
+import { clearExpiryOfRemovedDocuments } from '../common/validators/is-document-expiry-date.validator';
+
+const SPECIAL_HABILITATION_DOCUMENT_KEYS = [
+  'electricalTitleDoc',
+  'ss4TitleDoc',
+  'leadTitleDoc',
+  'sstCertificateDoc',
+] as const;
 
 const DEFAULT_SPECIAL_HABILITATIONS = {
   electricalTitle: false,
   electricalTitleDoc: null,
+  electricalTitleDocExpiresAt: null,
   ss4Title: false,
   ss4TitleDoc: null,
+  ss4TitleDocExpiresAt: null,
   leadTitle: false,
   leadTitleDoc: null,
+  leadTitleDocExpiresAt: null,
   sstCertificate: false,
   sstCertificateDoc: null,
+  sstCertificateDocExpiresAt: null,
 };
 
 @Injectable()
@@ -45,7 +57,12 @@ export class SpecialHabilitationsService {
 
     return this.model.findOneAndUpdate(
       { userId },
-      { $set: dto },
+      {
+        $set: clearExpiryOfRemovedDocuments(
+          dto,
+          SPECIAL_HABILITATION_DOCUMENT_KEYS
+        ),
+      },
       { upsert: true, new: true }
     );
   }

@@ -26,11 +26,14 @@ export type HabilitationKey = keyof HabilitationCodes;
 export interface HabilitationDocument extends HabilitationCodes {
   _id?: string;
   userId: number;
+  expiresAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }
 
-export type UpdateHabilitationDto = Partial<HabilitationCodes>;
+export type UpdateHabilitationDto = Partial<HabilitationCodes> & {
+  expiresAt?: string | null;
+};
 
 export const DEFAULT_HABILITATIONS: HabilitationCodes = {
   b0: false,
@@ -79,8 +82,17 @@ export const HABILITATION_TABLE: {
     {
       tension: 'Basse tension',
       cells: [
-        { codes: ['b0'], labels: ['B0'], description: 'Maçonnerie, plomberie, serrurerie, peinture' },
-        { codes: ['bs', 'be'], labels: ['BS', 'BE'], description: "Intervention sur climatisation, concierge, installateur d'alarme" },
+        {
+          codes: ['b0'],
+          labels: ['B0'],
+          description: 'Maçonnerie, plomberie, serrurerie, peinture',
+        },
+        {
+          codes: ['bs', 'be'],
+          labels: ['BS', 'BE'],
+          description:
+            "Intervention sur climatisation, concierge, installateur d'alarme",
+        },
         { codes: ['b1', 'b1v'], labels: ['B1', 'B1V'] },
         {
           codes: ['b2', 'b2v', 'b2vEssais'],
@@ -94,7 +106,11 @@ export const HABILITATION_TABLE: {
     {
       tension: 'Haute tension',
       cells: [
-        { codes: ['h0', 'h0v'], labels: ['H0', 'H0V'], description: 'Maçonnerie, plomberie, serrurerie, peinture' },
+        {
+          codes: ['h0', 'h0v'],
+          labels: ['H0', 'H0V'],
+          description: 'Maçonnerie, plomberie, serrurerie, peinture',
+        },
         null,
         { codes: ['h1', 'h1v'], labels: ['H1', 'H1V'] },
         {

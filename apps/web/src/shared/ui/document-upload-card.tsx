@@ -1,20 +1,23 @@
 'use client';
 
 import type React from 'react';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
+import { ValidityDateField } from './validity-date-field';
 
 interface DocumentUploadCardProps {
   label: string;
   description: string;
   inputId: string;
   value: string | null;
-  onChange: (base64: string | null) => void;
+  onChange: (base64: string | null, expiresAt?: string | null) => void;
   isPending?: boolean;
+  expiresAt?: string | null;
+  onExpiresAtChange?: (expiresAt: string | null) => void;
 }
 
 export function DocumentUploadCard({
@@ -24,8 +27,22 @@ export function DocumentUploadCard({
   value,
   onChange,
   isPending = false,
+  expiresAt = null,
+  onExpiresAtChange,
 }: DocumentUploadCardProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const requiresExpiry = onExpiresAtChange !== undefined;
+  const [pendingExpiresAt, setPendingExpiresAt] = useState(expiresAt);
+  const canSelectFile = !requiresExpiry || !!pendingExpiresAt;
+
+  useEffect(() => {
+    setPendingExpiresAt(expiresAt);
+  }, [expiresAt]);
+
+  const handleExpiresAtChange = (date: string | null) => {
+    setPendingExpiresAt(date);
+    if (value && date) onExpiresAtChange?.(date);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -33,7 +50,7 @@ export function DocumentUploadCard({
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      onChange(reader.result as string);
+      onChange(reader.result as string, pendingExpiresAt);
     };
     reader.readAsDataURL(file);
 
@@ -46,6 +63,15 @@ export function DocumentUploadCard({
         <p className="text-sm font-medium text-gray-900">{label}</p>
         <p className="text-muted-foreground text-xs">{description}</p>
       </div>
+
+      {requiresExpiry && (
+        <ValidityDateField
+          id={`${inputId}-expiry`}
+          value={pendingExpiresAt}
+          onChange={handleExpiresAtChange}
+          disabled={isPending}
+        />
+      )}
 
       {value ? (
         <div className="relative h-52 w-full max-w-md overflow-hidden rounded-md border">
@@ -87,10 +113,16 @@ export function DocumentUploadCard({
               type="button"
               variant="outline"
               onClick={() => inputRef.current?.click()}
-              disabled={isPending}
+              disabled={isPending || !canSelectFile}
             >
               Sélectionner un fichier
             </Button>
+            {!canSelectFile && (
+              <p className="text-muted-foreground text-xs">
+                Renseignez la date de fin de validité avant d&apos;ajouter le
+                document.
+              </p>
+            )}
           </div>
         </div>
       )}

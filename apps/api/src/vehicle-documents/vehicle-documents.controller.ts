@@ -68,7 +68,8 @@ export class VehicleDocumentsController {
   @ApiResponse({ status: 403, description: 'Accès interdit.' })
   update(
     @Param('userId') userId: string,
-    @Body() updateVehicleDocumentDto: UpdateVehicleDocumentDto
+    @Body(new ValidationPipe({ whitelist: true }))
+    updateVehicleDocumentDto: UpdateVehicleDocumentDto
   ) {
     return this.vehicleDocumentsService.update(
       +userId,

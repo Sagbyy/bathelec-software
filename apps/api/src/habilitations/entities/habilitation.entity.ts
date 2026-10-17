@@ -10,6 +10,9 @@ export class Habilitation {
   @Prop({ required: true, unique: true })
   userId: number;
 
+  @Prop({ type: Date, default: null })
+  expiresAt: Date | null;
+
   // Non-électrique BT
   @Prop({ type: Boolean, default: false })
   b0: boolean;

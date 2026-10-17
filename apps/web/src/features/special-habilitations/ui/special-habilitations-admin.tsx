@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@iconify/react/dist/iconify.js';
@@ -8,6 +8,7 @@ import { Switch } from '@/shared/ui/switch';
 import { Button } from '@/shared/ui/button';
 import { Label } from '@/shared/ui/label';
 import { Badge } from '@/shared/ui/badge';
+import { ValidityDateField } from '@/shared/ui/validity-date-field';
 import {
   DEFAULT_SPECIAL_HABILITATIONS,
   SPECIAL_HABILITATION_CONFIG,
@@ -25,26 +26,40 @@ function SpecialHabilitationRow({
   enabled,
   hasDocument,
   document,
+  expiresAt,
   isPending,
   onToggle,
   onUpload,
   onRemoveDoc,
+  onExpiresAtChange,
 }: {
   config: SpecialHabilitationConfig;
   enabled: boolean;
   hasDocument: boolean;
   document: string | null;
+  expiresAt: string | null;
   isPending: boolean;
   onToggle: (value: boolean) => void;
-  onUpload: (base64: string) => void;
+  onUpload: (base64: string, expiresAt: string) => void;
   onRemoveDoc: () => void;
+  onExpiresAtChange: (expiresAt: string) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [pendingExpiresAt, setPendingExpiresAt] = useState(expiresAt);
+
+  useEffect(() => {
+    setPendingExpiresAt(expiresAt);
+  }, [expiresAt]);
+
+  const handleExpiresAtChange = (date: string | null) => {
+    setPendingExpiresAt(date);
+    if (hasDocument && date) onExpiresAtChange(date);
+  };
 
   const handleFile = (file: File) => {
     const reader = new FileReader();
     reader.onloadend = () => {
-      onUpload(reader.result as string);
+      if (pendingExpiresAt) onUpload(reader.result as string, pendingExpiresAt);
     };
     reader.readAsDataURL(file);
   };
@@ -91,7 +106,18 @@ function SpecialHabilitationRow({
       </div>
 
       {enabled && (
-        <div className="mt-3 flex flex-wrap items-center gap-2 border-t pt-3">
+        <div className="mt-3 border-t pt-3">
+          <ValidityDateField
+            id={`${config.docKey}-expiry`}
+            value={pendingExpiresAt}
+            onChange={handleExpiresAtChange}
+            disabled={isPending}
+          />
+        </div>
+      )}
+
+      {enabled && (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           <input
             ref={inputRef}
             type="file"
@@ -107,7 +133,7 @@ function SpecialHabilitationRow({
             type="button"
             variant="outline"
             size="sm"
-            disabled={isPending}
+            disabled={isPending || !pendingExpiresAt}
             onClick={() => inputRef.current?.click()}
             className="gap-1.5"
           >
@@ -179,10 +205,19 @@ export function SpecialHabilitationsAdmin({
           enabled={habilitations[config.key]}
           hasDocument={!!habilitations[config.docKey]}
           document={habilitations[config.docKey]}
+          expiresAt={habilitations[`${config.docKey}ExpiresAt`] ?? null}
           isPending={isPending}
           onToggle={(value) => mutate({ [config.key]: value })}
-          onUpload={(base64) => mutate({ [config.docKey]: base64 })}
+          onUpload={(base64, expiresAt) =>
+            mutate({
+              [config.docKey]: base64,
+              [`${config.docKey}ExpiresAt`]: expiresAt,
+            })
+          }
           onRemoveDoc={() => mutate({ [config.docKey]: null })}
+          onExpiresAtChange={(expiresAt) =>
+            mutate({ [`${config.docKey}ExpiresAt`]: expiresAt })
+          }
         />
       ))}
     </div>

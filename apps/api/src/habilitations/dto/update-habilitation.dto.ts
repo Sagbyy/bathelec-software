@@ -1,4 +1,9 @@
-import { IsBoolean, IsOptional } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsOptional,
+  ValidateIf,
+} from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateHabilitationDto {
@@ -101,4 +106,15 @@ export class UpdateHabilitationDto {
   @IsOptional()
   @ApiPropertyOptional()
   heAttribut?: boolean;
+
+  @ValidateIf((_, value) => value !== null)
+  @IsDateString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    example: '2027-05-31',
+    nullable: true,
+    description:
+      'Validity end date of the NF C 18-510 habilitation title, required as soon as a code is granted',
+  })
+  expiresAt?: string | null;
 }

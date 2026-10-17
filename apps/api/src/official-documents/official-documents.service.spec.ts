@@ -153,6 +153,35 @@ describe('OfficialDocumentsService', () => {
     });
   });
 
+  describe('date de validité (DTA-51)', () => {
+    it('efface la date de validité quand le document est retiré', async () => {
+      mockModel.findOneAndUpdate.mockResolvedValue(mockDocument);
+
+      await service.update(1, { idCard: null });
+
+      expect(mockModel.findOneAndUpdate).toHaveBeenCalledWith(
+        { userId: 1 },
+        expect.objectContaining({ idCard: null, idCardExpiresAt: null }),
+        { new: true }
+      );
+    });
+
+    it('enregistre la date de validité avec le document', async () => {
+      mockModel.findOneAndUpdate.mockResolvedValue(mockDocument);
+
+      await service.update(1, {
+        btpCard: 'data:image/jpeg;base64,carte',
+        btpCardExpiresAt: '2027-05-31',
+      });
+
+      expect(mockModel.findOneAndUpdate).toHaveBeenCalledWith(
+        { userId: 1 },
+        expect.objectContaining({ btpCardExpiresAt: '2027-05-31' }),
+        { new: true }
+      );
+    });
+  });
+
   describe('remove', () => {
     it('supprime le document pour un userId donné', async () => {
       mockModel.findOneAndDelete.mockResolvedValue(mockDocument);
