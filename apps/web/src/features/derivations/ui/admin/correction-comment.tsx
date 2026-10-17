@@ -175,8 +175,8 @@ export default function CorrectionComment({
               </FieldGroup>
             </FieldSet>
             <FieldDescription>
-              Selectionner un des trois status après votre revue : Selectionner
-              un des trois status après votre revue de l'intervention.
+              Après votre revue de l'intervention, validez-la ou renvoyez-la au
+              technicien pour correction.
             </FieldDescription>
             <div className="flex gap-2">
               <Badge variant="default" className="bg-green-500">
@@ -185,10 +185,6 @@ export default function CorrectionComment({
               {' - '}
               <Badge variant="secondary">
                 {derivationStatusConfig[DerivationStatus.REVISING].text}
-              </Badge>
-              {' - '}
-              <Badge variant="destructive">
-                {derivationStatusConfig[DerivationStatus.INCORRECT].text}
               </Badge>
             </div>
             <form.Subscribe
