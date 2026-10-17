@@ -60,7 +60,8 @@ export const createChantierSchema = z
       .string()
       .trim()
       .min(2, 'Le numéro interne doit avoir au moins 2 caractères')
-      .max(80, 'Le numéro interne doit avoir au maximum 80 caractères'),
+      .max(80, 'Le numéro interne doit avoir au maximum 80 caractères')
+      .toUpperCase(),
     marketId: z.coerce
       .number({
         required_error: 'Veuillez sélectionner un marché',

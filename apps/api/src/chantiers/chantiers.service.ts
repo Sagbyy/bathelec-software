@@ -10,6 +10,11 @@ import { UpdateChantierDto } from './dto/request/update-chantier.dto';
 
 type ScheduleInput = Pick<CreateChantierDto, 'startDate' | 'endDate'>;
 
+type ChantierInput = ScheduleInput &
+  Partial<Pick<CreateChantierDto, 'internalAffaireNumber'>>;
+
+const normalizeAffaireNumber = (value: string) => value.trim().toUpperCase();
+
 const toDate = (value: string | null | undefined) =>
   value ? new Date(value) : value;
 
@@ -119,9 +124,13 @@ export class ChantiersService {
     return this.prisma.chantier.delete({ where: { id } });
   }
 
-  private toChantierData<T extends ScheduleInput>(dto: T) {
+  private toChantierData<T extends ChantierInput>(dto: T) {
     return {
       ...dto,
+      internalAffaireNumber:
+        dto.internalAffaireNumber === undefined
+          ? undefined
+          : normalizeAffaireNumber(dto.internalAffaireNumber),
       startDate: toDate(dto.startDate),
       endDate: toDate(dto.endDate),
     };

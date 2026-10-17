@@ -91,11 +91,13 @@ export function FormsList() {
   );
   const filteredForms = derivations.filter((derivation) => {
     const chantierAddress = derivation.chantier?.address ?? '';
+    const affaireNumber = derivation.chantier?.internalAffaireNumber ?? '';
     const matchesSearch =
       getTechnicianName(derivation.userId)
         .toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
       chantierAddress.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      affaireNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
       derivation.status.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesTechnician =
@@ -205,6 +207,7 @@ export function FormsList() {
                   <TableHead className="hidden md:table-cell">
                     Chantier
                   </TableHead>
+                  <TableHead>N° d'affaire</TableHead>
                   <TableHead>Statut</TableHead>
                   <TableHead className="text-right">Action</TableHead>
                 </TableRow>
@@ -224,6 +227,9 @@ export function FormsList() {
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
                       {derivation.chantier?.address ?? '—'}
+                    </TableCell>
+                    <TableCell>
+                      {derivation.chantier?.internalAffaireNumber ?? '—'}
                     </TableCell>
                     <TableCell>
                       <DerivationStatusIcon

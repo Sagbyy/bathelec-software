@@ -90,6 +90,44 @@ describe('ChantiersService', () => {
     });
   });
 
+  describe("numéro d'affaire interne", () => {
+    it('normalise le numéro à la création pour fiabiliser les statistiques', async () => {
+      mockPrismaService.market.findUnique.mockResolvedValue(mockMarket);
+      mockPrismaService.chantier.create.mockResolvedValue(mockChantier);
+
+      await service.create({ ...createDto, internalAffaireNumber: ' ba570035 ' });
+
+      expect(mockPrismaService.chantier.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ internalAffaireNumber: 'BA570035' }),
+        })
+      );
+    });
+
+    it('normalise le numéro à la mise à jour', async () => {
+      mockPrismaService.chantier.findUnique.mockResolvedValue(mockChantier);
+      mockPrismaService.chantier.update.mockResolvedValue(mockChantier);
+
+      await service.update(1, { internalAffaireNumber: 'ba570099' });
+
+      expect(mockPrismaService.chantier.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ internalAffaireNumber: 'BA570099' }),
+        })
+      );
+    });
+
+    it('ne touche pas au numéro quand il est absent de la mise à jour', async () => {
+      mockPrismaService.chantier.findUnique.mockResolvedValue(mockChantier);
+      mockPrismaService.chantier.update.mockResolvedValue(mockChantier);
+
+      await service.update(1, { address: '15 rue Neuve' });
+
+      const { data } = mockPrismaService.chantier.update.mock.calls[0][0];
+      expect(data.internalAffaireNumber).toBeUndefined();
+    });
+  });
+
   describe('planning du chantier', () => {
     it('enregistre les dates de début et de fin prévues', async () => {
       mockPrismaService.market.findUnique.mockResolvedValue(mockMarket);

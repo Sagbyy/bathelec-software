@@ -2,6 +2,7 @@ import { DashboardShell } from '@/widgets/dashboard/ui/shell';
 import { FormStatusCards } from '@/widgets/dashboard/ui/form-status-cards';
 import { FormsList } from '@/widgets/dashboard/ui/forms-list';
 import FormStatusChart from '@/widgets/dashboard/ui/form-status-chart';
+import { AffaireStatsTable } from '@/widgets/dashboard/ui/affaire-stats-table';
 
 export default function AdminPage() {
   return (
@@ -12,6 +13,7 @@ export default function AdminPage() {
             <FormStatusCards className="col-span-2 lg:col-span-4" />
             <FormStatusChart className="col-span-2 lg:col-span-3" />
           </div>
+          <AffaireStatsTable />
           <FormsList />
         </div>
       </DashboardShell>
