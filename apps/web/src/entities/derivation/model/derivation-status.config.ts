@@ -33,13 +33,6 @@ export const derivationStatusConfig: Record<
     textDarkColor: 'text-orange-800',
     backgroundColor: 'bg-orange-100',
   },
-  [DerivationStatus.INCORRECT]: {
-    text: 'Incorrect',
-    icon: 'mdi:alert-circle-outline',
-    textColor: 'text-red-500',
-    textDarkColor: 'text-red-800',
-    backgroundColor: 'bg-red-100',
-  },
   [DerivationStatus.COMPLETED]: {
     text: 'Terminé',
     icon: 'mdi:check-circle-outline',

@@ -3,7 +3,6 @@ export const STATUSES = [
   'Ongoing',
   'Reviewing',
   'Revising',
-  'Incorrect',
   'Completed',
 ] as const;
 
