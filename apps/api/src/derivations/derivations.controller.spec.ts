@@ -42,6 +42,7 @@ const mockDerivationsService = {
   assignTeam: jest.fn(),
   assignUser: jest.fn(),
   claimDerivation: jest.fn(),
+  getReviewStats: jest.fn(),
 };
 
 const currentUser = { userId: 42, username: 'tech', role: Role.TECHNICIAN };
@@ -189,6 +190,7 @@ describe('DerivationsController', () => {
       ['assignUser', [Role.ADMIN, Role.SUPERVISOR, Role.SITE_MANAGER]],
       ['claimDerivation', [Role.TECHNICIAN, Role.SITE_MANAGER]],
       ['findMyDerivations', [Role.TECHNICIAN, Role.SITE_MANAGER]],
+      ['getReviewStats', [Role.ADMIN, Role.SUPERVISOR]],
       [
         'createDerivation',
         [Role.ADMIN, Role.SUPERVISOR, Role.SITE_MANAGER, Role.TECHNICIAN],

@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { Derivation } from '@repo/types';
+import { Derivation, DerivationReviewStats } from '@repo/types';
 import { apiClient } from '@/shared/api';
 import { UpdateDerivation } from '../model/update-derivation.types';
 import { CreateDerivation } from '../model/create-derivation.schema';
@@ -21,6 +21,13 @@ export const derivationService = {
 
   getDerivations: async () => {
     const { data } = await apiClient.get<Derivation[]>(`/derivations`);
+    return data;
+  },
+
+  getReviewStats: async () => {
+    const { data } = await apiClient.get<DerivationReviewStats>(
+      '/derivations/stats/review'
+    );
     return data;
   },
 
@@ -77,5 +84,10 @@ export const derivationQueries = {
     queryOptions({
       queryKey: ['derivations', 'me'],
       queryFn: derivationService.getMyDerivations,
+    }),
+  reviewStats: () =>
+    queryOptions({
+      queryKey: ['derivations', 'stats', 'review'],
+      queryFn: derivationService.getReviewStats,
     }),
 };

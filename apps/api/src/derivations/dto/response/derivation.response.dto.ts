@@ -40,4 +40,10 @@ export class DerivationResponseDto {
 
   @ApiProperty({ example: null, nullable: true })
   correctionComment: string | null;
+
+  @ApiProperty({
+    example: 0,
+    description: 'Number of times the derivation was sent back for correction',
+  })
+  revisionCount: number;
 }
