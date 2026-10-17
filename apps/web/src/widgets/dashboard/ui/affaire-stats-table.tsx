@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { summarizeByInternalAffaire } from '@/entities/derivation';
+import {
+  AffaireStats,
+  summarizeByInternalAffaire,
+} from '@/entities/derivation';
 import { useDerivation } from '@/features/derivations';
 import {
   Card,
@@ -48,59 +51,75 @@ export function AffaireStatsTable() {
         />
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <p className="text-muted-foreground py-6 text-center text-sm">
-            Chargement des statistiques...
-          </p>
-        ) : rows.length === 0 ? (
-          <p className="text-muted-foreground py-6 text-center text-sm">
-            Aucune affaire à afficher.
-          </p>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>N° d'affaire</TableHead>
-                <TableHead className="hidden md:table-cell">Chantier</TableHead>
-                <TableHead className="text-right">Dérivations</TableHead>
-                <TableHead className="text-right">Terminées</TableHead>
-                <TableHead className="hidden text-right sm:table-cell">
-                  À valider
-                </TableHead>
-                <TableHead className="hidden text-right sm:table-cell">
-                  À corriger
-                </TableHead>
-                <TableHead className="text-right">Avancement</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((stats) => (
-                <TableRow key={stats.internalAffaireNumber}>
-                  <TableCell className="font-medium">
-                    {stats.internalAffaireNumber}
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {stats.address}
-                  </TableCell>
-                  <TableCell className="text-right">{stats.total}</TableCell>
-                  <TableCell className="text-right">
-                    {stats.completed}
-                  </TableCell>
-                  <TableCell className="hidden text-right sm:table-cell">
-                    {stats.awaitingReview}
-                  </TableCell>
-                  <TableCell className="hidden text-right sm:table-cell">
-                    {stats.awaitingCorrection}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {stats.completionRate} %
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+        <AffaireStatsContent isLoading={isLoading} rows={rows} />
       </CardContent>
     </Card>
+  );
+}
+
+function AffaireStatsContent({
+  isLoading,
+  rows,
+}: {
+  isLoading: boolean;
+  rows: AffaireStats[];
+}) {
+  if (isLoading) {
+    return (
+      <p className="text-muted-foreground py-6 text-center text-sm">
+        Chargement des statistiques...
+      </p>
+    );
+  }
+
+  if (rows.length === 0) {
+    return (
+      <p className="text-muted-foreground py-6 text-center text-sm">
+        Aucune affaire à afficher.
+      </p>
+    );
+  }
+
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>N° d'affaire</TableHead>
+          <TableHead className="hidden md:table-cell">Chantier</TableHead>
+          <TableHead className="text-right">Dérivations</TableHead>
+          <TableHead className="text-right">Terminées</TableHead>
+          <TableHead className="hidden text-right sm:table-cell">
+            À valider
+          </TableHead>
+          <TableHead className="hidden text-right sm:table-cell">
+            À corriger
+          </TableHead>
+          <TableHead className="text-right">Avancement</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {rows.map((stats) => (
+          <TableRow key={stats.internalAffaireNumber}>
+            <TableCell className="font-medium">
+              {stats.internalAffaireNumber}
+            </TableCell>
+            <TableCell className="hidden md:table-cell">
+              {stats.address}
+            </TableCell>
+            <TableCell className="text-right">{stats.total}</TableCell>
+            <TableCell className="text-right">{stats.completed}</TableCell>
+            <TableCell className="hidden text-right sm:table-cell">
+              {stats.awaitingReview}
+            </TableCell>
+            <TableCell className="hidden text-right sm:table-cell">
+              {stats.awaitingCorrection}
+            </TableCell>
+            <TableCell className="text-right">
+              {stats.completionRate} %
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
