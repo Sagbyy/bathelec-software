@@ -84,6 +84,8 @@ export interface ClientValidation {
   clientComment: string;
   signature: string;
   technicianComment: string;
+  technicianNothingToReport?: boolean;
+  technicianSignature?: string;
 }
 
 export interface CompletedDerivation {

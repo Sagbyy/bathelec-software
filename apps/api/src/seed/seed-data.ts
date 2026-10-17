@@ -243,7 +243,9 @@ export function buildCompletedDerivationData(
       satisfactionLevel: '5',
       clientComment: 'Travaux valides',
       signature: SAMPLE_IMAGE,
-      technicianComment: 'RAS',
+      technicianComment: '',
+      technicianNothingToReport: true,
+      technicianSignature: SAMPLE_IMAGE,
     },
   };
 }

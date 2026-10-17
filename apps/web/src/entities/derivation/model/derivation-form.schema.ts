@@ -219,9 +219,26 @@ export const createCompletedDerivationSchema = z.object({
       satisfactionLevel: z.string().optional(),
       clientComment: z.string().optional(),
       signature: z.any().optional(),
-      technicianComment: z
-        .string()
-        .min(1, { message: 'Le commentaire est requis' }),
+      technicianComment: z.string(),
+      technicianNothingToReport: z.boolean(),
+      technicianSignature: z.string().nullable(),
+    })
+    .superRefine((data, ctx) => {
+      if (!data.technicianNothingToReport && !data.technicianComment.trim()) {
+        ctx.addIssue({
+          path: ['technicianComment'],
+          message: 'Le commentaire est requis, sinon cochez « RAS »',
+          code: 'custom',
+        });
+      }
+
+      if (!data.technicianSignature) {
+        ctx.addIssue({
+          path: ['technicianSignature'],
+          message: 'La signature du technicien est requise',
+          code: 'custom',
+        });
+      }
     })
     .refine(
       (data) => {

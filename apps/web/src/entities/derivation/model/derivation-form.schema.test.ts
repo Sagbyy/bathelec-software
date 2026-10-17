@@ -83,7 +83,9 @@ const validData = {
   },
   clientValidation: {
     present: false,
-    technicianComment: 'RAS',
+    technicianComment: 'Câble remplacé',
+    technicianNothingToReport: false,
+    technicianSignature: 'data:image/png;base64,signature',
   },
 };
 
@@ -553,6 +555,54 @@ describe('createCompletedDerivationSchema', () => {
       });
       expect(result.success).toBe(false);
       expect(hasIssueAt(result, 'photoAfterWork', 'photo')).toBe(true);
+    });
+  });
+
+  describe('validation électricien (DTA-60)', () => {
+    const clientValidationIssues = (
+      clientValidation: Record<string, unknown>
+    ) => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        clientValidation: { ...validData.clientValidation, ...clientValidation },
+      });
+      return result.success
+        ? []
+        : result.error.issues.map((issue) => issue.path.join('.'));
+    };
+
+    it('exige un commentaire quand « RAS » n’est pas coché', () => {
+      expect(
+        clientValidationIssues({
+          technicianNothingToReport: false,
+          technicianComment: '  ',
+        })
+      ).toContain('clientValidation.technicianComment');
+    });
+
+    it('accepte un commentaire vide quand « RAS » est coché', () => {
+      expect(
+        clientValidationIssues({
+          technicianNothingToReport: true,
+          technicianComment: '',
+        })
+      ).toEqual([]);
+    });
+
+    it('exige la signature du technicien', () => {
+      expect(
+        clientValidationIssues({ technicianSignature: null })
+      ).toContain('clientValidation.technicianSignature');
+    });
+
+    it('exige la signature du technicien même avec « RAS »', () => {
+      expect(
+        clientValidationIssues({
+          technicianNothingToReport: true,
+          technicianComment: '',
+          technicianSignature: null,
+        })
+      ).toEqual(['clientValidation.technicianSignature']);
     });
   });
 });
