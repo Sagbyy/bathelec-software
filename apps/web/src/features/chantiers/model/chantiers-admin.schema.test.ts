@@ -28,6 +28,21 @@ describe('chantiers admin schemas', () => {
     if (result.success) expect(result.data.marketId).toBe(3);
   });
 
+  it("normalise le numéro d'affaire interne en majuscules", () => {
+    const result = createChantierSchema.safeParse({
+      address: '12 rue de la Paix',
+      enedisAffaireNumber: 'ENEDIS-001',
+      internalAffaireNumber: '  ba570035 ',
+      marketId: 3,
+      startDate: '',
+      endDate: '',
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success)
+      expect(result.data.internalAffaireNumber).toBe('BA570035');
+  });
+
   it('accepte un chantier programmé sur une période', () => {
     expect(
       chantierScheduleSchema.safeParse({

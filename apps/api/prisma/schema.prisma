@@ -42,6 +42,7 @@ model Chantier {
   derivations           Derivation[]
 
   @@index([startDate])
+  @@index([internalAffaireNumber])
 }
 
 model Derivation {
