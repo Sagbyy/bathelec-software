@@ -123,7 +123,11 @@ export function Navbar() {
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" aria-describedby={undefined}>
+        <SheetContent
+          side="left"
+          aria-describedby={undefined}
+          className="overflow-y-auto overscroll-contain"
+        >
           <VisuallyHidden>
             <SheetTitle>Abrisûr</SheetTitle>
           </VisuallyHidden>
