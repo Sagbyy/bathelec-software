@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { DerivationsModule } from './derivations/derivations.module';
 import { ConfigModule } from '@nestjs/config';
 import { CompletedDerivationModule } from './completed-derivation/completed-derivations.module';
+import { DerivationExportsModule } from './derivation-exports/derivation-exports.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SiteTeamsModule } from './site-teams/site-teams.module';
 import { VehicleDocumentsModule } from './vehicle-documents/vehicle-documents.module';
@@ -26,6 +27,7 @@ import { ChantierDocumentsModule } from './chantier-documents/chantier-documents
     UsersModule,
     DerivationsModule,
     CompletedDerivationModule,
+    DerivationExportsModule,
     SiteTeamsModule,
     VehicleDocumentsModule,
     OfficialDocumentsModule,

@@ -7,6 +7,7 @@ import { formatChantierSchedule, useChantiers } from '@/entities/chantier';
 import { useUserStore } from '@/entities/user';
 import { ChantierScheduleCard } from '@/features/chantiers';
 import { ChantierDocumentsManager } from '@/widgets/chantier-documents';
+import { ExportEnedisButton } from '@/features/enedis-export';
 
 export default function AdminChantierDetailPage() {
   const { chantierId } = useParams();
@@ -48,7 +49,14 @@ export default function AdminChantierDetailPage() {
         ← Retour aux chantiers
       </Link>
 
-      <h1 className="text-2xl font-bold sm:text-3xl">{chantier.address}</h1>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <h1 className="text-2xl font-bold sm:text-3xl">{chantier.address}</h1>
+        <ExportEnedisButton
+          scope="chantiers"
+          id={chantier.id}
+          label="Exporter le chantier (Excel Enedis)"
+        />
+      </div>
 
       <div className="text-muted-foreground mt-2 flex flex-wrap gap-4 text-sm">
         <span>Marché : {chantier.market?.name ?? '—'}</span>
