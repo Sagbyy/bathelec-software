@@ -223,6 +223,8 @@ Contraintes transverses : les photos sont aux formats JPEG, PNG ou WebP, avec un
 
 **Dates de validité (tous documents)** : chaque document joint (documents officiels, documents véhicule, titres et certificats) porte une date de fin de validité **obligatoire**, saisie avant l'envoi du fichier. L'état est affiché partout : valide, expire bientôt (60 jours ou moins), expiré.
 
+**Alertes d'expiration** : chaque jour, l'application repère les documents (et le titre d'habilitation) qui expirent dans 60, 30 puis 15 jours. Pour chaque palier atteint, une notification est envoyée **par e-mail** au technicien concerné ainsi qu'à tous les administrateurs et encadrants, et affichée **dans l'application** sous forme de bulle. Chaque destinataire coche « Je confirme avoir bien pris connaissance de l'information. » ; la confirmation est enregistrée par utilisateur.
+
 ### 4.8 Sécurité chantier
 
 - **EF-URG-01** — Page « Numéros d'urgence » accessible aux techniciens : SAMU (15), Police et Gendarmerie (17), Pompiers (18), numéro européen (112), avec appel en un clic depuis le mobile et rappel de la conduite à tenir en cas de danger sur chantier.
@@ -293,7 +295,7 @@ Fonctionnalités identifiées comme incomplètes ou candidates pour une version 
 3. **« Top Chantiers »** — page annoncée côté technicien (classement des meilleurs chantiers), actuellement en attente de spécification.
 4. **Réinitialisation de mot de passe oublié** — inexistante à ce jour. Seul le changement de mot de passe connecté est possible. À prévoir (lien par email).
 5. **Notifications** — aucun email ni notification push (par exemple prévenir un technicien d'un renvoi en correction, ou prévenir le bureau d'une soumission).
-6. **Gestion des dates d'échéance** — habilitations, certificats et documents (permis, carte BTP…) n'ont pas de date de validité ni d'alerte d'expiration. Fonctionnalité à forte valeur métier pour la conformité réglementaire.
+6. ~~**Gestion des dates d'échéance**~~ — traité : dates de validité obligatoires et alertes J-60 / J-30 / J-15 (voir §4.7).
 7. **Stockage des fichiers** — les photos et documents sont stockés en base (base64). Une migration vers un stockage de fichiers dédié est recommandée à mesure que la volumétrie croît.
 8. **Cycle de vie « En cours »** — le passage du statut « À compléter » à « En cours » mérite d'être formalisé (sauvegarde de brouillon terrain), en cohérence avec l'approche local-first.
 

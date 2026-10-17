@@ -8,16 +8,18 @@ datasource db_postgres {
 }
 
 model User {
-  id              Int                  @id @default(autoincrement())
-  email           String               @unique
-  username        String               @unique
-  password        String
-  role            String
-  createdAt       DateTime             @default(now())
-  firstName       String
-  lastName        String
-  Derivation      Derivation[]
-  teamMemberships SiteTeamMembership[]
+  id                         Int                         @id @default(autoincrement())
+  email                      String                      @unique
+  username                   String                      @unique
+  password                   String
+  role                       String
+  createdAt                  DateTime                    @default(now())
+  firstName                  String
+  lastName                   String
+  Derivation                 Derivation[]
+  teamMemberships            SiteTeamMembership[]
+  expiryNotifications        ExpiryNotification[]
+  expiryNotificationReceipts ExpiryNotificationReceipt[]
 }
 
 model Market {
@@ -79,4 +81,29 @@ model SiteTeamMembership {
   @@index([userId])
   @@index([teamId])
   @@map("UserGroupMembership")
+}
+
+model ExpiryNotification {
+  id            Int                         @id @default(autoincrement())
+  technicianId  Int
+  documentKey   String
+  documentLabel String
+  expiresAt     DateTime
+  threshold     Int
+  createdAt     DateTime                    @default(now())
+  technician    User                        @relation(fields: [technicianId], references: [id], onDelete: Cascade)
+  receipts      ExpiryNotificationReceipt[]
+
+  @@unique([technicianId, documentKey, expiresAt, threshold], map: "ExpiryNotification_document_threshold_key")
+  @@index([technicianId])
+}
+
+model ExpiryNotificationReceipt {
+  notificationId Int
+  userId         Int
+  acknowledgedAt DateTime           @default(now())
+  notification   ExpiryNotification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([notificationId, userId])
 }
