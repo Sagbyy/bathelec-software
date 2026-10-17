@@ -67,4 +67,85 @@ describe('derivationService', () => {
       expect(data[0]?.userId).toBe(1);
     });
   });
+
+  describe('assignment workflow', () => {
+    it('creates a derivation for a team', async () => {
+      let body: unknown;
+      server.use(
+        http.post(`${BASE}/derivations`, async ({ request }) => {
+          body = await request.json();
+          return HttpResponse.json({ id: 9, teamId: 1 }, { status: 201 });
+        })
+      );
+
+      const data = await derivationService.createDerivation({
+        teamId: 1,
+        chantierId: 2,
+      });
+
+      expect(body).toEqual({ teamId: 1, chantierId: 2 });
+      expect(data).toMatchObject({ id: 9, teamId: 1 });
+    });
+
+    it('fetches the derivations of the current user', async () => {
+      server.use(
+        http.get(`${BASE}/derivations/me`, () =>
+          HttpResponse.json([{ id: 4, userId: null, teamId: 1 }])
+        )
+      );
+
+      await expect(derivationService.getMyDerivations()).resolves.toEqual([
+        { id: 4, userId: null, teamId: 1 },
+      ]);
+    });
+
+    it('assigns a derivation to a team', async () => {
+      let body: unknown;
+      server.use(
+        http.patch(
+          `${BASE}/derivations/:id/team`,
+          async ({ request, params }) => {
+            body = await request.json();
+            return HttpResponse.json({ id: Number(params.id), teamId: 5 });
+          }
+        )
+      );
+
+      const data = await derivationService.assignTeam(3, 5);
+
+      expect(body).toEqual({ teamId: 5 });
+      expect(data).toMatchObject({ id: 3, teamId: 5 });
+    });
+
+    it('assigns or unassigns a technician', async () => {
+      const bodies: unknown[] = [];
+      server.use(
+        http.patch(`${BASE}/derivations/:id/assignee`, async ({ request }) => {
+          bodies.push(await request.json());
+          return HttpResponse.json({ id: 3 });
+        })
+      );
+
+      await derivationService.assignUser(3, 42);
+      await derivationService.assignUser(3, null);
+
+      expect(bodies).toEqual([{ userId: 42 }, { userId: null }]);
+    });
+
+    it('claims a derivation and surfaces conflicts', async () => {
+      server.use(
+        http.post(`${BASE}/derivations/:id/claim`, ({ params }) =>
+          Number(params.id) === 1
+            ? HttpResponse.json({ id: 1, userId: 42 })
+            : HttpResponse.json({ message: 'Conflict' }, { status: 409 })
+        )
+      );
+
+      await expect(derivationService.claimDerivation(1)).resolves.toEqual({
+        id: 1,
+        userId: 42,
+      });
+      await expect(derivationService.claimDerivation(2)).rejects.toThrow();
+    });
+  });
 });

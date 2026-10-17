@@ -76,11 +76,12 @@ export function FormsList() {
     if (techniciansData) setTechnicians(techniciansData);
   }, [techniciansData]);
 
-  const getTechnicianName = (userId: number) => {
-    const technician = technicians.find((t) => t.id === userId);
-    return technician
-      ? technician.firstName + ' ' + technician.lastName
-      : 'Unknown';
+  const getTechnicianName = (userId: number | null) => {
+    if (userId === null) return 'Non attribuée';
+    const assignee =
+      derivations.find((d) => d.userId === userId)?.user ??
+      technicians.find((t) => t.id === userId);
+    return assignee ? assignee.firstName + ' ' + assignee.lastName : 'Unknown';
   };
 
   const uniqueTechnicians = Array.from(
@@ -182,7 +183,6 @@ export function FormsList() {
                   </div>
                 </DropdownMenuContent>
               </DropdownMenu>
-
             </div>
           </div>
         </div>
@@ -200,8 +200,11 @@ export function FormsList() {
                 <TableRow>
                   <TableHead>ID</TableHead>
                   <TableHead>Créé le</TableHead>
+                  <TableHead>Équipe</TableHead>
                   <TableHead>Technicien</TableHead>
-                  <TableHead className="hidden md:table-cell">Chantier</TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    Chantier
+                  </TableHead>
                   <TableHead>Statut</TableHead>
                   <TableHead className="text-right">Action</TableHead>
                 </TableRow>
@@ -209,16 +212,23 @@ export function FormsList() {
               <TableBody>
                 {currentItems.map((derivation) => (
                   <TableRow key={derivation.id}>
-                    <TableCell className="font-medium">{derivation.id}</TableCell>
+                    <TableCell className="font-medium">
+                      {derivation.id}
+                    </TableCell>
                     <TableCell>
                       {formatDate(derivation.createdAt, 'dd/MM/yyyy')}
                     </TableCell>
-                    <TableCell>{getTechnicianName(derivation.userId)}</TableCell>
+                    <TableCell>{derivation.team?.name ?? '—'}</TableCell>
+                    <TableCell>
+                      {getTechnicianName(derivation.userId)}
+                    </TableCell>
                     <TableCell className="hidden md:table-cell">
                       {derivation.chantier?.address ?? '—'}
                     </TableCell>
                     <TableCell>
-                      <DerivationStatusIcon derivationStatus={derivation.status} />
+                      <DerivationStatusIcon
+                        derivationStatus={derivation.status}
+                      />
                     </TableCell>
                     <TableCell className="text-right">
                       {derivation.status === DerivationStatus.REVIEWING ? (
@@ -344,17 +354,23 @@ export function FormsList() {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <span className="text-sm font-medium">Chantier:</span>
-                <span className="col-span-3">{selectedForm.chantier?.address ?? '—'}</span>
+                <span className="col-span-3">
+                  {selectedForm.chantier?.address ?? '—'}
+                </span>
               </div>
               {selectedForm.chantier && (
                 <>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <span className="text-sm font-medium">N° Enedis:</span>
-                    <span className="col-span-3">{selectedForm.chantier.enedisAffaireNumber}</span>
+                    <span className="col-span-3">
+                      {selectedForm.chantier.enedisAffaireNumber}
+                    </span>
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <span className="text-sm font-medium">N° Interne:</span>
-                    <span className="col-span-3">{selectedForm.chantier.internalAffaireNumber}</span>
+                    <span className="col-span-3">
+                      {selectedForm.chantier.internalAffaireNumber}
+                    </span>
                   </div>
                 </>
               )}

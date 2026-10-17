@@ -17,16 +17,22 @@ describe('TechnicianHome', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseUserStore.mockReturnValue({
-      user: { id: 1, username: 'jean.dupont', firstName: 'Jean', lastName: 'Dupont', role: 'technician' },
+      user: {
+        id: 1,
+        username: 'jean.dupont',
+        firstName: 'Jean',
+        lastName: 'Dupont',
+        role: 'technician',
+      },
     });
   });
 
   describe('rendu général', () => {
-    it('affiche exactement 8 liens (7 cartes + Mon profil)', () => {
+    it('affiche exactement 9 liens (8 cartes + Mon profil)', () => {
       render(<TechnicianHome />);
 
       const links = screen.getAllByRole('link');
-      expect(links).toHaveLength(8);
+      expect(links).toHaveLength(9);
     });
 
     it('affiche le bouton Mon profil pointant vers /dashboard/profile', () => {
@@ -36,10 +42,11 @@ describe('TechnicianHome', () => {
       expect(profilLink).toHaveAttribute('href', '/dashboard/profile');
     });
 
-    it('affiche les 7 labels de section', () => {
+    it('affiche les 8 labels de section', () => {
       render(<TechnicianHome />);
 
       expect(screen.getByText('Top Chantiers')).toBeInTheDocument();
+      expect(screen.getByText('Mes dérivations')).toBeInTheDocument();
       expect(screen.getByText('Chantiers en cours')).toBeInTheDocument();
       expect(screen.getByText('Chantiers terminés')).toBeInTheDocument();
       expect(screen.getByText('Mes documents officiels')).toBeInTheDocument();
@@ -52,12 +59,14 @@ describe('TechnicianHome', () => {
       render(<TechnicianHome />);
 
       expect(screen.getByText('Tableau de bord')).toBeInTheDocument();
-      expect(screen.getByText('Que souhaitez-vous faire ?')).toBeInTheDocument();
+      expect(
+        screen.getByText('Que souhaitez-vous faire ?')
+      ).toBeInTheDocument();
     });
   });
 
   describe('salutation utilisateur', () => {
-    it("affiche le prénom et nom dans la salutation", () => {
+    it('affiche le prénom et nom dans la salutation', () => {
       render(<TechnicianHome />);
 
       expect(screen.getByText(/Jean Dupont/)).toBeInTheDocument();
@@ -85,7 +94,17 @@ describe('TechnicianHome', () => {
       render(<TechnicianHome />);
 
       const link = screen.getByRole('link', { name: /top chantiers/i });
-      expect(link).toHaveAttribute('href', '/dashboard/technician/top-chantiers');
+      expect(link).toHaveAttribute(
+        'href',
+        '/dashboard/technician/top-chantiers'
+      );
+    });
+
+    it('la carte Mes dérivations pointe vers la bonne route', () => {
+      render(<TechnicianHome />);
+
+      const link = screen.getByRole('link', { name: /mes dérivations/i });
+      expect(link).toHaveAttribute('href', '/dashboard/technician/assignments');
     });
 
     it('la carte Chantiers en cours pointe vers la bonne route', () => {
@@ -116,7 +135,10 @@ describe('TechnicianHome', () => {
       render(<TechnicianHome />);
 
       const link = screen.getByRole('link', { name: /habilitations/i });
-      expect(link).toHaveAttribute('href', '/dashboard/technician/habilitations');
+      expect(link).toHaveAttribute(
+        'href',
+        '/dashboard/technician/habilitations'
+      );
     });
 
     it('la carte Véhicule pointe vers la bonne route', () => {
@@ -126,7 +148,7 @@ describe('TechnicianHome', () => {
       expect(link).toHaveAttribute('href', '/dashboard/technician/vehicule');
     });
 
-    it("la carte Urgences pointe vers la bonne route", () => {
+    it('la carte Urgences pointe vers la bonne route', () => {
       render(<TechnicianHome />);
 
       const link = screen.getByRole('link', { name: /urgence/i });

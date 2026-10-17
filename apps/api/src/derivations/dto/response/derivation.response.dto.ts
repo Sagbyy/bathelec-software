@@ -5,8 +5,19 @@ export class DerivationResponseDto {
   @ApiProperty({ example: 1, description: 'The id of the derivation' })
   id: number;
 
-  @ApiProperty({ example: 1, description: 'The id of the user' })
-  userId: number;
+  @ApiProperty({
+    example: 1,
+    description: 'The id of the assigned user',
+    nullable: true,
+  })
+  userId: number | null;
+
+  @ApiProperty({
+    example: 1,
+    description: 'The id of the site team',
+    nullable: true,
+  })
+  teamId: number | null;
 
   @ApiProperty({
     example: 1,

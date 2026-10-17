@@ -19,6 +19,11 @@ const NAV_ITEMS: NavItem[] = [
     imageSrc: '/images/top-chantier.png',
   },
   {
+    label: 'Mes dérivations',
+    href: '/dashboard/technician/assignments',
+    imageSrc: '/images/builder.png',
+  },
+  {
     label: 'Chantiers en cours',
     href: '/dashboard/technician/derivations',
     imageSrc: '/images/red-folder.png',

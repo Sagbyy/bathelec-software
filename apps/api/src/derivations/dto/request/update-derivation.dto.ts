@@ -1,4 +1,15 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateDerivationDto } from './create-derivation.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { DerivationStatus } from '../../../types/derivations-status.enum';
 
-export class UpdateDerivationDto extends PartialType(CreateDerivationDto) {}
+export class UpdateDerivationDto {
+  @ApiProperty({ example: 'Comment', required: false, nullable: true })
+  @IsString()
+  @IsOptional()
+  correctionComment?: string | null;
+
+  @ApiProperty({ enum: DerivationStatus, required: false })
+  @IsEnum(DerivationStatus)
+  @IsOptional()
+  status?: DerivationStatus;
+}

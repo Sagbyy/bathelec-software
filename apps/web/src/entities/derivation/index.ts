@@ -1,4 +1,4 @@
-export { derivationService } from './api/derivation.service';
+export { derivationService, derivationQueries } from './api/derivation.service';
 export { completedDerivationsService } from './api/completed-derivations.service';
 export { derivationStatusConfig } from './model/derivation-status.config';
 export { DEFAULT_FORM_VALUES } from './model/derivation-form.defaults';
@@ -20,3 +20,5 @@ export type { CircuitBreakerPower } from './model/circuit-breaker';
 export { default as DerivationStatusIcon } from './ui/derivation-status-icon';
 export type { CreateCompletedDerivation } from './model/completed-derivation.types';
 export type { UpdateDerivation } from './model/update-derivation.types';
+export { createDerivationSchema } from './model/create-derivation.schema';
+export type { CreateDerivation } from './model/create-derivation.schema';

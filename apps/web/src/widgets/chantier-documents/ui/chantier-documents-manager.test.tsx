@@ -38,9 +38,8 @@ import { ChantierDocumentsManager } from './chantier-documents-manager';
 const mockUseUserStore = vi.mocked(useUserStore);
 
 function setRole(role: Role | undefined) {
-  mockUseUserStore.mockImplementation((selector: (s: unknown) => unknown) =>
-    selector({ user: role ? { role } : undefined })
-  );
+  mockUseUserStore.mockImplementation(((selector: (s: unknown) => unknown) =>
+    selector({ user: role ? { role } : undefined })) as never);
 }
 
 describe('ChantierDocumentsManager', () => {

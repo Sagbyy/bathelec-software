@@ -285,16 +285,14 @@ export class SiteTeamsService {
       throw new NotFoundException(`Team with ID ${teamId} not found`);
     }
 
-    const existingMembership = await this.prisma.siteTeamMembership.findUnique(
-      {
-        where: {
-          userId_teamId: {
-            userId,
-            teamId,
-          },
+    const existingMembership = await this.prisma.siteTeamMembership.findUnique({
+      where: {
+        userId_teamId: {
+          userId,
+          teamId,
         },
-      }
-    );
+      },
+    });
 
     if (existingMembership) {
       throw new BadRequestException('User is already a member of this team');
@@ -465,5 +463,26 @@ export class SiteTeamsService {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  async findTeamsWithMembersForUser(userId: number) {
+    return this.prisma.siteTeam.findMany({
+      where: { teamMemberships: { some: { userId } } },
+      include: {
+        teamMemberships: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                role: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { name: 'asc' },
+    });
   }
 }

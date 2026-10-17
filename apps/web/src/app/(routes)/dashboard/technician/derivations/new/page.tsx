@@ -1,4 +1,6 @@
-import CreateDerivationForm from '@/features/derivations/ui/create-derivation-form';
+'use client';
+
+import { CreateDerivationForm } from '@/features/derivations';
 
 export default function CreateDerivationPage() {
   return (
