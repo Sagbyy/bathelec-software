@@ -13,11 +13,20 @@ export class OfficialDocument {
   @Prop({ type: String, default: null })
   idCard: string;
 
+  @Prop({ type: Date, default: null })
+  idCardExpiresAt: Date | null;
+
   @Prop({ type: String, default: null })
   btpCard: string;
 
+  @Prop({ type: Date, default: null })
+  btpCardExpiresAt: Date | null;
+
   @Prop({ type: String, default: null })
   mutualCard: string;
+
+  @Prop({ type: Date, default: null })
+  mutualCardExpiresAt: Date | null;
 }
 
 export const OfficialDocumentSchema =

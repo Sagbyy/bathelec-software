@@ -7,6 +7,10 @@ export interface SpecialHabilitations {
   leadTitleDoc: string | null;
   sstCertificate: boolean;
   sstCertificateDoc: string | null;
+  electricalTitleDocExpiresAt?: string | null;
+  ss4TitleDocExpiresAt?: string | null;
+  leadTitleDocExpiresAt?: string | null;
+  sstCertificateDocExpiresAt?: string | null;
 }
 
 export type SpecialHabilitationKey =
@@ -20,6 +24,9 @@ export type SpecialHabilitationDocKey =
   | 'ss4TitleDoc'
   | 'leadTitleDoc'
   | 'sstCertificateDoc';
+
+export type SpecialHabilitationExpiryKey =
+  `${SpecialHabilitationDocKey}ExpiresAt`;
 
 export interface SpecialHabilitationDocument extends SpecialHabilitations {
   _id?: string;

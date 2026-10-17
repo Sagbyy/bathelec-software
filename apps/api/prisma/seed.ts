@@ -26,9 +26,12 @@ import {
   CHANTIERS_BY_MARKET,
   MARKETS,
   SAMPLE_IMAGE,
+  SEED_ACCOUNTS,
+  SEED_TECHNICIAN_USERNAME,
   STATUSES,
   SeededDerivation,
   buildCompletedDerivationData,
+  buildSeedUserData,
   getSeedChantierEnedisNumbers,
 } from '../src/seed/seed-data';
 
@@ -74,6 +77,8 @@ function getMongoModels() {
   };
 }
 
+const SEED_DOCUMENT_EXPIRY = new Date('2027-12-31');
+
 async function seedMongoData(userId: number, derivations: SeededDerivation[]) {
   if (!process.env.DATABASE_MONGO_URL) {
     throw new Error('DATABASE_MONGO_URL is required to seed MongoDB.');
@@ -114,6 +119,7 @@ async function seedMongoData(userId: number, derivations: SeededDerivation[]) {
           br: true,
           beAttribut: false,
           heAttribut: false,
+          expiresAt: SEED_DOCUMENT_EXPIRY,
         },
       },
       { upsert: true, new: true }
@@ -124,12 +130,14 @@ async function seedMongoData(userId: number, derivations: SeededDerivation[]) {
         $set: {
           electricalTitle: true,
           electricalTitleDoc: SAMPLE_IMAGE,
+          electricalTitleDocExpiresAt: SEED_DOCUMENT_EXPIRY,
           ss4Title: false,
           ss4TitleDoc: null,
           leadTitle: false,
           leadTitleDoc: null,
           sstCertificate: true,
           sstCertificateDoc: SAMPLE_IMAGE,
+          sstCertificateDocExpiresAt: SEED_DOCUMENT_EXPIRY,
         },
       },
       { upsert: true, new: true }
@@ -141,6 +149,9 @@ async function seedMongoData(userId: number, derivations: SeededDerivation[]) {
           idCard: SAMPLE_IMAGE,
           btpCard: SAMPLE_IMAGE,
           mutualCard: SAMPLE_IMAGE,
+          idCardExpiresAt: SEED_DOCUMENT_EXPIRY,
+          btpCardExpiresAt: SEED_DOCUMENT_EXPIRY,
+          mutualCardExpiresAt: SEED_DOCUMENT_EXPIRY,
         },
       },
       { upsert: true, new: true }
@@ -151,6 +162,8 @@ async function seedMongoData(userId: number, derivations: SeededDerivation[]) {
         $set: {
           vehicleRegistration: SAMPLE_IMAGE,
           drivingLicense: SAMPLE_IMAGE,
+          vehicleRegistrationExpiresAt: SEED_DOCUMENT_EXPIRY,
+          drivingLicenseExpiresAt: SEED_DOCUMENT_EXPIRY,
         },
       },
       { upsert: true, new: true }
@@ -177,8 +190,8 @@ async function seedMongoData(userId: number, derivations: SeededDerivation[]) {
 }
 
 async function undoSeed() {
-  const technicianUser = await prisma.user.findFirst({
-    where: { role: 'technician' },
+  const technicianUser = await prisma.user.findUnique({
+    where: { username: SEED_TECHNICIAN_USERNAME },
     select: { id: true },
   });
   const userId = technicianUser?.id;
@@ -284,16 +297,25 @@ async function undoSeed() {
 
 const SEED_TEAM_NAME = 'Équipe seed';
 
+async function seedAccounts() {
+  const users = await Promise.all(
+    SEED_ACCOUNTS.map(async (account) =>
+      prisma.user.upsert({
+        where: { username: account.username },
+        update: {},
+        create: await buildSeedUserData(account),
+        select: { id: true, username: true },
+      })
+    )
+  );
+
+  console.log(`\n👤 Comptes: ${users.map((user) => user.username).join(', ')}`);
+
+  return users.find((user) => user.username === SEED_TECHNICIAN_USERNAME)!;
+}
+
 async function main() {
-  const technicianUser = await prisma.user.findFirst({
-    where: { role: 'technician' },
-    select: { id: true },
-  });
-
-  if (!technicianUser) {
-    throw new Error('No technician user found in DB. Create one first.');
-  }
-
+  const technicianUser = await seedAccounts();
   const userId = technicianUser.id;
 
   console.log(`\nUsing technician userId: ${userId}`);

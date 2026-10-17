@@ -1,6 +1,11 @@
+import * as bcrypt from 'bcryptjs';
 import {
   CHANTIERS_BY_MARKET,
+  SEED_ACCOUNTS,
+  SEED_TECHNICIAN_USERNAME,
   buildCompletedDerivationData,
+  buildSeedUserData,
+  seedPasswordOf,
   buildSeedPhone,
   getSeedChantierEnedisNumbers,
   parseAddress,
@@ -8,6 +13,40 @@ import {
 } from './seed-data';
 
 describe('seed data helpers', () => {
+  it('declares an admin account and the seed technician account', () => {
+    expect(
+      SEED_ACCOUNTS.map(({ username, role }) => ({ username, role }))
+    ).toEqual([
+      { username: 'admin', role: 'admin' },
+      { username: SEED_TECHNICIAN_USERNAME, role: 'technician' },
+    ]);
+  });
+
+  it('uses the username as the seed account password', () => {
+    SEED_ACCOUNTS.forEach((account) => {
+      expect(seedPasswordOf(account)).toBe(account.username);
+    });
+  });
+
+  it('hashes the seed account password before it is stored', async () => {
+    const [admin] = SEED_ACCOUNTS;
+
+    const userData = await buildSeedUserData(admin);
+
+    expect(userData).toMatchObject({
+      username: admin.username,
+      email: admin.email,
+      role: 'admin',
+    });
+    expect(userData.password).not.toBe(seedPasswordOf(admin));
+    await expect(
+      bcrypt.compare(seedPasswordOf(admin), userData.password)
+    ).resolves.toBe(true);
+    await expect(bcrypt.compare('wrong', userData.password)).resolves.toBe(
+      false
+    );
+  });
+
   it('formats meter matricules with exactly 3 digits', () => {
     expect(threeDigitMatricule(1)).toBe('001');
     expect(threeDigitMatricule(42)).toBe('042');

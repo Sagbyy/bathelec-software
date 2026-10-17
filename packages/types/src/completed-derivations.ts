@@ -55,6 +55,8 @@ export interface NewMeter {
   indexPhoto: string;
 }
 
+export type CircuitBreakerTestButton = 'working' | 'faulty';
+
 export interface CircuitBreaker {
   preserved: boolean;
   voltage: VoltageType;
@@ -64,6 +66,8 @@ export interface CircuitBreaker {
   calibrationPower: string;
   commissioningDone: boolean;
   sealed: boolean;
+  testButton?: CircuitBreakerTestButton | null;
+  replacementExplanation?: string;
 }
 
 export interface PhotoAfterWork {
@@ -80,6 +84,8 @@ export interface ClientValidation {
   clientComment: string;
   signature: string;
   technicianComment: string;
+  technicianNothingToReport?: boolean;
+  technicianSignature?: string;
 }
 
 export interface CompletedDerivation {

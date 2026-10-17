@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Badge } from '@/shared/ui/badge';
+import { ValidityBadge } from '@/shared/ui/validity-date-field';
 import {
   DEFAULT_SPECIAL_HABILITATIONS,
   SPECIAL_HABILITATION_CONFIG,
@@ -19,10 +20,12 @@ function SpecialHabilitationCard({
   config,
   enabled,
   document,
+  expiresAt,
 }: {
   config: SpecialHabilitationConfig;
   enabled: boolean;
   document: string | null;
+  expiresAt: string | null;
 }) {
   const hasDocument = !!document;
   const clickable = enabled && hasDocument;
@@ -60,8 +63,14 @@ function SpecialHabilitationCard({
         {config.label}
       </p>
 
-      {enabled ? (
-        hasDocument ? (
+      {!enabled && (
+        <Badge variant="secondary" className="text-gray-300">
+          Non attribuée
+        </Badge>
+      )}
+
+      {enabled && hasDocument && (
+        <>
           <Badge className="gap-1 bg-green-100 text-green-700 hover:bg-green-100">
             <Icon
               icon="material-symbols:description-rounded"
@@ -69,18 +78,17 @@ function SpecialHabilitationCard({
             />
             Document disponible
           </Badge>
-        ) : (
-          <Badge variant="secondary" className="gap-1 text-gray-400">
-            <Icon
-              icon="material-symbols:description-outline-rounded"
-              className="h-3 w-3"
-            />
-            Pas de document
-          </Badge>
-        )
-      ) : (
-        <Badge variant="secondary" className="text-gray-300">
-          Non attribuée
+          <ValidityBadge expiresAt={expiresAt} />
+        </>
+      )}
+
+      {enabled && !hasDocument && (
+        <Badge variant="secondary" className="gap-1 text-gray-400">
+          <Icon
+            icon="material-symbols:description-outline-rounded"
+            className="h-3 w-3"
+          />
+          Pas de document
         </Badge>
       )}
     </div>
@@ -97,7 +105,9 @@ export function SpecialHabilitationsCards({
 
   if (activeConfigs.length === 0) {
     return (
-      <p className="text-sm text-gray-400">Aucun titre ou certificat attribué.</p>
+      <p className="text-sm text-gray-400">
+        Aucun titre ou certificat attribué.
+      </p>
     );
   }
 
@@ -109,6 +119,7 @@ export function SpecialHabilitationsCards({
           config={config}
           enabled={data[config.key]}
           document={data[config.docKey]}
+          expiresAt={data[`${config.docKey}ExpiresAt`] ?? null}
         />
       ))}
     </div>

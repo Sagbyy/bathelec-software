@@ -8,6 +8,13 @@ import {
 import { CreateVehicleDocumentDto } from './dto/create-vehicle-document.dto';
 import { UpdateVehicleDocumentDto } from './dto/update-vehicle-document.dto';
 
+import { clearExpiryOfRemovedDocuments } from '../common/validators/is-document-expiry-date.validator';
+
+const VEHICLE_DOCUMENT_KEYS = [
+  'vehicleRegistration',
+  'drivingLicense',
+] as const;
+
 @Injectable()
 export class VehicleDocumentsService {
   constructor(
@@ -24,7 +31,13 @@ export class VehicleDocumentsService {
     if (existing) {
       return this.vehicleDocumentModel.findOneAndUpdate(
         { userId },
-        { ...createVehicleDocumentDto, updatedAt: new Date() },
+        {
+          ...clearExpiryOfRemovedDocuments(
+            createVehicleDocumentDto,
+            VEHICLE_DOCUMENT_KEYS
+          ),
+          updatedAt: new Date(),
+        },
         { new: true }
       );
     }
@@ -46,7 +59,13 @@ export class VehicleDocumentsService {
   ): Promise<VehicleDocumentDocument> {
     return this.vehicleDocumentModel.findOneAndUpdate(
       { userId },
-      { ...updateVehicleDocumentDto, updatedAt: new Date() },
+      {
+        ...clearExpiryOfRemovedDocuments(
+          updateVehicleDocumentDto,
+          VEHICLE_DOCUMENT_KEYS
+        ),
+        updatedAt: new Date(),
+      },
       { new: true }
     );
   }

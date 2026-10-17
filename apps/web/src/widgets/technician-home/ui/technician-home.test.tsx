@@ -28,11 +28,11 @@ describe('TechnicianHome', () => {
   });
 
   describe('rendu général', () => {
-    it('affiche exactement 9 liens (8 cartes + Mon profil)', () => {
+    it('affiche exactement 10 liens (9 cartes + Mon profil)', () => {
       render(<TechnicianHome />);
 
       const links = screen.getAllByRole('link');
-      expect(links).toHaveLength(9);
+      expect(links).toHaveLength(10);
     });
 
     it('affiche le bouton Mon profil pointant vers /dashboard/profile', () => {
@@ -42,11 +42,12 @@ describe('TechnicianHome', () => {
       expect(profilLink).toHaveAttribute('href', '/dashboard/profile');
     });
 
-    it('affiche les 8 labels de section', () => {
+    it('affiche les 9 labels de section', () => {
       render(<TechnicianHome />);
 
       expect(screen.getByText('Top Chantiers')).toBeInTheDocument();
       expect(screen.getByText('Mes dérivations')).toBeInTheDocument();
+      expect(screen.getByText('Chantiers programmés')).toBeInTheDocument();
       expect(screen.getByText('Chantiers en cours')).toBeInTheDocument();
       expect(screen.getByText('Chantiers terminés')).toBeInTheDocument();
       expect(screen.getByText('Mes documents officiels')).toBeInTheDocument();
@@ -105,6 +106,16 @@ describe('TechnicianHome', () => {
 
       const link = screen.getByRole('link', { name: /mes dérivations/i });
       expect(link).toHaveAttribute('href', '/dashboard/technician/assignments');
+    });
+
+    it('la carte Chantiers programmés pointe vers la bonne route', () => {
+      render(<TechnicianHome />);
+
+      const link = screen.getByRole('link', { name: /chantiers programmés/i });
+      expect(link).toHaveAttribute(
+        'href',
+        '/dashboard/technician/scheduled-chantiers'
+      );
     });
 
     it('la carte Chantiers en cours pointe vers la bonne route', () => {

@@ -7,6 +7,7 @@ import { useHabilitation } from '@/entities/habilitation';
 import { useSpecialHabilitation } from '@/entities/special-habilitation';
 import { HabilitationsTable } from '@/features/habilitations';
 import { SpecialHabilitationsCards } from '@/features/special-habilitations';
+import { ValidityBadge } from '@/shared/ui/validity-date-field';
 
 export default function HabilitationsPage() {
   const user = useUserStore((s) => s.user);
@@ -55,9 +56,12 @@ export default function HabilitationsPage() {
           </section>
 
           <section>
-            <h2 className="mb-4 text-base font-semibold text-gray-700">
-              Habilitations NF C 18-510
-            </h2>
+            <div className="mb-4 flex flex-wrap items-center gap-3">
+              <h2 className="text-base font-semibold text-gray-700">
+                Habilitations NF C 18-510
+              </h2>
+              <ValidityBadge expiresAt={habilitations?.expiresAt} />
+            </div>
             <HabilitationsTable habilitations={habilitations ?? null} />
           </section>
         </div>

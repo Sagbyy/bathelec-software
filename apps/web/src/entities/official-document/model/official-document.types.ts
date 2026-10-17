@@ -1,15 +1,21 @@
-export interface OfficialDocument {
+export type OfficialDocumentKey = 'idCard' | 'btpCard' | 'mutualCard';
+
+export type OfficialDocumentExpiryKey = `${OfficialDocumentKey}ExpiresAt`;
+
+export type OfficialDocumentFiles = Record<OfficialDocumentKey, string | null>;
+
+export type OfficialDocumentExpiries = Partial<
+  Record<OfficialDocumentExpiryKey, string | null>
+>;
+
+export interface OfficialDocument
+  extends OfficialDocumentFiles,
+    OfficialDocumentExpiries {
   _id: string;
   userId: number;
-  idCard: string | null;
-  btpCard: string | null;
-  mutualCard: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface CreateOfficialDocumentDto {
-  idCard?: string | null;
-  btpCard?: string | null;
-  mutualCard?: string | null;
-}
+export type CreateOfficialDocumentDto = Partial<OfficialDocumentFiles> &
+  OfficialDocumentExpiries;

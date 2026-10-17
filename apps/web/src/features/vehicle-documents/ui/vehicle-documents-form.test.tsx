@@ -132,6 +132,9 @@ describe('VehicleDocumentsForm', () => {
 
       const { container } = render(<VehicleDocumentsForm />);
       const inputs = container.querySelectorAll('input[type="file"]');
+      fireEvent.change(container.querySelectorAll('input[type="date"]')[0]!, {
+        target: { value: '2027-05-31' },
+      });
       fireEvent.change(inputs[0]!, {
         target: {
           files: [new File(['img'], 'carte.jpg', { type: 'image/jpeg' })],
@@ -140,7 +143,7 @@ describe('VehicleDocumentsForm', () => {
 
       expect(mockMutate).toHaveBeenCalledWith({
         vehicleRegistration: base64,
-        drivingLicense: null,
+        vehicleRegistrationExpiresAt: '2027-05-31',
       });
       vi.unstubAllGlobals();
     });
@@ -159,6 +162,9 @@ describe('VehicleDocumentsForm', () => {
 
       const { container } = render(<VehicleDocumentsForm />);
       const inputs = container.querySelectorAll('input[type="file"]');
+      fireEvent.change(container.querySelectorAll('input[type="date"]')[1]!, {
+        target: { value: '2027-05-31' },
+      });
       fireEvent.change(inputs[1]!, {
         target: {
           files: [new File(['img'], 'permis.jpg', { type: 'image/jpeg' })],
@@ -166,8 +172,8 @@ describe('VehicleDocumentsForm', () => {
       });
 
       expect(mockMutate).toHaveBeenCalledWith({
-        vehicleRegistration: null,
         drivingLicense: base64,
+        drivingLicenseExpiresAt: '2027-05-31',
       });
       vi.unstubAllGlobals();
     });
@@ -195,10 +201,7 @@ describe('VehicleDocumentsForm', () => {
       fireEvent.click(screen.getAllByRole('button')[0]!);
 
       await waitFor(() => {
-        expect(mockMutate).toHaveBeenCalledWith({
-          vehicleRegistration: null,
-          drivingLicense: 'data:image/jpeg;base64,permis',
-        });
+        expect(mockMutate).toHaveBeenCalledWith({ vehicleRegistration: null });
       });
     });
 
@@ -207,10 +210,7 @@ describe('VehicleDocumentsForm', () => {
       fireEvent.click(screen.getAllByRole('button')[1]!);
 
       await waitFor(() => {
-        expect(mockMutate).toHaveBeenCalledWith({
-          vehicleRegistration: 'data:image/jpeg;base64,carte',
-          drivingLicense: null,
-        });
+        expect(mockMutate).toHaveBeenCalledWith({ drivingLicense: null });
       });
     });
   });

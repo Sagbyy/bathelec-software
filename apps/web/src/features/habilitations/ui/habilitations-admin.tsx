@@ -2,6 +2,7 @@
 
 import { Switch } from '@/shared/ui/switch';
 import { Label } from '@/shared/ui/label';
+import { ValidityDateField } from '@/shared/ui/validity-date-field';
 import {
   useHabilitation,
   useUpdateHabilitation,
@@ -135,8 +136,10 @@ export function HabilitationsAdmin({ technicianId }: HabilitationsAdminProps) {
 
   const habilitations = data ?? {
     userId: technicianId,
+    expiresAt: null,
     ...DEFAULT_HABILITATIONS,
   };
+  const hasExpiryDate = !!habilitations.expiresAt;
 
   const handleToggle = (key: HabilitationKey, value: boolean) => {
     mutate({ [key]: value });
@@ -152,6 +155,22 @@ export function HabilitationsAdmin({ technicianId }: HabilitationsAdminProps) {
 
   return (
     <div className="space-y-6">
+      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+        <ValidityDateField
+          id="habilitation-expiry"
+          label="Date de fin de validité du titre d'habilitation"
+          value={habilitations.expiresAt}
+          onChange={(expiresAt) => expiresAt && mutate({ expiresAt })}
+          disabled={isPending}
+        />
+        {!hasExpiryDate && (
+          <p className="text-muted-foreground mt-2 text-xs">
+            Renseignez la date de validité avant d&apos;accorder une
+            habilitation.
+          </p>
+        )}
+      </div>
+
       {GROUPS.map((group) => (
         <div
           key={group.title}
@@ -179,7 +198,9 @@ export function HabilitationsAdmin({ technicianId }: HabilitationsAdminProps) {
                   id={`toggle-${item.key}`}
                   checked={habilitations[item.key]}
                   onCheckedChange={(checked) => handleToggle(item.key, checked)}
-                  disabled={isPending}
+                  disabled={
+                    isPending || (!hasExpiryDate && !habilitations[item.key])
+                  }
                 />
               </div>
             ))}

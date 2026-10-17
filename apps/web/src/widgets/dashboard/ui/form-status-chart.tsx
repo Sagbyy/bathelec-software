@@ -43,10 +43,6 @@ const chartConfig = {
     label: derivationStatusConfig[DerivationStatus.REVISING].text,
     color: 'var(--chart-revising)',
   },
-  incorrect: {
-    label: derivationStatusConfig[DerivationStatus.INCORRECT].text,
-    color: 'var(--chart-incorrect)',
-  },
   pending: {
     label: derivationStatusConfig[DerivationStatus.PENDING].text,
     color: 'var(--chart-pending)',

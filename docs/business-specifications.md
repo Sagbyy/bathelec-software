@@ -177,11 +177,11 @@ Formulaire guidé avec barre de progression, pensé pour un usage sur smartphone
 4. **Ancien compteur** : type (électromécanique, CBE, Linky, autre), génération si Linky (SBE, G1, G2, G3), indicateurs **Conservé** et **Refus de Linky**, matricule (3 chiffres), clé (2 chiffres), index jour HP et nuit HC, photo du relevé d'index (obligatoire).
 5. **Nouvelle dérivation** : section posée (2x16, 2x25 ou 2x35 mm²), nature du câble (cuivre ou aluminium), longueur posée en mètres. **Règle de cohérence** : alerte si la longueur dépasse 10 m en 2x16 ou 20 m pour les autres sections (« Merci de confirmer la section, et de vérifier par rapport au projet »).
 6. **Nouveau compteur** *(sautée si l'ancien compteur est conservé)* : génération, matricule (3 chiffres, aide visuelle), index jour et nuit, photo avec index visible (obligatoire).
-7. **Disjoncteur** : consigne de sécurité affichée (test du bouton avant travaux, remplacement obligatoire sinon). Champs : conservé, voltage (mono ou tri), marque (BACO, GE, Schneider…), type (non différentiel, différentiel, sélectif), puissance, mise en service effectuée, **plombage obligatoire dans tous les cas**.
+7. **Disjoncteur** : consigne de sécurité affichée (test du bouton « TEST » après mise en service, remplacement obligatoire sinon). Champs : conservé, voltage (mono ou tri), marque (BACO, GE, Schneider…), type (non différentiel, différentiel, sélectif), puissance, mise en service effectuée, **plombage obligatoire dans tous les cas**. Si l'étude indique de **conserver** le disjoncteur, le résultat du test du bouton « TEST » est obligatoire (fonctionne / HS) ; si le bouton est **HS**, le disjoncteur est **à remplacer** et une **explication** est obligatoire.
 8. **Photo après travaux** : vue d'ensemble (obligatoire) et jusqu'à 2 photos complémentaires facultatives.
 9. **Validation client** : présence du client (présent ou absent).
    - Si le client est présent : validation des travaux, niveau de satisfaction (échelle de 0 à 4 étoiles), commentaire client et signature sur écran (avec effacement possible).
-   - Dans tous les cas : commentaire de l'électricien (obligatoire).
+   - Dans tous les cas : bouton **« RAS »** (rien à signaler) ; s'il n'est pas coché, le commentaire de l'électricien est obligatoire. **Signature du technicien** obligatoire.
 
 Contraintes transverses : les photos sont aux formats JPEG, PNG ou WebP, avec une taille limitée à environ 4 à 5 Mo par image. Le relevé complet (photos et signature incluses) est conservé de façon intègre et rattaché à la dérivation.
 
@@ -204,12 +204,14 @@ Contraintes transverses : les photos sont aux formats JPEG, PNG ou WebP, avec un
   - Chargé d'intervention : BR.
   - Chargé d'opérations spécifiques : BE et HE avec attribut (essais, mesurages, vérifications).
 - Attribution et retrait par l'administrateur uniquement. Le technicien consulte les siennes en lecture seule (badge vert pour habilité, grisé barré pour non habilité).
+- **Date de fin de validité du titre obligatoire** : aucun code ne peut être accordé sans elle.
 - Les habilitations ne peuvent être portées que par des comptes techniciens.
 
 #### Titres et certificats (EF-CERT)
 
 - Quatre certifications, chacune avec un indicateur actif ou inactif et une pièce justificative jointe (image ou PDF) : titre d'habilitation électrique, titre SS4 (amiante sous-section 4), titre plomb, certificat SST.
 - Actions administrateur : joindre, remplacer, prévisualiser ou supprimer le justificatif. États affichés : « Document disponible », « Pas de document », « Non attribuée ».
+- **Date de fin de validité obligatoire** pour chaque justificatif joint.
 
 #### Documents officiels (EF-DOC)
 
@@ -219,6 +221,8 @@ Contraintes transverses : les photos sont aux formats JPEG, PNG ou WebP, avec un
 #### Documents véhicule (EF-VEH)
 
 - Carte grise et permis de conduire, sur le même modèle que les documents officiels.
+
+**Dates de validité (tous documents)** : chaque document joint (documents officiels, documents véhicule, titres et certificats) porte une date de fin de validité **obligatoire**, saisie avant l'envoi du fichier. L'état est affiché partout : valide, expire bientôt (60 jours ou moins), expiré.
 
 ### 4.8 Sécurité chantier
 
@@ -236,8 +240,9 @@ Contraintes transverses : les photos sont aux formats JPEG, PNG ou WebP, avec un
   - la section, la nature et la longueur du câble posé,
   - les caractéristiques du disjoncteur (voltage, marque, type, puissance, mise en service, plombage),
   - la validation client (présence, satisfaction, commentaire).
+  - en fin de tableau : puissance du disjoncteur et puissance du calibrage (en ampères), résultat du test du bouton « TEST » (fonctionne / HS — à remplacer, avec l'explication), toggle « RAS » et commentaire de l'électricien, signature du technicien (image).
 - **EF-EXP-03** — Les unités et codifications (sections en mm², puissances en ampères, générations Linky, etc.) suivent la nomenclature Enedis afin de rendre l'export directement transmissible ou archivable, sans ressaisie.
-- **EF-EXP-04** — L'export peut porter sur une fiche unique ou sur l'ensemble des dérivations d'un chantier (export groupé).
+- **EF-EXP-04** — L'export peut porter sur une fiche unique ou sur l'ensemble des dérivations d'un chantier (export groupé). Accessible aux administrateurs et encadrants depuis la fiche de dérivation et la fiche chantier ; seules les dérivations disposant d'un relevé sont exportées.
 
 ---
 

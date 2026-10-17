@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ChantiersService } from './chantiers.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { DerivationStatus } from '../types/derivations-status.enum';
@@ -33,6 +33,9 @@ describe('ChantiersService', () => {
   let service: ChantiersService;
 
   const mockPrismaService = {
+    siteTeamMembership: {
+      findMany: jest.fn(),
+    },
     market: {
       findUnique: jest.fn(),
     },
@@ -84,6 +87,171 @@ describe('ChantiersService', () => {
       await expect(service.create(createDto)).rejects.toThrow(NotFoundException);
       await expect(service.create(createDto)).rejects.toThrow('Market not found');
       expect(mockPrismaService.chantier.create).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("numéro d'affaire interne", () => {
+    it('normalise le numéro à la création pour fiabiliser les statistiques', async () => {
+      mockPrismaService.market.findUnique.mockResolvedValue(mockMarket);
+      mockPrismaService.chantier.create.mockResolvedValue(mockChantier);
+
+      await service.create({ ...createDto, internalAffaireNumber: ' ba570035 ' });
+
+      expect(mockPrismaService.chantier.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ internalAffaireNumber: 'BA570035' }),
+        })
+      );
+    });
+
+    it('normalise le numéro à la mise à jour', async () => {
+      mockPrismaService.chantier.findUnique.mockResolvedValue(mockChantier);
+      mockPrismaService.chantier.update.mockResolvedValue(mockChantier);
+
+      await service.update(1, { internalAffaireNumber: 'ba570099' });
+
+      expect(mockPrismaService.chantier.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ internalAffaireNumber: 'BA570099' }),
+        })
+      );
+    });
+
+    it('ne touche pas au numéro quand il est absent de la mise à jour', async () => {
+      mockPrismaService.chantier.findUnique.mockResolvedValue(mockChantier);
+      mockPrismaService.chantier.update.mockResolvedValue(mockChantier);
+
+      await service.update(1, { address: '15 rue Neuve' });
+
+      const { data } = mockPrismaService.chantier.update.mock.calls[0][0];
+      expect(data.internalAffaireNumber).toBeUndefined();
+    });
+  });
+
+  describe('planning du chantier', () => {
+    it('enregistre les dates de début et de fin prévues', async () => {
+      mockPrismaService.market.findUnique.mockResolvedValue(mockMarket);
+      mockPrismaService.chantier.create.mockResolvedValue(mockChantier);
+
+      await service.create({
+        ...createDto,
+        startDate: '2026-11-03',
+        endDate: '2026-11-07',
+      });
+
+      expect(mockPrismaService.chantier.create).toHaveBeenCalledWith({
+        data: {
+          ...createDto,
+          startDate: new Date('2026-11-03'),
+          endDate: new Date('2026-11-07'),
+        },
+        include: { market: true },
+      });
+    });
+
+    it('refuse une date de fin antérieure à la date de début', async () => {
+      mockPrismaService.market.findUnique.mockResolvedValue(mockMarket);
+
+      await expect(
+        service.create({
+          ...createDto,
+          startDate: '2026-11-07',
+          endDate: '2026-11-03',
+        })
+      ).rejects.toThrow(BadRequestException);
+      expect(mockPrismaService.chantier.create).not.toHaveBeenCalled();
+    });
+
+    it('refuse une date de fin sans date de début', async () => {
+      mockPrismaService.market.findUnique.mockResolvedValue(mockMarket);
+
+      await expect(
+        service.create({ ...createDto, endDate: '2026-11-07' })
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('compare la nouvelle date de fin à la date de début existante', async () => {
+      mockPrismaService.chantier.findUnique.mockResolvedValue({
+        ...mockChantier,
+        startDate: new Date('2026-11-10'),
+        endDate: null,
+      });
+
+      await expect(
+        service.update(1, { endDate: '2026-11-03' })
+      ).rejects.toThrow(BadRequestException);
+      expect(mockPrismaService.chantier.update).not.toHaveBeenCalled();
+    });
+
+    it('permet de retirer les dates du planning', async () => {
+      mockPrismaService.chantier.findUnique.mockResolvedValue({
+        ...mockChantier,
+        startDate: new Date('2026-11-03'),
+        endDate: new Date('2026-11-07'),
+      });
+      mockPrismaService.chantier.update.mockResolvedValue(mockChantier);
+
+      await service.update(1, { startDate: null, endDate: null });
+
+      expect(mockPrismaService.chantier.update).toHaveBeenCalledWith({
+        where: { id: 1 },
+        data: { startDate: null, endDate: null },
+        include: { market: true },
+      });
+    });
+  });
+
+  describe('findScheduledForUser', () => {
+    beforeEach(() => {
+      jest
+        .useFakeTimers()
+        .setSystemTime(new Date('2026-10-17T23:30:00.000Z'));
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it("retourne les chantiers à venir liés aux dérivations de l'utilisateur ou de ses équipes, triés par date", async () => {
+      mockPrismaService.siteTeamMembership.findMany.mockResolvedValue([
+        { teamId: 3 },
+        { teamId: 5 },
+      ]);
+      mockPrismaService.chantier.findMany.mockResolvedValue([mockChantier]);
+
+      const result = await service.findScheduledForUser(42);
+
+      expect(result).toEqual([mockChantier]);
+      expect(mockPrismaService.siteTeamMembership.findMany).toHaveBeenCalledWith(
+        { where: { userId: 42 }, select: { teamId: true } }
+      );
+      expect(mockPrismaService.chantier.findMany).toHaveBeenCalledWith({
+        where: {
+          startDate: { gte: new Date('2026-10-17T00:00:00.000Z') },
+          derivations: {
+            some: { OR: [{ userId: 42 }, { teamId: { in: [3, 5] } }] },
+          },
+        },
+        include: { market: true },
+        orderBy: { startDate: 'asc' },
+      });
+    });
+
+    it("se limite aux dérivations propres quand l'utilisateur n'a pas d'équipe", async () => {
+      mockPrismaService.siteTeamMembership.findMany.mockResolvedValue([]);
+      mockPrismaService.chantier.findMany.mockResolvedValue([]);
+
+      await service.findScheduledForUser(42);
+
+      expect(mockPrismaService.chantier.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            derivations: {
+              some: { OR: [{ userId: 42 }, { teamId: { in: [] } }] },
+            },
+          }),
+        })
+      );
     });
   });
 

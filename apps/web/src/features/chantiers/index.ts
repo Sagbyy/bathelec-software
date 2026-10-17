@@ -11,3 +11,5 @@ export {
 } from './ui/chantier-status-badge';
 export { groupByMarket } from './lib/group-by-market';
 export type { MarketGroup } from './lib/group-by-market';
+export { ChantierScheduleCard } from './ui/chantier-schedule-card';
+export { ScheduledChantiersList } from './ui/scheduled-chantiers-list';

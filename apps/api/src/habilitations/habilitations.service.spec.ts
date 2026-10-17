@@ -1,4 +1,4 @@
-import { ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { HabilitationsService } from './habilitations.service';
@@ -37,6 +37,9 @@ const mockModel = {
 const mockUsersService = {
   findOneById: jest.fn(),
 };
+
+const storedHabilitations = (value: object | null) =>
+  mockModel.findOne.mockReturnValue({ lean: () => Promise.resolve(value) });
 
 describe('HabilitationsService', () => {
   let service: HabilitationsService;
@@ -89,17 +92,65 @@ describe('HabilitationsService', () => {
         id: 1,
         role: 'technician',
       });
+      storedHabilitations(null);
       const updated = { ...mockDoc, b0: true, bs: true };
       mockModel.findOneAndUpdate.mockResolvedValue(updated);
 
-      const result = await service.upsert(1, { b0: true, bs: true });
+      const result = await service.upsert(1, {
+        b0: true,
+        bs: true,
+        expiresAt: '2027-05-31',
+      });
 
       expect(result).toEqual(updated);
       expect(mockModel.findOneAndUpdate).toHaveBeenCalledWith(
         { userId: 1 },
-        { $set: { b0: true, bs: true } },
+        { $set: { b0: true, bs: true, expiresAt: '2027-05-31' } },
         { upsert: true, new: true }
       );
+    });
+
+    describe('date de validité (DTA-51)', () => {
+      beforeEach(() => {
+        mockUsersService.findOneById.mockResolvedValue({
+          id: 1,
+          role: 'technician',
+        });
+        mockModel.findOneAndUpdate.mockResolvedValue(mockDoc);
+      });
+
+      it("refuse d'accorder un code sans date de validité", async () => {
+        storedHabilitations(null);
+
+        await expect(service.upsert(1, { b0: true })).rejects.toThrow(
+          BadRequestException
+        );
+        expect(mockModel.findOneAndUpdate).not.toHaveBeenCalled();
+      });
+
+      it('accepte un code quand la date est déjà enregistrée', async () => {
+        storedHabilitations({ ...mockDoc, expiresAt: new Date('2027-05-31') });
+
+        await service.upsert(1, { bs: true });
+
+        expect(mockModel.findOneAndUpdate).toHaveBeenCalled();
+      });
+
+      it('refuse de retirer la date tant qu’un code reste accordé', async () => {
+        storedHabilitations({ ...mockDoc, expiresAt: new Date('2027-05-31') });
+
+        await expect(service.upsert(1, { expiresAt: null })).rejects.toThrow(
+          "La date de validité de l'habilitation est obligatoire."
+        );
+      });
+
+      it("n'exige pas de date quand aucun code n'est accordé", async () => {
+        storedHabilitations({ ...mockDoc, b0: true, expiresAt: null });
+
+        await service.upsert(1, { b0: false });
+
+        expect(mockModel.findOneAndUpdate).toHaveBeenCalled();
+      });
     });
 
     it("lève ForbiddenException si l'utilisateur est admin", async () => {

@@ -43,8 +43,7 @@ export function MultiStepForm({
 
   const isStatusDisabled =
     derivation.status === DerivationStatus.COMPLETED ||
-    derivation.status === DerivationStatus.REVIEWING ||
-    derivation.status === DerivationStatus.INCORRECT;
+    derivation.status === DerivationStatus.REVIEWING;
   const isFormDisabled = readOnly || isStatusDisabled;
 
   useEffect(() => {

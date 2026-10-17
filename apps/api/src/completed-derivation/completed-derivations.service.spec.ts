@@ -54,6 +54,8 @@ const mockDto = {
     clientComment: '1',
     signature: '1234567890',
     technicianComment: '1',
+
+    technicianSignature: 'data:image/png;base64,signature',
   },
 };
 
