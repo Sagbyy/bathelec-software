@@ -78,6 +78,17 @@ export class DerivationsController {
     return this.derivationsService.findAllDerivations();
   }
 
+  @Get('stats/review')
+  @UseGuards(RoleGuard)
+  @Role(UserRole.ADMIN, UserRole.SUPERVISOR)
+  @ApiOperation({
+    summary:
+      'Review statistics: first-time validation rate and return-for-correction rate',
+  })
+  getReviewStats() {
+    return this.derivationsService.getReviewStats();
+  }
+
   @Get('me')
   @UseGuards(RoleGuard)
   @Role(UserRole.TECHNICIAN, UserRole.SITE_MANAGER)

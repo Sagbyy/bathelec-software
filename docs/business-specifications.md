@@ -190,6 +190,7 @@ Contraintes transverses : les photos sont aux formats JPEG, PNG ou WebP, avec un
 - **EF-DASH-01** — Cartes d'indicateurs : nombre de dérivations par statut.
 - **EF-DASH-02** — Graphique circulaire de répartition des statuts avec total au centre.
 - **EF-DASH-03** — Liste des relevés : recherche, filtres par technicien et par statut, pagination (5, 10, 20 ou 50). Colonnes : ID, date de création, technicien, chantier, statut, action. Les relevés « En attente de validation » sont mis en avant avec un bouton « À vérifier ».
+- **EF-DASH-04** — Statistiques de revue : taux de dérivations **validées du premier coup** (terminées sans aucun renvoi en correction) et **taux de retour** (part des dérivations revues renvoyées au moins une fois en correction), avec le nombre total de renvois.
 
 ### 4.7 Dossier du technicien
 

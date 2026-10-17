@@ -148,4 +148,23 @@ describe('derivationService', () => {
       await expect(derivationService.claimDerivation(2)).rejects.toThrow();
     });
   });
+
+  it('récupère les statistiques de revue (DTA-54)', async () => {
+    const stats = {
+      completedCount: 4,
+      firstTimeValidatedCount: 3,
+      firstTimeValidationRate: 75,
+      reviewedCount: 5,
+      returnedCount: 2,
+      returnRate: 40,
+      totalReturns: 3,
+    };
+    server.use(
+      http.get(`${BASE}/derivations/stats/review`, () =>
+        HttpResponse.json(stats)
+      )
+    );
+
+    await expect(derivationService.getReviewStats()).resolves.toEqual(stats);
+  });
 });

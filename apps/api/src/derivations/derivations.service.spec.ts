@@ -56,6 +56,8 @@ describe('DerivationsService', () => {
       update: jest.fn(),
       updateMany: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
+      aggregate: jest.fn(),
     },
   };
 
@@ -296,6 +298,117 @@ describe('DerivationsService', () => {
     });
   });
 
+  describe('compteur de renvois en correction (DTA-54)', () => {
+    it('incrémente le compteur quand la dérivation est renvoyée en correction', async () => {
+      mockPrismaService.derivation.findUnique.mockResolvedValue({
+        ...mockDerivation,
+        status: DerivationStatus.REVIEWING,
+      });
+
+      await service.updateDerivation(1, {
+        status: DerivationStatus.REVISING,
+        correctionComment: 'Photo floue',
+      });
+
+      expect(mockPrismaService.derivation.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ revisionCount: { increment: 1 } }),
+        })
+      );
+    });
+
+    it('ne compte pas deux fois une dérivation déjà en correction', async () => {
+      mockPrismaService.derivation.findUnique.mockResolvedValue({
+        ...mockDerivation,
+        status: DerivationStatus.REVISING,
+      });
+
+      await service.updateDerivation(1, {
+        status: DerivationStatus.REVISING,
+        correctionComment: 'Précision',
+      });
+
+      const { data } = mockPrismaService.derivation.update.mock.calls[0][0];
+      expect(data.revisionCount).toBeUndefined();
+    });
+
+    it('ne compte pas une validation', async () => {
+      mockPrismaService.derivation.findUnique.mockResolvedValue({
+        ...mockDerivation,
+        status: DerivationStatus.REVIEWING,
+      });
+
+      await service.updateDerivation(1, {
+        status: DerivationStatus.COMPLETED,
+      });
+
+      const { data } = mockPrismaService.derivation.update.mock.calls[0][0];
+      expect(data.revisionCount).toBeUndefined();
+    });
+  });
+
+  describe('getReviewStats (DTA-54)', () => {
+    const mockCounts = (counts: number[], totalReturns: number | null) => {
+      counts.forEach((count) =>
+        mockPrismaService.derivation.count.mockResolvedValueOnce(count)
+      );
+      mockPrismaService.derivation.aggregate.mockResolvedValue({
+        _sum: { revisionCount: totalReturns },
+      });
+    };
+
+    it('calcule le taux de validation au 1er coup et le taux de retour', async () => {
+      mockCounts([8, 6, 12, 6], 9);
+
+      await expect(service.getReviewStats()).resolves.toEqual({
+        completedCount: 8,
+        firstTimeValidatedCount: 6,
+        firstTimeValidationRate: 75,
+        reviewedCount: 12,
+        returnedCount: 6,
+        returnRate: 50,
+        totalReturns: 9,
+      });
+    });
+
+    it('arrondit les taux au dixième', async () => {
+      mockCounts([3, 1, 3, 2], 2);
+
+      const stats = await service.getReviewStats();
+
+      expect(stats.firstTimeValidationRate).toBe(33.3);
+      expect(stats.returnRate).toBe(66.7);
+    });
+
+    it("retourne des taux nuls quand aucune dérivation n'a été revue", async () => {
+      mockCounts([0, 0, 0, 0], null);
+
+      await expect(service.getReviewStats()).resolves.toMatchObject({
+        firstTimeValidationRate: null,
+        returnRate: null,
+        totalReturns: 0,
+      });
+    });
+
+    it('compte les dérivations validées sans aucun renvoi', async () => {
+      mockCounts([0, 0, 0, 0], 0);
+
+      await service.getReviewStats();
+
+      expect(mockPrismaService.derivation.count).toHaveBeenCalledWith({
+        where: { status: DerivationStatus.COMPLETED, revisionCount: 0 },
+      });
+      expect(mockPrismaService.derivation.count).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            { status: DerivationStatus.COMPLETED },
+            { revisionCount: { gt: 0 } },
+          ],
+        },
+      });
+    });
+  });
+
   describe('updateDerivation (assignment protection)', () => {
     it('ne transmet à Prisma que le commentaire et le statut', async () => {
       mockPrismaService.derivation.findUnique.mockResolvedValue(mockDerivation);
@@ -311,6 +424,7 @@ describe('DerivationsService', () => {
         data: {
           correctionComment: undefined,
           status: DerivationStatus.REVISING,
+          revisionCount: { increment: 1 },
         },
         include: DERIVATION_INCLUDE,
       });

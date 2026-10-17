@@ -6,7 +6,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { Role } from '@repo/types';
+import { DerivationReviewStats, Role } from '@repo/types';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateDerivationDto } from './dto/request/create-derivation.dto';
 import { DerivationStatus } from '../types/derivations-status.enum';
@@ -20,6 +20,16 @@ const CHANTIER_INCLUDE = {
 } as const;
 
 const MANAGEMENT_ROLES: Role[] = [Role.ADMIN, Role.SUPERVISOR];
+
+const isSentBackForCorrection = (
+  currentStatus: string,
+  nextStatus?: DerivationStatus
+) =>
+  nextStatus === DerivationStatus.REVISING &&
+  currentStatus !== DerivationStatus.REVISING;
+
+const toRate = (part: number, total: number) =>
+  total === 0 ? null : Math.round((part / total) * 1000) / 10;
 
 @Injectable()
 export class DerivationsService {
@@ -143,9 +153,52 @@ export class DerivationsService {
       data: {
         correctionComment: updateDerivationDto.correctionComment,
         status: updateDerivationDto.status,
+        ...(isSentBackForCorrection(
+          derivation.status,
+          updateDerivationDto.status
+        )
+          ? { revisionCount: { increment: 1 } }
+          : {}),
       },
       include: CHANTIER_INCLUDE,
     });
+  }
+
+  async getReviewStats(): Promise<DerivationReviewStats> {
+    const [
+      completedCount,
+      firstTimeValidatedCount,
+      reviewedCount,
+      returnedCount,
+      returns,
+    ] = await Promise.all([
+      this.prisma.derivation.count({
+        where: { status: DerivationStatus.COMPLETED },
+      }),
+      this.prisma.derivation.count({
+        where: { status: DerivationStatus.COMPLETED, revisionCount: 0 },
+      }),
+      this.prisma.derivation.count({
+        where: {
+          OR: [
+            { status: DerivationStatus.COMPLETED },
+            { revisionCount: { gt: 0 } },
+          ],
+        },
+      }),
+      this.prisma.derivation.count({ where: { revisionCount: { gt: 0 } } }),
+      this.prisma.derivation.aggregate({ _sum: { revisionCount: true } }),
+    ]);
+
+    return {
+      completedCount,
+      firstTimeValidatedCount,
+      firstTimeValidationRate: toRate(firstTimeValidatedCount, completedCount),
+      reviewedCount,
+      returnedCount,
+      returnRate: toRate(returnedCount, reviewedCount),
+      totalReturns: returns._sum.revisionCount ?? 0,
+    };
   }
 
   async assignTeam(derivationId: number, teamId: number) {
