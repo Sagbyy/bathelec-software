@@ -258,7 +258,7 @@ export function Navbar() {
         <AbrisurLogo />
         <span className="sr-only">Abrisûr Software</span>
       </Link>
-      <NavigationMenu className="ml-auto hidden lg:block">
+      <NavigationMenu viewport={false} className="ml-auto hidden lg:block">
         <NavigationMenuList>
           {/* Common Links */}
           {commonLinks.map((link, index) => (
