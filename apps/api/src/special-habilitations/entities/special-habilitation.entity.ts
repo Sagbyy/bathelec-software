@@ -12,15 +12,19 @@ export class SpecialHabilitation {
 
   @Prop({ type: Boolean, default: false }) electricalTitle: boolean;
   @Prop({ type: String, default: null }) electricalTitleDoc: string | null;
+  @Prop({ type: Date, default: null }) electricalTitleDocExpiresAt: Date | null;
 
   @Prop({ type: Boolean, default: false }) ss4Title: boolean;
   @Prop({ type: String, default: null }) ss4TitleDoc: string | null;
+  @Prop({ type: Date, default: null }) ss4TitleDocExpiresAt: Date | null;
 
   @Prop({ type: Boolean, default: false }) leadTitle: boolean;
   @Prop({ type: String, default: null }) leadTitleDoc: string | null;
+  @Prop({ type: Date, default: null }) leadTitleDocExpiresAt: Date | null;
 
   @Prop({ type: Boolean, default: false }) sstCertificate: boolean;
   @Prop({ type: String, default: null }) sstCertificateDoc: string | null;
+  @Prop({ type: Date, default: null }) sstCertificateDocExpiresAt: Date | null;
 }
 
 export const SpecialHabilitationSchema =

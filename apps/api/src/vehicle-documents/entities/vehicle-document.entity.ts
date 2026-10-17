@@ -13,8 +13,14 @@ export class VehicleDocument {
   @Prop({ type: String, default: null })
   vehicleRegistration: string;
 
+  @Prop({ type: Date, default: null })
+  vehicleRegistrationExpiresAt: Date | null;
+
   @Prop({ type: String, default: null })
   drivingLicense: string;
+
+  @Prop({ type: Date, default: null })
+  drivingLicenseExpiresAt: Date | null;
 }
 
 export const VehicleDocumentSchema =

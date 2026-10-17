@@ -43,9 +43,7 @@ describe('specialHabilitationService', () => {
           )
         )
       );
-      await expect(
-        specialHabilitationService.getByUserId(1)
-      ).rejects.toThrow();
+      await expect(specialHabilitationService.getByUserId(1)).rejects.toThrow();
     });
   });
 

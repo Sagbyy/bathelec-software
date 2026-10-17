@@ -160,6 +160,9 @@ describe('OfficialDocumentsForm', () => {
 
       const { container } = render(<OfficialDocumentsForm />);
       const inputs = container.querySelectorAll('input[type="file"]');
+      fireEvent.change(container.querySelectorAll('input[type="date"]')[0]!, {
+        target: { value: '2027-05-31' },
+      });
       fireEvent.change(inputs[0]!, {
         target: {
           files: [new File(['img'], 'piece.jpg', { type: 'image/jpeg' })],
@@ -168,8 +171,7 @@ describe('OfficialDocumentsForm', () => {
 
       expect(mockMutate).toHaveBeenCalledWith({
         idCard: base64,
-        btpCard: null,
-        mutualCard: null,
+        idCardExpiresAt: '2027-05-31',
       });
       vi.unstubAllGlobals();
     });
@@ -187,6 +189,9 @@ describe('OfficialDocumentsForm', () => {
 
       const { container } = render(<OfficialDocumentsForm />);
       const inputs = container.querySelectorAll('input[type="file"]');
+      fireEvent.change(container.querySelectorAll('input[type="date"]')[1]!, {
+        target: { value: '2027-05-31' },
+      });
       fireEvent.change(inputs[1]!, {
         target: {
           files: [new File(['img'], 'btp.jpg', { type: 'image/jpeg' })],
@@ -194,9 +199,8 @@ describe('OfficialDocumentsForm', () => {
       });
 
       expect(mockMutate).toHaveBeenCalledWith({
-        idCard: null,
         btpCard: base64,
-        mutualCard: null,
+        btpCardExpiresAt: '2027-05-31',
       });
       vi.unstubAllGlobals();
     });
@@ -214,6 +218,9 @@ describe('OfficialDocumentsForm', () => {
 
       const { container } = render(<OfficialDocumentsForm />);
       const inputs = container.querySelectorAll('input[type="file"]');
+      fireEvent.change(container.querySelectorAll('input[type="date"]')[2]!, {
+        target: { value: '2027-05-31' },
+      });
       fireEvent.change(inputs[2]!, {
         target: {
           files: [new File(['img'], 'mutuelle.jpg', { type: 'image/jpeg' })],
@@ -221,9 +228,8 @@ describe('OfficialDocumentsForm', () => {
       });
 
       expect(mockMutate).toHaveBeenCalledWith({
-        idCard: null,
-        btpCard: null,
         mutualCard: base64,
+        mutualCardExpiresAt: '2027-05-31',
       });
       vi.unstubAllGlobals();
     });
@@ -241,11 +247,7 @@ describe('OfficialDocumentsForm', () => {
       fireEvent.click(screen.getAllByRole('button')[0]!);
 
       await waitFor(() => {
-        expect(mockMutate).toHaveBeenCalledWith({
-          idCard: null,
-          btpCard: 'data:image/jpeg;base64,btpBase64',
-          mutualCard: 'data:image/jpeg;base64,mutuelleBase64',
-        });
+        expect(mockMutate).toHaveBeenCalledWith({ idCard: null });
       });
     });
 
@@ -254,11 +256,7 @@ describe('OfficialDocumentsForm', () => {
       fireEvent.click(screen.getAllByRole('button')[1]!);
 
       await waitFor(() => {
-        expect(mockMutate).toHaveBeenCalledWith({
-          idCard: 'data:image/jpeg;base64,pieceBase64',
-          btpCard: null,
-          mutualCard: 'data:image/jpeg;base64,mutuelleBase64',
-        });
+        expect(mockMutate).toHaveBeenCalledWith({ btpCard: null });
       });
     });
 
@@ -267,12 +265,43 @@ describe('OfficialDocumentsForm', () => {
       fireEvent.click(screen.getAllByRole('button')[2]!);
 
       await waitFor(() => {
-        expect(mockMutate).toHaveBeenCalledWith({
-          idCard: 'data:image/jpeg;base64,pieceBase64',
-          btpCard: 'data:image/jpeg;base64,btpBase64',
-          mutualCard: null,
-        });
+        expect(mockMutate).toHaveBeenCalledWith({ mutualCard: null });
       });
+    });
+  });
+
+  describe('date de validité (DTA-51)', () => {
+    it("met à jour uniquement la date d'un document existant", () => {
+      mockUseOfficialDocument.mockReturnValue(
+        asHook({
+          data: { ...fullData, btpCardExpiresAt: '2026-12-31T00:00:00.000Z' },
+          isLoading: false,
+        })
+      );
+
+      const { container } = render(<OfficialDocumentsForm />);
+      const dateInputs = container.querySelectorAll('input[type="date"]');
+
+      expect(dateInputs[1]).toHaveValue('2026-12-31');
+
+      fireEvent.change(dateInputs[1]!, { target: { value: '2028-01-15' } });
+
+      expect(mockMutate).toHaveBeenCalledWith({
+        btpCardExpiresAt: '2028-01-15',
+      });
+    });
+
+    it("n'affiche que les documents demandés", () => {
+      mockUseOfficialDocument.mockReturnValue(
+        asHook({ data: undefined, isLoading: false })
+      );
+
+      render(<OfficialDocumentsForm documentKeys={['mutualCard']} />);
+
+      expect(screen.getByText('Carte mutuelle')).toBeInTheDocument();
+      expect(
+        screen.queryByText('Carte professionnelle BTP')
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -348,6 +377,9 @@ describe('OfficialDocumentsForm', () => {
 
       const { container } = render(<OfficialDocumentsForm userId={2} />);
       const inputs = container.querySelectorAll('input[type="file"]');
+      fireEvent.change(container.querySelectorAll('input[type="date"]')[0]!, {
+        target: { value: '2027-05-31' },
+      });
       fireEvent.change(inputs[0]!, {
         target: {
           files: [new File(['img'], 'piece.jpg', { type: 'image/jpeg' })],
@@ -356,8 +388,7 @@ describe('OfficialDocumentsForm', () => {
 
       expect(mockManagedMutate).toHaveBeenCalledWith({
         idCard: base64,
-        btpCard: null,
-        mutualCard: null,
+        idCardExpiresAt: '2027-05-31',
       });
       expect(mockMutate).not.toHaveBeenCalled();
       vi.unstubAllGlobals();

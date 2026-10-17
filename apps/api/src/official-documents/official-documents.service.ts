@@ -8,6 +8,10 @@ import {
 import { CreateOfficialDocumentDto } from './dto/create-official-document.dto';
 import { UpdateOfficialDocumentDto } from './dto/update-official-document.dto';
 
+import { clearExpiryOfRemovedDocuments } from '../common/validators/is-document-expiry-date.validator';
+
+const OFFICIAL_DOCUMENT_KEYS = ['idCard', 'btpCard', 'mutualCard'] as const;
+
 @Injectable()
 export class OfficialDocumentsService {
   constructor(
@@ -26,7 +30,13 @@ export class OfficialDocumentsService {
     if (existing) {
       return this.officialDocumentModel.findOneAndUpdate(
         { userId },
-        { ...createOfficialDocumentDto, updatedAt: new Date() },
+        {
+          ...clearExpiryOfRemovedDocuments(
+            createOfficialDocumentDto,
+            OFFICIAL_DOCUMENT_KEYS
+          ),
+          updatedAt: new Date(),
+        },
         { new: true }
       );
     }
@@ -48,7 +58,13 @@ export class OfficialDocumentsService {
   ): Promise<OfficialDocumentDocument> {
     return this.officialDocumentModel.findOneAndUpdate(
       { userId },
-      { ...updateOfficialDocumentDto, updatedAt: new Date() },
+      {
+        ...clearExpiryOfRemovedDocuments(
+          updateOfficialDocumentDto,
+          OFFICIAL_DOCUMENT_KEYS
+        ),
+        updatedAt: new Date(),
+      },
       { new: true }
     );
   }

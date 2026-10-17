@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
@@ -31,6 +35,12 @@ const DEFAULT_HABILITATIONS = {
   heAttribut: false,
 };
 
+type HabilitationCode = keyof typeof DEFAULT_HABILITATIONS;
+
+const HABILITATION_CODES = Object.keys(
+  DEFAULT_HABILITATIONS
+) as HabilitationCode[];
+
 @Injectable()
 export class HabilitationsService {
   constructor(
@@ -42,10 +52,11 @@ export class HabilitationsService {
   async findByUserId(
     userId: number
   ): Promise<
-    HabilitationDocument | (typeof DEFAULT_HABILITATIONS & { userId: number })
+    | HabilitationDocument
+    | (typeof DEFAULT_HABILITATIONS & { userId: number; expiresAt: null })
   > {
     const doc = await this.habilitationModel.findOne({ userId });
-    return doc ?? { userId, ...DEFAULT_HABILITATIONS };
+    return doc ?? { userId, expiresAt: null, ...DEFAULT_HABILITATIONS };
   }
 
   async upsert(
@@ -59,10 +70,32 @@ export class HabilitationsService {
       );
     }
 
+    const current = await this.habilitationModel.findOne({ userId }).lean();
+    this.ensureExpiryWhenGranted({
+      ...DEFAULT_HABILITATIONS,
+      ...current,
+      ...dto,
+    });
+
     return this.habilitationModel.findOneAndUpdate(
       { userId },
       { $set: dto },
       { upsert: true, new: true }
     );
+  }
+
+  private ensureExpiryWhenGranted(
+    habilitations: Record<HabilitationCode, boolean> & {
+      expiresAt?: Date | string | null;
+    }
+  ) {
+    const hasGrantedCode = HABILITATION_CODES.some(
+      (code) => habilitations[code]
+    );
+    if (hasGrantedCode && !habilitations.expiresAt) {
+      throw new BadRequestException(
+        "La date de validité de l'habilitation est obligatoire."
+      );
+    }
   }
 }

@@ -203,12 +203,14 @@ Contraintes transverses : les photos sont aux formats JPEG, PNG ou WebP, avec un
   - Chargé d'intervention : BR.
   - Chargé d'opérations spécifiques : BE et HE avec attribut (essais, mesurages, vérifications).
 - Attribution et retrait par l'administrateur uniquement. Le technicien consulte les siennes en lecture seule (badge vert pour habilité, grisé barré pour non habilité).
+- **Date de fin de validité du titre obligatoire** : aucun code ne peut être accordé sans elle.
 - Les habilitations ne peuvent être portées que par des comptes techniciens.
 
 #### Titres et certificats (EF-CERT)
 
 - Quatre certifications, chacune avec un indicateur actif ou inactif et une pièce justificative jointe (image ou PDF) : titre d'habilitation électrique, titre SS4 (amiante sous-section 4), titre plomb, certificat SST.
 - Actions administrateur : joindre, remplacer, prévisualiser ou supprimer le justificatif. États affichés : « Document disponible », « Pas de document », « Non attribuée ».
+- **Date de fin de validité obligatoire** pour chaque justificatif joint.
 
 #### Documents officiels (EF-DOC)
 
@@ -218,6 +220,8 @@ Contraintes transverses : les photos sont aux formats JPEG, PNG ou WebP, avec un
 #### Documents véhicule (EF-VEH)
 
 - Carte grise et permis de conduire, sur le même modèle que les documents officiels.
+
+**Dates de validité (tous documents)** : chaque document joint (documents officiels, documents véhicule, titres et certificats) porte une date de fin de validité **obligatoire**, saisie avant l'envoi du fichier. L'état est affiché partout : valide, expire bientôt (60 jours ou moins), expiré.
 
 ### 4.8 Sécurité chantier
 

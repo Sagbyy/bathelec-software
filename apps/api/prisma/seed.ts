@@ -74,6 +74,8 @@ function getMongoModels() {
   };
 }
 
+const SEED_DOCUMENT_EXPIRY = new Date('2027-12-31');
+
 async function seedMongoData(userId: number, derivations: SeededDerivation[]) {
   if (!process.env.DATABASE_MONGO_URL) {
     throw new Error('DATABASE_MONGO_URL is required to seed MongoDB.');
@@ -114,6 +116,7 @@ async function seedMongoData(userId: number, derivations: SeededDerivation[]) {
           br: true,
           beAttribut: false,
           heAttribut: false,
+          expiresAt: SEED_DOCUMENT_EXPIRY,
         },
       },
       { upsert: true, new: true }
@@ -124,12 +127,14 @@ async function seedMongoData(userId: number, derivations: SeededDerivation[]) {
         $set: {
           electricalTitle: true,
           electricalTitleDoc: SAMPLE_IMAGE,
+          electricalTitleDocExpiresAt: SEED_DOCUMENT_EXPIRY,
           ss4Title: false,
           ss4TitleDoc: null,
           leadTitle: false,
           leadTitleDoc: null,
           sstCertificate: true,
           sstCertificateDoc: SAMPLE_IMAGE,
+          sstCertificateDocExpiresAt: SEED_DOCUMENT_EXPIRY,
         },
       },
       { upsert: true, new: true }
@@ -141,6 +146,9 @@ async function seedMongoData(userId: number, derivations: SeededDerivation[]) {
           idCard: SAMPLE_IMAGE,
           btpCard: SAMPLE_IMAGE,
           mutualCard: SAMPLE_IMAGE,
+          idCardExpiresAt: SEED_DOCUMENT_EXPIRY,
+          btpCardExpiresAt: SEED_DOCUMENT_EXPIRY,
+          mutualCardExpiresAt: SEED_DOCUMENT_EXPIRY,
         },
       },
       { upsert: true, new: true }
@@ -151,6 +159,8 @@ async function seedMongoData(userId: number, derivations: SeededDerivation[]) {
         $set: {
           vehicleRegistration: SAMPLE_IMAGE,
           drivingLicense: SAMPLE_IMAGE,
+          vehicleRegistrationExpiresAt: SEED_DOCUMENT_EXPIRY,
+          drivingLicenseExpiresAt: SEED_DOCUMENT_EXPIRY,
         },
       },
       { upsert: true, new: true }

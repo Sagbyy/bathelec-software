@@ -131,7 +131,7 @@ describe('DocumentUploadCard', () => {
       const file = new File(['image'], 'carte.jpg', { type: 'image/jpeg' });
       fireEvent.change(input, { target: { files: [file] } });
 
-      expect(onChange).toHaveBeenCalledWith(base64Result);
+      expect(onChange).toHaveBeenCalledWith(base64Result, null);
       vi.unstubAllGlobals();
     });
 
@@ -145,6 +145,89 @@ describe('DocumentUploadCard', () => {
       fireEvent.change(input, { target: { files: [] } });
 
       expect(onChange).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('date de validité (DTA-51)', () => {
+    const withExpiry = {
+      ...defaultProps,
+      onExpiresAtChange: vi.fn(),
+    };
+
+    it('bloque la sélection du fichier tant que la date est absente', () => {
+      render(<DocumentUploadCard {...withExpiry} />);
+
+      expect(
+        screen.getByRole('button', { name: /sélectionner un fichier/i })
+      ).toBeDisabled();
+      expect(
+        screen.getByText(/Renseignez la date de fin de validité/)
+      ).toBeInTheDocument();
+    });
+
+    it('autorise la sélection une fois la date renseignée', () => {
+      render(<DocumentUploadCard {...withExpiry} />);
+
+      fireEvent.change(screen.getByLabelText(/Date de fin de validité/), {
+        target: { value: '2027-05-31' },
+      });
+
+      expect(
+        screen.getByRole('button', { name: /sélectionner un fichier/i })
+      ).toBeEnabled();
+      expect(withExpiry.onExpiresAtChange).not.toHaveBeenCalled();
+    });
+
+    it("transmet le document avec sa date lors de l'envoi", () => {
+      class MockFileReader {
+        result = 'data:image/png;base64,carte';
+        onloadend: (() => void) | null = null;
+        readAsDataURL() {
+          this.onloadend?.();
+        }
+      }
+      vi.stubGlobal('FileReader', MockFileReader);
+      const onChange = vi.fn();
+      const { container } = render(
+        <DocumentUploadCard
+          {...withExpiry}
+          onChange={onChange}
+          expiresAt="2027-05-31"
+        />
+      );
+
+      fireEvent.change(
+        container.querySelector('input[type="file"]') as HTMLInputElement,
+        {
+          target: {
+            files: [new File(['img'], 'carte.png', { type: 'image/png' })],
+          },
+        }
+      );
+
+      expect(onChange).toHaveBeenCalledWith(
+        'data:image/png;base64,carte',
+        '2027-05-31'
+      );
+      vi.unstubAllGlobals();
+    });
+
+    it("met à jour la date d'un document existant", () => {
+      const onExpiresAtChange = vi.fn();
+      render(
+        <DocumentUploadCard
+          {...defaultProps}
+          value="data:image/png;base64,AAA"
+          expiresAt="2027-05-31"
+          onExpiresAtChange={onExpiresAtChange}
+        />
+      );
+
+      fireEvent.change(screen.getByLabelText(/Date de fin de validité/), {
+        target: { value: '2028-01-15' },
+      });
+
+      expect(onExpiresAtChange).toHaveBeenCalledWith('2028-01-15');
     });
   });
 });
