@@ -5,7 +5,6 @@ export enum DerivationStatus {
   ONGOING = 'Ongoing',
   REVIEWING = 'Reviewing',
   REVISING = 'Revising',
-  INCORRECT = 'Incorrect',
   COMPLETED = 'Completed',
 }
 
