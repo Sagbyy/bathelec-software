@@ -1,6 +1,9 @@
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { z } from 'zod';
-import { CIRCUIT_BREAKER_POWERS } from './circuit-breaker';
+import {
+  CIRCUIT_BREAKER_POWERS,
+  CIRCUIT_BREAKER_TEST_RESULTS,
+} from './circuit-breaker';
 
 const THREE_DIGITS = /^\d{3}$/;
 const TWELVE_DIGITS = /^\d{12}$/;
@@ -135,47 +138,70 @@ export const createCompletedDerivationSchema = z.object({
       .refine((val) => val !== null, { message: 'La photo est requise' }),
   }),
 
-  circuitBreaker: z.object({
-    preserved: z.boolean(),
-    voltage: z.preprocess(
-      (val) => (val === undefined ? '' : val),
-      z
-        .string()
-        .min(1, { message: 'La tension est requise' })
-        .refine((val) => val === 'mono' || val === 'tri', {
-          message: 'La tension doit être "mono" ou "tri"',
-        })
-    ),
-    brand: z.string().min(1, { message: 'La marque est requise' }),
-    type: z.preprocess(
-      (val) => (val === undefined ? '' : val),
-      z
-        .string()
-        .min(1, { message: 'Le type est requis' })
-        .refine(
-          (val) =>
-            val === 'non_differentiel' ||
-            val === 'differentiel' ||
-            val === 'selectif',
-          { message: 'Le type doit être sélectionné' }
-        )
-    ),
-    power: z.enum(CIRCUIT_BREAKER_POWERS, {
-      errorMap: () => ({
-        message: 'La puissance du disjoncteur est requise',
+  circuitBreaker: z
+    .object({
+      preserved: z.boolean(),
+      voltage: z.preprocess(
+        (val) => (val === undefined ? '' : val),
+        z
+          .string()
+          .min(1, { message: 'La tension est requise' })
+          .refine((val) => val === 'mono' || val === 'tri', {
+            message: 'La tension doit être "mono" ou "tri"',
+          })
+      ),
+      brand: z.string().min(1, { message: 'La marque est requise' }),
+      type: z.preprocess(
+        (val) => (val === undefined ? '' : val),
+        z
+          .string()
+          .min(1, { message: 'Le type est requis' })
+          .refine(
+            (val) =>
+              val === 'non_differentiel' ||
+              val === 'differentiel' ||
+              val === 'selectif',
+            { message: 'Le type doit être sélectionné' }
+          )
+      ),
+      power: z.enum(CIRCUIT_BREAKER_POWERS, {
+        errorMap: () => ({
+          message: 'La puissance du disjoncteur est requise',
+        }),
       }),
+      calibrationPower: z
+        .string({
+          required_error: 'La puissance du calibrage est requise',
+          invalid_type_error: 'La puissance du calibrage est requise',
+        })
+        .min(1, 'La puissance du calibrage est requise'),
+      commissioningDone: z.boolean(),
+      sealed: z.boolean().refine((val) => val === true, {
+        message: 'Le disjoncteur doit être scellé',
+      }),
+      testButton: z.enum(CIRCUIT_BREAKER_TEST_RESULTS).nullable(),
+      replacementExplanation: z.string(),
+    })
+    .superRefine((data, ctx) => {
+      if (data.preserved && data.testButton === null) {
+        ctx.addIssue({
+          path: ['testButton'],
+          message: 'Le résultat du test du bouton « TEST » est requis',
+          code: 'custom',
+        });
+      }
+
+      if (
+        data.testButton === 'faulty' &&
+        data.replacementExplanation.trim() === ''
+      ) {
+        ctx.addIssue({
+          path: ['replacementExplanation'],
+          message: 'Expliquez pourquoi le disjoncteur est à remplacer',
+          code: 'custom',
+        });
+      }
     }),
-    calibrationPower: z
-      .string({
-        required_error: 'La puissance du calibrage est requise',
-        invalid_type_error: 'La puissance du calibrage est requise',
-      })
-      .min(1, 'La puissance du calibrage est requise'),
-    commissioningDone: z.boolean(),
-    sealed: z.boolean().refine((val) => val === true, {
-      message: 'Le disjoncteur doit être scellé',
-    }),
-  }),
 
   photoAfterWork: z.object({
     photo: z

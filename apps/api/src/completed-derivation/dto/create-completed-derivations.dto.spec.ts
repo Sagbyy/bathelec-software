@@ -83,3 +83,55 @@ describe('CreateCompletedDerivationDto circuit breaker (DTA-44)', () => {
     expect(JSON.stringify(error?.children)).toContain('calibrationPower');
   });
 });
+
+describe('CreateCompletedDerivationDto circuit breaker test button (DTA-49)', () => {
+  const withBreaker = (circuitBreaker: Record<string, unknown>) =>
+    circuitBreakerErrors({
+      ...validPayload,
+      circuitBreaker: { ...validPayload.circuitBreaker, ...circuitBreaker },
+    });
+
+  it('requires the test button result when the breaker is preserved', async () => {
+    const error = await withBreaker({ preserved: true });
+
+    expect(JSON.stringify(error?.children)).toContain('testButton');
+  });
+
+  it('accepts a preserved breaker whose test button works', async () => {
+    expect(
+      await withBreaker({ preserved: true, testButton: 'working' })
+    ).toBeUndefined();
+  });
+
+  it('requires an explanation when the test button is faulty', async () => {
+    const error = await withBreaker({
+      preserved: true,
+      testButton: 'faulty',
+      replacementExplanation: '',
+    });
+
+    expect(JSON.stringify(error?.children)).toContain('replacementExplanation');
+  });
+
+  it('accepts a faulty test button with an explanation', async () => {
+    expect(
+      await withBreaker({
+        preserved: true,
+        testButton: 'faulty',
+        replacementExplanation: 'Bouton inopérant, disjoncteur remplacé',
+      })
+    ).toBeUndefined();
+  });
+
+  it('rejects an unknown test button result', async () => {
+    const error = await withBreaker({ preserved: true, testButton: 'maybe' });
+
+    expect(JSON.stringify(error?.children)).toContain('testButton');
+  });
+
+  it('keeps accepting a replaced breaker without test data', async () => {
+    expect(
+      await withBreaker({ preserved: false, testButton: null })
+    ).toBeUndefined();
+  });
+});

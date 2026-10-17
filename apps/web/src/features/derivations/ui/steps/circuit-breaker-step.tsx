@@ -10,6 +10,7 @@ import {
 } from '@/shared/ui/form';
 import { SelectItem } from '@/shared/ui/select';
 import { LabeledInput } from '@/shared/ui/labeled-input';
+import { Textarea } from '@/shared/ui/textarea';
 import { LabeledSelect } from '@/shared/ui/labeled-select';
 import { Switch } from '@/shared/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group';
@@ -27,6 +28,8 @@ interface CircuitBreakerStepProps {
 
 export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
   const oldMeterPreserved = form.watch('oldMeter.preserved');
+  const breakerPreserved = form.watch('circuitBreaker.preserved');
+  const testButton = form.watch('circuitBreaker.testButton');
   const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
   return (
@@ -38,10 +41,10 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
       <Alert variant="destructive" className="mb-6">
         <AlertTriangle />
         <AlertDescription>
-          Avant travaux, tester sous-tension le bouton test du disjoncteur. Si
-          le bouton test ne fonctionne pas, le remplacement du disjoncteur est
-          obligatoire (même si le disjoncteur est récent). Si pas de bouton
-          test, remplacer impérativement le disjoncteur d'abonnée.
+          Si l'étude indique de conserver le disjoncteur, tester le bouton «
+          TEST » après la mise en service. Si le bouton test ne fonctionne pas,
+          le disjoncteur est à remplacer (même s'il est récent). Si pas de
+          bouton test, remplacer impérativement le disjoncteur d'abonné.
         </AlertDescription>
       </Alert>
 
@@ -199,6 +202,88 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
           </FormItem>
         )}
       />
+
+      {breakerPreserved && (
+        <FormField
+          control={form.control}
+          name="circuitBreaker.testButton"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormLabel>
+                Test du bouton « TEST » après mise en service
+                <span className="ml-1 text-red-500">*</span>
+              </FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  value={field.value ?? ''}
+                  className="flex flex-row space-x-4"
+                  disabled={isCompleted}
+                >
+                  <FormItem className="flex items-center space-x-2 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem
+                        value="working"
+                        id="test-button-working"
+                      />
+                    </FormControl>
+                    <FormLabel
+                      htmlFor="test-button-working"
+                      className="font-normal"
+                    >
+                      Fonctionne
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-2 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="faulty" id="test-button-faulty" />
+                    </FormControl>
+                    <FormLabel
+                      htmlFor="test-button-faulty"
+                      className="font-normal"
+                    >
+                      HS
+                    </FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
+
+      {breakerPreserved && testButton === 'faulty' && (
+        <>
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              Bouton test HS : le disjoncteur est à remplacer.
+            </AlertDescription>
+          </Alert>
+          <FormField
+            control={form.control}
+            name="circuitBreaker.replacementExplanation"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="replacement-explanation">
+                  Explication du remplacement
+                  <span className="ml-1 text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    id="replacement-explanation"
+                    placeholder="Décrivez le défaut constaté et l'action menée"
+                    disabled={isCompleted}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </>
+      )}
 
       <FormField
         control={form.control}

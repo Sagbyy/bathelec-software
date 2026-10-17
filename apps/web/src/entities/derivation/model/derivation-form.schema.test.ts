@@ -75,6 +75,8 @@ const validData = {
     calibrationPower: '45A',
     commissioningDone: true,
     sealed: true,
+    testButton: null,
+    replacementExplanation: '',
   },
   photoAfterWork: {
     photo: 'data:image/jpeg;base64,abc123',
@@ -197,6 +199,58 @@ describe('createCompletedDerivationSchema', () => {
         circuitBreaker: { ...validData.circuitBreaker, type: 'invalid' },
       });
       expect(result.success).toBe(false);
+    });
+
+    const issuePaths = (circuitBreaker: Record<string, unknown>) => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        circuitBreaker: { ...validData.circuitBreaker, ...circuitBreaker },
+      });
+      return result.success
+        ? []
+        : result.error.issues.map((issue) => issue.path.join('.'));
+    };
+
+    it('exige le test du bouton « TEST » quand le disjoncteur est conservé (DTA-49)', () => {
+      expect(issuePaths({ preserved: true, testButton: null })).toContain(
+        'circuitBreaker.testButton'
+      );
+    });
+
+    it('accepte un disjoncteur conservé dont le bouton test fonctionne (DTA-49)', () => {
+      expect(issuePaths({ preserved: true, testButton: 'working' })).toEqual(
+        []
+      );
+    });
+
+    it('exige une explication quand le bouton test est HS (DTA-49)', () => {
+      expect(
+        issuePaths({
+          preserved: true,
+          testButton: 'faulty',
+          replacementExplanation: '   ',
+        })
+      ).toContain('circuitBreaker.replacementExplanation');
+    });
+
+    it('accepte un bouton test HS accompagné d’une explication (DTA-49)', () => {
+      expect(
+        issuePaths({
+          preserved: true,
+          testButton: 'faulty',
+          replacementExplanation: 'Bouton inopérant, disjoncteur remplacé',
+        })
+      ).toEqual([]);
+    });
+
+    it("n'exige pas le test quand le disjoncteur n'est pas conservé (DTA-49)", () => {
+      expect(issuePaths({ preserved: false, testButton: null })).toEqual([]);
+    });
+
+    it('rejette un résultat de test inconnu (DTA-49)', () => {
+      expect(issuePaths({ preserved: true, testButton: 'maybe' })).toContain(
+        'circuitBreaker.testButton'
+      );
     });
 
     it('accepts tri voltage', () => {
