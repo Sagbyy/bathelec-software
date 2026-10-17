@@ -1,10 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ArgumentMetadata, ValidationPipe } from '@nestjs/common';
 import { Role as UserRole } from '@repo/types';
 import { ChantiersController } from './chantiers.controller';
 import { ChantiersService } from './chantiers.service';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import { RoleGuard } from '../role/role.guard';
 import { ROLE_METADATA_KEY } from '../role/role.decorator';
+import { UpdateChantierDto } from './dto/request/update-chantier.dto';
 
 const mockChantier = {
   id: 1,
@@ -22,6 +24,7 @@ const mockChantiersService = {
   findAll: jest.fn(),
   findOngoing: jest.fn(),
   findFinished: jest.fn(),
+  findScheduledForUser: jest.fn(),
   findOne: jest.fn(),
   update: jest.fn(),
   remove: jest.fn(),
@@ -207,6 +210,58 @@ describe('ChantiersController', () => {
         ) ?? [];
       expect(guards).not.toContain(RoleGuard);
     });
+  });
+
+  describe('findScheduled', () => {
+    it("délègue au service avec l'utilisateur courant", async () => {
+      mockChantiersService.findScheduledForUser.mockResolvedValue([
+        mockChantier,
+      ]);
+
+      const result = await controller.findScheduled({
+        userId: 42,
+        username: 'tech',
+        role: UserRole.TECHNICIAN,
+      });
+
+      expect(result).toEqual([mockChantier]);
+      expect(mockChantiersService.findScheduledForUser).toHaveBeenCalledWith(
+        42
+      );
+    });
+
+    it('réserve les chantiers programmés aux techniciens et chefs de chantier', () => {
+      expect(
+        Reflect.getMetadata(
+          ROLE_METADATA_KEY,
+          ChantiersController.prototype.findScheduled
+        )
+      ).toEqual([UserRole.TECHNICIAN, UserRole.SITE_MANAGER]);
+    });
+  });
+
+  describe('validation de la mise à jour', () => {
+    const pipe = new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    });
+    const asBody = {
+      type: 'body',
+      metatype: UpdateChantierDto,
+    } as ArgumentMetadata;
+
+    it('accepte des dates ISO et leur retrait', async () => {
+      await expect(
+        pipe.transform({ startDate: '2026-11-03', endDate: null }, asBody)
+      ).resolves.toEqual({ startDate: '2026-11-03', endDate: null });
+    });
+
+    it.each([[{ startDate: 'demain' }], [{ derivations: { create: {} } }]])(
+      'rejette %j',
+      async (body) => {
+        await expect(pipe.transform(body, asBody)).rejects.toThrow();
+      }
+    );
   });
 
   describe('rôles autorisés', () => {
