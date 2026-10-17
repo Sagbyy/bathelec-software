@@ -9,13 +9,13 @@ import {
   NavigationMenuTrigger,
 } from './navigation-menu';
 
-function renderMenu(viewport?: boolean) {
+function renderMenu(viewport?: boolean, contentClassName?: string) {
   return render(
     <NavigationMenu viewport={viewport} aria-label="Menu principal">
       <NavigationMenuList>
         <NavigationMenuItem data-testid="admin-item">
           <NavigationMenuTrigger>Administration</NavigationMenuTrigger>
-          <NavigationMenuContent>
+          <NavigationMenuContent className={contentClassName}>
             <p>Gestion des utilisateurs</p>
           </NavigationMenuContent>
         </NavigationMenuItem>
@@ -51,6 +51,16 @@ describe('NavigationMenu', () => {
       'data-viewport',
       'false'
     );
+  });
+
+  it('lets a submenu be anchored to the right edge of its item', async () => {
+    renderMenu(false, 'left-auto right-0');
+
+    const content = await openAdministration();
+    const panel = content.closest('[data-state="open"]');
+
+    expect(panel).toHaveClass('left-auto', 'right-0');
+    expect(panel).not.toHaveClass('left-0');
   });
 
   it('renders the submenu inside the shared viewport by default', async () => {

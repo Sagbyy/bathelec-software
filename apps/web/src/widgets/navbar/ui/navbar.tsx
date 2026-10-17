@@ -281,7 +281,7 @@ export function Navbar() {
                 {link.type === 'folder' ? (
                   <>
                     <NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
-                    <NavigationMenuContent>
+                    <NavigationMenuContent className="left-auto right-0">
                       <ul className="grid w-[400px] list-none gap-3 p-4">
                         {link.pages?.map((page, index) => (
                           <ListItem
@@ -316,7 +316,7 @@ export function Navbar() {
                 {link.type === 'folder' ? (
                   <>
                     <NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
-                    <NavigationMenuContent>
+                    <NavigationMenuContent className="left-auto right-0">
                       <ul className="grid w-[400px] list-none gap-3 p-4">
                         {link.pages?.map((page, pageIndex) => (
                           <ListItem
