@@ -228,6 +228,15 @@ describe('DerivationsController', () => {
       }
     );
 
+    it('rejette le statut « Incorrect » supprimé du cycle de vie', async () => {
+      await expect(
+        STRICT_VALIDATION.transform(
+          { status: 'Incorrect' },
+          asBody(UpdateDerivationDto)
+        )
+      ).rejects.toThrow();
+    });
+
     it('exige une équipe à la création', async () => {
       await expect(
         STRICT_VALIDATION.transform(

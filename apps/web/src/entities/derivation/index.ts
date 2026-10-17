@@ -22,3 +22,5 @@ export type { CreateCompletedDerivation } from './model/completed-derivation.typ
 export type { UpdateDerivation } from './model/update-derivation.types';
 export { createDerivationSchema } from './model/create-derivation.schema';
 export type { CreateDerivation } from './model/create-derivation.schema';
+export { summarizeByInternalAffaire } from './lib/affaire-stats';
+export type { AffaireStats } from './lib/affaire-stats';

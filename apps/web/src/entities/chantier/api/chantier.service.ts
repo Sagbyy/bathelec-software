@@ -6,7 +6,14 @@ export interface CreateChantierDto {
   enedisAffaireNumber: string;
   internalAffaireNumber: string;
   marketId: number;
+  startDate?: string | null;
+  endDate?: string | null;
 }
+
+export type UpdateChantierScheduleDto = Pick<
+  CreateChantierDto,
+  'startDate' | 'endDate'
+>;
 
 export const chantierService = {
   getAll: async () => {
@@ -24,8 +31,18 @@ export const chantierService = {
     return data;
   },
 
+  getScheduled: async () => {
+    const { data } = await apiClient.get<Chantier[]>('/chantiers/scheduled');
+    return data;
+  },
+
   create: async (dto: CreateChantierDto) => {
     const { data } = await apiClient.post<Chantier>('/chantiers', dto);
+    return data;
+  },
+
+  updateSchedule: async (id: number, dto: UpdateChantierScheduleDto) => {
+    const { data } = await apiClient.patch<Chantier>(`/chantiers/${id}`, dto);
     return data;
   },
 };

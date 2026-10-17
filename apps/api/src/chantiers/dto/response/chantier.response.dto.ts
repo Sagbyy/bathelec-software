@@ -16,6 +16,12 @@ export class ChantierResponseDto {
   @ApiProperty({ example: 1 })
   marketId: number;
 
+  @ApiProperty({ example: '2026-11-03T00:00:00.000Z', nullable: true })
+  startDate: string | null;
+
+  @ApiProperty({ example: '2026-11-07T00:00:00.000Z', nullable: true })
+  endDate: string | null;
+
   @ApiProperty({ example: '2024-01-01T00:00:00.000Z' })
   createdAt: string;
 

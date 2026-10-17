@@ -2,13 +2,17 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useChantiers } from '@/entities/chantier';
+import { Role } from '@repo/types';
+import { formatChantierSchedule, useChantiers } from '@/entities/chantier';
+import { useUserStore } from '@/entities/user';
+import { ChantierScheduleCard } from '@/features/chantiers';
 import { ChantierDocumentsManager } from '@/widgets/chantier-documents';
 
 export default function AdminChantierDetailPage() {
   const { chantierId } = useParams();
   const chantierIdNumber = parseInt(chantierId as string);
   const { data: chantiers, isLoading, error } = useChantiers();
+  const { user } = useUserStore();
   const chantier = chantiers?.find((item) => item.id === chantierIdNumber);
 
   if (isLoading) {
@@ -50,7 +54,12 @@ export default function AdminChantierDetailPage() {
         <span>Marché : {chantier.market?.name ?? '—'}</span>
         <span>N° ENEDIS : {chantier.enedisAffaireNumber}</span>
         <span>N° interne : {chantier.internalAffaireNumber}</span>
+        <span>Planning : {formatChantierSchedule(chantier)}</span>
       </div>
+
+      {user?.role === Role.ADMIN && (
+        <ChantierScheduleCard chantier={chantier} />
+      )}
 
       <ChantierDocumentsManager chantierId={chantierIdNumber} />
     </div>
