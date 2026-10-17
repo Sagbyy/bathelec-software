@@ -24,6 +24,11 @@ const NAV_ITEMS: NavItem[] = [
     imageSrc: '/images/builder.png',
   },
   {
+    label: 'Chantiers programmés',
+    href: '/dashboard/technician/scheduled-chantiers',
+    imageSrc: '/images/site-supervisor.png',
+  },
+  {
     label: 'Chantiers en cours',
     href: '/dashboard/technician/derivations',
     imageSrc: '/images/red-folder.png',

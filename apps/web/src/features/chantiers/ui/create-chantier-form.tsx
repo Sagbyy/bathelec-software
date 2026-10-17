@@ -26,7 +26,9 @@ import {
 import {
   CreateChantierFormData,
   createChantierSchema,
+  toScheduleDto,
 } from '../model/chantiers-admin.schema';
+import { ChantierScheduleFields } from './chantier-schedule-fields';
 
 export function CreateChantierForm() {
   const { data: markets, isLoading: marketsLoading } = useMarkets();
@@ -38,22 +40,27 @@ export function CreateChantierForm() {
       enedisAffaireNumber: '',
       internalAffaireNumber: '',
       marketId: undefined,
+      startDate: '',
+      endDate: '',
     },
   });
 
   const onSubmit = (data: CreateChantierFormData) => {
-    createChantier.mutate(data, {
-      onSuccess: () => {
-        toast.success('Chantier créé avec succès');
-        form.reset();
-      },
-      onError: (error: Error) => {
-        toast.error(
-          getApiErrorMessage(error) ||
-            'Une erreur est survenue lors de la création du chantier'
-        );
-      },
-    });
+    createChantier.mutate(
+      { ...data, ...toScheduleDto(data) },
+      {
+        onSuccess: () => {
+          toast.success('Chantier créé avec succès');
+          form.reset();
+        },
+        onError: (error: Error) => {
+          toast.error(
+            getApiErrorMessage(error) ||
+              'Une erreur est survenue lors de la création du chantier'
+          );
+        },
+      }
+    );
   };
 
   return (
@@ -202,6 +209,8 @@ export function CreateChantierForm() {
             )}
           />
         </div>
+
+        <ChantierScheduleFields control={form.control} />
 
         <Button
           type="submit"

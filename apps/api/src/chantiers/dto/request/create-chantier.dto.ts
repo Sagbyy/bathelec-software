@@ -1,5 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString, MinLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsDateString,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MinLength,
+  ValidateIf,
+} from 'class-validator';
 
 export class CreateChantierDto {
   @ApiProperty({
@@ -29,4 +36,24 @@ export class CreateChantierDto {
   @ApiProperty({ example: 1, description: 'The id of the associated market' })
   @IsNumber()
   marketId: number;
+
+  @ApiPropertyOptional({
+    example: '2026-11-03',
+    description: 'Scheduled start date of the chantier',
+    nullable: true,
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsDateString()
+  startDate?: string | null;
+
+  @ApiPropertyOptional({
+    example: '2026-11-07',
+    description: 'Scheduled end date of the chantier',
+    nullable: true,
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsDateString()
+  endDate?: string | null;
 }

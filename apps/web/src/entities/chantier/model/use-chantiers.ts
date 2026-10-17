@@ -2,7 +2,11 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Chantier } from '@repo/types';
-import { chantierService, CreateChantierDto } from '../api/chantier.service';
+import {
+  chantierService,
+  CreateChantierDto,
+  UpdateChantierScheduleDto,
+} from '../api/chantier.service';
 
 export const useChantiers = () =>
   useQuery<Chantier[]>({
@@ -22,6 +26,12 @@ export const useFinishedChantiers = () =>
     queryFn: () => chantierService.getFinished(),
   });
 
+export const useScheduledChantiers = () =>
+  useQuery<Chantier[]>({
+    queryKey: ['chantiers', 'scheduled'],
+    queryFn: () => chantierService.getScheduled(),
+  });
+
 export const useCreateChantier = () => {
   const queryClient = useQueryClient();
 
@@ -30,6 +40,18 @@ export const useCreateChantier = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['chantiers'] });
       queryClient.invalidateQueries({ queryKey: ['markets'] });
+    },
+  });
+};
+
+export const useUpdateChantierSchedule = (chantierId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (dto: UpdateChantierScheduleDto) =>
+      chantierService.updateSchedule(chantierId, dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chantiers'] });
     },
   });
 };
