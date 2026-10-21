@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { DerivationsModule } from './derivations/derivations.module';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { CompletedDerivationModule } from './completed-derivation/completed-derivations.module';
 import { DerivationExportsModule } from './derivation-exports/derivation-exports.module';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -16,12 +17,14 @@ import { SpecialHabilitationsModule } from './special-habilitations/special-habi
 import { MarketModule } from './market/market.module';
 import { ChantiersModule } from './chantiers/chantiers.module';
 import { ChantierDocumentsModule } from './chantier-documents/chantier-documents.module';
+import { ExpiryNotificationsModule } from './expiry-notifications/expiry-notifications.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     MongooseModule.forRoot(process.env.DATABASE_MONGO_URL),
     AuthModule,
     UsersModule,
@@ -36,6 +39,7 @@ import { ChantierDocumentsModule } from './chantier-documents/chantier-documents
     MarketModule,
     ChantiersModule,
     ChantierDocumentsModule,
+    ExpiryNotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

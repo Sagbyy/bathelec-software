@@ -6,6 +6,7 @@ import { Role } from '@repo/types';
 import { useAuthGuard } from '@/features/auth/model/use-auth-guard';
 import { useUserStore } from '@/entities/user';
 import { PageLoader } from '@/shared/ui/page-loader';
+import { ExpiryNotificationsBubble } from '@/features/expiry-notifications';
 
 export default function LayoutProtected({ children }: { children: ReactNode }) {
   const { isLoading, isClient, error } = useAuthGuard();
@@ -22,6 +23,7 @@ export default function LayoutProtected({ children }: { children: ReactNode }) {
         <Navbar />
       )}
       {children}
+      <ExpiryNotificationsBubble />
     </>
   );
 }
