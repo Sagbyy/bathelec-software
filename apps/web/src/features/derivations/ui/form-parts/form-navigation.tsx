@@ -25,12 +25,11 @@ export const FormNavigation = ({
   const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
   return (
-    <div className="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 -mx-4 -mb-4 mt-8 flex gap-3 rounded-b-xl border-t bg-card/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:-mb-6 sm:px-6 md:static md:mx-0 md:mb-0 md:justify-between md:rounded-none md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none">
+    <div className="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 -mx-5 -mb-5 mt-8 flex gap-3 rounded-b-xl border-t bg-card/95 px-5 py-2.5 backdrop-blur md:static md:mx-0 md:mb-0 md:justify-between md:rounded-none md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none">
       <Button
         type="button"
         variant="outline"
-        size="lg"
-        className="flex-1 md:flex-none"
+        className="flex-1 md:min-w-32 md:flex-none"
         onClick={onPrev}
         disabled={step === 1}
       >
@@ -40,8 +39,7 @@ export const FormNavigation = ({
 
       <Button
         type="button"
-        size="lg"
-        className="flex-1 md:flex-none"
+        className="flex-1 md:min-w-32 md:flex-none"
         onClick={onNext}
         disabled={isLastStep && isCompleted}
       >

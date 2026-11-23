@@ -123,7 +123,7 @@ export function MultiStepForm({
           }}
         >
           <Card>
-            <CardContent className="pt-4 sm:pt-6">
+            <CardContent className="pt-5">
               {renderStep()}
 
               <FormNavigation
