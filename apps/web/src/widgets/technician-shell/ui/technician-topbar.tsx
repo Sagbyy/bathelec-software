@@ -33,7 +33,7 @@ export function TechnicianTopbar({ showBack }: TechnicianTopbarProps) {
           aria-label="Retour au tableau de bord"
           className="rounded-lg px-2 py-1"
         >
-          <BrandLogo markClassName="size-7" />
+          <BrandLogo size={44} />
         </Link>
         <div className="ml-auto flex items-center gap-1">
           <ThemeToggle />

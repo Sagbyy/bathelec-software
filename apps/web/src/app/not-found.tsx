@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { Button } from '@/shared/ui/button';
-import { BrandMark } from '@/shared/ui/brand-logo';
+import { BrandLogo } from '@/shared/ui/brand-logo';
 
 export default function NotFound() {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center bg-background px-6 text-center">
-      <BrandMark className="mb-8 size-16" />
+      <BrandLogo size={120} className="mb-6" />
       <p className="text-sm font-semibold uppercase tracking-wider text-primary">
         Erreur 404
       </p>

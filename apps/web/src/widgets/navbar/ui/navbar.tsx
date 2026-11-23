@@ -28,7 +28,7 @@ export function Navbar() {
           aria-label="Abrisûr, retour au tableau de bord"
           className="rounded-lg"
         >
-          <BrandLogo caption="Gestion des chantiers" />
+          <BrandLogo size={50} />
         </Link>
         <div className="ml-auto flex items-center gap-1 lg:gap-2">
           <DesktopNav

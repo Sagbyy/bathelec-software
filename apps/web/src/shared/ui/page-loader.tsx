@@ -1,5 +1,5 @@
 import { cn } from '@/shared/lib/utils';
-import { BrandMark } from './brand-logo';
+import { BrandLogo } from './brand-logo';
 import { Spinner } from './spinner';
 
 interface PageLoaderProps {
@@ -14,7 +14,7 @@ export function PageLoader({ inline = false }: PageLoaderProps) {
         inline ? 'min-h-[60dvh]' : 'min-h-dvh'
       )}
     >
-      <BrandMark className="size-14 animate-pulse" />
+      <BrandLogo size={160} />
       <div className="space-y-1">
         <p className="text-base font-semibold text-foreground">
           Chargement en cours…

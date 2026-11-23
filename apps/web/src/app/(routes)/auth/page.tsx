@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { ShieldCheck, Smartphone, Zap } from 'lucide-react';
 import { LoginForm } from '@/features/auth';
-import { BrandLogo, BrandMark } from '@/shared/ui/brand-logo';
+import { BrandLogo } from '@/shared/ui/brand-logo';
 
 export const metadata: Metadata = {
   title: 'Connexion',
@@ -42,11 +42,8 @@ export default function AuthPage() {
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgb(var(--brand-600)/0.25),transparent_60%)]"
         />
 
-        <div className="relative flex items-center gap-3">
-          <BrandMark className="size-10 [&_circle:first-child]:stroke-white" />
-          <span className="text-lg font-semibold uppercase tracking-[0.2em]">
-            Abrisûr
-          </span>
+        <div className="relative w-fit rounded-2xl bg-white p-3 shadow-elevated">
+          <BrandLogo size={88} />
         </div>
 
         <div className="relative max-w-md">
@@ -81,11 +78,7 @@ export default function AuthPage() {
 
       <section className="flex flex-col items-center justify-center bg-background px-5 py-10 sm:px-8">
         <div className="w-full max-w-sm animate-fade-in-up">
-          <BrandLogo
-            className="mb-10 lg:hidden"
-            markClassName="size-10"
-            caption="Gestion des chantiers"
-          />
+          <BrandLogo size={140} className="mx-auto mb-8 lg:hidden" />
           <div className="mb-8">
             <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
               Bon retour 👋

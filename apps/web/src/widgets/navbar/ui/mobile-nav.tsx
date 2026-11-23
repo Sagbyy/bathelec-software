@@ -43,7 +43,7 @@ export function MobileNav({ links, activeHref }: MobileNavProps) {
         <div className="flex h-16 shrink-0 items-center border-b px-5">
           <SheetTitle asChild>
             <Link href="/dashboard" onClick={close} aria-label="Abrisûr">
-              <BrandLogo caption="Gestion des chantiers" />
+              <BrandLogo size={44} />
             </Link>
           </SheetTitle>
           <SheetDescription className="sr-only">
