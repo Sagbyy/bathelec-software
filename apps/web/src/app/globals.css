@@ -184,7 +184,17 @@
   }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+    outline: 2px solid rgb(var(--ring) / 0.6);
+    outline-offset: 2px;
+  }
+
+  [role^='menuitem']:focus-visible,
+  [role='option']:focus-visible,
+  [data-radix-collection-item]:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
