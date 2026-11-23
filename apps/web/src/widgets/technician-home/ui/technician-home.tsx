@@ -86,7 +86,7 @@ function FeaturedCard({ item }: { item: TechnicianNavItem }) {
         aria-hidden="true"
         className="pointer-events-none absolute right-6 top-4 size-16 rounded-full bg-primary"
       />
-      <span className="relative flex size-14 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
+      <span className="relative flex size-14 shrink-0 items-center justify-center rounded-xl bg-white shadow-elevated">
         <Image
           src={item.imageSrc}
           alt=""
