@@ -45,7 +45,7 @@ export function ChantierScheduleCard({ chantier }: ChantierScheduleCardProps) {
   };
 
   return (
-    <Card className="mt-6">
+    <Card>
       <CardHeader>
         <CardTitle className="text-lg">Planning</CardTitle>
         <p className="text-muted-foreground text-sm">

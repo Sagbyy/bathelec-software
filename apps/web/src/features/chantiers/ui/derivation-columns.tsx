@@ -7,7 +7,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { cn } from '@/shared/lib/utils';
-import DerivationStatusIcon from '@/entities/derivation/ui/derivation-status-icon';
+import { DerivationStatusIcon } from '@/entities/derivation';
 import { DerivationRow } from '../lib/derivation-row';
 
 function getStatusAction(status: DerivationStatus) {
@@ -15,32 +15,26 @@ function getStatusAction(status: DerivationStatus) {
     case DerivationStatus.PENDING:
       return (
         <Button
-          variant="outline"
-          className="bg-yellow-500 text-white hover:bg-yellow-600 hover:text-white"
+          size="sm"
+          className="bg-warning text-warning-foreground hover:bg-warning/90"
         >
           Compléter
         </Button>
       );
     case DerivationStatus.REVISING:
-      return (
-        <Button
-          variant="outline"
-          className="bg-orange-500 text-white hover:bg-orange-600 hover:text-white"
-        >
-          Corriger
-        </Button>
-      );
+      return <Button size="sm">Corriger</Button>;
     case DerivationStatus.ONGOING:
       return (
-        <Button
-          variant="outline"
-          className="bg-slate-500 text-white hover:bg-slate-600 hover:text-white"
-        >
+        <Button size="sm" variant="secondary">
           Continuer
         </Button>
       );
     default:
-      return <Button variant="outline">Voir</Button>;
+      return (
+        <Button size="sm" variant="outline">
+          Voir
+        </Button>
+      );
   }
 }
 
@@ -71,8 +65,10 @@ function SortableHeader({
 
 function getCmHighlight(cm: string): string {
   const value = cm.trim().toUpperCase();
-  if (value.startsWith('2D')) return 'bg-green-100 text-green-800';
-  if (value.startsWith('1D')) return 'bg-yellow-100 text-yellow-800';
+  if (value.startsWith('2D'))
+    return 'bg-success-soft text-success-soft-foreground';
+  if (value.startsWith('1D'))
+    return 'bg-warning-soft text-warning-soft-foreground';
   return '';
 }
 
@@ -82,9 +78,7 @@ export const derivationColumns: ColumnDef<DerivationRow>[] = [
   {
     accessorKey: 'building',
     meta: { label: 'Bâtiment' },
-    header: ({ column }) => (
-      <SortableHeader column={column} label="Bâtiment" />
-    ),
+    header: ({ column }) => <SortableHeader column={column} label="Bâtiment" />,
     cell: ({ row }) => placeholder(row.original.building),
   },
   {

@@ -78,7 +78,7 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
 
   return (
     <div className="space-y-6">
-      <div className="text-xl font-semibold">2. Informations générales</div>
+      <div className="text-lg font-semibold tracking-tight sm:text-xl">2. Informations générales</div>
 
       <FormField
         control={form.control}
@@ -86,7 +86,7 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
         render={({ field }) => (
           <FormItem className="flex flex-col">
             <FormLabel>
-              Date et heure<span className="ml-1 text-red-500">*</span>
+              Date et heure<span className="ml-1 text-destructive">*</span>
             </FormLabel>
             <FormControl>
               <DateTimePicker24h
@@ -112,7 +112,7 @@ export function GeneralInfoStep({ form, derivation }: GeneralInfoStepProps) {
           <FormItem>
             <FormLabel>
               Dérivation réalisée par
-              <span className="ml-1 text-red-500">*</span>
+              <span className="ml-1 text-destructive">*</span>
             </FormLabel>
             <Select
               onValueChange={field.onChange}

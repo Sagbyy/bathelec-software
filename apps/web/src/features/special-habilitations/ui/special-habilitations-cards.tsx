@@ -1,5 +1,7 @@
 'use client';
 
+import { Award } from 'lucide-react';
+import { EmptyState } from '@/shared/ui/empty-state';
 import Image from 'next/image';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@iconify/react/dist/iconify.js';
@@ -41,8 +43,9 @@ function SpecialHabilitationCard({
       }
       onClick={clickable ? () => window.open(document!, '_blank') : undefined}
       className={cn(
-        'flex flex-col items-center gap-3 rounded-2xl border border-gray-200 bg-white p-5 transition-all',
-        clickable && 'cursor-pointer hover:shadow-md',
+        'bg-card shadow-card flex flex-col items-center gap-3 rounded-xl border p-4 transition-all sm:p-5',
+        clickable &&
+          'hover:border-primary/30 hover:shadow-elevated focus-visible:ring-ring cursor-pointer hover:-translate-y-0.5 focus-visible:ring-2',
         !enabled && 'opacity-50'
       )}
     >
@@ -59,19 +62,15 @@ function SpecialHabilitationCard({
         />
       </div>
 
-      <p className="text-center text-sm font-semibold leading-tight text-gray-800">
+      <p className="text-foreground text-center text-sm font-semibold leading-tight">
         {config.label}
       </p>
 
-      {!enabled && (
-        <Badge variant="secondary" className="text-gray-300">
-          Non attribuée
-        </Badge>
-      )}
+      {!enabled && <Badge variant="neutral">Non attribuée</Badge>}
 
       {enabled && hasDocument && (
         <>
-          <Badge className="gap-1 bg-green-100 text-green-700 hover:bg-green-100">
+          <Badge variant="success">
             <Icon
               icon="material-symbols:description-rounded"
               className="h-3 w-3"
@@ -83,7 +82,7 @@ function SpecialHabilitationCard({
       )}
 
       {enabled && !hasDocument && (
-        <Badge variant="secondary" className="gap-1 text-gray-400">
+        <Badge variant="neutral">
           <Icon
             icon="material-symbols:description-outline-rounded"
             className="h-3 w-3"
@@ -105,9 +104,10 @@ export function SpecialHabilitationsCards({
 
   if (activeConfigs.length === 0) {
     return (
-      <p className="text-sm text-gray-400">
-        Aucun titre ou certificat attribué.
-      </p>
+      <EmptyState
+        icon={<Award />}
+        title="Aucun titre ou certificat attribué."
+      />
     );
   }
 

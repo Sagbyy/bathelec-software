@@ -1,17 +1,19 @@
 'use client';
 
+import { FilePlus2 } from 'lucide-react';
 import { CreateDerivationForm } from '@/features/derivations';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
 
 export default function CreateDerivationPage() {
   return (
-    <div className="mx-auto max-w-2xl space-y-6 bg-white p-6">
-      <div className="mb-6 space-y-2 text-center">
-        <h1 className="text-3xl font-bold">Créer un relevé de dérivation</h1>
-        <p className="text-muted-foreground">
-          Entrer les informations du relevé de dérivation
-        </p>
-      </div>
+    <PageContainer width="narrow">
+      <PageHeader
+        icon={<FilePlus2 />}
+        title="Créer un relevé de dérivation"
+        description="Entrer les informations du relevé de dérivation"
+      />
       <CreateDerivationForm />
-    </div>
+    </PageContainer>
   );
 }

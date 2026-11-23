@@ -1,5 +1,6 @@
 'use client';
 
+import { Spinner } from '@/shared/ui/spinner';
 import { Switch } from '@/shared/ui/switch';
 import { Label } from '@/shared/ui/label';
 import { ValidityDateField } from '@/shared/ui/validity-date-field';
@@ -147,15 +148,15 @@ export function HabilitationsAdmin({ technicianId }: HabilitationsAdminProps) {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[200px] items-center justify-center text-gray-400">
-        Chargement…
+      <div className="flex min-h-[200px] items-center justify-center">
+        <Spinner label="Chargement…" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="bg-card shadow-card rounded-xl border p-4">
         <ValidityDateField
           id="habilitation-expiry"
           label="Date de fin de validité du titre d'habilitation"
@@ -174,25 +175,29 @@ export function HabilitationsAdmin({ technicianId }: HabilitationsAdminProps) {
       {GROUPS.map((group) => (
         <div
           key={group.title}
-          className="rounded-xl border border-gray-200 bg-white shadow-sm"
+          className="bg-card shadow-card rounded-xl border"
         >
-          <div className="rounded-t-xl border-b bg-gray-50 px-4 py-3">
-            <p className="text-sm font-semibold text-gray-700">{group.title}</p>
+          <div className="bg-muted/50 rounded-t-xl border-b px-4 py-3">
+            <p className="text-foreground text-sm font-semibold">
+              {group.title}
+            </p>
           </div>
           <div className="divide-y">
             {group.items.map((item) => (
               <div
                 key={item.key}
-                className="flex items-center justify-between px-4 py-3"
+                className="flex min-h-14 items-center justify-between gap-4 px-4 py-3"
               >
                 <div>
                   <Label
                     htmlFor={`toggle-${item.key}`}
-                    className="text-sm font-medium text-gray-900"
+                    className="text-foreground text-sm font-medium"
                   >
                     {item.label}
                   </Label>
-                  <p className="text-xs text-gray-500">{item.description}</p>
+                  <p className="text-muted-foreground text-xs">
+                    {item.description}
+                  </p>
                 </div>
                 <Switch
                   id={`toggle-${item.key}`}

@@ -22,13 +22,14 @@ import {
 import { Input } from '@/shared/ui/input';
 import { Textarea } from '@/shared/ui/textarea';
 import { Badge } from '@/shared/ui/badge';
+import { AlertTriangle, UsersRound } from 'lucide-react';
+import { EmptyState } from '@/shared/ui/empty-state';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
+import { Skeleton } from '@/shared/ui/skeleton';
 import { Role } from '@repo/types';
 import { Separator } from '@/shared/ui/separator';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/shared/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover';
 import {
   Command,
   CommandEmpty,
@@ -117,7 +118,8 @@ export default function SiteTeamsPage() {
         },
         onError: (error: Error) => {
           toast.error(
-            getApiErrorMessage(error) || "Erreur lors de la modification de l'équipe"
+            getApiErrorMessage(error) ||
+              "Erreur lors de la modification de l'équipe"
           );
         },
       }
@@ -140,7 +142,8 @@ export default function SiteTeamsPage() {
       },
       onError: (error: Error) => {
         toast.error(
-          getApiErrorMessage(error) || "Erreur lors de la suppression de l'équipe"
+          getApiErrorMessage(error) ||
+            "Erreur lors de la suppression de l'équipe"
         );
       },
     });
@@ -205,24 +208,29 @@ export default function SiteTeamsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-4 p-8">
-        <div className="flex items-center justify-center py-12">
-          <p>Chargement...</p>
+      <PageContainer>
+        <Skeleton className="mb-8 h-12 w-64" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }, (_, index) => (
+            <Skeleton key={index} className="h-56 rounded-xl" />
+          ))}
         </div>
-      </div>
+        <span className="sr-only">Chargement...</span>
+      </PageContainer>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col gap-4 p-8">
-        <div className="flex items-center justify-center py-12">
-          <p className="text-destructive">
-            Erreur:{' '}
-            {error instanceof Error ? error.message : 'Une erreur est survenue'}
-          </p>
-        </div>
-      </div>
+      <PageContainer>
+        <EmptyState
+          icon={<AlertTriangle />}
+          title="Impossible de charger les équipes"
+          description={
+            error instanceof Error ? error.message : 'Une erreur est survenue'
+          }
+        />
+      </PageContainer>
     );
   }
 
@@ -247,92 +255,89 @@ export default function SiteTeamsPage() {
   );
 
   return (
-    <div className="flex flex-col gap-4 p-8">
-      <div className="flex items-center justify-between">
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-          Équipes chantier
-        </h2>
-        <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Icon icon="hugeicons:add-circle-01" />
-              Créer une équipe
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Créer une nouvelle équipe</DialogTitle>
-              <DialogDescription>
-                Remplissez les informations pour créer une nouvelle équipe
-                chantier.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex flex-col gap-4 py-4">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="name" className="text-sm font-medium">
-                  Nom de l&apos;équipe *
-                </label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  placeholder="Ex: Équipe Nord"
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="description" className="text-sm font-medium">
-                  Description *
-                </label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  placeholder="Description de l'équipe"
-                  rows={3}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setCreateDialogOpen(false);
-                  setFormData({ name: '', description: '' });
-                }}
-              >
-                Annuler
+    <PageContainer className="flex flex-col gap-4">
+      <PageHeader
+        className="mb-2 md:mb-4"
+        icon={<UsersRound />}
+        title="Équipes chantier"
+        description="Composez les équipes et affectez-leur des techniciens"
+        actions={
+          <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Icon icon="hugeicons:add-circle-01" />
+                Créer une équipe
               </Button>
-              <Button
-                onClick={handleCreateTeam}
-                disabled={createTeam.isPending}
-              >
-                {createTeam.isPending ? 'Création...' : 'Créer'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Créer une nouvelle équipe</DialogTitle>
+                <DialogDescription>
+                  Remplissez les informations pour créer une nouvelle équipe
+                  chantier.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-4 py-4">
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="name" className="text-sm font-medium">
+                    Nom de l&apos;équipe *
+                  </label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    placeholder="Ex: Équipe Nord"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="description" className="text-sm font-medium">
+                    Description *
+                  </label>
+                  <Textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
+                    placeholder="Description de l'équipe"
+                    rows={3}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setCreateDialogOpen(false);
+                    setFormData({ name: '', description: '' });
+                  }}
+                >
+                  Annuler
+                </Button>
+                <Button
+                  onClick={handleCreateTeam}
+                  disabled={createTeam.isPending}
+                >
+                  {createTeam.isPending ? 'Création...' : 'Créer'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        }
+      />
 
       {teams && teams.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Icon
-              icon="hugeicons:users-group"
-              className="text-muted-foreground mb-4 text-4xl"
-            />
-            <p className="text-muted-foreground">
-              Aucune équipe créée pour le moment
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={<UsersRound />}
+          title="Aucune équipe créée pour le moment"
+          description="Créez une équipe pour y affecter des techniciens."
+        />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {teams?.map((team) => (
-            <Card key={team.id}>
+            <Card key={team.id} className="flex flex-col">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -347,6 +352,8 @@ export default function SiteTeamsPage() {
                       size="icon"
                       onClick={() => handleDeleteTeam(team)}
                       title="Supprimer l'équipe"
+                      aria-label="Supprimer l'équipe"
+                      className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                     >
                       <Icon icon="hugeicons:delete-01" />
                     </Button>
@@ -366,7 +373,7 @@ export default function SiteTeamsPage() {
                     ) : (
                       <div className="flex flex-wrap gap-2">
                         {team.teamMemberships.map((membership) => (
-                          <Badge key={membership.user.id} variant="secondary">
+                          <Badge key={membership.user.id} variant="neutral">
                             {membership.user.firstName}{' '}
                             {membership.user.lastName}
                           </Badge>
@@ -376,7 +383,6 @@ export default function SiteTeamsPage() {
                   </div>
                   <Button
                     variant="outline"
-                    size="sm"
                     onClick={() => handleManageTeam(team)}
                     className="w-full"
                   >
@@ -405,13 +411,16 @@ export default function SiteTeamsPage() {
               Gérer l&apos;équipe - {selectedTeamData?.name}
             </DialogTitle>
             <DialogDescription>
-              Modifiez les informations de l&apos;équipe et gérez les techniciens.
+              Modifiez les informations de l&apos;équipe et gérez les
+              techniciens.
             </DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-col gap-6 py-4">
             <div className="flex flex-col gap-4">
-              <h3 className="text-lg font-semibold">Informations de l&apos;équipe</h3>
+              <h3 className="text-lg font-semibold">
+                Informations de l&apos;équipe
+              </h3>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
                   <label htmlFor="team-name" className="text-sm font-medium">
@@ -473,7 +482,7 @@ export default function SiteTeamsPage() {
                     {selectedTeamData?.teamMemberships.map((membership) => (
                       <div
                         key={membership.user.id}
-                        className="flex items-center justify-between rounded-md border p-2"
+                        className="bg-card flex items-center justify-between rounded-lg border p-2 pl-3"
                       >
                         <span className="text-sm">
                           {membership.user.firstName} {membership.user.lastName}
@@ -483,7 +492,7 @@ export default function SiteTeamsPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleRemoveUser(membership.user.id)}
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8 p-0"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10 size-9 p-0"
                           title="Retirer de l'équipe"
                           aria-label={`Retirer ${membership.user.firstName} ${membership.user.lastName} de l'équipe`}
                         >
@@ -519,7 +528,10 @@ export default function SiteTeamsPage() {
                         Sélectionner un technicien...
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[400px] p-0" align="start">
+                    <PopoverContent
+                      className="w-[min(400px,calc(100vw-2rem))] p-0"
+                      align="start"
+                    >
                       <Command>
                         <CommandInput
                           placeholder="Rechercher un technicien..."
@@ -583,7 +595,8 @@ export default function SiteTeamsPage() {
               <br />
               <br />
               Cette action est irréversible. Tous les techniciens seront retirés
-              de l&apos;équipe, mais les techniciens eux-mêmes ne seront pas supprimés.
+              de l&apos;équipe, mais les techniciens eux-mêmes ne seront pas
+              supprimés.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -608,9 +621,11 @@ export default function SiteTeamsPage() {
       </Dialog>
 
       <p className="text-muted-foreground text-sm">
-        <span className="font-bold">{teams?.length || 0}</span> équipe(s)
-        trouvé(s)
+        <span className="text-foreground font-semibold">
+          {teams?.length || 0}
+        </span>{' '}
+        équipe(s) trouvé(s)
       </p>
-    </div>
+    </PageContainer>
   );
 }

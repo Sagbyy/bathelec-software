@@ -3,31 +3,51 @@
 import Image from 'next/image';
 import { useOngoingChantiers } from '@/entities/chantier';
 import { MarketGrid } from '@/features/chantiers';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
+import { EmptyState } from '@/shared/ui/empty-state';
+import { Skeleton } from '@/shared/ui/skeleton';
 
 export default function ChantiersEnCoursPage() {
   const { data: chantiers, isLoading, error } = useOngoingChantiers();
 
-  if (isLoading) return <div className="p-8">Chargement...</div>;
-  if (error) return <div className="p-8">Une erreur est survenue</div>;
-
   return (
-    <div className="mx-2 py-10 sm:mx-10">
-      <div className="mb-6 flex items-center gap-3">
-        <Image
-          src="/images/red-folder.png"
-          alt=""
-          width={40}
-          height={40}
-          className="object-contain"
-        />
-        <h1 className="text-2xl font-bold">Chantiers en cours</h1>
-      </div>
-      <MarketGrid
-        chantiers={chantiers ?? []}
-        basePath="/dashboard/technician/derivations"
-        emptyMessage="Aucun marché avec chantier en cours."
-        folderImageSrc="/images/red-folder.png"
+    <PageContainer width="default">
+      <PageHeader
+        icon={
+          <Image
+            src="/images/red-folder.png"
+            alt=""
+            width={24}
+            height={24}
+            className="object-contain"
+          />
+        }
+        title="Chantiers en cours"
+        description="Vos interventions actives, classées par marché"
       />
-    </div>
+      {isLoading ? (
+        <div
+          className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4"
+          aria-label="Chargement..."
+        >
+          {Array.from({ length: 6 }, (_, index) => (
+            <Skeleton key={index} className="h-32 rounded-xl" />
+          ))}
+        </div>
+      ) : error ? (
+        <EmptyState
+          title="Une erreur est survenue"
+          description="Impossible de charger les chantiers. Réessayez plus tard."
+        />
+      ) : (
+        <MarketGrid
+          chantiers={chantiers ?? []}
+          basePath="/dashboard/technician/derivations"
+          emptyMessage="Aucun marché avec chantier en cours."
+          folderImageSrc="/images/red-folder.png"
+        />
+      )}
+    </PageContainer>
   );
 }

@@ -3,7 +3,12 @@
 import Image from 'next/image';
 import { useMemo } from 'react';
 import { Chantier } from '@repo/types';
+import { AlertTriangle } from 'lucide-react';
 import { DataTable } from '@/shared/ui/data-table';
+import { EmptyState } from '@/shared/ui/empty-state';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
+import { Skeleton } from '@/shared/ui/skeleton';
 import { useCompletedDerivationsByIds } from '@/features/derivations/model/use-completed-derivations';
 import { ChantierDocumentsSection } from '@/entities/chantier-document';
 import { derivationColumns } from './derivation-columns';
@@ -26,10 +31,7 @@ export function ChantierDerivationsView({
     () => chantiers.find((c) => c.id === chantierId),
     [chantiers, chantierId]
   );
-  const derivations = useMemo(
-    () => chantier?.derivations ?? [],
-    [chantier]
-  );
+  const derivations = useMemo(() => chantier?.derivations ?? [], [chantier]);
   const derivationIds = useMemo(
     () => derivations.map((d) => d.id),
     [derivations]
@@ -42,43 +44,63 @@ export function ChantierDerivationsView({
     [derivations, byId]
   );
 
-  if (isLoading) return <div className="p-8">Chargement...</div>;
-  if (error) return <div className="p-8">Une erreur est survenue</div>;
-  if (!chantier) return <div className="p-8">Chantier introuvable.</div>;
+  if (isLoading)
+    return (
+      <PageContainer>
+        <Skeleton className="mb-8 h-12 w-72" />
+        <Skeleton className="h-80 rounded-xl" />
+        <span className="sr-only">Chargement...</span>
+      </PageContainer>
+    );
+  if (error || !chantier)
+    return (
+      <PageContainer>
+        <EmptyState
+          icon={<AlertTriangle />}
+          title={error ? 'Une erreur est survenue' : 'Chantier introuvable.'}
+        />
+      </PageContainer>
+    );
 
   const fields = [
     { label: 'Marché', value: chantier.market?.name ?? '—' },
-    { label: "N° d'affaire ENEDIS", value: chantier.enedisAffaireNumber ?? '—' },
-    { label: "N° d'affaire interne", value: chantier.internalAffaireNumber ?? '—' },
+    {
+      label: "N° d'affaire ENEDIS",
+      value: chantier.enedisAffaireNumber ?? '—',
+    },
+    {
+      label: "N° d'affaire interne",
+      value: chantier.internalAffaireNumber ?? '—',
+    },
   ];
 
   return (
-    <div className="mx-2 py-10 sm:mx-10">
-      <div className="mb-6">
-        <div className="flex items-center gap-6">
+    <PageContainer className="space-y-6">
+      <PageHeader
+        className="mb-0 md:mb-0"
+        icon={
           <Image
             src="/images/builder.png"
             alt="Dossier chantier"
-            width={80}
-            height={80}
-            className="shrink-0 object-contain"
+            width={28}
+            height={28}
+            className="object-contain"
           />
-          <h1 className="text-2xl font-bold sm:text-3xl">{chantier.address}</h1>
-        </div>
+        }
+        eyebrow="Chantier"
+        title={chantier.address}
+      />
 
-        <div className="mt-4 flex flex-wrap gap-4">
-          {fields.map(({ label, value }) => (
-            <div key={label} className="inline-flex flex-col">
-              <span className="rounded-xl bg-black px-4 py-1.5 text-xs font-medium uppercase tracking-wide text-white whitespace-nowrap">
-                {label}
-              </span>
-              <span className="px-4 py-2 text-sm font-semibold text-black whitespace-nowrap">
-                {value}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+      <dl className="bg-card shadow-card grid grid-cols-1 gap-3 rounded-xl border p-4 sm:grid-cols-3 sm:p-5">
+        {fields.map(({ label, value }) => (
+          <div key={label} className="min-w-0">
+            <dt className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+              {label}
+            </dt>
+            <dd className="mt-0.5 truncate text-sm font-semibold">{value}</dd>
+          </div>
+        ))}
+      </dl>
 
       <DataTable
         columns={derivationColumns}
@@ -88,6 +110,6 @@ export function ChantierDerivationsView({
       />
 
       <ChantierDocumentsSection chantierId={chantierId} />
-    </div>
+    </PageContainer>
   );
 }

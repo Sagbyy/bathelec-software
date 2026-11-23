@@ -34,35 +34,37 @@ describe('HabilitationsTable', () => {
       render(<HabilitationsTable habilitations={null} />);
       const disabled = document.querySelectorAll('span.line-through');
       disabled.forEach((badge) => {
-        expect(badge.className).toContain('text-gray-400');
+        expect(badge.className).toContain('text-muted-foreground');
       });
     });
 
-    it("les badges désactivés n'ont pas la classe text-green-700", () => {
+    it("les badges désactivés n'ont pas la classe text-success-soft-foreground", () => {
       render(<HabilitationsTable habilitations={null} />);
       const disabled = document.querySelectorAll('span.line-through');
       disabled.forEach((badge) => {
-        expect(badge.className).not.toContain('text-green-700');
+        expect(badge.className).not.toContain('text-success-soft-foreground');
       });
     });
   });
 
   describe('badges activés', () => {
-    it('les badges activés ont la classe bg-green-100', () => {
+    it('les badges activés ont la classe bg-success-soft', () => {
       render(<HabilitationsTable habilitations={allEnabled} />);
-      const badges = document.querySelectorAll('span.bg-green-100');
+      const badges = document.querySelectorAll('span.bg-success-soft');
       expect(badges.length).toBeGreaterThan(0);
     });
 
-    it('les badges activés ont la classe text-green-700', () => {
+    it('les badges activés ont la classe text-success-soft-foreground', () => {
       render(<HabilitationsTable habilitations={allEnabled} />);
-      const badges = document.querySelectorAll('span.text-green-700');
+      const badges = document.querySelectorAll(
+        'span.text-success-soft-foreground'
+      );
       expect(badges.length).toBeGreaterThan(0);
     });
 
     it("les badges activés n'ont pas la classe line-through", () => {
       render(<HabilitationsTable habilitations={allEnabled} />);
-      const green = document.querySelectorAll('span.bg-green-100');
+      const green = document.querySelectorAll('span.bg-success-soft');
       green.forEach((badge) => {
         expect(badge.className).not.toContain('line-through');
       });
@@ -119,7 +121,7 @@ describe('HabilitationsTable', () => {
       const partial: HabilitationCodes = { ...DEFAULT_HABILITATIONS, b0: true };
       render(<HabilitationsTable habilitations={partial} />);
 
-      const greenBadges = document.querySelectorAll('span.bg-green-100');
+      const greenBadges = document.querySelectorAll('span.bg-success-soft');
       const disabledBadges = document.querySelectorAll('span.line-through');
 
       expect(greenBadges.length).toBeGreaterThan(0);

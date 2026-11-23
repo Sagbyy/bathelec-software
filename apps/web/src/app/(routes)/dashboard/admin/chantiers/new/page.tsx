@@ -1,17 +1,21 @@
 'use client';
 
+import { HardHat } from 'lucide-react';
 import { CreateChantierForm } from '@/features/chantiers';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
 
 export default function CreateChantierPage() {
   return (
-    <div className="mx-3 my-4 bg-white p-5 lg:mx-auto lg:w-1/2">
-      <div className="mb-6 space-y-2 text-center">
-        <h1 className="text-3xl font-bold">Créer un chantier</h1>
-        <p className="text-muted-foreground">
-          Renseigner les informations du chantier et son marché associé
-        </p>
+    <PageContainer width="narrow">
+      <PageHeader
+        icon={<HardHat />}
+        title="Créer un chantier"
+        description="Renseigner les informations du chantier et son marché associé"
+      />
+      <div className="bg-card shadow-card rounded-xl border p-4 sm:p-6">
+        <CreateChantierForm />
       </div>
-      <CreateChantierForm />
-    </div>
+    </PageContainer>
   );
 }

@@ -102,7 +102,7 @@ export function DataTable<TData, TValue>({
           placeholder={searchPlaceholder}
           value={globalFilter ?? ''}
           onChange={(event) => setGlobalFilter(event.target.value)}
-          className="max-w-sm"
+          className="sm:max-w-sm"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -126,7 +126,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="overflow-hidden rounded-md border">
+      <div className="overflow-hidden rounded-xl border bg-card shadow-card">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -148,8 +148,7 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  className="odd:bg-slate-50"
-                  key={row.id}
+                                    key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -166,7 +165,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="text-muted-foreground h-32 text-center"
                 >
                   {emptyMessage}
                 </TableCell>

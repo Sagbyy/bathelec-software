@@ -56,7 +56,7 @@ export function PhotoBeforeStep({ form }: PhotoBeforeStepProps) {
 
   return (
     <div className="space-y-6">
-      <div className="text-xl font-semibold">3. Photo avant travaux</div>
+      <div className="text-lg font-semibold tracking-tight sm:text-xl">3. Photo avant travaux</div>
 
       <FormField
         control={form.control}
@@ -65,7 +65,7 @@ export function PhotoBeforeStep({ form }: PhotoBeforeStepProps) {
           <FormItem>
             <FormLabel>
               Vue d'ensemble platine comptage
-              <span className="ml-1 text-red-500">*</span>
+              <span className="ml-1 text-destructive">*</span>
             </FormLabel>
             <FormControl>
               <div className="flex flex-col items-center gap-4">
@@ -76,7 +76,7 @@ export function PhotoBeforeStep({ form }: PhotoBeforeStepProps) {
                       alt="Aperçu de la photo"
                       width={400}
                       height={300}
-                      className="h-auto w-full rounded-md object-cover"
+                      className="h-auto w-full rounded-xl border object-cover"
                     />
                     <Button
                       type="button"
@@ -90,10 +90,10 @@ export function PhotoBeforeStep({ form }: PhotoBeforeStepProps) {
                     </Button>
                   </div>
                 ) : (
-                  <div className="w-full max-w-md rounded-md border-2 border-dashed border-gray-300 p-8 text-center">
+                  <div className="w-full max-w-md rounded-xl border-2 border-dashed border-border bg-muted/40 transition-colors hover:border-primary/40 hover:bg-primary-soft/50 p-8 text-center">
                     <div className="flex flex-col items-center">
-                      <Upload className="mb-2 h-10 w-10 text-gray-400" />
-                      <p className="mb-2 text-sm text-gray-600">
+                      <Upload className="mb-2 h-10 w-10 text-muted-foreground" />
+                      <p className="mb-2 text-sm text-muted-foreground">
                         Cliquez ou glissez-déposez une photo
                       </p>
                       <input

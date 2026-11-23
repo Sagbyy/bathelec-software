@@ -1,413 +1,46 @@
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetTitle,
-} from '@/shared/ui/sheet';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/shared/ui/collapsible';
-import { ChevronDown } from 'lucide-react';
+'use client';
+
 import Link from 'next/link';
-import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useUserStore } from '@/entities/user';
-import { Role } from '@repo/types';
-import React, { useState } from 'react';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { useAuth } from '@/features/auth';
-import { Button } from '@/shared/ui/button';
-import { DropdownMenuProfile } from './drop-down-profile';
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from '@/shared/ui/navigation-menu';
-import { NavbarLink } from '@/entities/user';
-import { getVisibleAdminLinks } from '../lib/navbar-links';
-
-const technicianLinks: NavbarLink[] = [
-  {
-    label: 'Chantiers',
-    href: '#',
-    type: 'folder',
-    pages: [
-      {
-        label: 'Top Chantiers',
-        href: '/dashboard/technician/top-chantiers',
-        type: 'page',
-        description: 'Classement de vos meilleurs chantiers',
-      },
-      {
-        label: 'Chantiers en cours',
-        href: '/dashboard/technician/derivations',
-        type: 'page',
-        description: 'Vos interventions actives',
-      },
-      {
-        label: 'Chantiers terminés',
-        href: '/dashboard/technician/derivations/complete',
-        type: 'page',
-        description: 'Historique de vos chantiers terminés',
-      },
-      {
-        label: 'Nouveau relevé de dérivation',
-        href: '/dashboard/technician/derivations/new',
-        type: 'page',
-        description: "Création d'un nouveau relevé de dérivation",
-      },
-    ],
-  },
-  {
-    label: 'Mon espace',
-    href: '#',
-    type: 'folder',
-    pages: [
-      {
-        label: 'Mes documents officiels',
-        href: '/dashboard/technician/documents',
-        type: 'page',
-        description: 'Vos documents administratifs',
-      },
-      {
-        label: 'Mes habilitations',
-        href: '/dashboard/technician/habilitations',
-        type: 'page',
-        description: 'Vos habilitations électriques',
-      },
-      {
-        label: 'Mon véhicule',
-        href: '/dashboard/technician/vehicule',
-        type: 'page',
-        description: 'Informations sur votre véhicule de service',
-      },
-      {
-        label: "Numéros d'urgence",
-        href: '/dashboard/technician/urgences',
-        type: 'page',
-        description: "Contacts essentiels en cas d'urgence",
-      },
-    ],
-  },
-];
-
-const commonLinks = [
-  {
-    label: 'Tableau de bord',
-    href: '/dashboard',
-    type: 'page',
-    description: 'Accéder au tableau de bord',
-  },
-];
+import { UserMenu } from '@/features/auth';
+import { ThemeToggle } from '@/features/theme-toggle';
+import { BrandLogo } from '@/shared/ui/brand-logo';
+import { getActiveHref, getNavigationLinks } from '../lib/navbar-links';
+import { DesktopNav } from './desktop-nav';
+import { MobileNav } from './mobile-nav';
 
 export function Navbar() {
   const { user } = useUserStore();
-  const { logout } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname() ?? '';
 
-  if (!user) return;
+  if (!user) return null;
 
-  const visibleAdminLinks = getVisibleAdminLinks(user.role);
+  const links = getNavigationLinks(user.role);
+  const activeHref = getActiveHref(pathname, links);
 
   return (
-    <header className="flex h-20 w-full shrink-0 items-center px-4 shadow-sm md:px-6">
-      <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="lg:hidden">
-            <MenuIcon className="h-6 w-6" />
-            <span className="sr-only">Toggle navigation menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent
-          side="left"
-          aria-describedby={undefined}
-          className="overflow-y-auto overscroll-contain"
+    <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-lg supports-[backdrop-filter]:bg-background/70">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-2 px-4 sm:px-6 lg:gap-6 lg:px-8">
+        <MobileNav links={links} activeHref={activeHref} />
+        <Link
+          href="/dashboard"
+          aria-label="Abrisûr, retour au tableau de bord"
+          className="rounded-lg"
         >
-          <VisuallyHidden>
-            <SheetTitle>Abrisûr</SheetTitle>
-          </VisuallyHidden>
-          <Link
-            href="/dashboard"
-            className="mr-6 flex"
-            prefetch={false}
-            onClick={() => setIsOpen(false)}
-          >
-            <span className="sr-only">Abrisûr Software</span>
-            <AbrisurLogo />
-          </Link>
-          <div className="grid gap-4 py-6">
-            {/* Common Links */}
-            {commonLinks.map((link, index) => (
-              <Link
-                key={index}
-                href={link.href}
-                className="flex w-full items-center py-2 text-lg font-semibold"
-                prefetch={false}
-                onClick={() => setIsOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-
-            {/* Admin Links with Collapsible */}
-            {visibleAdminLinks.map((link, index) => (
-                <div key={index}>
-                  {link.type === 'folder' ? (
-                    <Collapsible>
-                      <CollapsibleTrigger className="group flex w-full items-center justify-between py-2 text-lg font-semibold">
-                        <span>{link.label}</span>
-                        <ChevronDown className="h-4 w-4 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down space-y-2 overflow-hidden transition-all duration-300 ease-in-out">
-                        <div className="ml-4 space-y-2 border-l pl-4">
-                          {link.pages?.map((page, pageIndex) => (
-                            <Link
-                              key={pageIndex}
-                              href={page.href}
-                              className="hover:text-primary flex w-full items-center py-2 text-base"
-                              prefetch={false}
-                              onClick={() => setIsOpen(false)}
-                            >
-                              <div className="flex flex-col">
-                                <p>{page.label}</p>
-                                {page.description && (
-                                  <span className="text-muted-foreground text-sm">
-                                    {page.description}
-                                  </span>
-                                )}
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  ) : (
-                    <Link
-                      href={link.href}
-                      className="flex w-full items-center py-2 text-lg font-semibold"
-                      prefetch={false}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {link.label}
-                    </Link>
-                  )}
-                </div>
-              ))}
-
-            {/* Technician Links */}
-            {user?.role === Role.TECHNICIAN &&
-              technicianLinks.map((link, index) => (
-                <div key={index}>
-                  {link.type === 'folder' ? (
-                    <Collapsible>
-                      <CollapsibleTrigger className="group flex w-full items-center justify-between py-2 text-lg font-semibold">
-                        <span>{link.label}</span>
-                        <ChevronDown className="h-4 w-4 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down space-y-2 overflow-hidden transition-all duration-300 ease-in-out">
-                        <div className="ml-4 space-y-2 border-l pl-4">
-                          {link.pages?.map((page, pageIndex) => (
-                            <Link
-                              key={pageIndex}
-                              href={page.href}
-                              className="hover:text-primary flex w-full items-center py-2 text-base"
-                              prefetch={false}
-                              onClick={() => setIsOpen(false)}
-                            >
-                              <div className="flex flex-col">
-                                <p>{page.label}</p>
-                                {page.description && (
-                                  <span className="text-muted-foreground text-sm">
-                                    {page.description}
-                                  </span>
-                                )}
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  ) : (
-                    <Link
-                      href={link.href}
-                      className="flex w-full items-center py-2 text-lg font-semibold"
-                      prefetch={false}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {link.label}
-                    </Link>
-                  )}
-                </div>
-              ))}
-
-            <Button
-              onClick={() => {
-                logout();
-                setIsOpen(false);
-              }}
-              variant="default"
-              className="mt-4 w-full"
-            >
-              Se déconnecter
-            </Button>
-          </div>
-        </SheetContent>
-      </Sheet>
-      <Link href="/dashboard" className="mr-6 hidden lg:flex" prefetch={false}>
-        <AbrisurLogo />
-        <span className="sr-only">Abrisûr Software</span>
-      </Link>
-      <NavigationMenu viewport={false} className="ml-auto hidden lg:block">
-        <NavigationMenuList>
-          {/* Common Links */}
-          {commonLinks.map((link, index) => (
-            <NavigationMenuItem key={index}>
-              <NavigationMenuLink asChild>
-                <Link
-                  href={link.href}
-                  className={navigationMenuTriggerStyle()}
-                  prefetch={false}
-                >
-                  {link.label}
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          ))}
-
-          {/* Admin Links */}
-          {visibleAdminLinks.map((link, index) => (
-              <NavigationMenuItem key={index}>
-                {link.type === 'folder' ? (
-                  <>
-                    <NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
-                    <NavigationMenuContent className="left-auto right-0">
-                      <ul className="grid w-[400px] list-none gap-3 p-4">
-                        {link.pages?.map((page, index) => (
-                          <ListItem
-                            key={index}
-                            href={page.href}
-                            title={page.label}
-                          >
-                            {page.description && page.description}
-                          </ListItem>
-                        ))}
-                      </ul>
-                    </NavigationMenuContent>
-                  </>
-                ) : (
-                  <NavigationMenuLink asChild>
-                    <Link
-                      href={link.href}
-                      className={navigationMenuTriggerStyle()}
-                      prefetch={false}
-                    >
-                      {link.label}
-                    </Link>
-                  </NavigationMenuLink>
-                )}
-              </NavigationMenuItem>
-            ))}
-
-          {/* Technician Links */}
-          {user?.role === Role.TECHNICIAN &&
-            technicianLinks.map((link, index) => (
-              <NavigationMenuItem key={index}>
-                {link.type === 'folder' ? (
-                  <>
-                    <NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
-                    <NavigationMenuContent className="left-auto right-0">
-                      <ul className="grid w-[400px] list-none gap-3 p-4">
-                        {link.pages?.map((page, pageIndex) => (
-                          <ListItem
-                            key={pageIndex}
-                            href={page.href}
-                            title={page.label}
-                          >
-                            {page.description && page.description}
-                          </ListItem>
-                        ))}
-                      </ul>
-                    </NavigationMenuContent>
-                  </>
-                ) : (
-                  <NavigationMenuLink asChild>
-                    <Link
-                      href={link.href}
-                      className={navigationMenuTriggerStyle()}
-                      prefetch={false}
-                    >
-                      {link.label}
-                    </Link>
-                  </NavigationMenuLink>
-                )}
-              </NavigationMenuItem>
-            ))}
-        </NavigationMenuList>
-      </NavigationMenu>
-      <DropdownMenuProfile logout={logout} username={user?.username} />
+          <BrandLogo caption="Gestion des chantiers" />
+        </Link>
+        <div className="ml-auto flex items-center gap-1 lg:gap-2">
+          <DesktopNav
+            links={links}
+            pathname={pathname}
+            activeHref={activeHref}
+          />
+          <div className="mx-1 hidden h-6 w-px bg-border lg:block" />
+          <ThemeToggle />
+          <UserMenu />
+        </div>
+      </div>
     </header>
   );
 }
-
-function AbrisurLogo() {
-  return (
-    <Image
-      src="/logo-abrisur.webp"
-      alt="Abrisûr Logo"
-      width={50}
-      height={50}
-      className="h-auto w-auto"
-      priority
-    />
-  );
-}
-
-function MenuIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="4" x2="20" y1="12" y2="12" />
-      <line x1="4" x2="20" y1="6" y2="6" />
-      <line x1="4" x2="20" y1="18" y2="18" />
-    </svg>
-  );
-}
-
-const ListItem = React.forwardRef<
-  React.ElementRef<'a'>,
-  React.ComponentPropsWithoutRef<'a'>
->(({ className, title, children, href, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <Link
-          ref={ref}
-          href={href || '#'}
-          className="hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors"
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
-            {children}
-          </p>
-        </Link>
-      </NavigationMenuLink>
-    </li>
-  );
-});
-ListItem.displayName = 'ListItem';

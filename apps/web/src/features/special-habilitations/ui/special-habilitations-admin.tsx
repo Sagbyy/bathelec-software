@@ -1,5 +1,6 @@
 'use client';
 
+import { Spinner } from '@/shared/ui/spinner';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { cn } from '@/shared/lib/utils';
@@ -65,7 +66,7 @@ function SpecialHabilitationRow({
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
+    <div className="bg-card shadow-card rounded-xl border p-4">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Image
@@ -79,11 +80,11 @@ function SpecialHabilitationRow({
             )}
           />
           <div>
-            <Label className="text-sm font-semibold text-gray-900">
+            <Label className="text-foreground text-sm font-semibold">
               {config.label}
             </Label>
             {hasDocument ? (
-              <Badge className="ml-2 gap-1 bg-green-100 text-xs text-green-700 hover:bg-green-100">
+              <Badge variant="success" className="ml-2">
                 <Icon
                   icon="material-symbols:description-rounded"
                   className="h-3 w-3"
@@ -91,7 +92,7 @@ function SpecialHabilitationRow({
                 Document joint
               </Badge>
             ) : (
-              <Badge variant="secondary" className="ml-2 text-xs text-gray-400">
+              <Badge variant="neutral" className="ml-2">
                 Pas de document
               </Badge>
             )}
@@ -162,7 +163,7 @@ function SpecialHabilitationRow({
               size="sm"
               disabled={isPending}
               onClick={onRemoveDoc}
-              className="gap-1.5 text-red-500 hover:text-red-600"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive gap-1.5"
             >
               <Icon
                 icon="material-symbols:delete-outline-rounded"
@@ -190,8 +191,8 @@ export function SpecialHabilitationsAdmin({
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[200px] items-center justify-center text-gray-400">
-        Chargement…
+      <div className="flex min-h-[200px] items-center justify-center">
+        <Spinner label="Chargement…" />
       </div>
     );
   }

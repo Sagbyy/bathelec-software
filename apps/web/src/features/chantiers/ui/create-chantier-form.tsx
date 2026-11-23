@@ -73,7 +73,7 @@ export function CreateChantierForm() {
             <FormItem>
               <FormLabel
                 className={clsx(
-                  form.formState.errors.marketId && 'text-red-500'
+                  form.formState.errors.marketId && 'text-destructive'
                 )}
               >
                 Marché
@@ -86,7 +86,7 @@ export function CreateChantierForm() {
                 <FormControl>
                   <SelectTrigger
                     className={clsx(
-                      form.formState.errors.marketId && 'border-red-500'
+                      form.formState.errors.marketId && 'border-destructive'
                     )}
                   >
                     <SelectValue
@@ -125,7 +125,7 @@ export function CreateChantierForm() {
             <FormItem>
               <FormLabel
                 className={clsx(
-                  form.formState.errors.address && 'text-red-500'
+                  form.formState.errors.address && 'text-destructive'
                 )}
               >
                 Adresse du chantier
@@ -133,7 +133,7 @@ export function CreateChantierForm() {
               <FormControl>
                 <Input
                   className={clsx(
-                    form.formState.errors.address && 'border-red-500'
+                    form.formState.errors.address && 'border-destructive'
                   )}
                   placeholder="12 rue de la Paix"
                   required
@@ -155,7 +155,8 @@ export function CreateChantierForm() {
               <FormItem>
                 <FormLabel
                   className={clsx(
-                    form.formState.errors.enedisAffaireNumber && 'text-red-500'
+                    form.formState.errors.enedisAffaireNumber &&
+                      'text-destructive'
                   )}
                 >
                   Numéro d'affaire Enedis
@@ -164,7 +165,7 @@ export function CreateChantierForm() {
                   <Input
                     className={clsx(
                       form.formState.errors.enedisAffaireNumber &&
-                        'border-red-500'
+                        'border-destructive'
                     )}
                     placeholder="AFF-ENEDIS-2026-001"
                     required
@@ -186,7 +187,7 @@ export function CreateChantierForm() {
                 <FormLabel
                   className={clsx(
                     form.formState.errors.internalAffaireNumber &&
-                      'text-red-500'
+                      'text-destructive'
                   )}
                 >
                   Numéro d'affaire interne
@@ -195,7 +196,7 @@ export function CreateChantierForm() {
                   <Input
                     className={clsx(
                       form.formState.errors.internalAffaireNumber &&
-                        'border-red-500'
+                        'border-destructive'
                     )}
                     placeholder="INT-2026-001"
                     required

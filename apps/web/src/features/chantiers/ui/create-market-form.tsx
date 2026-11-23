@@ -53,14 +53,16 @@ export function CreateMarketForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel
-                className={clsx(form.formState.errors.name && 'text-red-500')}
+                className={clsx(
+                  form.formState.errors.name && 'text-destructive'
+                )}
               >
                 Nom du marché
               </FormLabel>
               <FormControl>
                 <Input
                   className={clsx(
-                    form.formState.errors.name && 'border-red-500'
+                    form.formState.errors.name && 'border-destructive'
                   )}
                   placeholder="Marché IDF 2026"
                   required

@@ -1,99 +1,93 @@
 import Image from 'next/image';
-import { TriangleAlert } from 'lucide-react';
+import { Phone, TriangleAlert } from 'lucide-react';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
 
 const EMERGENCY_CONTACTS = [
   {
     label: 'SAMU',
     number: '15',
     description: 'Urgences médicales',
-    color: 'blue',
   },
   {
     label: 'Police / Gendarmerie',
     number: '17',
     description: 'Urgences sécurité',
-    color: 'purple',
   },
   {
     label: 'Pompiers',
     number: '18',
     description: 'Incendie & secours',
-    color: 'red',
   },
   {
     label: 'Toutes urgences',
     number: '112',
     description: 'Numéro européen',
-    color: 'green',
   },
 ] as const;
 
-const COLOR_CLASSES = {
-  blue: 'bg-blue-500 border-blue-600 hover:bg-blue-600',
-  purple: 'bg-purple-500 border-purple-600 hover:bg-purple-600',
-  red: 'bg-red-500 border-red-600 hover:bg-red-600',
-  green: 'bg-green-500 border-green-600 hover:bg-green-600',
-} as const;
-
 export default function UrgencesPage() {
   return (
-    <div className="min-h-[calc(100vh-5rem)] bg-white px-4 py-8 md:px-8">
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-8 flex items-center gap-4">
+    <PageContainer width="default">
+      <PageHeader
+        icon={
           <Image
             src="/images/emergency-phone.png"
             alt=""
-            width={56}
-            height={56}
-            className="shrink-0 object-contain"
+            width={24}
+            height={24}
+            className="object-contain"
           />
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Numéros d'urgence
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              Contacts essentiels en cas d'urgence
-            </p>
-          </div>
-        </div>
+        }
+        title="Numéros d'urgence"
+        description="Contacts essentiels en cas d'urgence"
+      />
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
-          {EMERGENCY_CONTACTS.map((contact) => (
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+        {EMERGENCY_CONTACTS.map((contact) => (
+          <li key={contact.number}>
             <a
-              key={contact.number}
               href={`tel:${contact.number}`}
-              className={`flex flex-col items-center justify-center rounded-2xl border px-4 py-8 shadow-sm transition-all duration-150 hover:shadow-md active:scale-95 ${COLOR_CLASSES[contact.color]}`}
+              className="group flex items-center gap-4 rounded-xl border bg-card p-4 shadow-card transition-all duration-200 hover:border-primary/30 hover:shadow-elevated active:scale-[0.98] sm:p-5"
             >
-              <span className="text-7xl font-extrabold leading-none text-white">
+              <span className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-primary text-2xl font-bold tabular-nums text-primary-foreground shadow-brand">
                 {contact.number}
               </span>
-              <p className="mt-4 text-center text-base font-semibold text-white">
-                {contact.label}
-              </p>
-              <p className="mt-1 text-center text-sm text-white/80">
-                {contact.description}
-              </p>
+              <span className="min-w-0 flex-1">
+                <span className="block text-base font-semibold">
+                  {contact.label}
+                </span>
+                <span className="block text-sm text-muted-foreground">
+                  {contact.description}
+                </span>
+              </span>
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <Phone className="size-4" />
+              </span>
             </a>
-          ))}
-        </div>
+          </li>
+        ))}
+      </ul>
 
-        <div className="mt-6 flex gap-3 rounded-2xl border border-yellow-300 bg-yellow-50 p-4">
-          <TriangleAlert
-            className="mt-0.5 h-5 w-5 shrink-0 text-yellow-600"
-            strokeWidth={1.75}
-          />
-          <div>
-            <p className="text-sm font-semibold text-yellow-800">
-              En cas de danger sur chantier
-            </p>
-            <p className="mt-1 text-sm text-yellow-700">
-              Sécuriser la zone, alertez les secours, ne déplacer pas la victime
-              sauf danger immédiat. Restez en ligne avec les secours jusqu'à
-              leur arrivée.
-            </p>
-          </div>
+      <div
+        role="note"
+        className="mt-6 flex gap-3 rounded-xl border border-warning/30 bg-warning-soft p-4"
+      >
+        <TriangleAlert
+          className="mt-0.5 size-5 shrink-0 text-warning-soft-foreground"
+          strokeWidth={1.75}
+        />
+        <div>
+          <p className="text-sm font-semibold text-warning-soft-foreground">
+            En cas de danger sur chantier
+          </p>
+          <p className="mt-1 text-sm text-foreground/80">
+            Sécuriser la zone, alertez les secours, ne déplacer pas la victime
+            sauf danger immédiat. Restez en ligne avec les secours jusqu'à leur
+            arrivée.
+          </p>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

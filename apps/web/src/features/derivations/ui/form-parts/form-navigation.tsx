@@ -25,31 +25,35 @@ export const FormNavigation = ({
   const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
   return (
-    <div className="mt-8 flex justify-between">
+    <div className="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 -mx-4 -mb-4 mt-8 flex gap-3 rounded-b-xl border-t bg-card/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:-mb-6 sm:px-6 md:static md:mx-0 md:mb-0 md:justify-between md:rounded-none md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none">
       <Button
         type="button"
         variant="outline"
+        size="lg"
+        className="flex-1 md:flex-none"
         onClick={onPrev}
         disabled={step === 1}
       >
-        <ChevronLeft className="mr-2 h-4 w-4" />
+        <ChevronLeft />
         Précédent
       </Button>
 
       <Button
         type="button"
+        size="lg"
+        className="flex-1 md:flex-none"
         onClick={onNext}
         disabled={isLastStep && isCompleted}
       >
         {isLastStep ? (
           <>
             Soumettre
-            <Check className="ml-2 h-4 w-4" />
+            <Check />
           </>
         ) : (
           <>
             Suivant
-            <ChevronRight className="ml-2 h-4 w-4" />
+            <ChevronRight />
           </>
         )}
       </Button>

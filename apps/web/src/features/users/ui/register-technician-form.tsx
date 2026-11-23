@@ -83,7 +83,7 @@ export default function RegisterTechnicianForm() {
               <FormItem className="w-full">
                 <FormLabel
                   className={clsx(
-                    form.formState.errors.firstName && 'text-red-500'
+                    form.formState.errors.firstName && 'text-destructive'
                   )}
                 >
                   Prénom
@@ -91,7 +91,7 @@ export default function RegisterTechnicianForm() {
                 <FormControl>
                   <Input
                     className={clsx(
-                      form.formState.errors.firstName && 'border-red-500'
+                      form.formState.errors.firstName && 'border-destructive'
                     )}
                     required
                     placeholder="Prénom du technicien"
@@ -111,7 +111,7 @@ export default function RegisterTechnicianForm() {
               <FormItem className="w-full">
                 <FormLabel
                   className={clsx(
-                    form.formState.errors.lastName && 'text-red-500'
+                    form.formState.errors.lastName && 'text-destructive'
                   )}
                 >
                   Nom
@@ -119,7 +119,7 @@ export default function RegisterTechnicianForm() {
                 <FormControl>
                   <Input
                     className={clsx(
-                      form.formState.errors.lastName && 'border-red-500'
+                      form.formState.errors.lastName && 'border-destructive'
                     )}
                     required
                     placeholder="Nom du technicien"
@@ -140,14 +140,16 @@ export default function RegisterTechnicianForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel
-                className={clsx(form.formState.errors.email && 'text-red-500')}
+                className={clsx(
+                  form.formState.errors.email && 'text-destructive'
+                )}
               >
                 Email
               </FormLabel>
               <FormControl>
                 <Input
                   className={clsx(
-                    form.formState.errors.email && 'border-red-500'
+                    form.formState.errors.email && 'border-destructive'
                   )}
                   required
                   placeholder="Email du technicien"
@@ -165,7 +167,7 @@ export default function RegisterTechnicianForm() {
             <FormItem>
               <FormLabel
                 className={clsx(
-                  form.formState.errors.username && 'text-red-500'
+                  form.formState.errors.username && 'text-destructive'
                 )}
               >
                 Nom d'utilisateur
@@ -173,7 +175,7 @@ export default function RegisterTechnicianForm() {
               <FormControl>
                 <Input
                   className={clsx(
-                    form.formState.errors.username && 'border-red-500'
+                    form.formState.errors.username && 'border-destructive'
                   )}
                   required
                   placeholder="Nom d'utilisateur du technicien"
@@ -194,7 +196,7 @@ export default function RegisterTechnicianForm() {
               <FormItem className="w-full">
                 <FormLabel
                   className={clsx(
-                    form.formState.errors.password && 'text-red-500'
+                    form.formState.errors.password && 'text-destructive'
                   )}
                 >
                   Mot de passe
@@ -202,7 +204,7 @@ export default function RegisterTechnicianForm() {
                 <FormControl>
                   <Input
                     className={clsx(
-                      form.formState.errors.password && 'border-red-500'
+                      form.formState.errors.password && 'border-destructive'
                     )}
                     required
                     type="password"
@@ -222,7 +224,7 @@ export default function RegisterTechnicianForm() {
               <FormItem className="w-full">
                 <FormLabel
                   className={clsx(
-                    form.formState.errors.confirmPassword && 'text-red-500'
+                    form.formState.errors.confirmPassword && 'text-destructive'
                   )}
                 >
                   Confirmation du mot de passe
@@ -230,7 +232,8 @@ export default function RegisterTechnicianForm() {
                 <FormControl>
                   <Input
                     className={clsx(
-                      form.formState.errors.confirmPassword && 'border-red-500'
+                      form.formState.errors.confirmPassword &&
+                        'border-destructive'
                     )}
                     required
                     type="password"

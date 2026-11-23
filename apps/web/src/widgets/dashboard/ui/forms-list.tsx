@@ -1,5 +1,6 @@
 'use client';
 
+import { Skeleton } from '@/shared/ui/skeleton';
 import { useEffect, useState } from 'react';
 import {
   ChevronLeft,
@@ -42,9 +43,7 @@ import {
 import { DerivationStatus, Derivation, Technician } from '@repo/types';
 import { useDerivation } from '@/features/derivations';
 import { useTechnicians } from '@/entities/user';
-import { cn } from '@/shared/lib/utils';
 import { derivationStatusConfig } from '@/entities/derivation';
-import { Icon } from '@iconify/react/dist/iconify.js';
 import {
   DerivationStatusIcon,
   getDerivationReference,
@@ -127,7 +126,7 @@ export function FormsList() {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <CardTitle>Dérivations</CardTitle>
             <CardDescription>
@@ -197,8 +196,11 @@ export function FormsList() {
       </CardHeader>
       <CardContent>
         {isLoading && (
-          <div className="text-muted-foreground flex items-center justify-center py-10 text-sm">
-            Chargement des dérivations...
+          <div className="space-y-2">
+            {Array.from({ length: 5 }, (_, index) => (
+              <Skeleton key={index} className="h-12 rounded-lg" />
+            ))}
+            <span className="sr-only">Chargement des dérivations...</span>
           </div>
         )}
         {!isLoading && (
@@ -245,8 +247,7 @@ export function FormsList() {
                     <TableCell className="text-right">
                       {derivation.status === DerivationStatus.REVIEWING ? (
                         <Button
-                          variant="default"
-                          className={cn('bg-blue-500 hover:bg-blue-600')}
+                          className="bg-info text-info-foreground hover:bg-info/90"
                           size="sm"
                           onClick={() =>
                             router.push(
@@ -283,7 +284,7 @@ export function FormsList() {
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium">Lignes par page</p>
                   <select
-                    className="border-input bg-background h-8 rounded-md border px-2 text-sm"
+                    className="border-input bg-card h-9 rounded-lg border px-2 text-sm"
                     value={itemsPerPage}
                     onChange={(e) => {
                       setItemsPerPage(Number(e.target.value));
@@ -304,7 +305,7 @@ export function FormsList() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-8 w-8"
+                    className="size-9"
                     onClick={() => handlePageChange(1)}
                     disabled={currentPage === 1}
                     aria-label="Première page"
@@ -314,7 +315,7 @@ export function FormsList() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-8 w-8"
+                    className="size-9"
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
                     aria-label="Page précédente"
@@ -324,7 +325,7 @@ export function FormsList() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-8 w-8"
+                    className="size-9"
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages || totalPages === 0}
                     aria-label="Page suivante"
@@ -334,7 +335,7 @@ export function FormsList() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-8 w-8"
+                    className="size-9"
                     onClick={() => handlePageChange(totalPages)}
                     disabled={currentPage === totalPages || totalPages === 0}
                     aria-label="Dernière page"
@@ -389,19 +390,9 @@ export function FormsList() {
               <div className="grid grid-cols-4 items-center gap-4">
                 <span className="text-sm font-medium">Statut:</span>
                 <span className="col-span-3">
-                  <div
-                    className={cn(
-                      derivationStatusConfig[selectedForm.status].textColor,
-                      'flex items-center gap-2'
-                    )}
-                  >
-                    <Icon
-                      icon={derivationStatusConfig[selectedForm.status].icon}
-                    />
-                    <span className="font-semibold">
-                      {derivationStatusConfig[selectedForm.status].text}
-                    </span>
-                  </div>
+                  <DerivationStatusIcon
+                    derivationStatus={selectedForm.status}
+                  />
                 </span>
               </div>
               <div className="grid grid-cols-4 items-center gap-4">

@@ -1,8 +1,8 @@
 'use client';
 
 import { Fragment } from 'react';
-import { Loader2 } from 'lucide-react';
 import { useUserStore } from '@/entities/user';
+import { Spinner } from '@/shared/ui/spinner';
 import {
   VehicleDocumentKey,
   useUpsertVehicleDocument,
@@ -48,13 +48,13 @@ export function VehicleDocumentsForm({
   if (isLoading) {
     return (
       <div className="flex min-h-[200px] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+        <Spinner />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 rounded-xl border bg-card p-4 shadow-card sm:p-6">
       {documentKeys.map((documentKey, index) => {
         const expiryKey = `${documentKey}ExpiresAt` as const;
         return (

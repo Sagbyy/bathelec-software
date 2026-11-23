@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { FileSpreadsheet } from 'lucide-react';
+import { FileSpreadsheet, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { isAxiosError } from 'axios';
 import { Button } from '@/shared/ui/button';
@@ -40,9 +40,12 @@ export function ExportEnedisButton({
       size="sm"
       onClick={() => exportMutation.mutate()}
       disabled={exportMutation.isPending}
-      className="gap-2"
     >
-      <FileSpreadsheet className="h-4 w-4" />
+      {exportMutation.isPending ? (
+        <Loader2 className="animate-spin" />
+      ) : (
+        <FileSpreadsheet />
+      )}
       {exportMutation.isPending ? 'Export en cours...' : label}
     </Button>
   );

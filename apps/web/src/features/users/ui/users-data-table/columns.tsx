@@ -139,7 +139,7 @@ export const columns: ColumnDef<User>[] = [
       const role = row.original.role;
 
       return (
-        <Badge variant={role === Role.ADMIN ? 'destructive' : 'secondary'}>
+        <Badge variant={role === Role.ADMIN ? 'brand' : 'neutral'}>
           {ROLE_LABELS[role as Role] ?? role}
         </Badge>
       );

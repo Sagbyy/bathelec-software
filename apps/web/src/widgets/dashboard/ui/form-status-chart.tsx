@@ -1,3 +1,5 @@
+import { Skeleton } from '@/shared/ui/skeleton';
+import { EmptyState } from '@/shared/ui/empty-state';
 import {
   Card,
   CardContent,
@@ -61,11 +63,17 @@ export default function FormStatusChart({
   }, [data]);
 
   if (isLoading) {
-    return <div>Chargement des dérivations...</div>;
+    return <Skeleton className={cn('h-[340px] rounded-xl', className)} />;
   }
 
   if (!data) {
-    return <div>Aucune dérivation trouvée</div>;
+    return (
+      <EmptyState
+        className={className}
+        title="Aucune dérivation trouvée"
+        description="Les statistiques apparaîtront dès la première dérivation."
+      />
+    );
   }
 
   const derivationsByStatus: Record<string, number> = {};
@@ -94,7 +102,7 @@ export default function FormStatusChart({
           Visualisation du statut des dérivations
         </CardDescription>
       </CardHeader>
-      <CardContent className="pl-2">
+      <CardContent>
         <ChartContainer
           config={chartConfig}
           className="mx-auto aspect-square max-h-[250px]"
@@ -109,7 +117,9 @@ export default function FormStatusChart({
               dataKey="value"
               nameKey="status"
               innerRadius={60}
-              strokeWidth={5}
+              strokeWidth={4}
+              stroke="rgb(var(--card))"
+              paddingAngle={2}
             >
               <Label
                 content={({ viewBox }) => {
@@ -124,7 +134,7 @@ export default function FormStatusChart({
                         <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
+                          className="fill-foreground text-3xl font-semibold"
                         >
                           {totalDerivations.toLocaleString()}
                         </tspan>

@@ -1,19 +1,28 @@
 import Image from 'next/image';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
+import { EmptyState } from '@/shared/ui/empty-state';
 
 export default function TopChantiersPage() {
   return (
-    <div className="flex min-h-[calc(100vh-5rem)] flex-col items-center justify-center gap-4 p-8 text-center">
-      <Image
-        src="/images/top-chantier.png"
-        alt=""
-        width={80}
-        height={80}
-        className="object-contain"
+    <PageContainer width="default">
+      <PageHeader
+        title="Top Chantiers"
+        description="Le classement de vos meilleurs chantiers"
       />
-      <h1 className="text-2xl font-bold text-gray-900">Top Chantiers</h1>
-      <p className="text-muted-foreground max-w-sm">
-        Cette section affichera le classement de vos meilleurs chantiers.
-      </p>
-    </div>
+      <EmptyState
+        icon={
+          <Image
+            src="/images/top-chantier.png"
+            alt=""
+            width={28}
+            height={28}
+            className="object-contain"
+          />
+        }
+        title="Bientôt disponible"
+        description="Cette section affichera le classement de vos meilleurs chantiers."
+      />
+    </PageContainer>
   );
 }

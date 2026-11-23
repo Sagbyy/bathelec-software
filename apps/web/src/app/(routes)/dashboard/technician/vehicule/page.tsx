@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { ChevronRight } from 'lucide-react';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
 
 const DOCUMENT_CARDS = [
   {
@@ -16,44 +19,46 @@ const DOCUMENT_CARDS = [
 
 export default function VehiculePage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 md:px-8">
-      <div className="mb-8 flex items-center gap-4">
-        <Image
-          src="/images/vehicle-inspection-page.png"
-          alt=""
-          width={48}
-          height={48}
-          className="shrink-0 object-contain"
-        />
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Mon véhicule</h1>
-          <p className="text-muted-foreground text-sm">
-            Carte grise et permis de conduire
-          </p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <PageContainer width="default">
+      <PageHeader
+        icon={
+          <Image
+            src="/images/vehicle-inspection-page.png"
+            alt=""
+            width={24}
+            height={24}
+            className="object-contain"
+          />
+        }
+        title="Mon véhicule"
+        description="Carte grise et permis de conduire"
+      />
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
         {DOCUMENT_CARDS.map((card) => (
-          <Link
-            key={card.href}
-            href={card.href}
-            className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-10 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:scale-95"
-          >
-            <div className="relative h-32 w-full overflow-hidden rounded-xl">
-              <Image
-                src={card.image}
-                alt={card.label}
-                fill
-                className="object-contain"
-              />
-            </div>
-            <p className="text-center text-base font-semibold text-gray-900">
-              {card.label}
-            </p>
-          </Link>
+          <li key={card.href}>
+            <Link
+              href={card.href}
+              className="group flex h-full items-center gap-4 rounded-xl border bg-card p-4 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elevated active:scale-[0.98] sm:flex-col sm:items-stretch sm:p-5"
+            >
+              <span className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-muted sm:h-32 sm:w-full">
+                <Image
+                  src={card.image}
+                  alt=""
+                  fill
+                  sizes="(min-width: 640px) 480px, 80px"
+                  className="object-contain p-2"
+                />
+              </span>
+              <span className="flex flex-1 items-center justify-between gap-2">
+                <span className="text-sm font-semibold sm:text-base">
+                  {card.label}
+                </span>
+                <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+              </span>
+            </Link>
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </PageContainer>
   );
 }

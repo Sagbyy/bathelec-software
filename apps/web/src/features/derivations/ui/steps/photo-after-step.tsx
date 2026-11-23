@@ -110,7 +110,7 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
 
   return (
     <div className="space-y-6">
-      <div className="text-xl font-semibold">
+      <div className="text-lg font-semibold tracking-tight sm:text-xl">
         {oldMeterPreserved ? 7 : 8}. Photo après travaux
       </div>
 
@@ -125,7 +125,7 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
                 <FormLabel>
                   {photo.label}
                   {photo.required && (
-                    <span className="ml-1 text-red-500">*</span>
+                    <span className="ml-1 text-destructive">*</span>
                   )}
                 </FormLabel>
                 <FormControl>
@@ -139,7 +139,7 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
                           alt={`Aperçu ${photo.label}`}
                           width={400}
                           height={300}
-                          className="h-auto w-full rounded-md object-cover"
+                          className="h-auto w-full rounded-xl border object-cover"
                         />
                         <Button
                           type="button"
@@ -153,10 +153,10 @@ export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
                         </Button>
                       </div>
                     ) : (
-                      <div className="w-full rounded-md border-2 border-dashed border-gray-300 p-6 text-center">
+                      <div className="w-full rounded-xl border-2 border-dashed border-border bg-muted/40 transition-colors hover:border-primary/40 hover:bg-primary-soft/50 p-6 text-center">
                         <div className="flex flex-col items-center">
-                          <Upload className="mb-2 h-8 w-8 text-gray-400" />
-                          <p className="mb-2 text-xs text-gray-600">
+                          <Upload className="mb-2 h-8 w-8 text-muted-foreground" />
+                          <p className="mb-2 text-xs text-muted-foreground">
                             {photo.required
                               ? 'Cliquez ou glissez-déposez une photo'
                               : 'Photo optionnelle'}

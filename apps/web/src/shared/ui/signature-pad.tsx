@@ -34,7 +34,7 @@ export function SignaturePad({
     <div className="space-y-2">
       <div
         className={cn(
-          'h-64 rounded-md border bg-white p-2',
+          'h-64 rounded-xl border bg-white p-2 shadow-xs',
           disabled && 'pointer-events-none cursor-not-allowed'
         )}
       >

@@ -44,7 +44,7 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
 
   return (
     <div className="space-y-6">
-      <div className="text-xl font-semibold">
+      <div className="text-lg font-semibold tracking-tight sm:text-xl">
         {oldMeterPreserved ? 8 : 9}. Validation des travaux par le client
       </div>
 
@@ -86,7 +86,7 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
             control={form.control}
             name="clientValidation.workValidation"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+              <FormItem className="flex flex-row items-center justify-between gap-4 rounded-xl border bg-muted/30 p-4">
                 <div className="space-y-0.5">
                   <FormLabel className="text-base">
                     Validation des travaux
@@ -114,15 +114,15 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
                     {[0, 1, 2, 3, 4].map((rating) => {
                       const value = Number.parseInt(field.value || '0');
                       const isFilled = value >= rating;
-                      let colorClass = 'text-gray-300';
+                      let colorClass = 'text-muted-foreground/40';
 
                       if (isFilled) {
                         if (value === 0) {
-                          colorClass = 'fill-red-500 text-red-600';
+                          colorClass = 'fill-destructive text-destructive';
                         } else if (value === 1 || value === 2) {
-                          colorClass = 'fill-orange-500 text-orange-600';
+                          colorClass = 'fill-warning text-warning';
                         } else if (value === 3 || value === 4) {
-                          colorClass = 'fill-green-500 text-green-600';
+                          colorClass = 'fill-success text-success';
                         }
                       }
 
@@ -192,7 +192,7 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
         control={form.control}
         name="clientValidation.technicianNothingToReport"
         render={({ field }) => (
-          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+          <FormItem className="flex flex-row items-center justify-between gap-4 rounded-xl border bg-muted/30 p-4">
             <div className="space-y-0.5">
               <FormLabel
                 htmlFor="technician-nothing-to-report"
@@ -247,7 +247,7 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              Signature du technicien <span className="text-red-500">*</span>
+              Signature du technicien <span className="text-destructive">*</span>
             </FormLabel>
             <FormControl>
               <SignaturePad

@@ -67,7 +67,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
 
   return (
     <div className="space-y-6">
-      <div className="text-xl font-semibold">4. Ancien compteur</div>
+      <div className="text-lg font-semibold tracking-tight sm:text-xl">4. Ancien compteur</div>
 
       <LabeledSelect
         control={form.control}
@@ -103,7 +103,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
           control={form.control}
           name="oldMeter.preserved"
           render={({ field }) => (
-            <FormItem className="flex w-full flex-row items-center justify-between rounded-lg border p-4">
+            <FormItem className="flex w-full flex-row items-center justify-between gap-4 rounded-xl border bg-muted/30 p-4">
               <div className="space-y-0.5">
                 <FormLabel className="text-base">Conservé</FormLabel>
               </div>
@@ -123,7 +123,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
             control={form.control}
             name="oldMeter.linkyRefusal"
             render={({ field }) => (
-              <FormItem className="flex w-full flex-row items-center justify-between rounded-lg border p-4">
+              <FormItem className="flex w-full flex-row items-center justify-between gap-4 rounded-xl border bg-muted/30 p-4">
                 <div className="space-y-0.5">
                   <FormLabel className="text-base">Refus de Linky</FormLabel>
                 </div>
@@ -187,7 +187,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
               <FormItem>
                 <FormLabel>
                   Photo relevé index ancien compteur
-                  <span className="ml-1 text-red-500">*</span>
+                  <span className="ml-1 text-destructive">*</span>
                 </FormLabel>
                 <FormControl>
                   <div className="flex flex-col items-center gap-4">
@@ -198,7 +198,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
                           alt="Aperçu de la photo"
                           width={400}
                           height={300}
-                          className="h-auto w-full rounded-md object-cover"
+                          className="h-auto w-full rounded-xl border object-cover"
                         />
                         <Button
                           type="button"
@@ -212,10 +212,10 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
                         </Button>
                       </div>
                     ) : (
-                      <div className="w-full max-w-md rounded-md border-2 border-dashed border-gray-300 p-8 text-center">
+                      <div className="w-full max-w-md rounded-xl border-2 border-dashed border-border bg-muted/40 transition-colors hover:border-primary/40 hover:bg-primary-soft/50 p-8 text-center">
                         <div className="flex flex-col items-center">
-                          <Upload className="mb-2 h-10 w-10 text-gray-400" />
-                          <p className="mb-2 text-sm text-gray-600">
+                          <Upload className="mb-2 h-10 w-10 text-muted-foreground" />
+                          <p className="mb-2 text-sm text-muted-foreground">
                             Cliquez ou glissez-déposez une photo
                           </p>
                           <input

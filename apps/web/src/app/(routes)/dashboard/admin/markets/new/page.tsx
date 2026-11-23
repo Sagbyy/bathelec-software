@@ -1,17 +1,21 @@
 'use client';
 
+import { Briefcase } from 'lucide-react';
 import { CreateMarketForm } from '@/features/chantiers';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
 
 export default function CreateMarketPage() {
   return (
-    <div className="mx-3 my-4 bg-white p-5 lg:mx-auto lg:w-1/2">
-      <div className="mb-6 space-y-2 text-center">
-        <h1 className="text-3xl font-bold">Créer un marché</h1>
-        <p className="text-muted-foreground">
-          Ajouter un marché pour y rattacher des chantiers
-        </p>
+    <PageContainer width="narrow">
+      <PageHeader
+        icon={<Briefcase />}
+        title="Créer un marché"
+        description="Ajouter un marché pour y rattacher des chantiers"
+      />
+      <div className="bg-card shadow-card rounded-xl border p-4 sm:p-6">
+        <CreateMarketForm />
       </div>
-      <CreateMarketForm />
-    </div>
+    </PageContainer>
   );
 }
