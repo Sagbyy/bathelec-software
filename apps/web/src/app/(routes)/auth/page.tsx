@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { ShieldCheck, Smartphone, Zap } from 'lucide-react';
 import { LoginForm } from '@/features/auth';
 import { BrandLogo } from '@/shared/ui/brand-logo';
+import { GridBackdrop } from '@/shared/ui/grid-backdrop';
 
 export const metadata: Metadata = {
   title: 'Connexion',
@@ -29,18 +30,7 @@ export default function AuthPage() {
   return (
     <div className="grid min-h-dvh lg:grid-cols-[1.05fr_1fr]">
       <aside className="relative hidden overflow-hidden bg-ink p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-40 -top-40 size-[560px] rounded-full border-[28px] border-primary/90"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-4 top-28 size-56 rounded-full bg-primary blur-[1px]"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgb(var(--brand-600)/0.25),transparent_60%)]"
-        />
+        <GridBackdrop cellSize={40} />
 
         <div className="relative w-fit rounded-2xl bg-white p-3 shadow-elevated">
           <BrandLogo size={88} />

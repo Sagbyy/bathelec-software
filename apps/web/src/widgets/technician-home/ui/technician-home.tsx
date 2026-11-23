@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, ChevronRight, UserRound } from 'lucide-react';
 import { useUserStore } from '@/entities/user';
 import { Button } from '@/shared/ui/button';
+import { GridBackdrop } from '@/shared/ui/grid-backdrop';
 import { PageContainer } from '@/shared/ui/page-container';
 import {
   FEATURED_ITEM,
@@ -78,14 +79,7 @@ function FeaturedCard({ item }: { item: TechnicianNavItem }) {
       href={item.href}
       className="group relative flex items-center gap-4 overflow-hidden rounded-2xl bg-ink p-5 text-white shadow-elevated transition-transform active:scale-[0.99] sm:p-6"
     >
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-10 -top-16 size-48 rounded-full border-[14px] border-primary/80"
-      />
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute right-6 top-4 size-16 rounded-full bg-primary"
-      />
+      <GridBackdrop cellSize={24} />
       <span className="relative flex size-14 shrink-0 items-center justify-center rounded-xl bg-white shadow-elevated">
         <Image
           src={item.imageSrc}
