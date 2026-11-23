@@ -6,10 +6,7 @@ import { EmptyState } from '@/shared/ui/empty-state';
 export default function TopChantiersPage() {
   return (
     <PageContainer width="default">
-      <PageHeader
-        title="Top Chantiers"
-        description="Le classement de vos meilleurs chantiers"
-      />
+      <PageHeader title="TOP Chantiers" />
       <EmptyState
         icon={
           <Image
@@ -21,7 +18,6 @@ export default function TopChantiersPage() {
           />
         }
         title="Bientôt disponible"
-        description="Cette section affichera le classement de vos meilleurs chantiers."
       />
     </PageContainer>
   );

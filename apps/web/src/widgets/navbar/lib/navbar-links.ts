@@ -99,10 +99,9 @@ export const technicianLinks: NavbarLink[] = [
     allowedRoles: [Role.TECHNICIAN],
     pages: [
       {
-        label: 'Top Chantiers',
+        label: 'TOP Chantiers',
         href: '/dashboard/technician/top-chantiers',
         type: 'page',
-        description: 'Classement de vos meilleurs chantiers',
       },
       {
         label: 'Chantiers en cours',

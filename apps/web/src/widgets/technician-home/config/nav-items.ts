@@ -1,6 +1,6 @@
 export interface TechnicianNavItem {
   label: string;
-  description: string;
+  description?: string;
   href: string;
   imageSrc: string;
 }
@@ -11,8 +11,7 @@ export interface TechnicianNavSection {
 }
 
 export const FEATURED_ITEM: TechnicianNavItem = {
-  label: 'Top Chantiers',
-  description: 'Le classement des meilleures interventions',
+  label: 'TOP Chantiers',
   href: '/dashboard/technician/top-chantiers',
   imageSrc: '/images/top-chantier.png',
 };

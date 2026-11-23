@@ -45,7 +45,7 @@ describe('TechnicianHome', () => {
     it('affiche les 9 labels de section', () => {
       render(<TechnicianHome />);
 
-      expect(screen.getByText('Top Chantiers')).toBeInTheDocument();
+      expect(screen.getByText('TOP Chantiers')).toBeInTheDocument();
       expect(screen.getByText('Mes dérivations')).toBeInTheDocument();
       expect(screen.getByText('Chantiers programmés')).toBeInTheDocument();
       expect(screen.getByText('Chantiers en cours')).toBeInTheDocument();
@@ -87,6 +87,15 @@ describe('TechnicianHome', () => {
       render(<TechnicianHome />);
 
       expect(screen.getByText(/Technicien/)).toBeInTheDocument();
+    });
+  });
+
+  describe('carte TOP Chantiers', () => {
+    it('affiche TOP en majuscules sans phrase descriptive', () => {
+      render(<TechnicianHome />);
+
+      const link = screen.getByRole('link', { name: /top chantiers/i });
+      expect(link).toHaveTextContent(/^TOP Chantiers$/);
     });
   });
 

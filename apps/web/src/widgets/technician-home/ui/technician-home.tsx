@@ -97,7 +97,11 @@ function FeaturedCard({ item }: { item: TechnicianNavItem }) {
       </span>
       <span className="relative min-w-0 flex-1">
         <span className="block text-lg font-semibold">{item.label}</span>
-        <span className="block text-sm text-white/70">{item.description}</span>
+        {item.description && (
+          <span className="block text-sm text-white/70">
+            {item.description}
+          </span>
+        )}
       </span>
       <span className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-ink transition-transform group-hover:translate-x-0.5">
         <ArrowRight className="size-4" />
@@ -128,9 +132,11 @@ function NavCard({ item }: { item: TechnicianNavItem }) {
         <span className="block text-sm font-semibold leading-tight sm:text-base">
           {item.label}
         </span>
-        <span className="mt-0.5 block text-xs text-muted-foreground">
-          {item.description}
-        </span>
+        {item.description && (
+          <span className="mt-0.5 block text-xs text-muted-foreground">
+            {item.description}
+          </span>
+        )}
       </span>
     </Link>
   );
