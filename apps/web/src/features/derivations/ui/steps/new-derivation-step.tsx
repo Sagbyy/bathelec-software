@@ -39,15 +39,15 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
 
   return (
     <div className="space-y-6">
-      <div className="text-xl font-semibold">5. La nouvelle dérivation</div>
+      <div className="text-lg font-semibold tracking-tight sm:text-xl">5. La nouvelle dérivation</div>
 
       <FormField
         control={form.control}
         name="newDerivation.section"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className={cn(!isLengthCoherent && 'text-red-500')}>
-              Section posée<span className="ml-1 text-red-500">*</span>
+            <FormLabel className={cn(!isLengthCoherent && 'text-destructive')}>
+              Section posée<span className="ml-1 text-destructive">*</span>
             </FormLabel>
             <Select
               onValueChange={field.onChange}
@@ -78,7 +78,7 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              Nature du câble<span className="ml-1 text-red-500">*</span>
+              Nature du câble<span className="ml-1 text-destructive">*</span>
             </FormLabel>
             <Select
               onValueChange={field.onChange}
@@ -105,8 +105,8 @@ export function NewDerivationStep({ form }: NewDerivationStepProps) {
         name="newDerivation.length"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className={cn(!isLengthCoherent && 'text-red-500')}>
-              Longueur posée en M<span className="ml-1 text-red-500">*</span>
+            <FormLabel className={cn(!isLengthCoherent && 'text-destructive')}>
+              Longueur posée en M<span className="ml-1 text-destructive">*</span>
             </FormLabel>
             <FormControl>
               <InputNumberButtonsRounded

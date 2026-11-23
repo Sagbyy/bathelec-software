@@ -1,12 +1,19 @@
 'use client';
 
+import { CalendarClock } from 'lucide-react';
 import { ScheduledChantiersList } from '@/features/chantiers';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
 
 export default function ScheduledChantiersPage() {
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-10 md:px-8">
-      <h1 className="mb-6 text-2xl font-bold">Chantiers programmés</h1>
+    <PageContainer width="default">
+      <PageHeader
+        icon={<CalendarClock />}
+        title="Chantiers programmés"
+        description="Votre planning de chantiers à venir"
+      />
       <ScheduledChantiersList />
-    </div>
+    </PageContainer>
   );
 }

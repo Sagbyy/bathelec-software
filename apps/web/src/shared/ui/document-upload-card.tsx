@@ -60,7 +60,7 @@ export function DocumentUploadCard({
   return (
     <div className="space-y-3">
       <div>
-        <p className="text-sm font-medium text-gray-900">{label}</p>
+        <p className="text-sm font-medium text-foreground">{label}</p>
         <p className="text-muted-foreground text-xs">{description}</p>
       </div>
 
@@ -95,10 +95,10 @@ export function DocumentUploadCard({
           </Button>
         </div>
       ) : (
-        <div className="w-full max-w-md rounded-md border-2 border-dashed border-gray-300 p-8 text-center">
+        <div className="w-full max-w-md rounded-xl border-2 border-dashed border-border bg-muted/40 p-6 text-center transition-colors hover:border-primary/40 hover:bg-primary-soft/50 sm:p-8">
           <div className="flex flex-col items-center gap-2">
-            <Upload className="h-10 w-10 text-gray-400" />
-            <p className="text-sm text-gray-600">
+            <Upload className="h-10 w-10 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">
               Cliquez ou glissez-déposez un document
             </p>
             <input

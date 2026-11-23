@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
+import { ClipboardList } from 'lucide-react';
 import { Derivation, Role } from '@repo/types';
 import { Button } from '@/shared/ui/button';
 import {
@@ -10,6 +11,8 @@ import {
 } from '@/entities/derivation';
 import { useUserStore } from '@/entities/user';
 import { NativeSelect } from '@/shared/ui/native-select';
+import { EmptyState } from '@/shared/ui/empty-state';
+import { Skeleton } from '@/shared/ui/skeleton';
 import {
   formatMemberName,
   getTeamMembers,
@@ -32,24 +35,43 @@ export function TeamDerivationsList() {
   const { data: teams } = useQuery(siteTeamQueries.mine());
 
   if (!user) return null;
-  if (isLoading) return <p className="p-8">Chargement...</p>;
-  if (error) return <p className="p-8">Une erreur est survenue</p>;
+  if (isLoading)
+    return (
+      <div className="space-y-3" aria-label="Chargement...">
+        {Array.from({ length: 3 }, (_, index) => (
+          <Skeleton key={index} className="h-24 rounded-xl" />
+        ))}
+      </div>
+    );
+  if (error)
+    return (
+      <EmptyState
+        title="Une erreur est survenue"
+        description="Impossible de charger vos dérivations."
+      />
+    );
   if (!derivations?.length) {
-    return <p className="p-8 text-gray-500">Aucune dérivation à traiter.</p>;
+    return (
+      <EmptyState
+        icon={<ClipboardList />}
+        title="Aucune dérivation à traiter."
+        description="Les dérivations attribuées à votre équipe apparaîtront ici."
+      />
+    );
   }
 
   return (
-    <ul className="divide-y rounded-2xl border border-gray-200 bg-white">
+    <ul className="divide-y overflow-hidden rounded-xl border bg-card shadow-card">
       {derivations.map((derivation) => (
         <li
           key={derivation.id}
-          className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+          className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5"
         >
-          <div className="flex flex-col gap-1">
-            <span className="font-semibold text-gray-900">
+          <div className="flex min-w-0 flex-col items-start gap-1.5">
+            <span className="font-semibold leading-snug text-foreground">
               {derivation.chantier?.address ?? `Dérivation #${derivation.id}`}
             </span>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-muted-foreground">
               {getDerivationReference(derivation)} ·{' '}
               {derivation.team?.name ?? 'Sans équipe'}
             </span>
@@ -84,7 +106,7 @@ function DerivationAssignmentControl({
   const isMine = derivation.userId === currentUser.id;
 
   const openLink = (
-    <Button asChild variant="outline">
+    <Button asChild variant="outline" className="w-full sm:w-auto">
       <Link href={`${COMPLETE_PATH}/${derivation.id}`}>Ouvrir</Link>
     </Button>
   );
@@ -92,6 +114,7 @@ function DerivationAssignmentControl({
   if (action === 'claim') {
     return (
       <Button
+        className="w-full sm:w-auto"
         disabled={claim.isPending}
         onClick={() => claim.mutate(derivation.id)}
       >
@@ -109,10 +132,10 @@ function DerivationAssignmentControl({
     );
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <NativeSelect
           aria-label={`Attribuer la dérivation ${derivation.id}`}
-          className="w-auto"
+          className="sm:w-auto"
           value={derivation.userId ?? ''}
           disabled={assignUser.isPending}
           onChange={(event) =>

@@ -3,7 +3,12 @@
 import { useMemo } from 'react';
 import Image from 'next/image';
 import { Chantier } from '@repo/types';
+import { AlertTriangle } from 'lucide-react';
 import { DataTable } from '@/shared/ui/data-table';
+import { EmptyState } from '@/shared/ui/empty-state';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
+import { Skeleton } from '@/shared/ui/skeleton';
 import { buildChantierColumns } from './chantier-columns';
 
 interface MarketChantiersViewProps {
@@ -30,29 +35,45 @@ export function MarketChantiersView({
   const columns = useMemo(() => buildChantierColumns(basePath), [basePath]);
   const marketName = filtered[0]?.market?.name;
 
-  if (isLoading) return <div className="p-8">Chargement...</div>;
-  if (error) return <div className="p-8">Une erreur est survenue</div>;
+  if (isLoading) return <ViewLoading />;
+  if (error)
+    return (
+      <PageContainer>
+        <EmptyState icon={<AlertTriangle />} title="Une erreur est survenue" />
+      </PageContainer>
+    );
 
   return (
-    <div className="mx-2 py-10 sm:mx-10">
-      <div className="mb-6 flex items-center gap-3">
-        <Image
-          src={folderImageSrc}
-          alt=""
-          width={40}
-          height={40}
-          className="object-contain"
-        />
-        <h1 className="text-2xl font-bold">
-          {marketName ?? 'Marché'} — Chantiers
-        </h1>
-      </div>
+    <PageContainer>
+      <PageHeader
+        icon={
+          <Image
+            src={folderImageSrc}
+            alt=""
+            width={28}
+            height={28}
+            className="object-contain"
+          />
+        }
+        eyebrow="Marché"
+        title={`${marketName ?? 'Marché'} — Chantiers`}
+      />
       <DataTable
         columns={columns}
         data={filtered}
         searchPlaceholder="Rechercher un chantier..."
         emptyMessage="Aucun chantier."
       />
-    </div>
+    </PageContainer>
+  );
+}
+
+function ViewLoading() {
+  return (
+    <PageContainer>
+      <Skeleton className="mb-8 h-12 w-72" />
+      <Skeleton className="h-80 rounded-xl" />
+      <span className="sr-only">Chargement...</span>
+    </PageContainer>
   );
 }

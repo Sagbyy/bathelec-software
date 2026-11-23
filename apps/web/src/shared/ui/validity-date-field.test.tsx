@@ -33,6 +33,16 @@ describe('ValidityBadge', () => {
     render(<ValidityBadge expiresAt="2027-05-31" />);
     expect(screen.getByText("Valide jusqu'au 31 mai 2027")).toBeInTheDocument();
   });
+
+  it.each([
+    [null, 'Date de validité manquante', 'bg-muted'],
+    ['2026-09-01', 'Expiré depuis le 1 septembre 2026', 'bg-primary-soft'],
+    ['2026-11-01', 'Expire bientôt (1 novembre 2026)', 'bg-warning-soft'],
+    ['2027-05-31', "Valide jusqu'au 31 mai 2027", 'bg-success-soft'],
+  ])('colore le badge %s selon son statut', (expiresAt, label, toneClass) => {
+    render(<ValidityBadge expiresAt={expiresAt} />);
+    expect(screen.getByText(label)).toHaveClass(toneClass);
+  });
 });
 
 describe('ValidityDateField', () => {

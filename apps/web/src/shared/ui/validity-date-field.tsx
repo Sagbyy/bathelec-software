@@ -6,15 +6,16 @@ import {
   toDateInputValue,
   ValidityStatus,
 } from '@/shared/lib/document-validity';
-import { cn } from '@/shared/lib/utils';
+import type { Tone } from '@/shared/lib/tone';
+import { Badge } from './badge';
 import { Input } from './input';
 import { Label } from './label';
 
-const STATUS_STYLES: Record<ValidityStatus, string> = {
-  missing: 'bg-gray-100 text-gray-500',
-  expired: 'bg-red-100 text-red-700',
-  expiring: 'bg-orange-100 text-orange-700',
-  valid: 'bg-green-100 text-green-700',
+const STATUS_TONES: Record<ValidityStatus, Tone> = {
+  missing: 'neutral',
+  expired: 'brand',
+  expiring: 'warning',
+  valid: 'success',
 };
 
 const statusLabel = (status: ValidityStatus, expiresAt?: string | null) => {
@@ -28,14 +29,9 @@ const statusLabel = (status: ValidityStatus, expiresAt?: string | null) => {
 export function ValidityBadge({ expiresAt }: { expiresAt?: string | null }) {
   const status = getValidityStatus(expiresAt);
   return (
-    <span
-      className={cn(
-        'inline-flex rounded-full px-2 py-0.5 text-xs font-medium',
-        STATUS_STYLES[status]
-      )}
-    >
+    <Badge variant={STATUS_TONES[status]}>
       {statusLabel(status, expiresAt)}
-    </span>
+    </Badge>
   );
 }
 
@@ -57,13 +53,13 @@ export function ValidityDateField({
   return (
     <div className="flex max-w-md flex-col gap-1.5">
       <Label htmlFor={id} className="text-sm">
-        {label} <span className="text-red-500">*</span>
+        {label} <span className="text-destructive">*</span>
       </Label>
       <div className="flex flex-wrap items-center gap-2">
         <Input
           id={id}
           type="date"
-          className="w-44"
+          className="w-full sm:w-44"
           value={toDateInputValue(value)}
           disabled={disabled}
           onChange={(event) => onChange(event.target.value || null)}

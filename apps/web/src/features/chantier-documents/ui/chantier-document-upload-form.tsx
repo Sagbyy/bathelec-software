@@ -75,7 +75,9 @@ export function ChantierDocumentUploadForm({
         if (fileInputRef.current) fileInputRef.current.value = '';
       },
       onError: (error: Error) => {
-        toast.error(getApiErrorMessage(error) || "Échec de l'ajout du document");
+        toast.error(
+          getApiErrorMessage(error) || "Échec de l'ajout du document"
+        );
       },
     });
   };
@@ -84,7 +86,7 @@ export function ChantierDocumentUploadForm({
     <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 rounded-lg border p-4"
+        className="bg-muted/30 space-y-4 rounded-xl border p-4"
       >
         <h3 className="font-semibold">Ajouter un document</h3>
 

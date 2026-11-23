@@ -178,12 +178,11 @@ export default function CorrectionComment({
               Après votre revue de l'intervention, validez-la ou renvoyez-la au
               technicien pour correction.
             </FieldDescription>
-            <div className="flex gap-2">
-              <Badge variant="default" className="bg-green-500">
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="success">
                 {derivationStatusConfig[DerivationStatus.COMPLETED].text}
               </Badge>
-              {' - '}
-              <Badge variant="secondary">
+              <Badge variant="brand">
                 {derivationStatusConfig[DerivationStatus.REVISING].text}
               </Badge>
             </div>

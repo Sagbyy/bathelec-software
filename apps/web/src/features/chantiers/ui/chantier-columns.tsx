@@ -38,13 +38,17 @@ export function buildChantierColumns(basePath: string): ColumnDef<Chantier>[] {
       id: 'folder',
       header: '',
       cell: () => (
-        <Icon icon="mdi:folder" className="h-6 w-6 text-gray-400" />
+        <span className="bg-primary-soft text-primary flex size-9 items-center justify-center rounded-lg">
+          <Icon icon="mdi:folder" className="size-5" />
+        </span>
       ),
     },
     {
       accessorKey: 'address',
       meta: { label: 'Adresse' },
-      header: ({ column }) => <SortableHeader column={column} label="Adresse" />,
+      header: ({ column }) => (
+        <SortableHeader column={column} label="Adresse" />
+      ),
     },
     {
       accessorFn: (row) => row.market?.name ?? '—',

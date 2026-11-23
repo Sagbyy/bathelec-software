@@ -72,14 +72,17 @@ export function CreateDerivationForm() {
 
   return (
     <FormProvider {...form}>
-      <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+      <form
+        className="space-y-5 rounded-xl border bg-card p-4 shadow-card sm:p-6"
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
         <FormField
           control={form.control}
           name="teamId"
           render={({ field }) => (
             <FormItem className="w-full">
               <FormLabel
-                className={clsx(form.formState.errors.teamId && 'text-red-500')}
+                className={clsx(form.formState.errors.teamId && 'text-destructive')}
               >
                 Équipe chantier
               </FormLabel>
@@ -143,7 +146,7 @@ export function CreateDerivationForm() {
             <FormItem className="w-full">
               <FormLabel
                 className={clsx(
-                  form.formState.errors.chantierId && 'text-red-500'
+                  form.formState.errors.chantierId && 'text-destructive'
                 )}
               >
                 Chantier
@@ -155,10 +158,12 @@ export function CreateDerivationForm() {
                       variant="outline"
                       role="combobox"
                       aria-expanded={chantierOpen}
-                      className="w-full justify-between"
+                      className="w-full justify-between font-normal"
                     >
-                      {chantiers?.find((c) => c.id === field.value)?.address ??
-                        'Sélectionner un chantier...'}
+                      <span className="truncate">
+                        {chantiers?.find((c) => c.id === field.value)
+                          ?.address ?? 'Sélectionner un chantier...'}
+                      </span>
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -210,6 +215,7 @@ export function CreateDerivationForm() {
 
         <Button
           type="submit"
+          size="lg"
           className="w-full"
           disabled={createDerivation.isPending}
         >

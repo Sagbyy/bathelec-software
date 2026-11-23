@@ -35,6 +35,11 @@ import {
   useDeleteUser,
 } from '@/features/users/model/use-user';
 import { toast } from 'sonner';
+import { AlertTriangle, UserPen, UserX } from 'lucide-react';
+import { EmptyState } from '@/shared/ui/empty-state';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
+import { Skeleton } from '@/shared/ui/skeleton';
 import clsx from 'clsx';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { getApiErrorMessage } from '@/shared/lib/api-error';
@@ -148,53 +153,45 @@ export default function UserDetailsPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto max-w-2xl px-4 py-10 md:px-6">
-        <div className="flex items-center justify-center py-12">
-          <p>Chargement...</p>
-        </div>
-      </div>
+      <PageContainer width="narrow">
+        <Skeleton className="mb-8 h-12 w-72" />
+        <Skeleton className="h-[480px] rounded-xl" />
+        <span className="sr-only">Chargement...</span>
+      </PageContainer>
     );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto max-w-2xl px-4 py-10 md:px-6">
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-destructive">
-              Erreur:{' '}
-              {error instanceof Error
-                ? error.message
-                : 'Une erreur est survenue'}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <PageContainer width="narrow">
+        <EmptyState
+          icon={<AlertTriangle />}
+          title="Impossible de charger l'utilisateur"
+          description={
+            error instanceof Error ? error.message : 'Une erreur est survenue'
+          }
+        />
+      </PageContainer>
     );
   }
 
   if (!user) {
     return (
-      <div className="container mx-auto max-w-2xl px-4 py-10 md:px-6">
-        <Card>
-          <CardContent className="pt-6">
-            <p>Utilisateur non trouvé</p>
-          </CardContent>
-        </Card>
-      </div>
+      <PageContainer width="narrow">
+        <EmptyState icon={<UserX />} title="Utilisateur non trouvé" />
+      </PageContainer>
     );
   }
 
   return (
-    <div className="container mx-auto max-w-2xl px-4 py-10 md:px-6">
+    <PageContainer width="narrow">
+      <PageHeader
+        icon={<UserPen />}
+        title="Modifier l'utilisateur"
+        description={`Modifiez les informations de l'utilisateur ${user.username}`}
+      />
       <Card>
-        <CardHeader>
-          <CardTitle>Modifier l&apos;utilisateur</CardTitle>
-          <CardDescription>
-            Modifiez les informations de l&apos;utilisateur {user.username}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4 sm:pt-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="flex w-full flex-col items-center justify-center gap-4 lg:flex-row">
@@ -205,7 +202,7 @@ export default function UserDetailsPage() {
                     <FormItem className="w-full">
                       <FormLabel
                         className={clsx(
-                          form.formState.errors.firstName && 'text-red-500'
+                          form.formState.errors.firstName && 'text-destructive'
                         )}
                       >
                         Prénom
@@ -213,7 +210,8 @@ export default function UserDetailsPage() {
                       <FormControl>
                         <Input
                           className={clsx(
-                            form.formState.errors.firstName && 'border-red-500'
+                            form.formState.errors.firstName &&
+                              'border-destructive'
                           )}
                           placeholder="Prénom"
                           {...field}
@@ -230,7 +228,7 @@ export default function UserDetailsPage() {
                     <FormItem className="w-full">
                       <FormLabel
                         className={clsx(
-                          form.formState.errors.lastName && 'text-red-500'
+                          form.formState.errors.lastName && 'text-destructive'
                         )}
                       >
                         Nom
@@ -238,7 +236,8 @@ export default function UserDetailsPage() {
                       <FormControl>
                         <Input
                           className={clsx(
-                            form.formState.errors.lastName && 'border-red-500'
+                            form.formState.errors.lastName &&
+                              'border-destructive'
                           )}
                           placeholder="Nom"
                           {...field}
@@ -257,7 +256,7 @@ export default function UserDetailsPage() {
                   <FormItem>
                     <FormLabel
                       className={clsx(
-                        form.formState.errors.email && 'text-red-500'
+                        form.formState.errors.email && 'text-destructive'
                       )}
                     >
                       Email
@@ -265,7 +264,7 @@ export default function UserDetailsPage() {
                     <FormControl>
                       <Input
                         className={clsx(
-                          form.formState.errors.email && 'border-red-500'
+                          form.formState.errors.email && 'border-destructive'
                         )}
                         type="email"
                         placeholder="Email"
@@ -284,7 +283,7 @@ export default function UserDetailsPage() {
                   <FormItem>
                     <FormLabel
                       className={clsx(
-                        form.formState.errors.username && 'text-red-500'
+                        form.formState.errors.username && 'text-destructive'
                       )}
                     >
                       Nom d&apos;utilisateur
@@ -292,7 +291,7 @@ export default function UserDetailsPage() {
                     <FormControl>
                       <Input
                         className={clsx(
-                          form.formState.errors.username && 'border-red-500'
+                          form.formState.errors.username && 'border-destructive'
                         )}
                         placeholder="Nom d'utilisateur"
                         {...field}
@@ -310,7 +309,7 @@ export default function UserDetailsPage() {
                   <FormItem>
                     <FormLabel
                       className={clsx(
-                        form.formState.errors.role && 'text-red-500'
+                        form.formState.errors.role && 'text-destructive'
                       )}
                     >
                       Rôle
@@ -324,7 +323,7 @@ export default function UserDetailsPage() {
                       <FormControl>
                         <SelectTrigger
                           className={clsx(
-                            form.formState.errors.role && 'border-red-500'
+                            form.formState.errors.role && 'border-destructive'
                           )}
                         >
                           <SelectValue placeholder="Sélectionner un rôle" />
@@ -364,7 +363,7 @@ export default function UserDetailsPage() {
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
-                    <DialogClose>
+                    <DialogClose asChild>
                       <Button variant="outline">Annuler</Button>
                     </DialogClose>
                     <Button
@@ -378,7 +377,7 @@ export default function UserDetailsPage() {
                 </DialogContent>
               </Dialog>
 
-              <div className="flex gap-4">
+              <div className="flex flex-col-reverse gap-3 sm:flex-row">
                 <Button
                   type="button"
                   variant="outline"
@@ -411,6 +410,6 @@ export default function UserDetailsPage() {
           </CardContent>
         </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }

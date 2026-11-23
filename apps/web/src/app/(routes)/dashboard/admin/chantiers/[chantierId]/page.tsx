@@ -2,12 +2,18 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { AlertTriangle, ArrowLeft, MapPin } from 'lucide-react';
 import { Role } from '@repo/types';
 import { formatChantierSchedule, useChantiers } from '@/entities/chantier';
 import { useUserStore } from '@/entities/user';
 import { ChantierScheduleCard } from '@/features/chantiers';
 import { ChantierDocumentsManager } from '@/widgets/chantier-documents';
 import { ExportEnedisButton } from '@/features/enedis-export';
+import { Button } from '@/shared/ui/button';
+import { EmptyState } from '@/shared/ui/empty-state';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
+import { Skeleton } from '@/shared/ui/skeleton';
 
 export default function AdminChantierDetailPage() {
   const { chantierId } = useParams();
@@ -18,58 +24,78 @@ export default function AdminChantierDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
-        <p>Chargement...</p>
-      </div>
+      <PageContainer>
+        <Skeleton className="mb-6 h-12 w-2/3" />
+        <Skeleton className="h-64 rounded-xl" />
+        <span className="sr-only">Chargement...</span>
+      </PageContainer>
     );
   }
 
-  if (error) {
+  if (error || !chantier) {
     return (
-      <div className="p-8">
-        <p className="text-destructive">Une erreur est survenue</p>
-      </div>
+      <PageContainer>
+        <EmptyState
+          icon={<AlertTriangle />}
+          title={error ? 'Une erreur est survenue' : 'Chantier introuvable.'}
+          action={
+            <Button asChild variant="outline">
+              <Link href="/dashboard/admin/chantiers">
+                Retour aux chantiers
+              </Link>
+            </Button>
+          }
+        />
+      </PageContainer>
     );
   }
 
-  if (!chantier) {
-    return (
-      <div className="p-8">
-        <p>Chantier introuvable.</p>
-      </div>
-    );
-  }
+  const details = [
+    { label: 'Marché', value: chantier.market?.name ?? '—' },
+    { label: 'N° ENEDIS', value: chantier.enedisAffaireNumber },
+    { label: 'N° interne', value: chantier.internalAffaireNumber },
+    { label: 'Planning', value: formatChantierSchedule(chantier) },
+  ];
 
   return (
-    <div className="mx-2 py-10 sm:mx-10">
-      <Link
-        href="/dashboard/admin/chantiers"
-        className="text-muted-foreground mb-4 inline-block text-sm"
-      >
-        ← Retour aux chantiers
-      </Link>
+    <PageContainer className="space-y-6">
+      <Button asChild variant="ghost" size="sm" className="-ml-2">
+        <Link href="/dashboard/admin/chantiers">
+          <ArrowLeft />
+          Retour aux chantiers
+        </Link>
+      </Button>
 
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <h1 className="text-2xl font-bold sm:text-3xl">{chantier.address}</h1>
-        <ExportEnedisButton
-          scope="chantiers"
-          id={chantier.id}
-          label="Exporter le chantier (Excel Enedis)"
-        />
-      </div>
+      <PageHeader
+        className="mb-0 md:mb-0"
+        icon={<MapPin />}
+        eyebrow="Chantier"
+        title={chantier.address}
+        actions={
+          <ExportEnedisButton
+            scope="chantiers"
+            id={chantier.id}
+            label="Exporter le chantier (Excel Enedis)"
+          />
+        }
+      />
 
-      <div className="text-muted-foreground mt-2 flex flex-wrap gap-4 text-sm">
-        <span>Marché : {chantier.market?.name ?? '—'}</span>
-        <span>N° ENEDIS : {chantier.enedisAffaireNumber}</span>
-        <span>N° interne : {chantier.internalAffaireNumber}</span>
-        <span>Planning : {formatChantierSchedule(chantier)}</span>
-      </div>
+      <dl className="bg-card shadow-card grid grid-cols-2 gap-3 rounded-xl border p-4 sm:p-5 lg:grid-cols-4">
+        {details.map(({ label, value }) => (
+          <div key={label} className="min-w-0">
+            <dt className="text-muted-foreground text-xs font-medium">
+              {label}
+            </dt>
+            <dd className="mt-0.5 truncate text-sm font-medium">{value}</dd>
+          </div>
+        ))}
+      </dl>
 
       {user?.role === Role.ADMIN && (
         <ChantierScheduleCard chantier={chantier} />
       )}
 
       <ChantierDocumentsManager chantierId={chantierIdNumber} />
-    </div>
+    </PageContainer>
   );
 }

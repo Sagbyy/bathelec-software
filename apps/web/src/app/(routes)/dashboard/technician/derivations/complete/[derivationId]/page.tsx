@@ -1,11 +1,15 @@
 'use client';
 
-import { useDerivationById } from '@/features/derivations/model/use-derivation';
 import { useParams } from 'next/navigation';
+import { ClipboardPen } from 'lucide-react';
+import { useDerivationById } from '@/features/derivations/model/use-derivation';
 import { MultiStepForm } from '@/features/derivations/ui/multi-step-form';
 import { InfoCard } from '@/features/derivations/ui/info-derivation-card';
 import { getDerivationReference } from '@/entities/derivation';
 import { PageLoader } from '@/shared/ui/page-loader';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
+import { EmptyState } from '@/shared/ui/empty-state';
 
 export default function CompleteDerivationPage() {
   const { derivationId } = useParams();
@@ -16,22 +20,34 @@ export default function CompleteDerivationPage() {
     error,
   } = useDerivationById(parseInt(derivationId as string));
 
-  if (isLoading) return <PageLoader />;
-  if (error) return <div>Error: {error.message}</div>;
-  if (!derivation) return <div>Derivation not found</div>;
+  if (isLoading) return <PageLoader inline />;
+
+  if (error || !derivation)
+    return (
+      <PageContainer width="narrow">
+        <EmptyState
+          title={error ? 'Une erreur est survenue' : 'Dérivation introuvable'}
+          description={
+            error?.message ?? "Cette dérivation n'existe pas ou a été supprimée."
+          }
+        />
+      </PageContainer>
+    );
 
   return (
-    <div className="container mx-auto max-w-3xl px-4 py-10 md:px-6">
-      <h1 className="mb-8 text-center text-3xl font-bold">
-        Formulaire d'Intervention
-      </h1>
+    <PageContainer width="narrow">
+      <PageHeader
+        icon={<ClipboardPen />}
+        title="Formulaire d'Intervention"
+        description="Complétez chaque étape du relevé sur le terrain."
+      />
       <InfoCard
         reference={getDerivationReference(derivation)}
-        status={derivation?.status}
-        chantier={derivation?.chantier}
-        createdAt={derivation?.createdAt}
+        status={derivation.status}
+        chantier={derivation.chantier}
+        createdAt={derivation.createdAt}
       />
       <MultiStepForm derivation={derivation} />
-    </div>
+    </PageContainer>
   );
 }

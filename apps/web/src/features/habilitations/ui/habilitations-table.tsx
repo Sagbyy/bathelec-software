@@ -31,8 +31,8 @@ function CodeBadge({ label, enabled }: { label: string; enabled: boolean }) {
       className={cn(
         'inline-block rounded px-1.5 py-0.5 text-xs font-bold',
         enabled
-          ? 'bg-green-100 text-green-700'
-          : 'bg-gray-100 text-gray-400 line-through'
+          ? 'bg-success-soft text-success-soft-foreground'
+          : 'bg-muted text-muted-foreground/70 line-through'
       )}
     >
       {label}
@@ -42,15 +42,15 @@ function CodeBadge({ label, enabled }: { label: string; enabled: boolean }) {
 
 function Legend() {
   return (
-    <div className="mb-3 flex items-center gap-4 text-xs text-gray-500">
+    <div className="text-muted-foreground mb-3 flex items-center gap-4 text-xs">
       <div className="flex items-center gap-1.5">
-        <span className="inline-block rounded bg-green-100 px-1.5 py-0.5 text-xs font-bold text-green-700">
+        <span className="bg-success-soft text-success-soft-foreground inline-block rounded px-1.5 py-0.5 text-xs font-bold">
           Ex
         </span>
         <span>Activée</span>
       </div>
       <div className="flex items-center gap-1.5">
-        <span className="inline-block rounded bg-gray-100 px-1.5 py-0.5 text-xs font-bold text-gray-400 line-through">
+        <span className="bg-muted text-muted-foreground/70 inline-block rounded px-1.5 py-0.5 text-xs font-bold line-through">
           Ex
         </span>
         <span>Non activée</span>
@@ -65,26 +65,26 @@ export function HabilitationsTable({ habilitations }: HabilitationsTableProps) {
   return (
     <div>
       <Legend />
-      <div className="w-full overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+      <div className="bg-card shadow-card w-full overflow-x-auto rounded-xl border">
         <table className="w-full min-w-[700px] border-collapse text-sm">
           <thead>
-            <tr className="border-b bg-gray-50">
+            <tr className="bg-muted/50 border-b">
               <th className="w-28 border-r p-3" rowSpan={3} />
               <th
-                className="border-r p-3 text-center font-semibold text-gray-600"
+                className="text-muted-foreground border-r p-3 text-center font-semibold"
                 colSpan={2}
               >
                 Opération d'ordre non électrique
               </th>
               <th
-                className="p-3 text-center font-semibold text-gray-600"
+                className="text-muted-foreground p-3 text-center font-semibold"
                 colSpan={5}
               >
                 Opération d'ordre électrique
               </th>
             </tr>
             {/* Ligne labels (+ images nonElec en rowSpan=2) */}
-            <tr className="border-b bg-gray-50">
+            <tr className="bg-muted/50 border-b">
               {HABILITATION_TABLE.columns.slice(1).map((col) =>
                 NO_LABEL_COLUMNS.has(col.key) ? (
                   <th
@@ -105,7 +105,7 @@ export function HabilitationsTable({ habilitations }: HabilitationsTableProps) {
                 ) : (
                   <th
                     key={col.key}
-                    className="border-r p-2 text-center text-xs font-medium text-gray-500 last:border-r-0"
+                    className="text-muted-foreground border-r p-2 text-center text-xs font-medium last:border-r-0"
                   >
                     {col.label}
                   </th>
@@ -113,7 +113,7 @@ export function HabilitationsTable({ habilitations }: HabilitationsTableProps) {
               )}
             </tr>
             {/* Ligne images (colonnes avec label uniquement) */}
-            <tr className="border-b bg-gray-50">
+            <tr className="bg-muted/50 border-b">
               {HABILITATION_TABLE.columns
                 .slice(1)
                 .filter((col) => !NO_LABEL_COLUMNS.has(col.key))
@@ -141,17 +141,17 @@ export function HabilitationsTable({ habilitations }: HabilitationsTableProps) {
                 key={row.tension}
                 className={cn(
                   'border-b last:border-b-0',
-                  rowIdx === 0 ? 'bg-white' : 'bg-gray-50/50'
+                  rowIdx === 0 ? 'bg-card' : 'bg-muted/20'
                 )}
               >
-                <td className="border-r p-3 text-center text-xs font-semibold text-gray-700">
+                <td className="text-foreground border-r p-3 text-center text-xs font-semibold">
                   {row.tension}
                 </td>
                 {row.cells.map((cell, cellIdx) =>
                   cell === null ? (
                     <td
                       key={cellIdx}
-                      className="border-r p-3 text-center text-gray-300 last:border-r-0"
+                      className="text-muted-foreground/70 border-r p-3 text-center last:border-r-0"
                     >
                       —
                     </td>
@@ -167,7 +167,7 @@ export function HabilitationsTable({ habilitations }: HabilitationsTableProps) {
                         ))}
                       </div>
                       {cell.description && (
-                        <p className="mt-1.5 text-center text-[10px] leading-tight text-gray-400">
+                        <p className="text-muted-foreground/70 mt-1.5 text-center text-[10px] leading-tight">
                           {cell.description}
                         </p>
                       )}

@@ -1,5 +1,8 @@
 'use client';
 
+import { Briefcase } from 'lucide-react';
+import { EmptyState } from '@/shared/ui/empty-state';
+import { Skeleton } from '@/shared/ui/skeleton';
 import { useState } from 'react';
 import {
   AffaireStats,
@@ -66,17 +69,18 @@ function AffaireStatsContent({
 }) {
   if (isLoading) {
     return (
-      <p className="text-muted-foreground py-6 text-center text-sm">
-        Chargement des statistiques...
-      </p>
+      <div className="space-y-2">
+        {Array.from({ length: 4 }, (_, index) => (
+          <Skeleton key={index} className="h-11 rounded-lg" />
+        ))}
+        <span className="sr-only">Chargement des statistiques...</span>
+      </div>
     );
   }
 
   if (rows.length === 0) {
     return (
-      <p className="text-muted-foreground py-6 text-center text-sm">
-        Aucune affaire à afficher.
-      </p>
+      <EmptyState icon={<Briefcase />} title="Aucune affaire à afficher." />
     );
   }
 
@@ -115,7 +119,18 @@ function AffaireStatsContent({
               {stats.awaitingCorrection}
             </TableCell>
             <TableCell className="text-right">
-              {stats.completionRate} %
+              <div className="flex items-center justify-end gap-2">
+                <div
+                  aria-hidden="true"
+                  className="bg-muted hidden h-1.5 w-16 overflow-hidden rounded-full sm:block"
+                >
+                  <div
+                    className="bg-success h-full rounded-full"
+                    style={{ width: `${Math.min(stats.completionRate, 100)}%` }}
+                  />
+                </div>
+                <span className="tabular-nums">{stats.completionRate} %</span>
+              </div>
             </TableCell>
           </TableRow>
         ))}

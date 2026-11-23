@@ -1,9 +1,12 @@
 'use client';
 
-import { ShieldCheck, Loader2 } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { useUserById } from '@/features/users';
 import { HabilitationsAdmin } from '@/features/habilitations';
 import { SpecialHabilitationsAdmin } from '@/features/special-habilitations';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
+import { Spinner } from '@/shared/ui/spinner';
 
 interface PageProps {
   params: { technicianId: string };
@@ -16,43 +19,39 @@ export default function AdminHabilitationsPage({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+      <div className="flex min-h-[60dvh] items-center justify-center">
+        <Spinner />
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 md:px-8">
-      <div className="mb-8 flex items-center gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-100">
-          <ShieldCheck className="h-6 w-6 text-indigo-600" strokeWidth={1.75} />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Habilitations</h1>
-          <p className="text-muted-foreground text-sm">
-            {technician
-              ? `${technician.firstName} ${technician.lastName} (${technician.username})`
-              : `Technicien #${userId}`}
-          </p>
-        </div>
-      </div>
+    <PageContainer width="narrow">
+      <PageHeader
+        icon={<ShieldCheck />}
+        title="Habilitations"
+        description={
+          technician
+            ? `${technician.firstName} ${technician.lastName} (${technician.username})`
+            : `Technicien #${userId}`
+        }
+      />
 
       <div className="space-y-8">
         <section>
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500">
+          <h2 className="text-muted-foreground mb-3 text-xs font-semibold uppercase tracking-wider">
             Titres &amp; certificats
           </h2>
           <SpecialHabilitationsAdmin technicianId={userId} />
         </section>
 
         <section>
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500">
+          <h2 className="text-muted-foreground mb-3 text-xs font-semibold uppercase tracking-wider">
             Habilitations NF C 18-510
           </h2>
           <HabilitationsAdmin technicianId={userId} />
         </section>
       </div>
-    </div>
+    </PageContainer>
   );
 }

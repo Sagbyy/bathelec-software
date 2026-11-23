@@ -1,7 +1,12 @@
 'use client';
 
-import { Button } from '@/shared/ui/button';
+import { AlertTriangle, UsersRound } from 'lucide-react';
 import { Icon } from '@iconify/react/dist/iconify.js';
+import { Button } from '@/shared/ui/button';
+import { EmptyState } from '@/shared/ui/empty-state';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
+import { Skeleton } from '@/shared/ui/skeleton';
 import { DataTable } from '@/features/users/ui/users-data-table/data-table';
 import { columns } from '@/features/users/ui/users-data-table/columns';
 import { useUsers } from '@/features/users/model/use-user';
@@ -11,46 +16,48 @@ export default function ListUsersPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-4 p-8">
-        <div className="flex items-center justify-center py-12">
-          <p>Chargement...</p>
-        </div>
-      </div>
+      <PageContainer>
+        <Skeleton className="mb-8 h-12 w-64" />
+        <Skeleton className="h-96 w-full rounded-xl" />
+        <span className="sr-only">Chargement...</span>
+      </PageContainer>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col gap-4 p-8">
-        <div className="flex items-center justify-center py-12">
-          <p className="text-destructive">
-            Erreur:{' '}
-            {error instanceof Error ? error.message : 'Une erreur est survenue'}
-          </p>
-        </div>
-      </div>
+      <PageContainer>
+        <EmptyState
+          icon={<AlertTriangle />}
+          title="Impossible de charger la liste"
+          description={
+            error instanceof Error ? error.message : 'Une erreur est survenue'
+          }
+        />
+      </PageContainer>
     );
   }
 
   const users = data || [];
 
   return (
-    <div className="flex flex-col gap-4 p-8">
-      <div className="flex items-center justify-between">
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-          Utilisateurs
-        </h2>
-        <div>
+    <PageContainer>
+      <PageHeader
+        icon={<UsersRound />}
+        title="Utilisateurs"
+        description="Gérez les comptes et les rôles de la plateforme"
+        actions={
           <Button variant="outline">
             <Icon icon="hugeicons:csv-02" />
             Télécharger CSV
           </Button>
-        </div>
-      </div>
+        }
+      />
       <DataTable columns={columns} data={users} />
-      <p className="text-muted-foreground text-sm">
-        <span className="font-bold">{users.length}</span> utilisateurs trouvés
+      <p className="text-muted-foreground mt-2 text-sm">
+        <span className="text-foreground font-semibold">{users.length}</span>{' '}
+        utilisateurs trouvés
       </p>
-    </div>
+    </PageContainer>
   );
 }

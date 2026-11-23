@@ -84,7 +84,6 @@ export function MultiStepForm({
 
   const renderStep = useCallback(() => {
     const actualStep = getActualStep(step);
-    //const actualStep = 9;
 
     switch (actualStep) {
       case 1:
@@ -124,7 +123,7 @@ export function MultiStepForm({
           }}
         >
           <Card>
-            <CardContent className="pt-6">
+            <CardContent className="pt-5">
               {renderStep()}
 
               <FormNavigation

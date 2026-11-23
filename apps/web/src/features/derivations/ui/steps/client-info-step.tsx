@@ -18,7 +18,7 @@ export function ClientInfoStep({ form }: ClientInfoStepProps) {
 
   return (
     <div className="space-y-6">
-      <div className="text-xl font-semibold">1. Informations client</div>
+      <div className="text-lg font-semibold tracking-tight sm:text-xl">1. Informations client</div>
 
       <LabeledInput
         control={form.control}

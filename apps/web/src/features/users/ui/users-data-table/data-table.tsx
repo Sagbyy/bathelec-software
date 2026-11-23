@@ -114,18 +114,18 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex flex-col gap-2 pb-4 sm:flex-row sm:items-center">
         <Input
           placeholder="Rechercher par ID, email, nom d'utilisateur, prénom ou nom..."
           value={globalFilter ?? ''}
           onChange={(event) => {
             setGlobalFilter(event.target.value);
           }}
-          className="max-w-sm"
+          className="sm:max-w-sm"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="sm:ml-auto">
               <Icon icon="mdi:eye" className="h-4 w-4" />
               Colonnes
             </Button>
@@ -150,7 +150,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="overflow-hidden rounded-md border">
+      <div className="bg-card shadow-card overflow-hidden rounded-xl border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -191,7 +191,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="text-muted-foreground h-32 text-center"
                 >
                   Aucun résultat.
                 </TableCell>
@@ -212,7 +212,7 @@ export function DataTable<TData, TValue>({
               value={`${table.getState().pagination.pageSize}`}
               onValueChange={(value) => table.setPageSize(Number(value))}
             >
-              <SelectTrigger className="h-8 w-[80px]">
+              <SelectTrigger className="h-9 w-[80px]">
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />
@@ -234,7 +234,7 @@ export function DataTable<TData, TValue>({
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8"
+              className="size-9"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
               aria-label="Première page"
@@ -244,7 +244,7 @@ export function DataTable<TData, TValue>({
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8"
+              className="size-9"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
               aria-label="Page précédente"
@@ -254,7 +254,7 @@ export function DataTable<TData, TValue>({
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8"
+              className="size-9"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
               aria-label="Page suivante"
@@ -264,7 +264,7 @@ export function DataTable<TData, TValue>({
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8"
+              className="size-9"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
               aria-label="Dernière page"

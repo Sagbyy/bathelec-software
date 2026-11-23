@@ -1,118 +1,126 @@
 'use client';
 
-import Image from 'next/image';
-import { Icon } from '@iconify/react';
-import React from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import clsx from 'clsx';
+import { AlertCircle, Eye, EyeOff, Loader2 } from 'lucide-react';
 import useAuth from '../model/use-auth';
-import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert';
-import LoaderComponent from '@/shared/ui/loader-component';
+import { loginSchema, type LoginValues } from '../model/login.schema';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from '@/shared/ui/form';
 import { Input } from '@/shared/ui/input';
 import { Button } from '@/shared/ui/button';
 
-const formSchema = z.object({
-  username: z.string().min(2).max(50),
-  password: z.string(),
-});
-
 export default function LoginForm() {
   const { login, loading, error } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       username: '',
       password: '',
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: LoginValues) => {
     login(values.username, values.password);
   };
 
   return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="mx-3 w-full max-w-72 rounded-lg bg-white p-4 shadow-sm">
-        <Image
-          src="/logo-abrisur.webp"
-          className="mx-auto h-auto w-auto"
-          alt="Abrisûr Logo"
-          width={200}
-          height={100}
-          priority
-        />
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-5"
+        noValidate
+      >
         {error && (
-          <Alert variant="destructive" className="my-3">
-            <Icon className="h-4 w-4" icon="octicon:alert-24" />
-            <AlertTitle>Erreur</AlertTitle>
-            <AlertDescription>
+          <div
+            role="alert"
+            className="flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-sm"
+          >
+            <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
+            <p className="text-foreground">
               Votre nom d'utilisateur ou mot de passe est incorrect.
-            </AlertDescription>
-          </Alert>
-        )}
-        {loading ? (
-          <div className="m-5 flex items-center justify-center">
-            <LoaderComponent />
+            </p>
           </div>
-        ) : (
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className={clsx(error && 'text-red-500')}>
-                      Nom d'utilisateur
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        className={clsx(error && 'border-red-500')}
-                        required
-                        placeholder="Votre nom d'utilisateur"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className={clsx(error && 'text-red-500')}>
-                      Mot de passe
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        className={clsx(error && 'border-red-500')}
-                        required
-                        placeholder="Votre mot de passe"
-                        type="password"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="hover:bg w-full bg-[#CD2C35]">
-                Se connecter
-              </Button>
-            </form>
-          </Form>
         )}
-      </div>
-    </div>
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nom d'utilisateur</FormLabel>
+              <FormControl>
+                <Input
+                  autoComplete="username"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  placeholder="Votre nom d'utilisateur"
+                  aria-invalid={error || undefined}
+                  className="h-11"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Mot de passe</FormLabel>
+              <div className="relative">
+                <FormControl>
+                  <Input
+                    autoComplete="current-password"
+                    placeholder="Votre mot de passe"
+                    type={showPassword ? 'text' : 'password'}
+                    aria-invalid={error || undefined}
+                    className="h-11 pr-11"
+                    {...field}
+                  />
+                </FormControl>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((visible) => !visible)}
+                  aria-label={
+                    showPassword
+                      ? 'Masquer le mot de passe'
+                      : 'Afficher le mot de passe'
+                  }
+                  className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-lg text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {showPassword ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
+                </button>
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full shadow-brand"
+          disabled={loading}
+          aria-busy={loading}
+        >
+          {loading && <Loader2 className="animate-spin" />}
+          Se connecter
+        </Button>
+      </form>
+    </Form>
   );
 }

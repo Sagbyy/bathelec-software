@@ -1,8 +1,8 @@
 'use client';
 
 import { Fragment } from 'react';
-import { Loader2 } from 'lucide-react';
 import { useUserStore } from '@/entities/user';
+import { Spinner } from '@/shared/ui/spinner';
 import {
   OfficialDocumentKey,
   useOfficialDocument,
@@ -59,14 +59,14 @@ export function OfficialDocumentsForm({
   if (isLoading) {
     return (
       <div className="flex min-h-[200px] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+        <Spinner />
       </div>
     );
   }
 
   if (managed && error) {
     return (
-      <p className="text-destructive text-sm">
+      <p className="rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm text-destructive">
         Impossible de charger les documents de cet utilisateur.
       </p>
     );
@@ -74,14 +74,14 @@ export function OfficialDocumentsForm({
 
   if (managed && !data) {
     return (
-      <p className="text-muted-foreground text-sm">
+      <p className="rounded-xl border border-dashed bg-card p-6 text-center text-sm text-muted-foreground">
         Ce technicien n&apos;a pas encore enregistré de documents officiels.
       </p>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 rounded-xl border bg-card p-4 shadow-card sm:p-6">
       {documentKeys.map((documentKey, index) => {
         const expiryKey = `${documentKey}ExpiresAt` as const;
         return (

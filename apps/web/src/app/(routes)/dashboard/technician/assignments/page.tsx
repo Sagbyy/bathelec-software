@@ -1,12 +1,19 @@
 'use client';
 
+import { HardHat } from 'lucide-react';
 import { TeamDerivationsList } from '@/features/derivations';
+import { PageContainer } from '@/shared/ui/page-container';
+import { PageHeader } from '@/shared/ui/page-header';
 
 export default function TechnicianAssignmentsPage() {
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-10 md:px-8">
-      <h1 className="mb-6 text-2xl font-bold">Mes dérivations</h1>
+    <PageContainer width="default">
+      <PageHeader
+        icon={<HardHat />}
+        title="Mes dérivations"
+        description="Les relevés de dérivation de votre équipe"
+      />
       <TeamDerivationsList />
-    </div>
+    </PageContainer>
   );
 }

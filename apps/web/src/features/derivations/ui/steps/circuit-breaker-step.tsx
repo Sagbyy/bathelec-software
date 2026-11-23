@@ -34,7 +34,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
 
   return (
     <div className="space-y-6">
-      <div className="text-xl font-semibold">
+      <div className="text-lg font-semibold tracking-tight sm:text-xl">
         {oldMeterPreserved ? 6 : 7}. Disjoncteur
       </div>
 
@@ -52,7 +52,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         control={form.control}
         name="circuitBreaker.preserved"
         render={({ field }) => (
-          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+          <FormItem className="flex flex-row items-center justify-between gap-4 rounded-xl border bg-muted/30 p-4">
             <div className="space-y-0.5">
               <FormLabel className="text-base">Conservé</FormLabel>
             </div>
@@ -73,7 +73,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         render={({ field }) => (
           <FormItem className="space-y-3">
             <FormLabel>
-              Voltage <span className="ml-1 text-red-500">*</span>
+              Voltage <span className="ml-1 text-destructive">*</span>
             </FormLabel>
             <FormControl>
               <RadioGroup
@@ -118,7 +118,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         render={({ field }) => (
           <FormItem className="space-y-3">
             <FormLabel>
-              Type <span className="ml-1 text-red-500">*</span>
+              Type <span className="ml-1 text-destructive">*</span>
             </FormLabel>
             <FormControl>
               <RadioGroup
@@ -186,7 +186,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         control={form.control}
         name="circuitBreaker.commissioningDone"
         render={({ field }) => (
-          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+          <FormItem className="flex flex-row items-center justify-between gap-4 rounded-xl border bg-muted/30 p-4">
             <div className="space-y-0.5">
               <FormLabel className="text-base">
                 Mise en service effectuée
@@ -211,7 +211,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
             <FormItem className="space-y-3">
               <FormLabel>
                 Test du bouton « TEST » après mise en service
-                <span className="ml-1 text-red-500">*</span>
+                <span className="ml-1 text-destructive">*</span>
               </FormLabel>
               <FormControl>
                 <RadioGroup
@@ -268,7 +268,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
               <FormItem>
                 <FormLabel htmlFor="replacement-explanation">
                   Explication du remplacement
-                  <span className="ml-1 text-red-500">*</span>
+                  <span className="ml-1 text-destructive">*</span>
                 </FormLabel>
                 <FormControl>
                   <Textarea
@@ -289,7 +289,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
         control={form.control}
         name="circuitBreaker.sealed"
         render={({ field }) => (
-          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+          <FormItem className="flex flex-row items-center justify-between gap-4 rounded-xl border bg-muted/30 p-4">
             <div className="space-y-0.5">
               <FormLabel className="text-base">Plombage</FormLabel>
             </div>

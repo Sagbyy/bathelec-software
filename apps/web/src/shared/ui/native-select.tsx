@@ -8,7 +8,7 @@ export const NativeSelect = React.forwardRef<
   <select
     ref={ref}
     className={cn(
-      'border-input bg-background ring-offset-background focus-visible:ring-ring h-10 w-full rounded-md border px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+      'h-10 w-full rounded-lg border border-input bg-card px-3 text-base shadow-xs transition-[color,box-shadow,border-color] hover:border-foreground/20 focus-visible:outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/15 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60 md:text-sm',
       className
     )}
     {...props}

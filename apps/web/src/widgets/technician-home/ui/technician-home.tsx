@@ -2,63 +2,16 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { User } from 'lucide-react';
+import { ArrowRight, ChevronRight, UserRound } from 'lucide-react';
 import { useUserStore } from '@/entities/user';
-import { cn } from '@/shared/lib/utils';
-
-type NavItem = {
-  label: string;
-  href: string;
-  imageSrc: string;
-};
-
-const NAV_ITEMS: NavItem[] = [
-  {
-    label: 'Top Chantiers',
-    href: '/dashboard/technician/top-chantiers',
-    imageSrc: '/images/top-chantier.png',
-  },
-  {
-    label: 'Mes dérivations',
-    href: '/dashboard/technician/assignments',
-    imageSrc: '/images/builder.png',
-  },
-  {
-    label: 'Chantiers programmés',
-    href: '/dashboard/technician/scheduled-chantiers',
-    imageSrc: '/images/site-supervisor.png',
-  },
-  {
-    label: 'Chantiers en cours',
-    href: '/dashboard/technician/derivations',
-    imageSrc: '/images/red-folder.png',
-  },
-  {
-    label: 'Chantiers terminés',
-    href: '/dashboard/technician/derivations/complete',
-    imageSrc: '/images/green-folder.png',
-  },
-  {
-    label: 'Mes documents officiels',
-    href: '/dashboard/technician/documents',
-    imageSrc: '/images/identity-card-page.png',
-  },
-  {
-    label: 'Mes habilitations',
-    href: '/dashboard/technician/habilitations',
-    imageSrc: '/images/habilitation-page.png',
-  },
-  {
-    label: 'Mon véhicule',
-    href: '/dashboard/technician/vehicule',
-    imageSrc: '/images/vehicle-inspection-page.png',
-  },
-  {
-    label: "Numéros d'urgence",
-    href: '/dashboard/technician/urgences',
-    imageSrc: '/images/emergency-phone.png',
-  },
-];
+import { Button } from '@/shared/ui/button';
+import { GridBackdrop } from '@/shared/ui/grid-backdrop';
+import { PageContainer } from '@/shared/ui/page-container';
+import {
+  FEATURED_ITEM,
+  NAV_SECTIONS,
+  type TechnicianNavItem,
+} from '../config/nav-items';
 
 export function TechnicianHome() {
   const { user } = useUserStore();
@@ -69,78 +22,115 @@ export function TechnicianHome() {
       : (user?.firstName ?? user?.lastName ?? 'Technicien');
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <div className="mx-auto w-full max-w-5xl px-4 pb-8 pt-6 md:px-8 md:pt-10">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">
-              Tableau de bord
-            </p>
-            <h1 className="mt-1 text-2xl font-bold text-gray-900 md:text-3xl">
-              Bonjour, {fullName} 👋
-            </h1>
-            <p className="mt-1 text-gray-500">Que souhaitez-vous faire ?</p>
-          </div>
-          <Link
-            href="/dashboard/profile"
-            className="flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 shadow-sm transition-all duration-150 hover:shadow-md active:scale-95"
-          >
-            <User className="h-4 w-4 text-slate-600" strokeWidth={1.75} />
-            <span className="text-sm font-medium text-gray-900">
-              Mon profil
-            </span>
+    <PageContainer width="default" className="space-y-8">
+      <header className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-wider text-primary">
+            Tableau de bord
+          </p>
+          <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight md:text-3xl">
+            Bonjour, {fullName} 👋
+          </h1>
+          <p className="mt-1 text-muted-foreground">
+            Que souhaitez-vous faire ?
+          </p>
+        </div>
+        <Button
+          asChild
+          variant="outline"
+          className="size-10 shrink-0 px-0 sm:h-10 sm:w-auto sm:px-4"
+        >
+          <Link href="/dashboard/profile">
+            <UserRound />
+            <span className="sr-only sm:not-sr-only">Mon profil</span>
           </Link>
-        </div>
-      </div>
+        </Button>
+      </header>
 
-      <div className="mx-auto w-full max-w-5xl flex-1 px-4 pb-8 md:px-8">
-        <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <div className="col-span-2">
-            <NavCard item={NAV_ITEMS[0]!} fullWidth />
-          </div>
-          {NAV_ITEMS.slice(1).map((item) => (
-            <NavCard key={item.href} item={item} />
-          ))}
-        </div>
-      </div>
-    </div>
+      <FeaturedCard item={FEATURED_ITEM} />
+
+      {NAV_SECTIONS.map((section) => (
+        <section key={section.title} aria-labelledby={sectionId(section.title)}>
+          <h2
+            id={sectionId(section.title)}
+            className="mb-3 text-sm font-semibold text-muted-foreground"
+          >
+            {section.title}
+          </h2>
+          <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+            {section.items.map((item) => (
+              <li key={item.href}>
+                <NavCard item={item} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </PageContainer>
   );
 }
 
-function NavCard({
-  item,
-  fullWidth = false,
-}: {
-  item: NavItem;
-  fullWidth?: boolean;
-}) {
+const sectionId = (title: string) =>
+  `section-${title.toLowerCase().replace(/\s+/g, '-')}`;
+
+function FeaturedCard({ item }: { item: TechnicianNavItem }) {
   return (
     <Link
       href={item.href}
-      className={cn(
-        'group flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-200',
-        'hover:-translate-y-0.5 hover:shadow-md active:scale-95',
-        fullWidth
-          ? 'flex-row gap-4 py-5'
-          : 'min-h-[120px] gap-3 sm:min-h-[140px]'
-      )}
+      className="group relative flex items-center gap-4 overflow-hidden rounded-2xl bg-ink p-5 text-white shadow-elevated transition-transform active:scale-[0.99] sm:p-6"
     >
-      <Image
-        src={item.imageSrc}
-        alt={item.label}
-        width={fullWidth ? 48 : 64}
-        height={fullWidth ? 48 : 64}
-        className="shrink-0 object-contain"
-      />
-      <span
-        className={cn(
-          'font-semibold leading-tight text-gray-700',
-          fullWidth
-            ? 'text-base md:text-lg'
-            : 'text-center text-sm sm:text-base'
+      <GridBackdrop cellSize={24} />
+      <span className="relative flex size-14 shrink-0 items-center justify-center rounded-xl bg-white shadow-elevated">
+        <Image
+          src={item.imageSrc}
+          alt=""
+          width={40}
+          height={40}
+          className="object-contain"
+        />
+      </span>
+      <span className="relative min-w-0 flex-1">
+        <span className="block text-lg font-semibold">{item.label}</span>
+        {item.description && (
+          <span className="block text-sm text-white/70">
+            {item.description}
+          </span>
         )}
-      >
-        {item.label}
+      </span>
+      <span className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-ink transition-transform group-hover:translate-x-0.5">
+        <ArrowRight className="size-4" />
+      </span>
+    </Link>
+  );
+}
+
+function NavCard({ item }: { item: TechnicianNavItem }) {
+  return (
+    <Link
+      href={item.href}
+      className="group flex h-full flex-col gap-3 rounded-xl border bg-card p-4 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elevated active:scale-[0.98]"
+    >
+      <span className="flex items-start justify-between">
+        <span className="flex size-12 items-center justify-center rounded-xl bg-muted transition-colors group-hover:bg-primary-soft">
+          <Image
+            src={item.imageSrc}
+            alt=""
+            width={32}
+            height={32}
+            className="object-contain"
+          />
+        </span>
+        <ChevronRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+      </span>
+      <span>
+        <span className="block text-sm font-semibold leading-tight sm:text-base">
+          {item.label}
+        </span>
+        {item.description && (
+          <span className="mt-0.5 block text-xs text-muted-foreground">
+            {item.description}
+          </span>
+        )}
       </span>
     </Link>
   );
