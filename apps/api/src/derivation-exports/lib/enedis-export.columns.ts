@@ -1,4 +1,13 @@
 import { CompletedDerivation } from '../../completed-derivation/entities/completed-derivations.entity';
+import {
+  BREAKER_TYPE_LABELS,
+  CABLE_NATURE_LABELS,
+  METER_GENERATION_LABELS,
+  METER_TYPE_LABELS,
+  VOLTAGE_LABELS,
+  formatInterventionDate,
+  toEnedisLabel,
+} from './enedis-labels';
 
 export type EnedisExportChantier = {
   address: string;
@@ -9,6 +18,7 @@ export type EnedisExportChantier = {
 
 export type EnedisExportSource = {
   derivationId: number;
+  performedBy: string;
   chantier: EnedisExportChantier | null;
   report: Pick<
     CompletedDerivation,
@@ -32,16 +42,11 @@ export type EnedisColumn = {
 
 const yesNo = (value: boolean | undefined) => (value ? 'Oui' : 'Non');
 
-const VOLTAGE_LABELS: Record<string, string> = {
-  mono: 'Monophasé',
-  tri: 'Triphasé',
-};
-
-const BREAKER_TYPE_LABELS: Record<string, string> = {
-  non_differentiel: 'Non différentiel',
-  differentiel: 'Différentiel',
-  selectif: 'Sélectif',
-};
+const newMeterValue = (
+  { report }: EnedisExportSource,
+  value: (newMeter: EnedisExportSource['report']['newMeter']) => string
+) =>
+  report.oldMeter.preserved || !report.newMeter ? '' : value(report.newMeter);
 
 const withUnit = (value: string | undefined, unit: string) =>
   value ? `${value.replace(/\s*A$/i, '')} ${unit}` : '';
@@ -121,19 +126,70 @@ export const ENEDIS_COLUMNS: EnedisColumn[] = [
         .join(' / '),
   },
   {
+    header: "Date et heure d'intervention",
+    width: 18,
+    value: ({ report }) => formatInterventionDate(report.generalInfo.dateTime),
+  },
+  {
+    header: 'Réalisé par',
+    width: 22,
+    value: ({ performedBy }) => performedBy,
+  },
+  {
+    header: 'Commentaire intervention',
+    width: 30,
+    value: ({ report }) => report.generalInfo.comment ?? '',
+  },
+  {
     header: 'Ancien compteur — type',
     width: 18,
-    value: ({ report }) => report.oldMeter.type,
+    value: ({ report }) =>
+      toEnedisLabel(METER_TYPE_LABELS, report.oldMeter.type),
   },
   {
     header: 'Ancien compteur — génération',
     width: 14,
-    value: ({ report }) => report.oldMeter.generation ?? '',
+    value: ({ report }) =>
+      toEnedisLabel(METER_GENERATION_LABELS, report.oldMeter.generation),
   },
   {
     header: 'Ancien compteur — matricule',
     width: 18,
     value: ({ report }) => report.oldMeter.serialNumber ?? '',
+  },
+  {
+    header: 'Ancien compteur — clé',
+    width: 10,
+    value: ({ report }) => report.oldMeter.key ?? '',
+  },
+  {
+    header: 'Ancien compteur — conservé',
+    width: 12,
+    value: ({ report }) => yesNo(report.oldMeter.preserved),
+  },
+  {
+    header: 'Nouveau compteur — type',
+    width: 18,
+    value: (source) => newMeterValue(source, () => METER_TYPE_LABELS.linky),
+  },
+  {
+    header: 'Nouveau compteur — génération',
+    width: 14,
+    value: (source) =>
+      newMeterValue(source, ({ generation }) =>
+        toEnedisLabel(METER_GENERATION_LABELS, generation)
+      ),
+  },
+  {
+    header: 'Nouveau compteur — matricule',
+    width: 18,
+    value: (source) =>
+      newMeterValue(source, ({ serialNumber }) => serialNumber ?? ''),
+  },
+  {
+    header: 'Nouveau compteur — clé',
+    width: 10,
+    value: (source) => newMeterValue(source, ({ key }) => key ?? ''),
   },
   {
     header: 'Ancien compteur — index HP',
@@ -146,28 +202,15 @@ export const ENEDIS_COLUMNS: EnedisColumn[] = [
     value: ({ report }) => report.oldMeter.nightIndex ?? '',
   },
   {
-    header: 'Nouveau compteur — génération',
-    width: 14,
-    value: ({ report }) =>
-      report.oldMeter.preserved ? '' : (report.newMeter?.generation ?? ''),
-  },
-  {
-    header: 'Nouveau compteur — matricule',
-    width: 18,
-    value: ({ report }) =>
-      report.oldMeter.preserved ? '' : (report.newMeter?.serialNumber ?? ''),
-  },
-  {
     header: 'Nouveau compteur — index HP',
     width: 14,
-    value: ({ report }) =>
-      report.oldMeter.preserved ? '' : (report.newMeter?.dayIndex ?? ''),
+    value: (source) => newMeterValue(source, ({ dayIndex }) => dayIndex ?? ''),
   },
   {
     header: 'Nouveau compteur — index HC',
     width: 14,
-    value: ({ report }) =>
-      report.oldMeter.preserved ? '' : (report.newMeter?.nightIndex ?? ''),
+    value: (source) =>
+      newMeterValue(source, ({ nightIndex }) => nightIndex ?? ''),
   },
   {
     header: 'Câble — section (mm²)',
@@ -177,7 +220,8 @@ export const ENEDIS_COLUMNS: EnedisColumn[] = [
   {
     header: 'Câble — nature',
     width: 14,
-    value: ({ report }) => report.newDerivation.cableType,
+    value: ({ report }) =>
+      toEnedisLabel(CABLE_NATURE_LABELS, report.newDerivation.cableType),
   },
   {
     header: 'Câble — longueur (m)',
@@ -193,8 +237,7 @@ export const ENEDIS_COLUMNS: EnedisColumn[] = [
     header: 'Disjoncteur — voltage',
     width: 14,
     value: ({ report }) =>
-      VOLTAGE_LABELS[report.circuitBreaker.voltage] ??
-      report.circuitBreaker.voltage,
+      toEnedisLabel(VOLTAGE_LABELS, report.circuitBreaker.voltage),
   },
   {
     header: 'Disjoncteur — marque',
@@ -205,8 +248,7 @@ export const ENEDIS_COLUMNS: EnedisColumn[] = [
     header: 'Disjoncteur — type',
     width: 16,
     value: ({ report }) =>
-      BREAKER_TYPE_LABELS[report.circuitBreaker.type] ??
-      report.circuitBreaker.type,
+      toEnedisLabel(BREAKER_TYPE_LABELS, report.circuitBreaker.type),
   },
   {
     header: 'Disjoncteur — mise en service',
@@ -222,6 +264,14 @@ export const ENEDIS_COLUMNS: EnedisColumn[] = [
     header: 'Client présent',
     width: 12,
     value: ({ report }) => yesNo(report.clientValidation.present),
+  },
+  {
+    header: 'Travaux validés par le client',
+    width: 14,
+    value: ({ report }) =>
+      report.clientValidation.present
+        ? yesNo(report.clientValidation.workValidation)
+        : '',
   },
   {
     header: 'Satisfaction client (0-4)',

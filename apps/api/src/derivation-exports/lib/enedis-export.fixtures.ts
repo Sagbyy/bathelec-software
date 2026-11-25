@@ -4,6 +4,7 @@ export const buildSource = (
   overrides: Partial<EnedisExportSource['report']> = {}
 ): EnedisExportSource => ({
   derivationId: 1,
+  performedBy: 'Jean Tech',
   chantier: {
     address: '3 RUE PAILLET 75005 PARIS',
     enedisAffaireNumber: 'DC21/014312',

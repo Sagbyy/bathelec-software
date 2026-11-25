@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Workbook } from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
+import { DerivationStatus } from '../types/derivations-status.enum';
 import {
   CompletedDerivation,
   CompletedDerivationDocument,
@@ -19,6 +20,7 @@ const SIGNATURE_COLUMN_INDEX = ENEDIS_COLUMNS.findIndex(
 );
 const SIGNATURE_ROW_HEIGHT = 48;
 const PNG_DATA_URL = /^data:image\/png;base64,/;
+const USER_ID = /^\d+$/;
 
 export type EnedisExportFile = { fileName: string; buffer: Buffer };
 
@@ -34,7 +36,7 @@ export class DerivationExportsService {
     const sources = await this.loadSources({ id: derivationId });
     if (sources.length === 0) {
       throw new NotFoundException(
-        'No completed report found for this derivation'
+        'No validated report found for this derivation'
       );
     }
     return {
@@ -47,7 +49,7 @@ export class DerivationExportsService {
     const sources = await this.loadSources({ chantierId });
     if (sources.length === 0) {
       throw new NotFoundException(
-        'No completed report found for this chantier'
+        'No validated report found for this chantier'
       );
     }
     return {
@@ -61,7 +63,7 @@ export class DerivationExportsService {
     chantierId?: number;
   }): Promise<EnedisExportSource[]> {
     const derivations = await this.prisma.derivation.findMany({
-      where,
+      where: { ...where, status: DerivationStatus.COMPLETED },
       include: { chantier: { include: { market: true } } },
       orderBy: { id: 'asc' },
     });
@@ -73,19 +75,47 @@ export class DerivationExportsService {
     const reportByDerivation = new Map(
       reports.map((report) => [report.requestedDerivationId, report])
     );
+    const performerNames = await this.loadPerformerNames(
+      reports.map((report) => report.generalInfo?.derivationBy)
+    );
 
     return derivations.flatMap((derivation) => {
       const report = reportByDerivation.get(derivation.id);
-      return report
-        ? [
-            {
-              derivationId: derivation.id,
-              chantier: derivation.chantier,
-              report,
-            },
-          ]
-        : [];
+      if (!report) return [];
+      const performer = report.generalInfo?.derivationBy ?? '';
+      return [
+        {
+          derivationId: derivation.id,
+          performedBy: performerNames.get(performer) ?? performer,
+          chantier: derivation.chantier,
+          report,
+        },
+      ];
     });
+  }
+
+  private async loadPerformerNames(performers: (string | undefined)[]) {
+    const userIds = [
+      ...new Set(
+        performers
+          .filter((performer): performer is string =>
+            USER_ID.test(performer ?? '')
+          )
+          .map(Number)
+      ),
+    ];
+    if (userIds.length === 0) return new Map<string, string>();
+
+    const users = await this.prisma.user.findMany({
+      where: { id: { in: userIds } },
+      select: { id: true, firstName: true, lastName: true },
+    });
+    return new Map(
+      users.map(({ id, firstName, lastName }) => [
+        String(id),
+        `${firstName} ${lastName}`,
+      ])
+    );
   }
 
   private async buildWorkbook(sources: EnedisExportSource[]) {

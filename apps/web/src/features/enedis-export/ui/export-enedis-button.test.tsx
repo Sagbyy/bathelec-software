@@ -58,7 +58,7 @@ describe('ExportEnedisButton', () => {
     );
   });
 
-  it('prévient quand aucun relevé complété n’est exportable', async () => {
+  it('prévient quand aucun relevé validé n’est exportable', async () => {
     server.use(
       http.get(
         `${BASE}/derivation-exports/chantiers/5`,
@@ -72,7 +72,7 @@ describe('ExportEnedisButton', () => {
 
     await waitFor(() =>
       expect(toastError).toHaveBeenCalledWith(
-        'Aucun relevé complété à exporter.'
+        'Aucun relevé validé à exporter.'
       )
     );
     expect(saveFile).not.toHaveBeenCalled();

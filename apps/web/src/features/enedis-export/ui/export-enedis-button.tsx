@@ -19,7 +19,7 @@ interface ExportEnedisButtonProps {
 
 const errorMessage = (error: Error) =>
   isAxiosError(error) && error.response?.status === 404
-    ? 'Aucun relevé complété à exporter.'
+    ? 'Aucun relevé validé à exporter.'
     : "L'export Enedis a échoué.";
 
 export function ExportEnedisButton({
