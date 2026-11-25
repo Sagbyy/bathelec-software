@@ -8,3 +8,7 @@ export type {
   VehicleDocumentKey,
   CreateVehicleDocumentDto,
 } from './model/vehicle-document.types';
+export {
+  VEHICLE_DOCUMENT_FIELDS,
+  VEHICLE_DOCUMENT_KEYS,
+} from './config/vehicle-document-fields';

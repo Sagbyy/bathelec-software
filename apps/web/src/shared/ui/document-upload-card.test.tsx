@@ -229,5 +229,34 @@ describe('DocumentUploadCard', () => {
 
       expect(onExpiresAtChange).toHaveBeenCalledWith('2028-01-15');
     });
+
+    it("refuse d'effacer la date d'un document conservé", () => {
+      const onExpiresAtChange = vi.fn();
+      render(
+        <DocumentUploadCard
+          {...defaultProps}
+          value="data:image/png;base64,AAA"
+          expiresAt="2027-05-31"
+          onExpiresAtChange={onExpiresAtChange}
+        />
+      );
+
+      fireEvent.change(screen.getByLabelText(/Date de fin de validité/), {
+        target: { value: '' },
+      });
+
+      expect(onExpiresAtChange).not.toHaveBeenCalled();
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        /obligatoire tant que le document est conservé/
+      );
+    });
+
+    it("n'affiche pas d'erreur avant l'ajout d'un document", () => {
+      render(
+        <DocumentUploadCard {...defaultProps} onExpiresAtChange={vi.fn()} />
+      );
+
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
   });
 });

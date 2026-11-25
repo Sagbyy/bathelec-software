@@ -4,16 +4,28 @@ import { IsDateString, ValidateIf } from 'class-validator';
 export const expiryKeyOf = <K extends string>(documentKey: K) =>
   `${documentKey}ExpiresAt` as const;
 
+const isExpiryDateRequired = (
+  dto: Record<string, unknown>,
+  documentKey: string,
+  expiryKey: string
+) => {
+  const isDocumentRemoved = dto[documentKey] === null;
+  const isDocumentProvided = typeof dto[documentKey] === 'string';
+  const isExpiryTouched = dto[expiryKey] !== undefined;
+  return !isDocumentRemoved && (isDocumentProvided || isExpiryTouched);
+};
+
 export function IsDocumentExpiryDate(documentKey: string) {
   const expiryKey = expiryKeyOf(documentKey);
   return applyDecorators(
-    ValidateIf(
-      (dto: Record<string, unknown>) =>
-        typeof dto[documentKey] === 'string' || dto[expiryKey] != null
+    ValidateIf((dto: Record<string, unknown>) =>
+      isExpiryDateRequired(dto, documentKey, expiryKey)
     ),
     IsDateString(
       {},
-      { message: `${expiryKey} is required when ${documentKey} is provided` }
+      {
+        message: `${expiryKey} is required while ${documentKey} is kept`,
+      }
     )
   );
 }

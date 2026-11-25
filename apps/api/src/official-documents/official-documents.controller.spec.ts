@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OfficialDocumentsController } from './official-documents.controller';
 import { OfficialDocumentsService } from './official-documents.service';
+import { OwnerOnlyGuard } from '../common/guards/owner-only.guard';
 import { SelfAdminOrSupervisorGuard } from '../common/guards/self-admin-or-supervisor.guard';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 
@@ -34,6 +35,8 @@ describe('OfficialDocumentsController', () => {
       .overrideGuard(JwtAuthGuard)
       .useValue({ canActivate: () => true })
       .overrideGuard(SelfAdminOrSupervisorGuard)
+      .useValue({ canActivate: () => true })
+      .overrideGuard(OwnerOnlyGuard)
       .useValue({ canActivate: () => true })
       .compile();
 
@@ -108,15 +111,23 @@ describe('OfficialDocumentsController', () => {
     });
   });
 
-  describe('protection IDOR via SelfAdminOrSupervisorGuard', () => {
-    it.each(['findByUserId', 'update', 'remove'] as const)(
-      'applique SelfAdminOrSupervisorGuard sur %s (ouvert aux encadrants)',
+  describe('access control', () => {
+    it('lets the owner, admins and supervisors read the documents', () => {
+      const guards = Reflect.getMetadata(
+        '__guards__',
+        OfficialDocumentsController.prototype.findByUserId
+      );
+      expect(guards).toEqual([SelfAdminOrSupervisorGuard]);
+    });
+
+    it.each(['update', 'remove'] as const)(
+      'restricts %s to the owning technician (management is read-only)',
       (method) => {
         const guards = Reflect.getMetadata(
           '__guards__',
           OfficialDocumentsController.prototype[method]
         );
-        expect(guards).toContain(SelfAdminOrSupervisorGuard);
+        expect(guards).toEqual([OwnerOnlyGuard]);
       }
     );
 

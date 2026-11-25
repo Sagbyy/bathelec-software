@@ -4,40 +4,20 @@ import { Fragment } from 'react';
 import { useUserStore } from '@/entities/user';
 import { Spinner } from '@/shared/ui/spinner';
 import {
+  VEHICLE_DOCUMENT_FIELDS,
+  VEHICLE_DOCUMENT_KEYS,
   VehicleDocumentKey,
   useUpsertVehicleDocument,
   useVehicleDocument,
 } from '@/entities/vehicle-document';
 import { DocumentUploadCard } from '@/shared/ui/document-upload-card';
 
-const VEHICLE_DOCUMENT_FIELDS: Record<
-  VehicleDocumentKey,
-  { label: string; description: string; inputId: string }
-> = {
-  vehicleRegistration: {
-    label: 'Carte grise',
-    description:
-      'Photo ou scan de la carte grise du véhicule (jpeg, png, webp — max 5 Mo)',
-    inputId: 'vehicle-registration-upload',
-  },
-  drivingLicense: {
-    label: 'Permis de conduire',
-    description:
-      'Photo ou scan du permis de conduire (jpeg, png, webp — max 5 Mo)',
-    inputId: 'driving-license-upload',
-  },
-};
-
-const ALL_DOCUMENT_KEYS = Object.keys(
-  VEHICLE_DOCUMENT_FIELDS
-) as VehicleDocumentKey[];
-
 interface VehicleDocumentsFormProps {
   documentKeys?: VehicleDocumentKey[];
 }
 
 export function VehicleDocumentsForm({
-  documentKeys = ALL_DOCUMENT_KEYS,
+  documentKeys = VEHICLE_DOCUMENT_KEYS,
 }: VehicleDocumentsFormProps = {}) {
   const user = useUserStore((s) => s.user);
   const userId = user?.id;

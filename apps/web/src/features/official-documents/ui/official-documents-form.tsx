@@ -4,79 +4,32 @@ import { Fragment } from 'react';
 import { useUserStore } from '@/entities/user';
 import { Spinner } from '@/shared/ui/spinner';
 import {
+  OFFICIAL_DOCUMENT_FIELDS,
+  OFFICIAL_DOCUMENT_KEYS,
   OfficialDocumentKey,
   useOfficialDocument,
   useUpsertOfficialDocument,
-  useUpdateOfficialDocumentByUser,
 } from '@/entities/official-document';
 import { DocumentUploadCard } from '@/shared/ui/document-upload-card';
 
-const OFFICIAL_DOCUMENT_FIELDS: Record<
-  OfficialDocumentKey,
-  { label: string; description: string; inputId: string }
-> = {
-  idCard: {
-    label: "Pièce d'identité ou titre de séjour",
-    description:
-      "Carte nationale d'identité, passeport ou titre de séjour (jpeg, png, webp — max 5 Mo)",
-    inputId: 'id-card-upload',
-  },
-  btpCard: {
-    label: 'Carte professionnelle BTP',
-    description: 'Carte BTP en cours de validité (jpeg, png, webp — max 5 Mo)',
-    inputId: 'btp-card-upload',
-  },
-  mutualCard: {
-    label: 'Carte mutuelle',
-    description:
-      'Attestation ou carte de mutuelle (jpeg, png, webp — max 5 Mo)',
-    inputId: 'mutual-card-upload',
-  },
-};
-
-const ALL_DOCUMENT_KEYS = Object.keys(
-  OFFICIAL_DOCUMENT_FIELDS
-) as OfficialDocumentKey[];
-
 interface OfficialDocumentsFormProps {
-  userId?: number;
   documentKeys?: OfficialDocumentKey[];
 }
 
 export function OfficialDocumentsForm({
-  userId,
-  documentKeys = ALL_DOCUMENT_KEYS,
+  documentKeys = OFFICIAL_DOCUMENT_KEYS,
 }: OfficialDocumentsFormProps = {}) {
   const currentUser = useUserStore((s) => s.user);
-  const managed = userId != null;
-  const targetUserId = userId ?? currentUser?.id;
+  const userId = currentUser?.id;
 
-  const { data, isLoading, error } = useOfficialDocument(targetUserId!);
-  const selfUpsert = useUpsertOfficialDocument(targetUserId!);
-  const managedUpdate = useUpdateOfficialDocumentByUser(targetUserId!);
-  const { mutate, isPending } = managed ? managedUpdate : selfUpsert;
+  const { data, isLoading } = useOfficialDocument(userId!);
+  const { mutate, isPending } = useUpsertOfficialDocument(userId!);
 
   if (isLoading) {
     return (
       <div className="flex min-h-[200px] items-center justify-center">
         <Spinner />
       </div>
-    );
-  }
-
-  if (managed && error) {
-    return (
-      <p className="rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm text-destructive">
-        Impossible de charger les documents de cet utilisateur.
-      </p>
-    );
-  }
-
-  if (managed && !data) {
-    return (
-      <p className="rounded-xl border border-dashed bg-card p-6 text-center text-sm text-muted-foreground">
-        Ce technicien n&apos;a pas encore enregistré de documents officiels.
-      </p>
     );
   }
 

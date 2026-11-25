@@ -66,4 +66,21 @@ describe('SpecialHabilitationsAdmin — date de validité (DTA-51)', () => {
       sstCertificateDocExpiresAt: '2028-01-15',
     });
   });
+
+  it("refuse d'effacer la date d'un justificatif conservé", () => {
+    withSst({
+      sstCertificateDoc: 'data:image/png;base64,AAA',
+      sstCertificateDocExpiresAt: '2027-05-31T00:00:00.000Z',
+    });
+
+    render(<SpecialHabilitationsAdmin technicianId={3} />);
+    fireEvent.change(screen.getByLabelText(/Date de fin de validité/), {
+      target: { value: '' },
+    });
+
+    expect(mutate).not.toHaveBeenCalled();
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      /obligatoire tant que le document est conservé/
+    );
+  });
 });

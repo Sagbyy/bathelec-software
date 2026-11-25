@@ -35,12 +35,26 @@ export function ValidityBadge({ expiresAt }: { expiresAt?: string | null }) {
   );
 }
 
+interface DocumentValidityBadgeProps {
+  hasDocument: boolean;
+  expiresAt?: string | null;
+}
+
+export function DocumentValidityBadge({
+  hasDocument,
+  expiresAt,
+}: DocumentValidityBadgeProps) {
+  if (!hasDocument) return <Badge variant="neutral">Aucun document</Badge>;
+  return <ValidityBadge expiresAt={expiresAt} />;
+}
+
 interface ValidityDateFieldProps {
   id: string;
   value?: string | null;
   onChange: (value: string | null) => void;
   disabled?: boolean;
   label?: string;
+  error?: string;
 }
 
 export function ValidityDateField({
@@ -49,6 +63,7 @@ export function ValidityDateField({
   onChange,
   disabled = false,
   label = 'Date de fin de validité',
+  error,
 }: ValidityDateFieldProps) {
   return (
     <div className="flex max-w-md flex-col gap-1.5">
@@ -61,11 +76,18 @@ export function ValidityDateField({
           type="date"
           className="w-full sm:w-44"
           value={toDateInputValue(value)}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-error` : undefined}
           disabled={disabled}
           onChange={(event) => onChange(event.target.value || null)}
         />
         <ValidityBadge expiresAt={value} />
       </div>
+      {error && (
+        <p id={`${id}-error`} role="alert" className="text-xs text-destructive">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

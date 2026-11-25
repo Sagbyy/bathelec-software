@@ -10,6 +10,7 @@ import { Button } from '@/shared/ui/button';
 import { Label } from '@/shared/ui/label';
 import { Badge } from '@/shared/ui/badge';
 import { ValidityDateField } from '@/shared/ui/validity-date-field';
+import { getValidityDateError } from '@/shared/lib/document-validity';
 import {
   DEFAULT_SPECIAL_HABILITATIONS,
   SPECIAL_HABILITATION_CONFIG,
@@ -113,6 +114,7 @@ function SpecialHabilitationRow({
             value={pendingExpiresAt}
             onChange={handleExpiresAtChange}
             disabled={isPending}
+            error={getValidityDateError(hasDocument, pendingExpiresAt)}
           />
         </div>
       )}

@@ -3,19 +3,23 @@ import Image from 'next/image';
 import { ChevronRight } from 'lucide-react';
 import { PageContainer } from '@/shared/ui/page-container';
 import { PageHeader } from '@/shared/ui/page-header';
+import { OwnOfficialDocumentBadge } from '@/features/official-documents';
 
 const DOCUMENT_CARDS = [
   {
+    documentKey: 'idCard',
     label: "Pièce d'identité ou titre de séjour",
     href: '/dashboard/technician/documents/id-card',
     image: '/images/identity-card-and-residence-permit.png',
   },
   {
+    documentKey: 'btpCard',
     label: 'Carte Pro du BTP',
     href: '/dashboard/technician/documents/btp-card',
     image: '/images/btp-card.png',
   },
   {
+    documentKey: 'mutualCard',
     label: 'Carte Mutuelle',
     href: '/dashboard/technician/documents/mutual-card',
     image: '/images/pro-btp-mutual.png',
@@ -50,14 +54,11 @@ export default function DocumentsPage() {
 }
 
 function DocumentLinkCard({
+  documentKey,
   label,
   href,
   image,
-}: {
-  label: string;
-  href: string;
-  image: string;
-}) {
+}: (typeof DOCUMENT_CARDS)[number]) {
   return (
     <Link
       href={href}
@@ -73,7 +74,10 @@ function DocumentLinkCard({
         />
       </span>
       <span className="flex flex-1 items-center justify-between gap-2">
-        <span className="text-sm font-semibold sm:text-base">{label}</span>
+        <span className="flex flex-col items-start gap-1.5">
+          <span className="text-sm font-semibold sm:text-base">{label}</span>
+          <OwnOfficialDocumentBadge documentKey={documentKey} />
+        </span>
         <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
       </span>
     </Link>

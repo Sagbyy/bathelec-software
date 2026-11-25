@@ -3,14 +3,17 @@ import Image from 'next/image';
 import { ChevronRight } from 'lucide-react';
 import { PageContainer } from '@/shared/ui/page-container';
 import { PageHeader } from '@/shared/ui/page-header';
+import { OwnVehicleDocumentBadge } from '@/features/vehicle-documents';
 
 const DOCUMENT_CARDS = [
   {
+    documentKey: 'vehicleRegistration',
     label: 'Carte grise de mon véhicule',
     href: '/dashboard/technician/vehicule/vehicle-registration',
     image: '/images/vehicle-registration.svg',
   },
   {
+    documentKey: 'drivingLicense',
     label: 'Mon permis de conduire',
     href: '/dashboard/technician/vehicule/driving-license',
     image: '/images/driving-license.jpg',
@@ -50,8 +53,11 @@ export default function VehiculePage() {
                 />
               </span>
               <span className="flex flex-1 items-center justify-between gap-2">
-                <span className="text-sm font-semibold sm:text-base">
-                  {card.label}
+                <span className="flex flex-col items-start gap-1.5">
+                  <span className="text-sm font-semibold sm:text-base">
+                    {card.label}
+                  </span>
+                  <OwnVehicleDocumentBadge documentKey={card.documentKey} />
                 </span>
                 <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
               </span>

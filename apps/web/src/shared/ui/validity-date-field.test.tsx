@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ValidityBadge, ValidityDateField } from './validity-date-field';
+import {
+  DocumentValidityBadge,
+  ValidityBadge,
+  ValidityDateField,
+} from './validity-date-field';
 
 describe('ValidityBadge', () => {
   beforeEach(() => {
@@ -60,5 +64,42 @@ describe('ValidityDateField', () => {
 
     expect(onChange).toHaveBeenNthCalledWith(1, '2028-01-15');
     expect(onChange).toHaveBeenNthCalledWith(2, null);
+  });
+
+  it("affiche et relie le message d'erreur au champ", () => {
+    render(
+      <ValidityDateField
+        id="expiry"
+        value={null}
+        onChange={vi.fn()}
+        error="Date obligatoire"
+      />
+    );
+    const input = screen.getByLabelText(/Date de fin de validité/);
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Date obligatoire');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute('aria-describedby', 'expiry-error');
+  });
+});
+
+describe('DocumentValidityBadge', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 9, 17));
+  });
+
+  afterEach(() => vi.useRealTimers());
+
+  it("signale l'absence de document", () => {
+    render(<DocumentValidityBadge hasDocument={false} expiresAt="2027-05-31" />);
+    expect(screen.getByText('Aucun document')).toBeInTheDocument();
+  });
+
+  it("affiche le statut de validité d'un document présent", () => {
+    render(<DocumentValidityBadge hasDocument expiresAt="2026-09-01" />);
+    expect(
+      screen.getByText('Expiré depuis le 1 septembre 2026')
+    ).toBeInTheDocument();
   });
 });

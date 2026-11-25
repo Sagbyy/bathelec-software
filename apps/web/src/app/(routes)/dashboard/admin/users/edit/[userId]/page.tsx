@@ -44,7 +44,7 @@ import clsx from 'clsx';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { getApiErrorMessage } from '@/shared/lib/api-error';
 import { useUserStore } from '@/entities/user';
-import { OfficialDocumentsForm } from '@/features/official-documents';
+import { TechnicianDocumentsView } from '@/widgets/technician-documents';
 import { Role, ROLE_VALUES, ROLE_LABELS } from '@repo/types';
 
 const updateUserSchema = z.object({
@@ -88,9 +88,10 @@ export default function UserDetailsPage() {
   const { mutate: deleteUser, isPending: isDeleting } = useDeleteUser();
   const { user: currentUser } = useUserStore();
   const canEditRole = currentUser?.role === Role.ADMIN;
-  const canManageDocuments =
-    currentUser?.role === Role.ADMIN ||
-    (currentUser?.role === Role.SUPERVISOR && user?.role !== Role.ADMIN);
+  const canViewDocuments =
+    user?.role === Role.TECHNICIAN &&
+    (currentUser?.role === Role.ADMIN ||
+      currentUser?.role === Role.SUPERVISOR);
 
   const form = useForm<UpdateUserFormValues>({
     resolver: zodResolver(updateUserSchema),
@@ -396,17 +397,17 @@ export default function UserDetailsPage() {
         </CardContent>
       </Card>
 
-      {canManageDocuments && (
+      {canViewDocuments && (
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle>Documents officiels</CardTitle>
+            <CardTitle>Documents du technicien</CardTitle>
             <CardDescription>
-              Consultez, remplacez ou retirez les documents officiels de{' '}
-              {user.username}
+              Consultez les documents officiels et véhicule de{' '}
+              {user.username} (lecture seule)
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <OfficialDocumentsForm userId={userIdNumber} />
+            <TechnicianDocumentsView technicianId={userIdNumber} />
           </CardContent>
         </Card>
       )}
