@@ -27,5 +27,13 @@ export const getValidityStatus = (
   return 'valid';
 };
 
-export const formatValidityDate = (expiresAt: string) =>
+export const MISSING_VALIDITY_DATE_MESSAGE =
+  'La date de fin de validité est obligatoire tant que le document est conservé.';
+
+export const getValidityDateError = (
+  hasDocument: boolean,
+  expiresAt: string | null | undefined
+) => (hasDocument && !expiresAt ? MISSING_VALIDITY_DATE_MESSAGE : undefined);
+
+export const formatValidityDate =(expiresAt: string) =>
   format(toCalendarDate(expiresAt), 'd MMMM yyyy', { locale: fr });

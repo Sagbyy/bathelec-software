@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   formatValidityDate,
+  getValidityDateError,
   getValidityStatus,
+  MISSING_VALIDITY_DATE_MESSAGE,
   toDateInputValue,
 } from './document-validity';
 
@@ -42,5 +44,21 @@ describe('toDateInputValue', () => {
   it('prépare une date pour un champ date', () => {
     expect(toDateInputValue('2027-05-31T00:00:00.000Z')).toBe('2027-05-31');
     expect(toDateInputValue(null)).toBe('');
+  });
+});
+
+describe('getValidityDateError', () => {
+  it('requires a date while the document is kept', () => {
+    expect(getValidityDateError(true, null)).toBe(
+      MISSING_VALIDITY_DATE_MESSAGE
+    );
+  });
+
+  it('accepts a kept document with a date', () => {
+    expect(getValidityDateError(true, '2027-05-31')).toBeUndefined();
+  });
+
+  it('does not require a date before any document is added', () => {
+    expect(getValidityDateError(false, null)).toBeUndefined();
   });
 });

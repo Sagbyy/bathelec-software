@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { VehicleDocumentsController } from './vehicle-documents.controller';
 import { VehicleDocumentsService } from './vehicle-documents.service';
-import { SelfOrAdminGuard } from '../common/guards/self-or-admin.guard';
+import { OwnerOnlyGuard } from '../common/guards/owner-only.guard';
+import { SelfAdminOrSupervisorGuard } from '../common/guards/self-admin-or-supervisor.guard';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 
 const vehicleDocumentEntity = {
@@ -32,7 +33,9 @@ describe('VehicleDocumentsController', () => {
     })
       .overrideGuard(JwtAuthGuard)
       .useValue({ canActivate: () => true })
-      .overrideGuard(SelfOrAdminGuard)
+      .overrideGuard(SelfAdminOrSupervisorGuard)
+      .useValue({ canActivate: () => true })
+      .overrideGuard(OwnerOnlyGuard)
       .useValue({ canActivate: () => true })
       .compile();
 
@@ -105,5 +108,26 @@ describe('VehicleDocumentsController', () => {
       expect(result).toEqual(vehicleDocumentEntity);
       expect(mockVehicleDocumentsService.remove).toHaveBeenCalledWith(1);
     });
+  });
+
+  describe('access control', () => {
+    it('lets the owner, admins and supervisors read the documents', () => {
+      const guards = Reflect.getMetadata(
+        '__guards__',
+        VehicleDocumentsController.prototype.findByUserId
+      );
+      expect(guards).toEqual([SelfAdminOrSupervisorGuard]);
+    });
+
+    it.each(['update', 'remove'] as const)(
+      'restricts %s to the owning technician',
+      (method) => {
+        const guards = Reflect.getMetadata(
+          '__guards__',
+          VehicleDocumentsController.prototype[method]
+        );
+        expect(guards).toEqual([OwnerOnlyGuard]);
+      }
+    );
   });
 });

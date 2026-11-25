@@ -15,7 +15,8 @@ vi.mock('next/image', () => ({
 
 const mockMutate = vi.fn();
 
-vi.mock('@/entities/vehicle-document', () => ({
+vi.mock('@/entities/vehicle-document', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/entities/vehicle-document')>()),
   useVehicleDocument: vi.fn(),
   useUpsertVehicleDocument: vi.fn(() => ({
     mutate: mockMutate,

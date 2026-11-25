@@ -6,6 +6,7 @@ import {
 } from './entities/vehicle-document.entity';
 import { VehicleDocumentsController } from './vehicle-documents.controller';
 import { VehicleDocumentsService } from './vehicle-documents.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { VehicleDocumentsService } from './vehicle-documents.service';
     ]),
   ],
   controllers: [VehicleDocumentsController],
-  providers: [VehicleDocumentsService],
+  providers: [VehicleDocumentsService, PrismaService],
 })
 export class VehicleDocumentsModule {}

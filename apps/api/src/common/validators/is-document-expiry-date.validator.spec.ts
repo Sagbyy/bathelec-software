@@ -41,6 +41,25 @@ describe('IsDocumentExpiryDate', () => {
     expect(await errorsFor({ idCardExpiresAt: '2027-05-31' })).toHaveLength(0);
   });
 
+  it('rejects clearing the expiry date while keeping the document', async () => {
+    const errors = await errorsFor({ idCardExpiresAt: null });
+
+    expect(errors[0]?.property).toBe('idCardExpiresAt');
+  });
+
+  it('rejects replacing the document with a cleared expiry date', async () => {
+    const errors = await errorsFor({
+      idCard: 'data:image/png;base64,AAA',
+      idCardExpiresAt: null,
+    });
+
+    expect(errors[0]?.property).toBe('idCardExpiresAt');
+  });
+
+  it('accepts a payload that does not touch the document', async () => {
+    expect(await errorsFor({})).toHaveLength(0);
+  });
+
   it('accepts removing the document without a date', async () => {
     expect(
       await errorsFor({ idCard: null, idCardExpiresAt: null })

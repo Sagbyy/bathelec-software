@@ -7,6 +7,7 @@ import { Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
+import { getValidityDateError } from '@/shared/lib/document-validity';
 import { ValidityDateField } from './validity-date-field';
 
 interface DocumentUploadCardProps {
@@ -34,6 +35,7 @@ export function DocumentUploadCard({
   const requiresExpiry = onExpiresAtChange !== undefined;
   const [pendingExpiresAt, setPendingExpiresAt] = useState(expiresAt);
   const canSelectFile = !requiresExpiry || !!pendingExpiresAt;
+  const validityDateError = getValidityDateError(!!value, pendingExpiresAt);
 
   useEffect(() => {
     setPendingExpiresAt(expiresAt);
@@ -70,6 +72,7 @@ export function DocumentUploadCard({
           value={pendingExpiresAt}
           onChange={handleExpiresAtChange}
           disabled={isPending}
+          error={validityDateError}
         />
       )}
 

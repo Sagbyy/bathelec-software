@@ -20,7 +20,8 @@ import {
   AuthenticatedUser,
   CurrentUser,
 } from '../common/decorators/current-user.decorator';
-import { SelfOrAdminGuard } from '../common/guards/self-or-admin.guard';
+import { OwnerOnlyGuard } from '../common/guards/owner-only.guard';
+import { SelfAdminOrSupervisorGuard } from '../common/guards/self-admin-or-supervisor.guard';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import { CreateVehicleDocumentDto } from './dto/create-vehicle-document.dto';
 import { UpdateVehicleDocumentDto } from './dto/update-vehicle-document.dto';
@@ -51,7 +52,7 @@ export class VehicleDocumentsController {
   }
 
   @Get('by-user/:userId')
-  @UseGuards(SelfOrAdminGuard)
+  @UseGuards(SelfAdminOrSupervisorGuard)
   @ApiOperation({ summary: 'Récupérer les documents du véhicule par userId' })
   @ApiParam({ name: 'userId', type: Number })
   @ApiResponse({ status: 200, description: 'Documents récupérés.' })
@@ -61,7 +62,7 @@ export class VehicleDocumentsController {
   }
 
   @Patch('by-user/:userId')
-  @UseGuards(SelfOrAdminGuard)
+  @UseGuards(OwnerOnlyGuard)
   @ApiOperation({ summary: 'Mettre à jour les documents du véhicule' })
   @ApiParam({ name: 'userId', type: Number })
   @ApiBody({ type: UpdateVehicleDocumentDto })
@@ -78,7 +79,7 @@ export class VehicleDocumentsController {
   }
 
   @Delete('by-user/:userId')
-  @UseGuards(SelfOrAdminGuard)
+  @UseGuards(OwnerOnlyGuard)
   @ApiOperation({ summary: 'Supprimer les documents du véhicule' })
   @ApiParam({ name: 'userId', type: Number })
   @ApiResponse({ status: 200, description: 'Documents supprimés.' })

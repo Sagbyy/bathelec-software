@@ -43,6 +43,22 @@ describe('ActionCell (columns.tsx)', () => {
     expect(screen.queryByTitle('Habilitations')).not.toBeInTheDocument();
   });
 
+  it('navigue vers les documents en lecture seule pour un technicien', async () => {
+    const user = userEvent.setup();
+    renderActionCell(7, 'technician');
+
+    await user.click(screen.getByTitle('Documents'));
+
+    expect(mockPush).toHaveBeenCalledWith(
+      '/dashboard/admin/technicians/7/documents'
+    );
+  });
+
+  it("n'affiche pas le bouton Documents pour un admin", () => {
+    renderActionCell(2, 'admin');
+    expect(screen.queryByTitle('Documents')).not.toBeInTheDocument();
+  });
+
   it('affiche le bouton Modifier pour un admin', () => {
     renderActionCell(2, 'admin');
     expect(screen.getByTitle('Modifier')).toBeInTheDocument();

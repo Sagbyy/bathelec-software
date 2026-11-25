@@ -11,7 +11,7 @@ import {
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { ShieldCheck } from 'lucide-react';
+import { FileText, ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Role, ROLE_LABELS } from '@repo/types';
 
@@ -214,6 +214,18 @@ function ActionCell({ userId, role }: { userId: number; role: string }) {
           title="Habilitations"
         >
           <ShieldCheck className="h-4 w-4" />
+        </Button>
+      )}
+      {role === Role.TECHNICIAN && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() =>
+            router.push(`/dashboard/admin/technicians/${userId}/documents`)
+          }
+          title="Documents"
+        >
+          <FileText className="h-4 w-4" />
         </Button>
       )}
     </div>
