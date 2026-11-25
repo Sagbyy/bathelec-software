@@ -396,3 +396,24 @@ describe('CreateCompletedDerivationDto photos (RG-09)', () => {
     ).toBeUndefined();
   });
 });
+
+describe('CreateCompletedDerivationDto client submission id (ENF-08)', () => {
+  const submissionIdErrors = async (clientSubmissionId: unknown) =>
+    (await validationErrors({ ...validPayload, clientSubmissionId })).find(
+      (error) => error.property === 'clientSubmissionId'
+    );
+
+  it('accepts a payload without submission id', async () => {
+    expect(await submissionIdErrors(undefined)).toBeUndefined();
+  });
+
+  it('accepts a UUID submission id', async () => {
+    expect(
+      await submissionIdErrors('3f0c8a52-6a0e-4d3c-9f8e-2b1d5c7e9a10')
+    ).toBeUndefined();
+  });
+
+  it('rejects a submission id that is not a UUID', async () => {
+    expect(await submissionIdErrors('not-a-uuid')).toBeDefined();
+  });
+});
