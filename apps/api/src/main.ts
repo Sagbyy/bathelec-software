@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
+import { JSON_BODY_LIMIT_BYTES } from './common/http/json-body-limit';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
@@ -15,7 +16,7 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
-  app.useBodyParser('json', { limit: '100mb' });
+  app.useBodyParser('json', { limit: JSON_BODY_LIMIT_BYTES });
 
   const config = new DocumentBuilder()
     .addBearerAuth()

@@ -1,9 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Path, UseFormReturn } from 'react-hook-form';
+import { toast } from 'sonner';
 import {
   type CreateCompletedDerivation,
-  STEP_FIELDS_TO_VALIDATE,
-  TOTAL_STEPS,
+  findFirstInvalidStep,
+  getFieldsToValidate,
+  getVisibleSteps,
 } from '@/entities/derivation';
 
 type UseFormStepsProps = {
@@ -12,128 +14,101 @@ type UseFormStepsProps = {
   readOnly?: boolean;
 };
 
+export const INVALID_SUBMISSION_MESSAGE =
+  'Le formulaire est incomplet : corrigez les champs signalés avant de soumettre.';
+
 export const useFormSteps = ({
   form,
   onSubmit,
   readOnly = false,
 }: UseFormStepsProps) => {
   const [step, setStep] = useState(1);
-  const [totalSteps, setTotalSteps] = useState(TOTAL_STEPS);
 
   const oldMeterPreserved = form.watch('oldMeter.preserved');
+  const linkyRefusal = form.watch('oldMeter.linkyRefusal');
   const clientPresent = form.watch('clientValidation.present');
-  const isLinkyRefusal = form.watch('oldMeter.linkyRefusal');
+
+  const visibleSteps = useMemo(
+    () => getVisibleSteps({ preserved: oldMeterPreserved, linkyRefusal }),
+    [oldMeterPreserved, linkyRefusal]
+  );
+  const totalSteps = visibleSteps.length;
 
   useEffect(() => {
-    if (isLinkyRefusal) {
-      setTotalSteps(oldMeterPreserved ? 7 : 8);
-    } else {
-      setTotalSteps(oldMeterPreserved ? 8 : 9);
-    }
-  }, [oldMeterPreserved, isLinkyRefusal]);
+    setStep((current) => Math.min(current, totalSteps));
+  }, [totalSteps]);
 
   const getActualStep = useCallback(
-    (currentStep: number) => {
-      if (
-        oldMeterPreserved &&
-        isLinkyRefusal &&
-        currentStep > 5 &&
-        currentStep < 9
-      ) {
-        console.log('currentStep', currentStep);
-        return currentStep + 2;
-      }
-
-      if (oldMeterPreserved && currentStep > 5 && currentStep < 9) {
-        console.log('currentStep oldMeterPreserved', currentStep);
-        return currentStep + 1;
-      }
-
-      if (isLinkyRefusal && currentStep > 6 && currentStep < 9) {
-        console.log('currentStep isLinkyRefusal', currentStep);
-        return currentStep + 1;
-      }
-
-      return currentStep;
-    },
-    [oldMeterPreserved]
+    (currentStep: number) => visibleSteps[currentStep - 1] ?? currentStep,
+    [visibleSteps]
   );
 
-  const getFieldsToValidate = useCallback(
-    (currentStep: number) => {
-      const stepConfig = STEP_FIELDS_TO_VALIDATE[currentStep];
+  const goToStep = useCallback((target: number) => {
+    setStep(target);
+    window.scrollTo(0, 0);
+  }, []);
 
-      if (currentStep === 6 && oldMeterPreserved) {
-        return [];
+  const goToFirstInvalidStep = useCallback(
+    (invalidSections: string[]) => {
+      const invalidStep = findFirstInvalidStep(invalidSections, visibleSteps);
+
+      if (invalidStep !== null) {
+        goToStep(visibleSteps.indexOf(invalidStep) + 1);
       }
-
-      if (
-        currentStep === TOTAL_STEPS &&
-        stepConfig &&
-        typeof stepConfig === 'object' &&
-        'present' in stepConfig
-      ) {
-        return clientPresent ? stepConfig.present : stepConfig.absent;
-      }
-
-      return stepConfig as string[];
+      toast.error(INVALID_SUBMISSION_MESSAGE);
     },
-    [oldMeterPreserved, clientPresent]
+    [visibleSteps, goToStep]
   );
+
+  const submit = useCallback(async () => {
+    await form.handleSubmit(
+      (data) => onSubmit(data),
+      (errors) => goToFirstInvalidStep(Object.keys(errors))
+    )();
+  }, [form, onSubmit, goToFirstInvalidStep]);
 
   const nextStep = useCallback(async () => {
     if (readOnly) {
       if (step < totalSteps) {
-        if (oldMeterPreserved && step === 5) {
-          setStep(6);
-        } else {
-          setStep(step + 1);
-        }
-        window.scrollTo(0, 0);
+        goToStep(step + 1);
       }
       return;
     }
 
-    const fieldsToValidate = getFieldsToValidate(getActualStep(step));
-    const result = await form.trigger(
+    const fieldsToValidate = getFieldsToValidate(
+      getActualStep(step),
+      clientPresent
+    );
+    const isStepValid = await form.trigger(
       fieldsToValidate as Path<CreateCompletedDerivation>[]
     );
 
-    if (result) {
-      if (step < totalSteps) {
-        if (oldMeterPreserved && step === 5) {
-          setStep(6);
-        } else {
-          setStep(step + 1);
-        }
-        window.scrollTo(0, 0);
-      } else {
-        const data = form.getValues();
-        console.log(data);
-        onSubmit(data);
-      }
+    if (!isStepValid) {
+      return;
     }
+
+    if (step < totalSteps) {
+      goToStep(step + 1);
+      return;
+    }
+
+    await submit();
   }, [
     step,
     totalSteps,
-    oldMeterPreserved,
     form,
     getActualStep,
-    getFieldsToValidate,
-    onSubmit,
+    clientPresent,
+    goToStep,
+    submit,
     readOnly,
   ]);
 
   const prevStep = useCallback(() => {
     if (step > 1) {
-      if (oldMeterPreserved && step === 6) {
-        setStep(5);
-      } else {
-        setStep(step - 1);
-      }
-      window.scrollTo(0, 0);
+      goToStep(step - 1);
     }
-  }, [step, oldMeterPreserved]);
+  }, [step, goToStep]);
 
   const progress = (step / totalSteps) * 100;
 
@@ -144,7 +119,6 @@ export const useFormSteps = ({
     nextStep,
     prevStep,
     getActualStep,
-    getFieldsToValidate,
     oldMeterPreserved,
   };
 };

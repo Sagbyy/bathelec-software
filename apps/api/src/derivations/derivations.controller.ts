@@ -214,6 +214,30 @@ export class DerivationsController {
     );
   }
 
+  @Post('/:derivationId/start')
+  @UseGuards(RoleGuard)
+  @Role(UserRole.TECHNICIAN, UserRole.SITE_MANAGER)
+  @ApiOperation({
+    summary:
+      'Mark the report of a derivation as started: Pending becomes Ongoing',
+  })
+  @ApiParam({ name: 'derivationId', type: Number })
+  @ApiOkResponse({ type: DerivationResponseDto })
+  @ApiResponse({
+    status: 403,
+    description: 'Only the assigned technician can fill this derivation.',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'The derivation report is no longer editable.',
+  })
+  startDerivation(
+    @Param('derivationId') derivationId: number,
+    @CurrentUser() user: AuthenticatedUser
+  ) {
+    return this.derivationsService.startDerivation(derivationId, user);
+  }
+
   @Post('/:derivationId/claim')
   @UseGuards(RoleGuard)
   @Role(UserRole.TECHNICIAN, UserRole.SITE_MANAGER)

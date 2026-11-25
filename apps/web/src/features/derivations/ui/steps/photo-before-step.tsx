@@ -1,8 +1,5 @@
 'use client';
 
-import type React from 'react';
-
-import { useState, useEffect } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
   FormControl,
@@ -15,44 +12,22 @@ import { Button } from '@/shared/ui/button';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import { CreateCompletedDerivation } from '@/entities/derivation';
-import { useDerivationStatusStore } from '@/entities/derivation';
+import {
+  REPORT_PHOTO_ACCEPT_ATTRIBUTE,
+  useDerivationStatusStore,
+} from '@/entities/derivation';
+import { useReportPhotoField } from '../../model/use-report-photo-field';
 
 interface PhotoBeforeStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }
 
 export function PhotoBeforeStep({ form }: PhotoBeforeStepProps) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { previewUrl, selectPhoto, clearPhoto } = useReportPhotoField(
+    form,
+    'photoBeforeWork.photo'
+  );
   const { isNotEditable: isCompleted } = useDerivationStatusStore();
-
-  useEffect(() => {
-    const photo = form.getValues('photoBeforeWork.photo');
-    if (typeof photo === 'string' || photo === null) {
-      setPreviewUrl(photo);
-    }
-  }, [form]);
-
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    onChange: (value: File) => void
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      onChange(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const dataUrl = reader.result as string;
-        setPreviewUrl(dataUrl);
-        form.setValue('photoBeforeWork.photo', dataUrl);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const clearFile = (onChange: (value: null) => void) => {
-    onChange(null);
-    setPreviewUrl(null);
-  };
 
   return (
     <div className="space-y-6">
@@ -61,7 +36,7 @@ export function PhotoBeforeStep({ form }: PhotoBeforeStepProps) {
       <FormField
         control={form.control}
         name="photoBeforeWork.photo"
-        render={({ field: { value, onChange, ...field } }) => (
+        render={({ field: { name, onBlur, ref } }) => (
           <FormItem>
             <FormLabel>
               Vue d'ensemble platine comptage
@@ -83,7 +58,7 @@ export function PhotoBeforeStep({ form }: PhotoBeforeStepProps) {
                       variant="destructive"
                       size="icon"
                       className="absolute right-2 top-2"
-                      onClick={() => clearFile(onChange)}
+                      onClick={clearPhoto}
                       disabled={isCompleted}
                     >
                       <X className="h-4 w-4" />
@@ -98,11 +73,13 @@ export function PhotoBeforeStep({ form }: PhotoBeforeStepProps) {
                       </p>
                       <input
                         type="file"
-                        accept="image/*"
+                        accept={REPORT_PHOTO_ACCEPT_ATTRIBUTE}
                         className="hidden"
                         id="photo-before-upload"
-                        onChange={(e) => handleFileChange(e, onChange)}
-                        {...field}
+                        name={name}
+                        onBlur={onBlur}
+                        ref={ref}
+                        onChange={selectPhoto}
                         disabled={isCompleted}
                       />
                       <Button

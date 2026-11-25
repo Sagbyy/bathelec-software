@@ -19,12 +19,13 @@ import { SignaturePad } from '@/shared/ui/signature-pad';
 import type { CreateCompletedDerivation } from '@/entities/derivation';
 import { useDerivationStatusStore } from '@/entities/derivation';
 import { cn } from '@/shared/lib/utils';
+import { useStepNumber } from '../../model/use-step-number';
 interface ClientValidationStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }
 
 export function ClientValidationStep({ form }: ClientValidationStepProps) {
-  const oldMeterPreserved = form.watch('oldMeter.preserved');
+  const stepNumber = useStepNumber(form, 9);
   const [clientPresent, setClientPresent] = useState(
     form.getValues('clientValidation.present')
   );
@@ -45,7 +46,7 @@ export function ClientValidationStep({ form }: ClientValidationStepProps) {
   return (
     <div className="space-y-6">
       <div className="text-lg font-semibold tracking-tight sm:text-xl">
-        {oldMeterPreserved ? 8 : 9}. Validation des travaux par le client
+        {stepNumber}. Validation des travaux par le client
       </div>
 
       <FormField

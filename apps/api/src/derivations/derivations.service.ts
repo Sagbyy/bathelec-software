@@ -147,6 +147,22 @@ export class DerivationsService {
     return this.findDerivationById(derivation.id);
   }
 
+  async startDerivation(derivationId: number, actor: AuthenticatedUser) {
+    const derivation = await this.derivationAccess.findFillableOrThrow(
+      derivationId,
+      actor
+    );
+
+    if (derivation.status === DerivationStatus.PENDING) {
+      await this.prisma.derivation.updateMany({
+        where: { id: derivation.id, status: DerivationStatus.PENDING },
+        data: { status: DerivationStatus.ONGOING },
+      });
+    }
+
+    return this.findDerivationById(derivation.id);
+  }
+
   async findAllDerivations() {
     return this.prisma.derivation.findMany({ include: CHANTIER_INCLUDE });
   }

@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
+import type { ZodIssue } from 'zod';
 import {
   createCompletedDerivationSchema,
+  getCompletedDerivationSchema,
   oldMeterRequiresKey,
 } from './derivation-form.schema';
 
-type ParseResult = ReturnType<
-  typeof createCompletedDerivationSchema.safeParse
->;
+type ParseResult = { error?: { issues: ZodIssue[] } };
 
 const hasIssueAt = (result: ParseResult, segment: string, field: string) =>
   result.error?.issues.some(
@@ -552,23 +552,39 @@ describe('createCompletedDerivationSchema', () => {
   });
 
   describe('photoAfterWork (DTA-65)', () => {
-    it('accepts up to four photos', () => {
+    it('accepts up to two additional photos', () => {
       const result = createCompletedDerivationSchema.safeParse({
         ...validData,
         photoAfterWork: {
           photo: 'data:image/jpeg;base64,p1',
           secondPhoto: 'data:image/jpeg;base64,p2',
           thirdPhoto: 'data:image/jpeg;base64,p3',
-          fourthPhoto: 'data:image/jpeg;base64,p4',
         },
       });
       expect(result.success).toBe(true);
     });
 
+    it('drops a third additional photo from the submitted data', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        photoAfterWork: {
+          photo: 'data:image/jpeg;base64,p1',
+          fourthPhoto: 'data:image/jpeg;base64,p4',
+        },
+      });
+      expect(result.success && result.data.photoAfterWork).toEqual({
+        photo: 'data:image/jpeg;base64,p1',
+      });
+    });
+
     it('keeps the extra photos optional', () => {
       const result = createCompletedDerivationSchema.safeParse({
         ...validData,
-        photoAfterWork: { photo: 'data:image/jpeg;base64,p1' },
+        photoAfterWork: {
+          photo: 'data:image/jpeg;base64,p1',
+          secondPhoto: null,
+          thirdPhoto: null,
+        },
       });
       expect(result.success).toBe(true);
     });
@@ -578,11 +594,173 @@ describe('createCompletedDerivationSchema', () => {
         ...validData,
         photoAfterWork: {
           photo: null,
-          fourthPhoto: 'data:image/jpeg;base64,p4',
+          secondPhoto: 'data:image/jpeg;base64,p2',
         },
       });
       expect(result.success).toBe(false);
       expect(hasIssueAt(result, 'photoAfterWork', 'photo')).toBe(true);
+    });
+  });
+
+  describe('photo format and size (§4.5)', () => {
+    const withBeforePhoto = (photo: unknown) =>
+      createCompletedDerivationSchema.safeParse({
+        ...validData,
+        photoBeforeWork: { photo },
+      });
+
+    it.each(['image/jpeg', 'image/png', 'image/webp'])(
+      'accepts a %s photo',
+      (mimeType) => {
+        expect(withBeforePhoto(`data:${mimeType};base64,AAAA`).success).toBe(
+          true
+        );
+      }
+    );
+
+    it.each([
+      'data:image/gif;base64,R0lGODlh',
+      'data:application/pdf;base64,AAAA',
+      'https://example.com/photo.jpg',
+    ])('rejects %s', (photo) => {
+      const result = withBeforePhoto(photo);
+      expect(messageAt(result, 'photoBeforeWork', 'photo')).toBe(
+        'La photo doit être au format JPEG, PNG ou WebP et ne pas dépasser 5 Mo'
+      );
+    });
+
+    it('rejects a photo larger than 5 MB', () => {
+      const oversized = `data:image/png;base64,${'A'.repeat(7 * 1024 * 1024)}`;
+      expect(withBeforePhoto(oversized).success).toBe(false);
+    });
+
+    it('rejects an invalid additional photo', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        photoAfterWork: {
+          photo: 'data:image/jpeg;base64,p1',
+          secondPhoto: 'data:image/gif;base64,R0lGODlh',
+        },
+      });
+      expect(hasIssueAt(result, 'photoAfterWork', 'secondPhoto')).toBe(true);
+    });
+  });
+
+  describe('old meter index photo (RG-09)', () => {
+    it.each([undefined, null, ''])(
+      'requires the photo when the meter is replaced (%p)',
+      (indexPhoto) => {
+        const result = createCompletedDerivationSchema.safeParse({
+          ...validData,
+          oldMeter: { ...validData.oldMeter, indexPhoto },
+        });
+        expect(messageAt(result, 'oldMeter', 'indexPhoto')).toBe(
+          'La photo est requise'
+        );
+      }
+    );
+  });
+
+  describe('circuit breaker sealing (RG-06)', () => {
+    it('rejects an unsealed circuit breaker', () => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        circuitBreaker: { ...validData.circuitBreaker, sealed: false },
+      });
+      expect(messageAt(result, 'circuitBreaker', 'sealed')).toBe(
+        'Le plombage du disjoncteur est obligatoire'
+      );
+    });
+  });
+
+  describe('new meter step (RG-07, Linky refusal)', () => {
+    const emptyNewMeter = {
+      generation: '',
+      serialNumber: '',
+      key: '',
+      dayIndex: '',
+      indexPhoto: null,
+    };
+
+    it.each([
+      { preserved: true, linkyRefusal: false },
+      { preserved: false, linkyRefusal: true },
+    ])('does not validate the skipped new meter (%j)', (outcome) => {
+      const oldMeter = { ...validData.oldMeter, ...outcome };
+      const result = getCompletedDerivationSchema(oldMeter).safeParse({
+        ...validData,
+        oldMeter,
+        newMeter: emptyNewMeter,
+      });
+      expect(hasIssueAt(result, 'newMeter', 'serialNumber')).toBe(false);
+      expect(hasIssueAt(result, 'newMeter', 'indexPhoto')).toBe(false);
+    });
+
+    it('validates the new meter when one is installed', () => {
+      const result = getCompletedDerivationSchema(validData.oldMeter).safeParse(
+        { ...validData, newMeter: emptyNewMeter }
+      );
+      expect(hasIssueAt(result, 'newMeter', 'serialNumber')).toBe(true);
+      expect(hasIssueAt(result, 'newMeter', 'indexPhoto')).toBe(true);
+    });
+  });
+
+  describe('client presence (RG-10)', () => {
+    const withClient = (clientValidation: Record<string, unknown>) => {
+      const result = createCompletedDerivationSchema.safeParse({
+        ...validData,
+        clientValidation: { ...validData.clientValidation, ...clientValidation },
+      });
+      return result.success
+        ? []
+        : result.error.issues.map((issue) => issue.path.join('.'));
+    };
+
+    it('does not require the client signature when the client is absent', () => {
+      expect(
+        withClient({
+          present: false,
+          signature: null,
+          workValidation: undefined,
+          satisfactionLevel: undefined,
+        })
+      ).toEqual([]);
+    });
+
+    it('requires the client signature when the client is present', () => {
+      expect(
+        withClient({
+          present: true,
+          workValidation: true,
+          satisfactionLevel: '0',
+          signature: null,
+        })
+      ).toEqual(['clientValidation.signature']);
+    });
+
+    it('accepts a present client with work validation, satisfaction and signature', () => {
+      expect(
+        withClient({
+          present: true,
+          workValidation: false,
+          satisfactionLevel: '4',
+          signature: 'data:image/png;base64,client',
+        })
+      ).toEqual([]);
+    });
+
+    it('requires the work validation and a 0 to 4 satisfaction when present', () => {
+      expect(
+        withClient({
+          present: true,
+          workValidation: undefined,
+          satisfactionLevel: '5',
+          signature: 'data:image/png;base64,client',
+        })
+      ).toEqual([
+        'clientValidation.workValidation',
+        'clientValidation.satisfactionLevel',
+      ]);
     });
   });
 
