@@ -48,6 +48,11 @@ export const useFormSteps = ({
     window.scrollTo(0, 0);
   }, []);
 
+  const restoreStep = useCallback(
+    (target: number) => setStep(Math.max(1, Math.round(target))),
+    []
+  );
+
   const goToFirstInvalidStep = useCallback(
     (invalidSections: string[]) => {
       const invalidStep = findFirstInvalidStep(invalidSections, visibleSteps);
@@ -119,6 +124,7 @@ export const useFormSteps = ({
     nextStep,
     prevStep,
     getActualStep,
+    restoreStep,
     oldMeterPreserved,
   };
 };

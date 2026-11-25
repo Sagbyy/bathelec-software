@@ -4,6 +4,7 @@ import './globals.css';
 import QueryProvider from '@/shared/config/query-provider';
 import AuthProvider from '@/shared/config/auth-provider';
 import ThemeProvider from '@/shared/config/theme-provider';
+import ServiceWorkerRegistrar from '@/shared/config/service-worker-registrar';
 import { Toaster } from '@/shared/ui/sonner';
 
 const geistSans = localFont({
@@ -59,6 +60,7 @@ export default function RootLayout({
               <main>{children}</main>
             </AuthProvider>
           </QueryProvider>
+          <ServiceWorkerRegistrar />
           <Toaster richColors closeButton position="top-center" />
         </ThemeProvider>
       </body>

@@ -18,7 +18,11 @@ import { useCompletedDerivationsById } from '..';
 import { CreateCompletedDerivation } from '@/entities/derivation';
 import { useDerivationSubmit } from '..';
 import { DEFAULT_FORM_VALUES } from '@/entities/derivation';
-import { formatCompletedDerivation } from './utils/form-data-formatter';
+import { formatCompletedDerivation } from '../lib/format-completed-derivation';
+import { useReportDraft } from '../model/use-report-draft';
+import { useQueuedReport } from '../model/use-report-sync';
+import { QueuedReportNotice } from './queued-report-notice';
+import { useUserStore } from '@/entities/user';
 import { useFormSteps } from '..';
 import { useStartDerivation } from '../model/use-start-derivation';
 import { FormHeader } from './form-parts/form-header';
@@ -36,9 +40,10 @@ export function MultiStepForm({
   readOnly = false,
 }: MultiStepFormProps) {
   const { submit } = useDerivationSubmit(derivation.id);
-  const { data: completedDerivation } = useCompletedDerivationsById(
-    derivation.id
-  );
+  const { data: completedDerivation, isLoading: isCompletedDerivationLoading } =
+    useCompletedDerivationsById(derivation.id);
+  const ownerId = useUserStore((state) => state.user?.id);
+  const queuedReport = useQueuedReport(ownerId, derivation.id);
   const { setIsNotEditable } = useDerivationStatusStore();
 
   const isStatusDisabled =
@@ -72,17 +77,36 @@ export function MultiStepForm({
   }, [form, isFormDisabled]);
 
   useEffect(() => {
-    if (completedDerivation) {
+    if (isFormDisabled && completedDerivation) {
       form.reset(formatCompletedDerivation(completedDerivation));
     }
-  }, [completedDerivation, form]);
+  }, [completedDerivation, form, isFormDisabled]);
 
-  const { step, totalSteps, progress, nextStep, prevStep, getActualStep } =
-    useFormSteps({
-      form,
-      onSubmit: submit,
-      readOnly: isFormDisabled,
-    });
+  const {
+    step,
+    totalSteps,
+    progress,
+    nextStep,
+    prevStep,
+    getActualStep,
+    restoreStep,
+  } = useFormSteps({
+    form,
+    onSubmit: submit,
+    readOnly: isFormDisabled,
+  });
+
+  useReportDraft({
+    form,
+    ownerId,
+    derivationId: derivation.id,
+    enabled: !isFormDisabled,
+    discard: isStatusDisabled,
+    serverReport: completedDerivation,
+    isServerReportLoading: isCompletedDerivationLoading,
+    step,
+    onRestoreStep: restoreStep,
+  });
 
   const renderStep = useCallback(() => {
     const actualStep = getActualStep(step);
@@ -114,6 +138,7 @@ export function MultiStepForm({
   return (
     <div className="w-full">
       <FormHeader step={step} totalSteps={totalSteps} progress={progress} />
+      {!isFormDisabled && <QueuedReportNotice entry={queuedReport} />}
 
       <Form {...form}>
         <form

@@ -4,9 +4,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { UserMenu } from '@/features/auth';
+import { ReportSyncStatus } from '@/features/derivations';
 import { ThemeToggle } from '@/features/theme-toggle';
 import { BrandLogo } from '@/shared/ui/brand-logo';
 import { Button } from '@/shared/ui/button';
+import { OFFLINE_SHELL_PATHS } from '../lib/tab-links';
 
 interface TechnicianTopbarProps {
   showBack: boolean;
@@ -36,6 +38,7 @@ export function TechnicianTopbar({ showBack }: TechnicianTopbarProps) {
           <BrandLogo size={44} />
         </Link>
         <div className="ml-auto flex items-center gap-1">
+          <ReportSyncStatus shellPaths={OFFLINE_SHELL_PATHS} />
           <ThemeToggle />
           <UserMenu />
         </div>

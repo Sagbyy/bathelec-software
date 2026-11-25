@@ -12,6 +12,13 @@ vi.mock('@tanstack/react-query', () => ({
   useQueryClient: () => ({ clear: mockClear }),
 }));
 
+const mockClearOfflineReadCache = vi.hoisted(() =>
+  vi.fn().mockResolvedValue(undefined)
+);
+vi.mock('@/shared/lib/offline', () => ({
+  clearOfflineReadCache: mockClearOfflineReadCache,
+}));
+
 const mockFetch = vi.fn();
 
 describe('useAuth', () => {
@@ -48,6 +55,19 @@ describe('useAuth', () => {
 
       expect(mockPush).toHaveBeenCalledWith('/dashboard');
       expect(result.current.error).toBe(false);
+    });
+
+    it('drops the offline read cache of a previous session on success (ENF-08)', async () => {
+      mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) });
+
+      const { result } = renderHook(() => useAuth());
+
+      await act(async () => {
+        await result.current.login('adminuser', 'Pass123!');
+      });
+
+      expect(mockClear).toHaveBeenCalledOnce();
+      expect(mockClearOfflineReadCache).toHaveBeenCalledOnce();
     });
 
     it('sets error state and does not redirect on failure', async () => {
@@ -108,6 +128,18 @@ describe('useAuth', () => {
       });
 
       expect(mockClear).toHaveBeenCalledOnce();
+    });
+
+    it('clears the offline read cache and service worker caches on logout (ENF-08)', async () => {
+      mockFetch.mockResolvedValueOnce({ ok: true });
+
+      const { result } = renderHook(() => useAuth());
+
+      await act(async () => {
+        await result.current.logout();
+      });
+
+      expect(mockClearOfflineReadCache).toHaveBeenCalledOnce();
     });
 
     it('redirects to /auth on logout', async () => {

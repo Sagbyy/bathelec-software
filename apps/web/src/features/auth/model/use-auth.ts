@@ -3,7 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { setAuthToken } from '@/shared/api/auth-token';
+import { setAuthToken } from '@/shared/api';
+import { clearOfflineReadCache } from '@/shared/lib/offline';
 
 const useAuth = () => {
   const router = useRouter();
@@ -22,6 +23,8 @@ const useAuth = () => {
       });
       if (!res.ok) throw new Error();
       const { accessToken } = await res.json();
+      queryClient.clear();
+      await clearOfflineReadCache();
       setAuthToken(accessToken);
       router.push('/dashboard');
     } catch {
@@ -35,6 +38,7 @@ const useAuth = () => {
     await fetch('/api/auth/logout', { method: 'POST' });
     setAuthToken(null);
     queryClient.clear();
+    await clearOfflineReadCache();
     router.push('/auth');
   };
 
