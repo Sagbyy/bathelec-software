@@ -50,6 +50,21 @@ describe('useAuth', () => {
       expect(result.current.error).toBe(false);
     });
 
+    it('clears cached queries of a previous session on success', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ authenticated: true }),
+      });
+
+      const { result } = renderHook(() => useAuth());
+
+      await act(async () => {
+        await result.current.login('adminuser', 'Pass123!');
+      });
+
+      expect(mockClear).toHaveBeenCalledOnce();
+    });
+
     it('sets error state and does not redirect on failure', async () => {
       mockFetch.mockResolvedValueOnce({ ok: false, json: () => Promise.resolve({}) });
 

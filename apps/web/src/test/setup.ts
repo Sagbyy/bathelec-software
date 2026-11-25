@@ -10,4 +10,6 @@ afterEach(() => {
 });
 afterAll(() => server.close());
 
-Object.defineProperty(window, 'scrollTo', { value: vi.fn(), writable: true });
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'scrollTo', { value: vi.fn(), writable: true });
+}

@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import QueryProvider from '@/shared/config/query-provider';
-import AuthProvider from '@/shared/config/auth-provider';
 import ThemeProvider from '@/shared/config/theme-provider';
 import { Toaster } from '@/shared/ui/sonner';
 
@@ -55,9 +54,7 @@ export default function RootLayout({
       <body className="min-h-dvh">
         <ThemeProvider>
           <QueryProvider>
-            <AuthProvider>
-              <main>{children}</main>
-            </AuthProvider>
+            <main>{children}</main>
           </QueryProvider>
           <Toaster richColors closeButton position="top-center" />
         </ThemeProvider>

@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { SESSION_COOKIE_NAME } from '@/shared/config/access-control';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
   const { accessToken } = await res.json();
 
   const cookieStore = await cookies();
-  cookieStore.set('token', accessToken, {
+  cookieStore.set(SESSION_COOKIE_NAME, accessToken, {
     httpOnly: true,
     secure: true,
     sameSite: 'lax',
@@ -25,5 +26,5 @@ export async function POST(req: NextRequest) {
     path: '/',
   });
 
-  return NextResponse.json({ accessToken });
+  return NextResponse.json({ authenticated: true });
 }

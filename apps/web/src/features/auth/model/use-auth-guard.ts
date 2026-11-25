@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
-import { Role, User } from '@repo/types';
+import { User } from '@repo/types';
 import { userService, useUserStore } from '@/entities/user';
+import { HOME_PATH, isRoleAllowedForPath } from '@/shared/config';
 
 export function useAuthGuard() {
   const [isClient, setIsClient] = useState(false);
@@ -31,16 +32,8 @@ export function useAuthGuard() {
 
     setUser(user);
 
-    if (
-      user.role === Role.ADMIN &&
-      pathname.startsWith('/dashboard/technician')
-    ) {
-      router.push('/dashboard');
-    } else if (
-      user.role === Role.TECHNICIAN &&
-      pathname.startsWith('/dashboard/admin')
-    ) {
-      router.push('/dashboard');
+    if (!isRoleAllowedForPath(user.role, pathname)) {
+      router.push(HOME_PATH);
     }
   }, [user, router, isClient, pathname, setUser]);
 
