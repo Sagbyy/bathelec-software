@@ -21,13 +21,14 @@ import {
   CIRCUIT_BREAKER_POWERS,
   useDerivationStatusStore,
 } from '@/entities/derivation';
+import { useStepNumber } from '../../model/use-step-number';
 
 interface CircuitBreakerStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }
 
 export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
-  const oldMeterPreserved = form.watch('oldMeter.preserved');
+  const stepNumber = useStepNumber(form, 7);
   const breakerPreserved = form.watch('circuitBreaker.preserved');
   const testButton = form.watch('circuitBreaker.testButton');
   const { isNotEditable: isCompleted } = useDerivationStatusStore();
@@ -35,7 +36,7 @@ export function CircuitBreakerStep({ form }: CircuitBreakerStepProps) {
   return (
     <div className="space-y-6">
       <div className="text-lg font-semibold tracking-tight sm:text-xl">
-        {oldMeterPreserved ? 6 : 7}. Disjoncteur
+        {stepNumber}. Disjoncteur
       </div>
 
       <Alert variant="destructive" className="mb-6">

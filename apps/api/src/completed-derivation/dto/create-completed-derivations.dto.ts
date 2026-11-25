@@ -1,6 +1,8 @@
 import {
+  Equals,
   IsBoolean,
   IsDate,
+  IsEmpty,
   IsIn,
   IsNotEmpty,
   IsNumber,
@@ -12,7 +14,14 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { FOLIO_PATTERN } from '@repo/types';
+import {
+  FOLIO_PATTERN,
+  isNewMeterInstalled,
+  REPORT_MAX_ADDITIONAL_PHOTOS,
+} from '@repo/types';
+import { IsReportPhoto } from './is-report-photo.validator';
+
+const SATISFACTION_LEVELS = ['0', '1', '2', '3', '4'];
 class ClientInfoDto {
   @IsString()
   @ApiProperty({ example: 'John Doe', description: 'The name of the client' })
@@ -109,7 +118,7 @@ class GeneralInfoDto {
 }
 
 class PhotoBeforeWorkDto {
-  @IsString()
+  @IsReportPhoto()
   @ApiProperty({
     example: 'https://example.com/photo.jpg',
     description: 'The photo before work',
@@ -139,6 +148,16 @@ class OldMeterDto {
   })
   preserved: boolean;
 
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty({
+    example: false,
+    required: false,
+    description:
+      'The client refused the Linky meter: no new meter is installed',
+  })
+  linkyRefusal?: boolean;
+
   @IsString()
   @ApiProperty({
     example: '1234567890',
@@ -166,6 +185,18 @@ class OldMeterDto {
     description: 'The night index of the meter',
   })
   nightIndex: string;
+
+  @ValidateIf(
+    (meter: OldMeterDto) => !meter.preserved || meter.indexPhoto != null
+  )
+  @IsReportPhoto()
+  @ApiProperty({
+    example: 'data:image/jpeg;base64,/9j/4AAQSkZJRg==',
+    required: false,
+    description:
+      'The photo of the old meter index, required unless the meter is preserved',
+  })
+  indexPhoto?: string;
 }
 
 class NewDerivationDto {
@@ -227,11 +258,10 @@ class NewMeterDto {
   })
   nightIndex: string;
 
-  @IsOptional()
-  @IsString()
+  @IsReportPhoto()
   @ApiProperty({
-    example: 'https://example.com/photo.jpg',
-    description: 'The photo of the meter',
+    example: 'data:image/jpeg;base64,/9j/4AAQSkZJRg==',
+    description: 'The photo of the new meter with a visible index',
   })
   indexPhoto: string;
 }
@@ -286,10 +316,10 @@ class CircuitBreakerDto {
   })
   commissioningDone: boolean;
 
-  @IsBoolean()
+  @Equals(true, { message: 'The circuit breaker must be sealed' })
   @ApiProperty({
     example: true,
-    description: 'The sealed',
+    description: 'The circuit breaker sealing, mandatory in every case',
   })
   sealed: boolean;
 
@@ -321,40 +351,35 @@ class CircuitBreakerDto {
 }
 
 class PhotoAfterWorkDto {
-  @IsString()
+  @IsReportPhoto()
   @ApiProperty({
-    example:
-      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=',
+    example: 'data:image/jpeg;base64,/9j/4AAQSkZJRg==',
     description: 'The required photo after work',
   })
   photo: string;
 
-  @IsString()
   @IsOptional()
+  @IsReportPhoto()
   @ApiProperty({
-    example:
-      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=',
-    description: 'The second optional photo after work',
+    example: 'data:image/jpeg;base64,/9j/4AAQSkZJRg==',
+    required: false,
+    description: 'The first optional additional photo after work',
   })
   secondPhoto?: string;
 
-  @IsString()
   @IsOptional()
+  @IsReportPhoto()
   @ApiProperty({
-    example:
-      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=',
-    description: 'The third optional photo after work',
+    example: 'data:image/jpeg;base64,/9j/4AAQSkZJRg==',
+    required: false,
+    description: 'The second optional additional photo after work',
   })
   thirdPhoto?: string;
 
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-    example:
-      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=',
-    description: 'The fourth optional photo after work',
+  @IsEmpty({
+    message: `At most ${REPORT_MAX_ADDITIONAL_PHOTOS} additional photos are allowed`,
   })
-  fourthPhoto?: string;
+  fourthPhoto?: never;
 }
 
 class ClientValidationDto {
@@ -365,34 +390,47 @@ class ClientValidationDto {
   })
   present: boolean;
 
+  @ValidateIf((validation: ClientValidationDto) => validation.present)
   @IsBoolean()
   @ApiProperty({
     example: true,
-    description: 'The work validation',
+    required: false,
+    description: 'The work validation, required when the client is present',
   })
-  workValidation: boolean;
+  workValidation?: boolean;
 
-  @IsString()
+  @ValidateIf((validation: ClientValidationDto) => validation.present)
+  @IsIn(SATISFACTION_LEVELS)
   @ApiProperty({
     example: '2',
-    description: 'The satisfaction level from 1 to 5',
+    required: false,
+    enum: SATISFACTION_LEVELS,
+    description:
+      'The satisfaction level from 0 to 4, required when the client is present',
   })
-  satisfactionLevel: string;
+  satisfactionLevel?: string;
 
+  @IsOptional()
   @IsString()
   @ApiProperty({
     example: 'Client comment',
+    required: false,
     description: 'The client comment',
   })
-  clientComment: string;
+  clientComment?: string;
 
+  @ValidateIf((validation: ClientValidationDto) => validation.present)
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({
     example:
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=',
-    description: 'The signature',
+    required: false,
+    nullable: true,
+    description:
+      'The client signature, required only when the client is present',
   })
-  signature: string;
+  signature?: string | null;
 
   @IsBoolean()
   @IsOptional()
@@ -496,6 +534,9 @@ export class CreateCompletedDerivationDto {
   })
   newDerivation: NewDerivationDto;
 
+  @ValidateIf((dto: CreateCompletedDerivationDto) =>
+    isNewMeterInstalled(dto.oldMeter ?? {})
+  )
   @ValidateNested()
   @Type(() => NewMeterDto)
   @ApiProperty({

@@ -77,6 +77,13 @@ export const derivationService = {
     );
     return data;
   },
+
+  startDerivation: async (derivationId: number) => {
+    const { data } = await apiClient.post<Derivation>(
+      `/derivations/${derivationId}/start`
+    );
+    return data;
+  },
 };
 
 export const derivationQueries = {

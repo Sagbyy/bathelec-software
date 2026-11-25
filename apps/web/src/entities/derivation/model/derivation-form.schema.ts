@@ -1,10 +1,21 @@
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { z } from 'zod';
-import { isValidFolio, normalizeFolio } from '@repo/types';
+import {
+  isNewMeterInstalled,
+  type OldMeterOutcome,
+  isValidFolio,
+  normalizeFolio,
+  REPORT_PHOTO_ERROR_MESSAGE,
+} from '@repo/types';
 import {
   CIRCUIT_BREAKER_POWERS,
   CIRCUIT_BREAKER_TEST_RESULTS,
 } from './circuit-breaker';
+import {
+  isMissingPhoto,
+  isValidStoredPhoto,
+  REPORT_PHOTO_REQUIRED_MESSAGE,
+} from './report-photo';
 
 const THREE_DIGITS = /^\d{3}$/;
 const TWELVE_DIGITS = /^\d{12}$/;
@@ -23,14 +34,61 @@ export function oldMeterRequiresKey(oldMeter: {
   return METER_TYPES_WITH_KEY.includes(oldMeter.type ?? '');
 }
 
-photoBeforeWork: z.object({
-  photo: z
-    .union([z.instanceof(File), z.instanceof(Blob), z.string()])
-    .nullable()
-    .refine((val) => val !== null, 'La photo est requise'),
+const SATISFACTION_LEVELS = ['0', '1', '2', '3', '4'];
+
+const addPhotoIssues = (
+  value: unknown,
+  ctx: z.RefinementCtx,
+  path: (string | number)[],
+  required: boolean
+) => {
+  if (isMissingPhoto(value)) {
+    if (required) {
+      ctx.addIssue({
+        path,
+        message: REPORT_PHOTO_REQUIRED_MESSAGE,
+        code: 'custom',
+      });
+    }
+    return;
+  }
+
+  if (!isValidStoredPhoto(value)) {
+    ctx.addIssue({ path, message: REPORT_PHOTO_ERROR_MESSAGE, code: 'custom' });
+  }
+};
+
+const requiredPhotoSchema = z
+  .any()
+  .superRefine((value, ctx) => addPhotoIssues(value, ctx, [], true));
+
+const optionalPhotoSchema = z
+  .any()
+  .superRefine((value, ctx) => addPhotoIssues(value, ctx, [], false));
+
+const newMeterSchema = z.object({
+  generation: z.string().min(1, { message: 'La génération est requise' }),
+  serialNumber: z.string().regex(TWELVE_DIGITS, {
+    message: 'Le matricule doit contenir exactement 12 chiffres',
+  }),
+  key: z.string().regex(TWO_DIGITS, {
+    message: 'La clé doit contenir exactement 2 chiffres',
+  }),
+  dayIndex: z.string().min(1, { message: "L'index jour est requis" }),
+  nightIndex: z.string().optional(),
+  indexPhoto: requiredPhotoSchema,
 });
 
-export const createCompletedDerivationSchema = z.object({
+const skippedNewMeterSchema = z.object({
+  generation: z.string().optional(),
+  serialNumber: z.string().optional(),
+  key: z.string().optional(),
+  dayIndex: z.string().optional(),
+  nightIndex: z.string().optional(),
+  indexPhoto: z.any().optional(),
+});
+
+const completedDerivationSectionsSchema = z.object({
   clientInfo: z.object({
     name: z.string().min(2, { message: 'Le nom est requis' }),
     phone: z
@@ -66,10 +124,7 @@ export const createCompletedDerivationSchema = z.object({
   }),
 
   photoBeforeWork: z.object({
-    photo: z
-      .union([z.instanceof(File), z.instanceof(Blob), z.string()])
-      .nullable()
-      .refine((val) => val !== null, 'La photo est requise'),
+    photo: requiredPhotoSchema,
   }),
 
   oldMeter: z
@@ -85,13 +140,7 @@ export const createCompletedDerivationSchema = z.object({
       indexPhoto: z.any().optional(),
     })
     .superRefine((data, ctx) => {
-      if (!data.preserved && data.indexPhoto === null) {
-        ctx.addIssue({
-          path: ['indexPhoto'],
-          message: 'La photo est requise',
-          code: 'custom',
-        });
-      }
+      addPhotoIssues(data.indexPhoto, ctx, ['indexPhoto'], !data.preserved);
 
       if (data.type === 'linky' && !data.generation) {
         ctx.addIssue({
@@ -129,21 +178,6 @@ export const createCompletedDerivationSchema = z.object({
     section: z.string().min(1, { message: 'La section est requise' }),
     cableType: z.string().min(1, { message: 'La nature du câble est requise' }),
     length: z.number().min(0, { message: 'La longueur doit être positive' }),
-  }),
-
-  newMeter: z.object({
-    generation: z.string().min(1, { message: 'La génération est requise' }),
-    serialNumber: z.string().regex(TWELVE_DIGITS, {
-      message: 'Le matricule doit contenir exactement 12 chiffres',
-    }),
-    key: z.string().regex(TWO_DIGITS, {
-      message: 'La clé doit contenir exactement 2 chiffres',
-    }),
-    dayIndex: z.string().min(1, { message: "L'index jour est requis" }),
-    nightIndex: z.string().optional(),
-    indexPhoto: z
-      .any()
-      .refine((val) => val !== null, { message: 'La photo est requise' }),
   }),
 
   circuitBreaker: z
@@ -185,7 +219,7 @@ export const createCompletedDerivationSchema = z.object({
         .min(1, 'La puissance du calibrage est requise'),
       commissioningDone: z.boolean(),
       sealed: z.boolean().refine((val) => val === true, {
-        message: 'Le disjoncteur doit être scellé',
+        message: 'Le plombage du disjoncteur est obligatoire',
       }),
       testButton: z.enum(CIRCUIT_BREAKER_TEST_RESULTS).nullable(),
       replacementExplanation: z.string(),
@@ -212,12 +246,9 @@ export const createCompletedDerivationSchema = z.object({
     }),
 
   photoAfterWork: z.object({
-    photo: z
-      .any()
-      .refine((val) => val !== null, { message: 'La photo est requise' }),
-    secondPhoto: z.any().optional(),
-    thirdPhoto: z.any().optional(),
-    fourthPhoto: z.any().optional(),
+    photo: requiredPhotoSchema,
+    secondPhoto: optionalPhotoSchema,
+    thirdPhoto: optionalPhotoSchema,
   }),
 
   clientValidation: z
@@ -247,21 +278,46 @@ export const createCompletedDerivationSchema = z.object({
           code: 'custom',
         });
       }
-    })
-    .refine(
-      (data) => {
-        if (data.present) {
-          return (
-            !!data.workValidation !== undefined &&
-            !!data.satisfactionLevel &&
-            !!data.signature
-          );
-        }
-        return true;
-      },
-      {
-        message: 'Tous les champs sont requis lorsque le client est présent',
-        path: ['present'],
+
+      if (!data.present) {
+        return;
       }
-    ),
+
+      if (typeof data.workValidation !== 'boolean') {
+        ctx.addIssue({
+          path: ['workValidation'],
+          message: 'La validation des travaux est requise',
+          code: 'custom',
+        });
+      }
+
+      if (!SATISFACTION_LEVELS.includes(data.satisfactionLevel ?? '')) {
+        ctx.addIssue({
+          path: ['satisfactionLevel'],
+          message: 'Le niveau de satisfaction est requis',
+          code: 'custom',
+        });
+      }
+
+      if (!data.signature) {
+        ctx.addIssue({
+          path: ['signature'],
+          message: 'La signature du client est requise lorsqu’il est présent',
+          code: 'custom',
+        });
+      }
+    }),
 });
+
+export const createCompletedDerivationSchema =
+  completedDerivationSectionsSchema.extend({ newMeter: newMeterSchema });
+
+const completedDerivationWithoutNewMeterSchema =
+  completedDerivationSectionsSchema.extend({
+    newMeter: skippedNewMeterSchema,
+  });
+
+export const getCompletedDerivationSchema = (oldMeter: OldMeterOutcome) =>
+  isNewMeterInstalled(oldMeter)
+    ? createCompletedDerivationSchema
+    : completedDerivationWithoutNewMeterSchema;

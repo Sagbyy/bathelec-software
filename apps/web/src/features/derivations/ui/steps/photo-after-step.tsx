@@ -1,8 +1,6 @@
 'use client';
 
-import type React from 'react';
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
   FormControl,
@@ -14,197 +12,165 @@ import {
 import { Button } from '@/shared/ui/button';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
-import { CreateCompletedDerivation } from '@/entities/derivation';
-import { useDerivationStatusStore } from '@/entities/derivation';
+import { REPORT_MAX_ADDITIONAL_PHOTOS } from '@repo/types';
+import {
+  REPORT_PHOTO_ACCEPT_ATTRIBUTE,
+  useDerivationStatusStore,
+  type CreateCompletedDerivation,
+} from '@/entities/derivation';
+import { useStepNumber } from '../../model/use-step-number';
+import { useReportPhotoField } from '../../model/use-report-photo-field';
 
 interface PhotoAfterStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }
 
-type PhotoFieldName = 'photo' | 'secondPhoto' | 'thirdPhoto' | 'fourthPhoto';
+type PhotoFieldName = 'photo' | 'secondPhoto' | 'thirdPhoto';
 
-interface PhotoPreview {
+interface PhotoSlot {
   fieldName: PhotoFieldName;
   label: string;
   required: boolean;
 }
 
-export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
-  const [numberOfPhotos, setNumberOfPhotos] = useState(1);
-  const oldMeterPreserved = form.watch('oldMeter.preserved');
-  const { isNotEditable: isCompleted } = useDerivationStatusStore();
+const PHOTO_SLOTS: PhotoSlot[] = [
+  {
+    fieldName: 'photo',
+    label: "Vue d'ensemble platine comptage",
+    required: true,
+  },
+  {
+    fieldName: 'secondPhoto',
+    label: 'Photo supplémentaire 1 (optionnelle)',
+    required: false,
+  },
+  {
+    fieldName: 'thirdPhoto',
+    label: 'Photo supplémentaire 2 (optionnelle)',
+    required: false,
+  },
+].slice(0, 1 + REPORT_MAX_ADDITIONAL_PHOTOS) as PhotoSlot[];
 
-  const photos: PhotoPreview[] = [
-    {
-      fieldName: 'photo',
-      label: "Vue d'ensemble platine comptage",
-      required: true,
-    },
-    {
-      fieldName: 'secondPhoto',
-      label: 'Photo supplémentaire 1 (optionnelle)',
-      required: false,
-    },
-    {
-      fieldName: 'thirdPhoto',
-      label: 'Photo supplémentaire 2 (optionnelle)',
-      required: false,
-    },
-    {
-      fieldName: 'fourthPhoto',
-      label: 'Photo supplémentaire 3 (optionnelle)',
-      required: false,
-    },
-  ];
+const countFilledSlots = (form: UseFormReturn<CreateCompletedDerivation>) =>
+  PHOTO_SLOTS.filter(({ fieldName }) =>
+    Boolean(form.getValues(`photoAfterWork.${fieldName}`))
+  ).length;
 
-  const [previewUrls, setPreviewUrls] = useState<Record<string, string | null>>(
-    {}
+interface PhotoAfterFieldProps {
+  form: UseFormReturn<CreateCompletedDerivation>;
+  slot: PhotoSlot;
+  disabled: boolean;
+}
+
+function PhotoAfterField({ form, slot, disabled }: PhotoAfterFieldProps) {
+  const inputId = `photo-after-${slot.fieldName}`;
+  const { previewUrl, selectPhoto, clearPhoto } = useReportPhotoField(
+    form,
+    `photoAfterWork.${slot.fieldName}`
   );
 
-  useEffect(() => {
-    const initialUrls: Record<string, string | null> = {};
-    const photoFields: PhotoFieldName[] = [
-      'photo',
-      'secondPhoto',
-      'thirdPhoto',
-      'fourthPhoto',
-    ];
-    photoFields.forEach((fieldName) => {
-      const value = form.getValues(`photoAfterWork.${fieldName}`);
-      initialUrls[fieldName] = value || null;
-    });
-    setPreviewUrls(initialUrls);
+  return (
+    <FormField
+      control={form.control}
+      name={`photoAfterWork.${slot.fieldName}`}
+      render={({ field: { name, onBlur, ref } }) => (
+        <FormItem>
+          <FormLabel>
+            {slot.label}
+            {slot.required && <span className="ml-1 text-destructive">*</span>}
+          </FormLabel>
+          <FormControl>
+            <div className="flex flex-col items-center gap-4">
+              {previewUrl ? (
+                <div className="relative w-full">
+                  <Image
+                    src={previewUrl}
+                    alt={`Aperçu ${slot.label}`}
+                    width={400}
+                    height={300}
+                    className="h-auto w-full rounded-xl border object-cover"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute right-2 top-2"
+                    onClick={clearPhoto}
+                    disabled={disabled}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="w-full rounded-xl border-2 border-dashed border-border bg-muted/40 transition-colors hover:border-primary/40 hover:bg-primary-soft/50 p-6 text-center">
+                  <div className="flex flex-col items-center">
+                    <Upload className="mb-2 h-8 w-8 text-muted-foreground" />
+                    <p className="mb-2 text-xs text-muted-foreground">
+                      {slot.required
+                        ? 'Cliquez ou glissez-déposez une photo'
+                        : 'Photo optionnelle'}
+                    </p>
+                    <input
+                      type="file"
+                      accept={REPORT_PHOTO_ACCEPT_ATTRIBUTE}
+                      className="hidden"
+                      id={inputId}
+                      data-testid={inputId}
+                      name={name}
+                      onBlur={onBlur}
+                      ref={ref}
+                      onChange={selectPhoto}
+                      disabled={disabled}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => document.getElementById(inputId)?.click()}
+                      disabled={disabled}
+                    >
+                      Sélectionner
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
 
-    const filledCount = photoFields.filter(
-      (fieldName) => initialUrls[fieldName]
-    ).length;
-    setNumberOfPhotos(Math.max(1, filledCount));
-  }, [form]);
-
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    fieldName: PhotoFieldName,
-    onChange: (value: string | null) => void
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        setPreviewUrls((prev) => ({ ...prev, [fieldName]: result }));
-        form.setValue(`photoAfterWork.${fieldName}`, result);
-        onChange(result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const clearFile = (
-    fieldName: PhotoFieldName,
-    onChange: (value: null) => void
-  ) => {
-    onChange(null);
-    setPreviewUrls((prev) => ({ ...prev, [fieldName]: null }));
-    form.setValue(`photoAfterWork.${fieldName}`, null);
-  };
+export function PhotoAfterStep({ form }: PhotoAfterStepProps) {
+  const stepNumber = useStepNumber(form, 8);
+  const { isNotEditable: isCompleted } = useDerivationStatusStore();
+  const [numberOfPhotos, setNumberOfPhotos] = useState(() =>
+    Math.max(1, countFilledSlots(form))
+  );
 
   return (
     <div className="space-y-6">
       <div className="text-lg font-semibold tracking-tight sm:text-xl">
-        {oldMeterPreserved ? 7 : 8}. Photo après travaux
+        {stepNumber}. Photo après travaux
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        {photos.slice(0, numberOfPhotos).map((photo) => (
-          <FormField
-            key={photo.fieldName}
-            control={form.control}
-            name={`photoAfterWork.${photo.fieldName}`}
-            render={({ field: { value, onChange, ...field } }) => (
-              <FormItem>
-                <FormLabel>
-                  {photo.label}
-                  {photo.required && (
-                    <span className="ml-1 text-destructive">*</span>
-                  )}
-                </FormLabel>
-                <FormControl>
-                  <div className="flex flex-col items-center gap-4">
-                    {previewUrls[photo.fieldName] ? (
-                      <div className="relative w-full">
-                        <Image
-                          src={
-                            previewUrls[photo.fieldName] || '/placeholder.svg'
-                          }
-                          alt={`Aperçu ${photo.label}`}
-                          width={400}
-                          height={300}
-                          className="h-auto w-full rounded-xl border object-cover"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute right-2 top-2"
-                          onClick={() => clearFile(photo.fieldName, onChange)}
-                          disabled={isCompleted}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="w-full rounded-xl border-2 border-dashed border-border bg-muted/40 transition-colors hover:border-primary/40 hover:bg-primary-soft/50 p-6 text-center">
-                        <div className="flex flex-col items-center">
-                          <Upload className="mb-2 h-8 w-8 text-muted-foreground" />
-                          <p className="mb-2 text-xs text-muted-foreground">
-                            {photo.required
-                              ? 'Cliquez ou glissez-déposez une photo'
-                              : 'Photo optionnelle'}
-                          </p>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            id={`photo-after-${photo.fieldName}`}
-                            onChange={(e) =>
-                              handleFileChange(e, photo.fieldName, onChange)
-                            }
-                            {...field}
-                            disabled={isCompleted}
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              document
-                                .getElementById(
-                                  `photo-after-${photo.fieldName}`
-                                )
-                                ?.click()
-                            }
-                            disabled={isCompleted}
-                          >
-                            Sélectionner
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+        {PHOTO_SLOTS.slice(0, numberOfPhotos).map((slot) => (
+          <PhotoAfterField
+            key={slot.fieldName}
+            form={form}
+            slot={slot}
+            disabled={isCompleted}
           />
         ))}
-        {numberOfPhotos < photos.length && (
+        {numberOfPhotos < PHOTO_SLOTS.length && (
           <Button
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => {
-              setNumberOfPhotos(numberOfPhotos + 1);
-            }}
+            onClick={() => setNumberOfPhotos(numberOfPhotos + 1)}
             disabled={isCompleted}
           >
             Ajouter une photo supplémentaire

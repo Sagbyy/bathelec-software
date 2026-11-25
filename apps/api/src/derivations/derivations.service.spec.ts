@@ -62,7 +62,10 @@ describe('DerivationsService', () => {
     },
   };
 
-  const mockDerivationAccess = { findViewableOrThrow: jest.fn() };
+  const mockDerivationAccess = {
+    findViewableOrThrow: jest.fn(),
+    findFillableOrThrow: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -737,6 +740,72 @@ describe('DerivationsService', () => {
       await expect(service.claimDerivation(1, technician)).rejects.toThrow(
         ForbiddenException
       );
+    });
+  });
+
+  describe('startDerivation', () => {
+    it('passe une dérivation « À compléter » en « En cours »', async () => {
+      mockDerivationAccess.findFillableOrThrow.mockResolvedValue(
+        mockDerivation
+      );
+      mockPrismaService.derivation.updateMany.mockResolvedValue({ count: 1 });
+      mockPrismaService.derivation.findUnique.mockResolvedValue({
+        ...mockDerivation,
+        status: DerivationStatus.ONGOING,
+      });
+
+      const result = await service.startDerivation(1, technician);
+
+      expect(mockDerivationAccess.findFillableOrThrow).toHaveBeenCalledWith(
+        1,
+        technician
+      );
+      expect(mockPrismaService.derivation.updateMany).toHaveBeenCalledWith({
+        where: { id: 1, status: DerivationStatus.PENDING },
+        data: { status: DerivationStatus.ONGOING },
+      });
+      expect(result.status).toBe(DerivationStatus.ONGOING);
+    });
+
+    it.each([DerivationStatus.ONGOING, DerivationStatus.REVISING])(
+      'ne modifie pas le statut %s',
+      async (status) => {
+        mockDerivationAccess.findFillableOrThrow.mockResolvedValue({
+          ...mockDerivation,
+          status,
+        });
+        mockPrismaService.derivation.findUnique.mockResolvedValue({
+          ...mockDerivation,
+          status,
+        });
+
+        const result = await service.startDerivation(1, technician);
+
+        expect(mockPrismaService.derivation.updateMany).not.toHaveBeenCalled();
+        expect(result.status).toBe(status);
+      }
+    );
+
+    it('refuse un utilisateur qui ne peut pas remplir le relevé', async () => {
+      mockDerivationAccess.findFillableOrThrow.mockRejectedValue(
+        new ForbiddenException()
+      );
+
+      await expect(service.startDerivation(1, technician)).rejects.toThrow(
+        ForbiddenException
+      );
+      expect(mockPrismaService.derivation.updateMany).not.toHaveBeenCalled();
+    });
+
+    it('refuse un relevé qui n’est plus modifiable', async () => {
+      mockDerivationAccess.findFillableOrThrow.mockRejectedValue(
+        new ConflictException()
+      );
+
+      await expect(service.startDerivation(1, technician)).rejects.toThrow(
+        ConflictException
+      );
+      expect(mockPrismaService.derivation.updateMany).not.toHaveBeenCalled();
     });
   });
 

@@ -43,6 +43,7 @@ const mockDerivationsService = {
   assignTeam: jest.fn(),
   assignUser: jest.fn(),
   claimDerivation: jest.fn(),
+  startDerivation: jest.fn(),
   getReviewStats: jest.fn(),
 };
 
@@ -188,8 +189,18 @@ describe('DerivationsController', () => {
       );
     });
 
+    it('délègue le démarrage de la saisie avec l’acteur courant', async () => {
+      await controller.startDerivation(1, currentUser);
+
+      expect(mockDerivationsService.startDerivation).toHaveBeenCalledWith(
+        1,
+        currentUser
+      );
+    });
+
     it.each([
       ['assignTeam', [Role.ADMIN, Role.SUPERVISOR]],
+      ['startDerivation', [Role.TECHNICIAN, Role.SITE_MANAGER]],
       ['assignUser', [Role.ADMIN, Role.SUPERVISOR, Role.SITE_MANAGER]],
       ['claimDerivation', [Role.TECHNICIAN, Role.SITE_MANAGER]],
       ['findMyDerivations', [Role.TECHNICIAN, Role.SITE_MANAGER]],

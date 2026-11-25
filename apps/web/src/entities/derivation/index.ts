@@ -5,10 +5,20 @@ export { DEFAULT_FORM_VALUES } from './model/derivation-form.defaults';
 export {
   TOTAL_STEPS,
   STEP_FIELDS_TO_VALIDATE,
+  getVisibleSteps,
+  getStepNumber,
+  getFieldsToValidate,
+  findFirstInvalidStep,
 } from './model/derivation-step-fields';
+export { completedDerivationResolver } from './model/completed-derivation.resolver';
+export {
+  REPORT_PHOTO_ACCEPT_ATTRIBUTE,
+  getReportPhotoFileError,
+} from './model/report-photo';
 export { useDerivationStatusStore } from './model/use-derivation-status.store';
 export {
   createCompletedDerivationSchema,
+  getCompletedDerivationSchema,
   oldMeterRequiresKey,
 } from './model/derivation-form.schema';
 export {

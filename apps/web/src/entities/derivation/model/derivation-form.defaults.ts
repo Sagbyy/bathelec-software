@@ -25,12 +25,12 @@ export const DEFAULT_FORM_VALUES = {
     type: '',
     generation: '',
     preserved: false,
-    linkyRefusal: undefined,
+    linkyRefusal: false,
     serialNumber: '',
     key: '',
     dayIndex: '',
     nightIndex: '',
-    indexPhoto: undefined,
+    indexPhoto: null,
   },
   newDerivation: {
     section: '',
@@ -61,7 +61,6 @@ export const DEFAULT_FORM_VALUES = {
     photo: null,
     secondPhoto: null,
     thirdPhoto: null,
-    fourthPhoto: null,
   },
   clientValidation: {
     present: true,

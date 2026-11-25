@@ -20,7 +20,11 @@ export const formatCompletedDerivation = (
       dateTime: formattedDateTime,
     },
     photoBeforeWork: completedDerivation.photoBeforeWork,
-    oldMeter: completedDerivation.oldMeter,
+    oldMeter: {
+      ...completedDerivation.oldMeter,
+      linkyRefusal: completedDerivation.oldMeter.linkyRefusal ?? false,
+      indexPhoto: completedDerivation.oldMeter.indexPhoto ?? null,
+    },
     newDerivation: completedDerivation.newDerivation,
     newMeter: completedDerivation.newMeter,
     circuitBreaker: {
@@ -32,7 +36,11 @@ export const formatCompletedDerivation = (
       replacementExplanation:
         completedDerivation.circuitBreaker.replacementExplanation ?? '',
     },
-    photoAfterWork: completedDerivation.photoAfterWork,
+    photoAfterWork: {
+      photo: completedDerivation.photoAfterWork.photo,
+      secondPhoto: completedDerivation.photoAfterWork.secondPhoto ?? null,
+      thirdPhoto: completedDerivation.photoAfterWork.thirdPhoto ?? null,
+    },
     clientValidation: {
       ...completedDerivation.clientValidation,
       technicianNothingToReport:

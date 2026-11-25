@@ -1,8 +1,5 @@
 'use client';
 
-import type React from 'react';
-
-import { useState, useEffect } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
   FormControl,
@@ -19,7 +16,11 @@ import { Button } from '@/shared/ui/button';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import { CreateCompletedDerivation } from '@/entities/derivation';
-import { useDerivationStatusStore } from '@/entities/derivation';
+import {
+  REPORT_PHOTO_ACCEPT_ATTRIBUTE,
+  useDerivationStatusStore,
+} from '@/entities/derivation';
+import { useReportPhotoField } from '../../model/use-report-photo-field';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 
@@ -28,38 +29,12 @@ interface NewMeterStepProps {
 }
 
 export function NewMeterStep({ form }: NewMeterStepProps) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { isNotEditable: isCompleted } = useDerivationStatusStore();
 
-  useEffect(() => {
-    setPreviewUrl(form.getValues('newMeter.indexPhoto'));
-  }, [form]);
-
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    // eslint-disable-next-line no-unused-vars
-    onChange: (value: File) => void
-  ) => {
-    const file = e.target.files?.[0];
-
-    if (file) {
-      onChange(file);
-
-      const reader = new FileReader();
-
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-        form.setValue('newMeter.indexPhoto', reader.result);
-      };
-
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const clearFile = (onChange: (value: null) => void) => {
-    onChange(null);
-    setPreviewUrl(null);
-  };
+  const { previewUrl, selectPhoto, clearPhoto } = useReportPhotoField(
+    form,
+    'newMeter.indexPhoto'
+  );
 
   return (
     <div className="space-y-6">
@@ -136,7 +111,7 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
       <FormField
         control={form.control}
         name="newMeter.indexPhoto"
-        render={({ field: { value, onChange, ...field } }) => (
+        render={({ field: { name, onBlur, ref } }) => (
           <FormItem>
             <FormLabel>
               Photo avec index visible
@@ -158,7 +133,7 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
                       variant="destructive"
                       size="icon"
                       className="absolute right-2 top-2"
-                      onClick={() => clearFile(onChange)}
+                      onClick={clearPhoto}
                       disabled={isCompleted}
                     >
                       <X className="h-4 w-4" />
@@ -173,11 +148,13 @@ export function NewMeterStep({ form }: NewMeterStepProps) {
                       </p>
                       <input
                         type="file"
-                        accept="image/*"
+                        accept={REPORT_PHOTO_ACCEPT_ATTRIBUTE}
                         className="hidden"
                         id="new-meter-photo-upload"
-                        onChange={(e) => handleFileChange(e, onChange)}
-                        {...field}
+                        name={name}
+                        onBlur={onBlur}
+                        ref={ref}
+                        onChange={selectPhoto}
                         disabled={isCompleted}
                       />
                       <Button

@@ -1,8 +1,5 @@
 'use client';
 
-import type React from 'react';
-
-import { useState, useEffect } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
   FormControl,
@@ -20,15 +17,16 @@ import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import type { CreateCompletedDerivation } from '@/entities/derivation';
 import {
+  REPORT_PHOTO_ACCEPT_ATTRIBUTE,
   useDerivationStatusStore,
   oldMeterRequiresKey,
 } from '@/entities/derivation';
+import { useReportPhotoField } from '../../model/use-report-photo-field';
 interface OldMeterStepProps {
   form: UseFormReturn<CreateCompletedDerivation>;
 }
 
 export function OldMeterStep({ form }: OldMeterStepProps) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const oldMeterType = form.watch('oldMeter.type');
   const oldMeterPreserved = form.watch('oldMeter.preserved');
   const oldMeterLinkyRefusal = form.watch('oldMeter.linkyRefusal');
@@ -40,30 +38,10 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
     linkyRefusal: oldMeterLinkyRefusal,
   });
 
-  useEffect(() => {
-    setPreviewUrl(form.getValues('oldMeter.indexPhoto'));
-  }, [form]);
-
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    onChange: (value: File) => void
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      onChange(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-        form.setValue('oldMeter.indexPhoto', reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const clearFile = (onChange: (value: null) => void) => {
-    onChange(null);
-    setPreviewUrl(null);
-  };
+  const { previewUrl, selectPhoto, clearPhoto } = useReportPhotoField(
+    form,
+    'oldMeter.indexPhoto'
+  );
 
   return (
     <div className="space-y-6">
@@ -183,7 +161,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
           <FormField
             control={form.control}
             name="oldMeter.indexPhoto"
-            render={({ field: { value, onChange, ...field } }) => (
+            render={({ field: { name, onBlur, ref } }) => (
               <FormItem>
                 <FormLabel>
                   Photo relevé index ancien compteur
@@ -205,7 +183,7 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
                           variant="destructive"
                           size="icon"
                           className="absolute right-2 top-2"
-                          onClick={() => clearFile(onChange)}
+                          onClick={clearPhoto}
                           disabled={isCompleted}
                         >
                           <X className="h-4 w-4" />
@@ -220,11 +198,13 @@ export function OldMeterStep({ form }: OldMeterStepProps) {
                           </p>
                           <input
                             type="file"
-                            accept="image/*"
+                            accept={REPORT_PHOTO_ACCEPT_ATTRIBUTE}
                             className="hidden"
                             id="old-meter-photo-upload"
-                            onChange={(e) => handleFileChange(e, onChange)}
-                            {...field}
+                            name={name}
+                            onBlur={onBlur}
+                            ref={ref}
+                            onChange={selectPhoto}
                             disabled={isCompleted}
                           />
                           <Button

@@ -147,6 +147,22 @@ describe('derivationService', () => {
       });
       await expect(derivationService.claimDerivation(2)).rejects.toThrow();
     });
+
+    it('starts a derivation report and surfaces refusals', async () => {
+      server.use(
+        http.post(`${BASE}/derivations/:id/start`, ({ params }) =>
+          Number(params.id) === 1
+            ? HttpResponse.json({ id: 1, status: 'Ongoing' })
+            : HttpResponse.json({ message: 'Forbidden' }, { status: 403 })
+        )
+      );
+
+      await expect(derivationService.startDerivation(1)).resolves.toEqual({
+        id: 1,
+        status: 'Ongoing',
+      });
+      await expect(derivationService.startDerivation(2)).rejects.toThrow();
+    });
   });
 
   it('récupère les statistiques de revue (DTA-54)', async () => {

@@ -35,10 +35,12 @@ export interface OldMeter {
   type: string;
   generation: string;
   preserved: boolean;
+  linkyRefusal?: boolean;
   serialNumber: string;
   key: string;
   dayIndex: string;
   nightIndex: string;
+  indexPhoto?: string | null;
 }
 
 export interface NewDerivation {

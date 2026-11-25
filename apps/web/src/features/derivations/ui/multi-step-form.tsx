@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, type DefaultValues } from 'react-hook-form';
 import { Form } from '@/shared/ui/form';
 import { Card, CardContent } from '@/shared/ui/card';
@@ -14,13 +13,14 @@ import { NewMeterStep } from './steps/new-meter-step';
 import { CircuitBreakerStep } from './steps/circuit-breaker-step';
 import { PhotoAfterStep } from './steps/photo-after-step';
 import { ClientValidationStep } from './steps/client-validation-step';
-import { createCompletedDerivationSchema } from '@/entities/derivation';
+import { completedDerivationResolver } from '@/entities/derivation';
 import { useCompletedDerivationsById } from '..';
 import { CreateCompletedDerivation } from '@/entities/derivation';
 import { useDerivationSubmit } from '..';
 import { DEFAULT_FORM_VALUES } from '@/entities/derivation';
 import { formatCompletedDerivation } from './utils/form-data-formatter';
 import { useFormSteps } from '..';
+import { useStartDerivation } from '../model/use-start-derivation';
 import { FormHeader } from './form-parts/form-header';
 import { FormNavigation } from './form-parts/form-navigation';
 import { Derivation, DerivationStatus } from '@repo/types';
@@ -50,6 +50,8 @@ export function MultiStepForm({
     setIsNotEditable(isFormDisabled);
   }, [isFormDisabled, setIsNotEditable]);
 
+  useStartDerivation(derivation, isFormDisabled);
+
   const form = useForm<
     CreateCompletedDerivation,
     unknown,
@@ -57,7 +59,7 @@ export function MultiStepForm({
   >({
     resolver: isFormDisabled
       ? undefined
-      : zodResolver(createCompletedDerivationSchema),
+      : completedDerivationResolver,
     defaultValues:
       DEFAULT_FORM_VALUES as unknown as DefaultValues<CreateCompletedDerivation>,
     mode: 'onChange',

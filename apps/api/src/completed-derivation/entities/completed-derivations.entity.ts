@@ -43,10 +43,12 @@ export class CompletedDerivation {
     type: string;
     generation: string;
     preserved: boolean;
+    linkyRefusal?: boolean;
     serialNumber: string;
     key: string;
     dayIndex: string;
     nightIndex: string;
+    indexPhoto?: string;
   };
 
   @Prop({ type: Object, required: true })
@@ -94,7 +96,7 @@ export class CompletedDerivation {
     workValidation: boolean;
     satisfactionLevel: string;
     clientComment: string;
-    signature: string;
+    signature?: string | null;
     technicianComment: string;
     technicianNothingToReport?: boolean;
     technicianSignature?: string;
