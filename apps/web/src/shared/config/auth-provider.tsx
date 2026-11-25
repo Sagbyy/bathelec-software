@@ -15,7 +15,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
           setAuthToken(data.accessToken);
           queryClient.refetchQueries();
         }
-      });
+      })
+      .catch(() => undefined);
   }, [queryClient]);
 
   return <>{children}</>;

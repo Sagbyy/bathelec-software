@@ -266,4 +266,59 @@ describe('CompletedDerivationService', () => {
       expect(mockCompletedDerivationModel.findOne).not.toHaveBeenCalled();
     });
   });
+  describe('rejeu idempotent d’une soumission hors-ligne (ENF-08)', () => {
+    const submissionId = '3f0c8a52-6a0e-4d3c-9f8e-2b1d5c7e9a10';
+    const replayedDto = { ...mockDto, clientSubmissionId: submissionId };
+    const storedReport = { ...replayedDto, _id: 'stored' };
+
+    const findOneResolving = (report: unknown) =>
+      mockCompletedDerivationModel.findOne.mockReturnValue({
+        lean: jest.fn().mockResolvedValue(report),
+      });
+
+    it('renvoie le relevé déjà enregistré sans le soumettre une seconde fois', async () => {
+      findOneResolving(storedReport);
+
+      const result = await service.create(replayedDto, technician);
+
+      expect(result).toBe(storedReport);
+      expect(mockCompletedDerivationModel.findOne).toHaveBeenCalledWith({
+        requestedDerivationId: mockDto.requestedDerivationId,
+        clientSubmissionId: submissionId,
+      });
+      expect(mockDerivationAccess.findFillableOrThrow).not.toHaveBeenCalled();
+      expect(mockPrismaService.derivation.update).not.toHaveBeenCalled();
+      expect(
+        mockCompletedDerivationModel.findOneAndUpdate
+      ).not.toHaveBeenCalled();
+    });
+
+    it('vérifie le droit de consultation avant de renvoyer le relevé rejoué', async () => {
+      findOneResolving(storedReport);
+      mockDerivationAccess.findViewableOrThrow.mockRejectedValue(
+        new ForbiddenException()
+      );
+
+      await expect(service.create(replayedDto, technician)).rejects.toThrow(
+        ForbiddenException
+      );
+    });
+
+    it('enregistre l’identifiant de soumission lors de la première réception', async () => {
+      const result = await service.create(replayedDto, technician);
+
+      expect(mockDerivationAccess.findFillableOrThrow).toHaveBeenCalled();
+      expect(mockPrismaService.derivation.update).toHaveBeenCalled();
+      expect(result.clientSubmissionId).toBe(submissionId);
+    });
+
+    it('ne cherche pas de rejeu sans identifiant de soumission', async () => {
+      await service.create(mockDto, technician);
+
+      expect(mockCompletedDerivationModel.findOne).toHaveBeenCalledTimes(1);
+      expect(mockCompletedDerivationModel.findOne).toHaveBeenCalledWith({
+        requestedDerivationId: mockDto.requestedDerivationId,
+      });
+    });
+  });
 });

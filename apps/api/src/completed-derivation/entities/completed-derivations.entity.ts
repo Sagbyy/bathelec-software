@@ -10,6 +10,9 @@ export class CompletedDerivation {
   @Prop({ required: true })
   requestedDerivationId: number;
 
+  @Prop({ type: String, index: true, sparse: true })
+  clientSubmissionId?: string;
+
   @Prop({ type: Object, required: true })
   clientInfo: {
     name: string;

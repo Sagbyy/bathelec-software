@@ -44,5 +44,5 @@ export function useAuthGuard() {
     }
   }, [user, router, isClient, pathname, setUser]);
 
-  return { user, isLoading, isClient, error };
+  return { user, isLoading, isClient, error: user ? null : error };
 }

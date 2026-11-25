@@ -17,6 +17,12 @@ export const tabLinks: TabLink[] = [
   { label: 'Profil', href: '/dashboard/profile', icon: UserRound },
 ];
 
+export const OFFLINE_SHELL_PATHS: readonly string[] = [
+  ...tabLinks.map((tab) => tab.href),
+  '/dashboard/technician/derivations/complete',
+  '/dashboard/technician/assignments',
+];
+
 const matches = (pathname: string, href: string) =>
   href === HOME_HREF
     ? pathname === href

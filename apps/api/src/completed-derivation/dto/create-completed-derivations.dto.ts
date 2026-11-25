@@ -8,6 +8,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   Matches,
   ValidateIf,
   ValidateNested,
@@ -471,6 +472,16 @@ export class CreateCompletedDerivationDto {
     description: 'The requested derivation id',
   })
   requestedDerivationId: number;
+
+  @IsOptional()
+  @IsUUID()
+  @ApiProperty({
+    required: false,
+    example: '3f0c8a52-6a0e-4d3c-9f8e-2b1d5c7e9a10',
+    description:
+      'Client generated id of the submission, replaying the same id returns the stored report instead of submitting it twice',
+  })
+  clientSubmissionId?: string;
 
   @ValidateNested()
   @Type(() => ClientInfoDto)

@@ -22,6 +22,11 @@ export class CompletedDerivationService {
   ) {}
 
   async create(dto: CreateCompletedDerivationDto, actor: AuthenticatedUser) {
+    const replayedReport = await this.findReplayedSubmission(dto, actor);
+    if (replayedReport) {
+      return replayedReport;
+    }
+
     const derivation = await this.derivationAccess.findFillableOrThrow(
       dto.requestedDerivationId,
       actor
@@ -76,6 +81,31 @@ export class CompletedDerivationService {
     return await this.completedDerivationModel.findOne({
       requestedDerivationId: derivation.id,
     });
+  }
+
+  private async findReplayedSubmission(
+    dto: CreateCompletedDerivationDto,
+    actor: AuthenticatedUser
+  ): Promise<CompletedDerivation | null> {
+    if (!dto.clientSubmissionId) {
+      return null;
+    }
+
+    const report = await this.completedDerivationModel
+      .findOne({
+        requestedDerivationId: dto.requestedDerivationId,
+        clientSubmissionId: dto.clientSubmissionId,
+      })
+      .lean<CompletedDerivation>();
+    if (!report) {
+      return null;
+    }
+
+    await this.derivationAccess.findViewableOrThrow(
+      dto.requestedDerivationId,
+      actor
+    );
+    return report;
   }
 
   private async ensureFolioAvailable(folio: string, derivationId: number) {

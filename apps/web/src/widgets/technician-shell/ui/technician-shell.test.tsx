@@ -11,6 +11,7 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@/features/auth', () => ({ UserMenu: () => null }));
 vi.mock('@/features/theme-toggle', () => ({ ThemeToggle: () => null }));
+vi.mock('@/features/derivations', () => ({ ReportSyncStatus: () => null }));
 
 describe('TechnicianShell', () => {
   beforeEach(() => {

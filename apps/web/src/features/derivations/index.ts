@@ -22,3 +22,4 @@ export type { AssignmentAction } from './lib/derivation-assignment';
 export { CreateDerivationForm } from './ui/create-derivation-form';
 export { DerivationTeamCard } from './ui/derivation-team-card';
 export { TeamDerivationsList } from './ui/team-derivations-list';
+export { ReportSyncStatus } from './ui/report-sync-status';
