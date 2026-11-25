@@ -99,7 +99,7 @@ export const HABILITATION_TABLE: {
           labels: ['B2', 'B2V', 'B2V essais'],
         },
         { codes: ['bc'], labels: ['BC'] },
-        { codes: ['bs', 'br'], labels: ['BS', 'BR'] },
+        { codes: ['br'], labels: ['BR'] },
         { codes: ['beAttribut'], labels: ['BE + attribut'] },
       ],
     },
