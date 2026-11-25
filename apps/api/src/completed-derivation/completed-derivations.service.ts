@@ -86,7 +86,7 @@ export class CompletedDerivationService {
   private async findReplayedSubmission(
     dto: CreateCompletedDerivationDto,
     actor: AuthenticatedUser
-  ) {
+  ): Promise<CompletedDerivation | null> {
     if (!dto.clientSubmissionId) {
       return null;
     }
@@ -96,7 +96,7 @@ export class CompletedDerivationService {
         requestedDerivationId: dto.requestedDerivationId,
         clientSubmissionId: dto.clientSubmissionId,
       })
-      .lean();
+      .lean<CompletedDerivation>();
     if (!report) {
       return null;
     }
