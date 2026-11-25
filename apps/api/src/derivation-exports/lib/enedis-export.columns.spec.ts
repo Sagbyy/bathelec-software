@@ -91,21 +91,20 @@ describe('Enedis export columns', () => {
     );
   });
 
-  it('exports the old and new meter keys', () => {
-    const source = buildSource();
-
-    expect(valueOf(source, 'Ancien compteur — clé')).toBe('12');
-    expect(valueOf(source, 'Nouveau compteur — clé')).toBe('34');
-  });
-
-  it('uses Enedis labels for meter types, generations and cable nature', () => {
-    const source = buildSource();
-
-    expect(valueOf(source, 'Ancien compteur — type')).toBe('Linky');
-    expect(valueOf(source, 'Ancien compteur — génération')).toBe('Linky G1');
-    expect(valueOf(source, 'Nouveau compteur — type')).toBe('Linky');
-    expect(valueOf(source, 'Nouveau compteur — génération')).toBe('Linky G3');
-    expect(valueOf(source, 'Câble — nature')).toBe('Cuivre');
+  it.each([
+    ['Ancien compteur — clé', '12'],
+    ['Nouveau compteur — clé', '34'],
+    ['Ancien compteur — type', 'Linky'],
+    ['Ancien compteur — génération', 'Linky G1'],
+    ['Nouveau compteur — type', 'Linky'],
+    ['Nouveau compteur — génération', 'Linky G3'],
+    ['Câble — nature', 'Cuivre'],
+    ['Puissance disjoncteur', '15-45 A'],
+    ['Puissance calibrage', '45 A'],
+    ['Disjoncteur — voltage', 'Monophasé'],
+    ['Disjoncteur — type', 'Sélectif'],
+  ])('exports %s as %s', (header, expected) => {
+    expect(valueOf(buildSource(), header)).toBe(expected);
   });
 
   it('labels a CBE old meter without generation', () => {
@@ -148,20 +147,6 @@ describe('Enedis export columns', () => {
       '+33612345678',
       '3 rue Paillet, 75005 Paris',
     ]);
-  });
-
-  it('expresses powers in amperes', () => {
-    const source = buildSource();
-
-    expect(valueOf(source, 'Puissance disjoncteur')).toBe('15-45 A');
-    expect(valueOf(source, 'Puissance calibrage')).toBe('45 A');
-  });
-
-  it('uses business labels for voltage and breaker type', () => {
-    const source = buildSource();
-
-    expect(valueOf(source, 'Disjoncteur — voltage')).toBe('Monophasé');
-    expect(valueOf(source, 'Disjoncteur — type')).toBe('Sélectif');
   });
 
   it('leaves the new meter empty when the old meter is preserved', () => {
