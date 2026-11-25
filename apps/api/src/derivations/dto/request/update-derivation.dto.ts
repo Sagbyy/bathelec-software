@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsOptional, IsString } from 'class-validator';
 import { DerivationStatus } from '../../../types/derivations-status.enum';
+import { REVIEW_DECISIONS } from '../../access/derivation-access.policy';
 
 export class UpdateDerivationDto {
   @ApiProperty({ example: 'Comment', required: false, nullable: true })
@@ -8,8 +9,8 @@ export class UpdateDerivationDto {
   @IsOptional()
   correctionComment?: string | null;
 
-  @ApiProperty({ enum: DerivationStatus, required: false })
-  @IsEnum(DerivationStatus)
+  @ApiProperty({ enum: REVIEW_DECISIONS, required: false })
+  @IsIn(REVIEW_DECISIONS)
   @IsOptional()
   status?: DerivationStatus;
 }

@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ConsoleLogger } from '@nestjs/common';
+import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
 
@@ -14,6 +14,7 @@ async function bootstrap() {
   });
 
   app.use(cookieParser());
+  app.useGlobalPipes(new ValidationPipe());
   app.useBodyParser('json', { limit: '100mb' });
 
   const config = new DocumentBuilder()

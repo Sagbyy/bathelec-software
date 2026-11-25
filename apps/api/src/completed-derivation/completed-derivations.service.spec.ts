@@ -1,9 +1,14 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { CompletedDerivationService } from './completed-derivations.service';
 import { CompletedDerivation } from './entities/completed-derivations.entity';
 import { PrismaService } from '../prisma/prisma.service';
+import { Role } from '@repo/types';
+import { DerivationAccessService } from '../derivations/access/derivation-access.service';
+
+const technician = { userId: 42, username: 'tech', role: Role.TECHNICIAN };
+const assignedDerivation = { id: 1, userId: 42, teamId: 3, status: 'Pending' };
 
 const mockDto = {
   requestedDerivationId: 1,
@@ -85,6 +90,11 @@ describe('CompletedDerivationService', () => {
     },
   };
 
+  const mockDerivationAccess = {
+    findFillableOrThrow: jest.fn(),
+    findViewableOrThrow: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -100,6 +110,7 @@ describe('CompletedDerivationService', () => {
           provide: PrismaService,
           useValue: mockPrismaService,
         },
+        { provide: DerivationAccessService, useValue: mockDerivationAccess },
       ],
     }).compile();
 
@@ -112,6 +123,12 @@ describe('CompletedDerivationService', () => {
     });
     mockPrismaService.derivation.update.mockResolvedValue({});
     mockPrismaService.derivation.findFirst.mockResolvedValue(null);
+    mockDerivationAccess.findFillableOrThrow.mockResolvedValue(
+      assignedDerivation
+    );
+    mockDerivationAccess.findViewableOrThrow.mockResolvedValue(
+      assignedDerivation
+    );
   });
 
   it('should be defined', () => {
@@ -119,7 +136,7 @@ describe('CompletedDerivationService', () => {
   });
 
   it('should create a completed derivation', async () => {
-    const completedDerivation = await service.create(mockDto);
+    const completedDerivation = await service.create(mockDto, technician);
 
     expect(completedDerivation).toBeDefined();
     expect(completedDerivation.clientInfo).toEqual(mockDto.clientInfo);
@@ -145,7 +162,8 @@ describe('CompletedDerivationService', () => {
 
     it('normalise le folio et le recopie sur la dérivation', async () => {
       const result = await service.create(
-        withFolio('sgx001-com001 -asc001-  001 - 101')
+        withFolio('sgx001-com001 -asc001-  001 - 101'),
+        technician
       );
 
       expect(result.clientInfo.folio).toBe(
@@ -164,16 +182,25 @@ describe('CompletedDerivationService', () => {
       mockPrismaService.derivation.findFirst.mockResolvedValue({ id: 7 });
 
       await expect(
-        service.create(withFolio('SGX001 - COM001 - ASC001 - 001 - 101'))
+        service.create(
+          withFolio('SGX001 - COM001 - ASC001 - 001 - 101'),
+          technician
+        )
       ).rejects.toThrow(ConflictException);
       await expect(
-        service.create(withFolio('SGX001 - COM001 - ASC001 - 001 - 101'))
+        service.create(
+          withFolio('SGX001 - COM001 - ASC001 - 001 - 101'),
+          technician
+        )
       ).rejects.toThrow('Ce folio est déjà utilisé par la dérivation n°7');
       expect(mockPrismaService.derivation.update).not.toHaveBeenCalled();
     });
 
     it('ignore la dérivation elle-même lors du contrôle d’unicité', async () => {
-      await service.create(withFolio('SGX001 - COM001 - ASC001 - 001 - 101'));
+      await service.create(
+        withFolio('SGX001 - COM001 - ASC001 - 001 - 101'),
+        technician
+      );
 
       expect(mockPrismaService.derivation.findFirst).toHaveBeenCalledWith({
         where: {
@@ -182,6 +209,61 @@ describe('CompletedDerivationService', () => {
         },
         select: { id: true },
       });
+    });
+  });
+
+  describe('contrôle d’accès au relevé (RG-04, ENF-03)', () => {
+    it('refuse la soumission quand la dérivation n’est plus modifiable', async () => {
+      mockDerivationAccess.findFillableOrThrow.mockRejectedValue(
+        new ConflictException()
+      );
+
+      await expect(service.create(mockDto, technician)).rejects.toThrow(
+        ConflictException
+      );
+      expect(mockPrismaService.derivation.update).not.toHaveBeenCalled();
+    });
+
+    it('vérifie le droit de saisie de l’acteur sur la dérivation demandée', async () => {
+      await service.create(mockDto, technician);
+
+      expect(mockDerivationAccess.findFillableOrThrow).toHaveBeenCalledWith(
+        mockDto.requestedDerivationId,
+        technician
+      );
+    });
+
+    it('attribue au technicien une dérivation d’équipe non attribuée', async () => {
+      mockDerivationAccess.findFillableOrThrow.mockResolvedValue({
+        ...assignedDerivation,
+        userId: null,
+      });
+
+      await service.create(mockDto, technician);
+
+      expect(mockPrismaService.derivation.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ userId: technician.userId }),
+        })
+      );
+    });
+
+    it('ne réattribue pas une dérivation déjà attribuée', async () => {
+      await service.create(mockDto, technician);
+
+      const { data } = mockPrismaService.derivation.update.mock.calls[0][0];
+      expect(data.userId).toBeUndefined();
+    });
+
+    it('ne lit le relevé qu’après avoir vérifié le droit de consultation', async () => {
+      mockDerivationAccess.findViewableOrThrow.mockRejectedValue(
+        new ForbiddenException()
+      );
+
+      await expect(service.findOne(1, technician)).rejects.toThrow(
+        ForbiddenException
+      );
+      expect(mockCompletedDerivationModel.findOne).not.toHaveBeenCalled();
     });
   });
 });

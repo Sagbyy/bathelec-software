@@ -12,14 +12,17 @@ import { CreateDerivationDto } from './dto/request/create-derivation.dto';
 import { DerivationStatus } from '../types/derivations-status.enum';
 import { UpdateDerivationDto } from './dto/request/update-derivation.dto';
 import { AuthenticatedUser } from '../common/decorators/current-user.decorator';
+import { DerivationAccessService } from './access/derivation-access.service';
+import {
+  isManagement,
+  requiresCorrectionComment,
+} from './access/derivation-access.policy';
 
 const CHANTIER_INCLUDE = {
   chantier: { include: { market: true } },
   team: { select: { id: true, name: true } },
   user: { select: { id: true, firstName: true, lastName: true } },
 } as const;
-
-const MANAGEMENT_ROLES: Role[] = [Role.ADMIN, Role.SUPERVISOR];
 
 const isSentBackForCorrection = (
   currentStatus: string,
@@ -33,7 +36,10 @@ const toRate = (part: number, total: number) =>
 
 @Injectable()
 export class DerivationsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly derivationAccess: DerivationAccessService
+  ) {}
   private readonly logger = new Logger(DerivationsService.name);
 
   async createDerivation(
@@ -43,8 +49,10 @@ export class DerivationsService {
     const { teamId } = createDerivationDto;
     await this.ensureTeamExists(teamId);
 
-    const isManagement = MANAGEMENT_ROLES.includes(actor.role as Role);
-    if (!isManagement && !(await this.isTeamMember(teamId, actor.userId))) {
+    if (
+      !isManagement(actor) &&
+      !(await this.isTeamMember(teamId, actor.userId))
+    ) {
       throw new ForbiddenException(
         'Only a member of the team can create a derivation for it'
       );
@@ -83,10 +91,16 @@ export class DerivationsService {
     });
   }
 
-  async findDerivationByUserId(userId: number) {
+  async findDerivationByUserId(userId: number, actor: AuthenticatedUser) {
     const parsedUserId = Number(userId);
     if (isNaN(parsedUserId)) {
       throw new NotFoundException('Invalid user ID');
+    }
+
+    if (!isManagement(actor) && parsedUserId !== actor.userId) {
+      throw new ForbiddenException(
+        "You are not allowed to access another user's derivations"
+      );
     }
 
     const derivations = await this.prisma.derivation.findMany({
@@ -122,6 +136,17 @@ export class DerivationsService {
     return derivation;
   }
 
+  async findViewableDerivationById(
+    derivationId: number,
+    actor: AuthenticatedUser
+  ) {
+    const derivation = await this.derivationAccess.findViewableOrThrow(
+      derivationId,
+      actor
+    );
+    return this.findDerivationById(derivation.id);
+  }
+
   async findAllDerivations() {
     return this.prisma.derivation.findMany({ include: CHANTIER_INCLUDE });
   }
@@ -133,6 +158,17 @@ export class DerivationsService {
     const parsedDerivationId = Number(derivationId);
     if (isNaN(parsedDerivationId)) {
       throw new NotFoundException('Invalid derivation ID');
+    }
+
+    if (
+      requiresCorrectionComment(
+        updateDerivationDto.status,
+        updateDerivationDto.correctionComment
+      )
+    ) {
+      throw new BadRequestException(
+        'A correction comment is required to send a derivation back for correction'
+      );
     }
 
     this.logger.log(`Finding derivation with ID: ${parsedDerivationId}`);

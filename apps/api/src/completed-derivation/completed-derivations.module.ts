@@ -7,6 +7,7 @@ import {
   CompletedDerivationSchema,
 } from './entities/completed-derivations.entity';
 import { PrismaService } from '../prisma/prisma.service';
+import { DerivationAccessService } from '../derivations/access/derivation-access.service';
 
 @Module({
   imports: [
@@ -15,6 +16,10 @@ import { PrismaService } from '../prisma/prisma.service';
     ]),
   ],
   controllers: [CompletedDerivationController],
-  providers: [CompletedDerivationService, PrismaService],
+  providers: [
+    CompletedDerivationService,
+    DerivationAccessService,
+    PrismaService,
+  ],
 })
 export class CompletedDerivationModule {}

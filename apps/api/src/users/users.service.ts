@@ -40,6 +40,7 @@ export class UsersService {
 
     const user = await this.prisma.user.findUnique({
       where: { id },
+      omit: { password: true },
     });
 
     return user;
@@ -69,6 +70,7 @@ export class UsersService {
         lastName,
         role: 'technician',
       },
+      omit: { password: true },
     });
   }
 

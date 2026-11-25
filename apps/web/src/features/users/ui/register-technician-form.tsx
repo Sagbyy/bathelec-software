@@ -13,6 +13,7 @@ import clsx from 'clsx';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { apiClient } from '@/shared/api';
+import { strongPasswordSchema } from '@/shared/lib/password-policy';
 
 export default function RegisterTechnicianForm() {
   const registerTechnicianSchema = z
@@ -30,10 +31,7 @@ export default function RegisterTechnicianForm() {
         .string()
         .min(2, "Le nom d'utilisateur doit avoir au moins 2 caractères")
         .max(50, "Le nom d'utilisateur doit avoir au maximum 50 caractères"),
-      password: z
-        .string()
-        .min(8, 'Le mot de passe doit avoir au moins 8 caractères')
-        .max(32, 'Le mot de passe doit avoir au maximum 32 caractères'),
+      password: strongPasswordSchema,
       confirmPassword: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {

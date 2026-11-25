@@ -21,7 +21,7 @@ export function toDerivationRow(
     status: derivation.status,
     building: completed?.generalInfo?.building ?? '',
     cmIdentification: completed?.generalInfo?.cmIdentification ?? '',
-    folio: completed?.clientInfo?.folio ?? '',
+    folio: completed?.clientInfo?.folio ?? derivation.folio ?? '',
     floor: completed?.generalInfo?.floor ?? '',
     electricianName: completed?.generalInfo?.derivationBy ?? '',
     clientName: completed?.clientInfo?.name ?? '',

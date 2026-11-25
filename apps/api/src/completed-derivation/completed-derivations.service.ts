@@ -9,67 +9,54 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreateCompletedDerivationDto } from './dto/create-completed-derivations.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { DerivationStatus } from '../types/derivations-status.enum';
+import { AuthenticatedUser } from '../common/decorators/current-user.decorator';
+import { DerivationAccessService } from '../derivations/access/derivation-access.service';
 
 @Injectable()
 export class CompletedDerivationService {
   constructor(
     @InjectModel(CompletedDerivation.name)
     private completedDerivationModel: Model<CompletedDerivationDocument>,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly derivationAccess: DerivationAccessService
   ) {}
 
-  async create(dto: CreateCompletedDerivationDto) {
+  async create(dto: CreateCompletedDerivationDto, actor: AuthenticatedUser) {
+    const derivation = await this.derivationAccess.findFillableOrThrow(
+      dto.requestedDerivationId,
+      actor
+    );
     const folio = normalizeFolio(dto.clientInfo.folio);
-    await this.ensureFolioAvailable(folio, dto.requestedDerivationId);
-    const createCompletedDerivationDto = {
+    await this.ensureFolioAvailable(folio, derivation.id);
+    const report = {
       ...dto,
+      requestedDerivationId: derivation.id,
       clientInfo: { ...dto.clientInfo, folio },
     };
 
     try {
-      const completedDerivationOnDatabase = await this.completedDerivationModel
-        .findOne({
-          requestedDerivationId:
-            createCompletedDerivationDto.requestedDerivationId,
-        })
+      const existingReport = await this.completedDerivationModel
+        .findOne({ requestedDerivationId: derivation.id })
         .lean();
 
-      if (completedDerivationOnDatabase) {
-        await this.prisma.derivation.update({
-          where: {
-            id: createCompletedDerivationDto.requestedDerivationId,
-          },
-          data: {
-            status: DerivationStatus.REVIEWING,
-            folio,
-          },
-        });
+      await this.prisma.derivation.update({
+        where: { id: derivation.id },
+        data: {
+          status: DerivationStatus.REVIEWING,
+          folio,
+          ...(derivation.userId === null ? { userId: actor.userId } : {}),
+        },
+      });
 
+      if (existingReport) {
         return this.completedDerivationModel.findOneAndUpdate(
-          {
-            requestedDerivationId:
-              createCompletedDerivationDto.requestedDerivationId,
-          },
-          { ...createCompletedDerivationDto, updatedAt: new Date() },
+          { requestedDerivationId: derivation.id },
+          { ...report, updatedAt: new Date() },
           { new: true }
         );
       }
 
-      const completedDerivation = new this.completedDerivationModel(
-        createCompletedDerivationDto
-      );
-
-      await this.prisma.derivation.update({
-        where: {
-          id: createCompletedDerivationDto.requestedDerivationId,
-        },
-        data: {
-          status: DerivationStatus.REVIEWING,
-          folio,
-        },
-      });
-
-      return await completedDerivation.save();
+      return await new this.completedDerivationModel(report).save();
     } catch (error) {
       console.error('Error in create method:', error);
       throw new Error('Error while creating or updating completed derivation');
@@ -80,35 +67,15 @@ export class CompletedDerivationService {
     return await this.completedDerivationModel.find();
   }
 
-  async findOne(id: number) {
-    return await this.completedDerivationModel.findOne({
-      requestedDerivationId: id,
-    });
-  }
-
-  async update(id: number, dto: Partial<CompletedDerivation>) {
-    const folio = dto.clientInfo?.folio
-      ? normalizeFolio(dto.clientInfo.folio)
-      : undefined;
-    if (folio) {
-      await this.ensureFolioAvailable(folio, dto.requestedDerivationId);
-    }
-
-    await this.prisma.derivation.update({
-      where: {
-        id: dto.requestedDerivationId,
-      },
-      data: {
-        status: DerivationStatus.REVIEWING,
-        folio,
-      },
-    });
-
-    return await this.completedDerivationModel.findByIdAndUpdate(
-      id,
-      folio ? { ...dto, clientInfo: { ...dto.clientInfo, folio } } : dto,
-      { new: true }
+  async findOne(derivationId: number, actor: AuthenticatedUser) {
+    const derivation = await this.derivationAccess.findViewableOrThrow(
+      derivationId,
+      actor
     );
+
+    return await this.completedDerivationModel.findOne({
+      requestedDerivationId: derivation.id,
+    });
   }
 
   private async ensureFolioAvailable(folio: string, derivationId: number) {
@@ -121,9 +88,5 @@ export class CompletedDerivationService {
         `Ce folio est déjà utilisé par la dérivation n°${owner.id}`
       );
     }
-  }
-
-  remove(id: number) {
-    return this.completedDerivationModel.findByIdAndDelete(id);
   }
 }

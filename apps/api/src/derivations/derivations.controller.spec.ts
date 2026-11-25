@@ -36,6 +36,7 @@ const mockDerivationsService = {
   createDerivation: jest.fn(),
   findDerivationByUserId: jest.fn(),
   findDerivationById: jest.fn(),
+  findViewableDerivationById: jest.fn(),
   findAllDerivations: jest.fn(),
   updateDerivation: jest.fn(),
   findMyDerivations: jest.fn(),
@@ -90,25 +91,27 @@ describe('DerivationsController', () => {
         mockDerivation,
       ]);
 
-      const result = await controller.findDerivationByUserId(42);
+      const result = await controller.findDerivationByUserId(42, currentUser);
 
       expect(result).toEqual([mockDerivation]);
       expect(
         mockDerivationsService.findDerivationByUserId
-      ).toHaveBeenCalledWith(42);
+      ).toHaveBeenCalledWith(42, currentUser);
     });
   });
 
   describe('findDerivationById', () => {
     it('retourne une dérivation par id avec son chantier et marché', async () => {
-      mockDerivationsService.findDerivationById.mockResolvedValue(
+      mockDerivationsService.findViewableDerivationById.mockResolvedValue(
         mockDerivation
       );
 
-      const result = await controller.findDerivationById(1);
+      const result = await controller.findDerivationById(1, currentUser);
 
       expect(result).toEqual(mockDerivation);
-      expect(mockDerivationsService.findDerivationById).toHaveBeenCalledWith(1);
+      expect(
+        mockDerivationsService.findViewableDerivationById
+      ).toHaveBeenCalledWith(1, currentUser);
     });
   });
 
@@ -191,6 +194,8 @@ describe('DerivationsController', () => {
       ['claimDerivation', [Role.TECHNICIAN, Role.SITE_MANAGER]],
       ['findMyDerivations', [Role.TECHNICIAN, Role.SITE_MANAGER]],
       ['getReviewStats', [Role.ADMIN, Role.SUPERVISOR]],
+      ['findAllDerivations', [Role.ADMIN, Role.SUPERVISOR]],
+      ['updateDerivation', [Role.ADMIN, Role.SUPERVISOR]],
       [
         'createDerivation',
         [Role.ADMIN, Role.SUPERVISOR, Role.SITE_MANAGER, Role.TECHNICIAN],
@@ -226,6 +231,15 @@ describe('DerivationsController', () => {
       async (body) => {
         await expect(
           STRICT_VALIDATION.transform(body, asBody(UpdateDerivationDto))
+        ).rejects.toThrow();
+      }
+    );
+
+    it.each([['Pending'], ['Ongoing'], ['Reviewing']])(
+      'rejette le statut %s qui n’est pas une décision de revue',
+      async (status) => {
+        await expect(
+          STRICT_VALIDATION.transform({ status }, asBody(UpdateDerivationDto))
         ).rejects.toThrow();
       }
     );

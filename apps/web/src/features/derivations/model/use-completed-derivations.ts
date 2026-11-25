@@ -55,6 +55,7 @@ export const useCompletedDerivationsByIds = (derivationIds: number[]) => {
       queryKey: ['completed-derivations', id],
       queryFn: () =>
         completedDerivationsService.getCompletedDerivationsById(id),
+      retry: false,
     })),
   });
 

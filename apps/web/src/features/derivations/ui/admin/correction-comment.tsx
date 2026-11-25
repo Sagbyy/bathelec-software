@@ -26,19 +26,16 @@ import {
 } from '@/shared/ui/select';
 import { derivationStatusConfig } from '@/entities/derivation';
 import { Derivation, DerivationStatus } from '@repo/types';
-import { z } from 'zod';
 import { useForm } from '@tanstack/react-form';
-import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useUpdateCommentDerivation } from '@/features/derivations/model/use-update-comment-derivation';
+import {
+  correctionFormSchema,
+  isReviewDecision,
+  REVIEW_DECISIONS,
+  type ReviewDecision,
+} from '@/features/derivations/model/correction-form.schema';
 import { Badge } from '@/shared/ui/badge';
-
-const formSchema = z.object({
-  correctionComment: z.string().max(255, {
-    message: 'Le commentaire ne peut pas dépasser 255 caractères',
-  }),
-  status: z.nativeEnum(DerivationStatus),
-});
 
 interface CorrectionCommentProps {
   derivation: Derivation;
@@ -55,35 +52,28 @@ export default function CorrectionComment({
   const form = useForm({
     defaultValues: {
       correctionComment: derivation.correctionComment || '',
-      status: derivation.status as DerivationStatus,
+      status: (isReviewDecision(derivation.status)
+        ? derivation.status
+        : '') as ReviewDecision,
     },
     validators: {
-      onSubmit: formSchema,
+      onSubmit: correctionFormSchema,
     },
-    onSubmit: async ({ value }) => {
-      updateCommentDerivationMutation.mutate({
-        correctionComment: value.correctionComment,
-        status: value.status,
-      });
-
-      if (updateCommentDerivationMutation.isSuccess) {
-        toast.success('Formulaire soumis avec succès !');
-      }
-
-      if (updateCommentDerivationMutation.isError) {
-        toast.error('Erreur lors de la mise à jour du formulaire');
-      }
-
-      router.push('/dashboard');
+    onSubmit: ({ value }) => {
+      updateCommentDerivationMutation.mutate(
+        {
+          correctionComment: value.correctionComment,
+          status: value.status,
+        },
+        { onSuccess: () => router.push('/dashboard') }
+      );
     },
   });
 
-  const statuses = Object.entries(derivationStatusConfig).map(
-    ([key, value]) => ({
-      value: key,
-      label: value.text,
-    })
-  );
+  const statuses = REVIEW_DECISIONS.map((status) => ({
+    value: status,
+    label: derivationStatusConfig[status].text,
+  }));
 
   return (
     <Card>
@@ -123,7 +113,7 @@ export default function CorrectionComment({
                           onBlur={field.handleBlur}
                           onChange={(e) => field.handleChange(e.target.value)}
                           aria-invalid={isInvalid}
-                          placeholder="Ajouter n'importe quel commentaire de correction..."
+                          placeholder="Obligatoire pour renvoyer le relevé en correction..."
                           className="resize-none"
                         />
                         {isInvalid && (
@@ -147,12 +137,12 @@ export default function CorrectionComment({
                         <Select
                           value={field.state.value}
                           onValueChange={(value) =>
-                            field.handleChange(value as DerivationStatus)
+                            field.handleChange(value as ReviewDecision)
                           }
                           aria-invalid={isInvalid}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Sélectionner un statut" />
+                            <SelectValue placeholder="Sélectionner une décision" />
                           </SelectTrigger>
                           <SelectContent>
                             {statuses.map((status) => (
@@ -193,7 +183,9 @@ export default function CorrectionComment({
                   <Button
                     type="submit"
                     className="w-full"
-                    disabled={isPristine}
+                    disabled={
+                      isPristine || updateCommentDerivationMutation.isPending
+                    }
                   >
                     Enregistrer
                   </Button>

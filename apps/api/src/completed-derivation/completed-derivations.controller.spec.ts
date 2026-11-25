@@ -1,6 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CompletedDerivationController } from './completed-derivations.controller';
 import { CompletedDerivationService } from './completed-derivations.service';
+import { Reflector } from '@nestjs/core';
+import { Role } from '@repo/types';
+import { ROLE_METADATA_KEY } from '../role/role.decorator';
+
+const currentUser = { userId: 42, username: 'tech', role: Role.TECHNICIAN };
 
 describe('CompletedDerivationController', () => {
   let controller: CompletedDerivationController;
@@ -81,8 +86,6 @@ describe('CompletedDerivationController', () => {
     findAll: async () => [],
     findOne: async () => ({}),
     create: async () => completedDerivationEntity,
-    update: async () => ({}),
-    delete: async () => ({}),
   };
 
   beforeEach(async () => {
@@ -107,8 +110,28 @@ describe('CompletedDerivationController', () => {
 
   describe('create', () => {
     it('should create a completed derivation', async () => {
-      const result = await controller.create(completedDerivationEntity);
+      const result = await controller.create(
+        completedDerivationEntity,
+        currentUser
+      );
       expect(result).toEqual(completedDerivationEntity);
     });
+  });
+
+  it.each([
+    ['create', [Role.TECHNICIAN, Role.SITE_MANAGER]],
+    ['findAll', [Role.ADMIN, Role.SUPERVISOR]],
+  ] as const)('restreint %s aux rôles %j', (handler, roles) => {
+    const allowed = new Reflector().get(
+      ROLE_METADATA_KEY,
+      CompletedDerivationController.prototype[handler]
+    );
+
+    expect(allowed).toEqual(roles);
+  });
+
+  it('n’expose plus la modification ni la suppression d’un relevé', () => {
+    expect('update' in CompletedDerivationController.prototype).toBe(false);
+    expect('remove' in CompletedDerivationController.prototype).toBe(false);
   });
 });

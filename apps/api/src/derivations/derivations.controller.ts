@@ -69,6 +69,8 @@ export class DerivationsController {
   }
 
   @Get()
+  @UseGuards(RoleGuard)
+  @Role(UserRole.ADMIN, UserRole.SUPERVISOR)
   @ApiOperation({ summary: 'Find all derivations' })
   @ApiOkResponse({
     description: 'The derivations have been successfully retrieved.',
@@ -113,8 +115,11 @@ export class DerivationsController {
     description: 'The derivation has not been found.',
   })
   @ApiBody({ type: GetDerivationByUserDto })
-  findDerivationByUserId(@Param('userId') userId: number) {
-    return this.derivationsService.findDerivationByUserId(userId);
+  findDerivationByUserId(
+    @Param('userId') userId: number,
+    @CurrentUser() user: AuthenticatedUser
+  ) {
+    return this.derivationsService.findDerivationByUserId(userId, user);
   }
 
   @Get('by-id/:derivationId')
@@ -129,12 +134,26 @@ export class DerivationsController {
     description: 'The derivation has not been found.',
   })
   @ApiBody({ type: GetDerivationByIdDto })
-  findDerivationById(@Param('derivationId') derivationId: number) {
-    return this.derivationsService.findDerivationById(derivationId);
+  @ApiResponse({
+    status: 403,
+    description: 'The derivation belongs to another technician.',
+  })
+  findDerivationById(
+    @Param('derivationId') derivationId: number,
+    @CurrentUser() user: AuthenticatedUser
+  ) {
+    return this.derivationsService.findViewableDerivationById(
+      derivationId,
+      user
+    );
   }
 
   @Patch('/:derivationId')
-  @ApiOperation({ summary: 'Update a derivation' })
+  @UseGuards(RoleGuard)
+  @Role(UserRole.ADMIN, UserRole.SUPERVISOR)
+  @ApiOperation({
+    summary: 'Review a derivation: validate it or send it back for correction',
+  })
   @ApiParam({ name: 'derivationId', type: Number })
   @ApiOkResponse({
     description: 'The derivation has been successfully updated.',

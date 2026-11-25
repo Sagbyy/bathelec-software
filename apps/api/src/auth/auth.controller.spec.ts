@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
+import { Reflector } from '@nestjs/core';
+import { Role } from '@repo/types';
+import { ROLE_METADATA_KEY } from '../role/role.decorator';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -83,6 +86,15 @@ describe('AuthController', () => {
         'Doe'
       );
       expect(result).toEqual(user);
+    });
+
+    it('is reserved to administrators and supervisors', () => {
+      const allowed = new Reflector().get(
+        ROLE_METADATA_KEY,
+        AuthController.prototype.register
+      );
+
+      expect(allowed).toEqual([Role.ADMIN, Role.SUPERVISOR]);
     });
   });
 });

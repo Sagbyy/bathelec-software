@@ -9,6 +9,7 @@ import { Role } from '@repo/types';
 import { DerivationsService } from './derivations.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { DerivationStatus } from '../types/derivations-status.enum';
+import { DerivationAccessService } from './access/derivation-access.service';
 
 const mockChantier = {
   id: 1,
@@ -61,11 +62,14 @@ describe('DerivationsService', () => {
     },
   };
 
+  const mockDerivationAccess = { findViewableOrThrow: jest.fn() };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DerivationsService,
         { provide: PrismaService, useValue: mockPrismaService },
+        { provide: DerivationAccessService, useValue: mockDerivationAccess },
       ],
     }).compile();
 
@@ -211,7 +215,7 @@ describe('DerivationsService', () => {
     it('retourne les dérivations pour un utilisateur', async () => {
       mockPrismaService.derivation.findMany.mockResolvedValue([mockDerivation]);
 
-      const result = await service.findDerivationByUserId(42);
+      const result = await service.findDerivationByUserId(42, technician);
 
       expect(result).toEqual([mockDerivation]);
       expect(mockPrismaService.derivation.findMany).toHaveBeenCalledWith({
@@ -223,9 +227,24 @@ describe('DerivationsService', () => {
     it('retourne un tableau vide si aucune dérivation', async () => {
       mockPrismaService.derivation.findMany.mockResolvedValue([]);
 
-      const result = await service.findDerivationByUserId(42);
+      const result = await service.findDerivationByUserId(42, technician);
 
       expect(result).toEqual([]);
+    });
+
+    it("refuse à un technicien de lire les dérivations d'un autre utilisateur", async () => {
+      await expect(
+        service.findDerivationByUserId(99, technician)
+      ).rejects.toThrow(ForbiddenException);
+      expect(mockPrismaService.derivation.findMany).not.toHaveBeenCalled();
+    });
+
+    it("autorise un admin à lire les dérivations d'un autre utilisateur", async () => {
+      mockPrismaService.derivation.findMany.mockResolvedValue([mockDerivation]);
+
+      await expect(service.findDerivationByUserId(42, admin)).resolves.toEqual([
+        mockDerivation,
+      ]);
     });
   });
 
@@ -251,6 +270,34 @@ describe('DerivationsService', () => {
       await expect(service.findDerivationById(999)).rejects.toThrow(
         'Derivation not found'
       );
+    });
+  });
+
+  describe('findViewableDerivationById', () => {
+    it("vérifie l'accès avant de retourner la dérivation", async () => {
+      mockDerivationAccess.findViewableOrThrow.mockResolvedValue(
+        mockDerivation
+      );
+      mockPrismaService.derivation.findUnique.mockResolvedValue(mockDerivation);
+
+      const result = await service.findViewableDerivationById(1, technician);
+
+      expect(result).toEqual(mockDerivation);
+      expect(mockDerivationAccess.findViewableOrThrow).toHaveBeenCalledWith(
+        1,
+        technician
+      );
+    });
+
+    it("propage le refus d'accès sans lire la dérivation", async () => {
+      mockDerivationAccess.findViewableOrThrow.mockRejectedValue(
+        new ForbiddenException()
+      );
+
+      await expect(
+        service.findViewableDerivationById(1, technician)
+      ).rejects.toThrow(ForbiddenException);
+      expect(mockPrismaService.derivation.findUnique).not.toHaveBeenCalled();
     });
   });
 
@@ -347,6 +394,25 @@ describe('DerivationsService', () => {
     });
   });
 
+  describe('commentaire de correction obligatoire (RG-12)', () => {
+    it.each([[undefined], [null], [''], ['   ']])(
+      'refuse un renvoi en correction avec le commentaire %j',
+      async (correctionComment) => {
+        mockPrismaService.derivation.findUnique.mockResolvedValue(
+          mockDerivation
+        );
+
+        await expect(
+          service.updateDerivation(1, {
+            status: DerivationStatus.REVISING,
+            correctionComment,
+          })
+        ).rejects.toThrow(BadRequestException);
+        expect(mockPrismaService.derivation.update).not.toHaveBeenCalled();
+      }
+    );
+  });
+
   describe('getReviewStats (DTA-54)', () => {
     const mockCounts = (counts: number[], totalReturns: number | null) => {
       counts.forEach((count) =>
@@ -415,6 +481,7 @@ describe('DerivationsService', () => {
 
       await service.updateDerivation(1, {
         status: DerivationStatus.REVISING,
+        correctionComment: 'Photo floue',
         userId: 99,
         user: { connect: { id: 99 } },
       } as never);
@@ -422,7 +489,7 @@ describe('DerivationsService', () => {
       expect(mockPrismaService.derivation.update).toHaveBeenCalledWith({
         where: { id: 1 },
         data: {
-          correctionComment: undefined,
+          correctionComment: 'Photo floue',
           status: DerivationStatus.REVISING,
           revisionCount: { increment: 1 },
         },

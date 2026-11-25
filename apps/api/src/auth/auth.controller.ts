@@ -1,8 +1,19 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { Role as UserRole } from '@repo/types';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from '../users/dto/login-user.dto';
+import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
+import { RoleGuard } from '../role/role.guard';
+import { Role } from '../role/role.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -13,6 +24,8 @@ export class AuthController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Role(UserRole.ADMIN, UserRole.SUPERVISOR)
   async register(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createUser(
       createUserDto.email,

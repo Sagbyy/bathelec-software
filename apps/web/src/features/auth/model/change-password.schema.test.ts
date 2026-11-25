@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { PASSWORD_MESSAGES } from '@/shared/lib/password-policy';
 import { changePasswordSchema } from './change-password.schema';
 
 const base = {
@@ -30,7 +31,7 @@ describe('changePasswordSchema', () => {
     });
     expect(result.success).toBe(false);
     expect(result.error?.issues.map((i) => i.message)).toContain(
-      'Password must contain a number'
+      PASSWORD_MESSAGES.digit
     );
   });
 
@@ -42,7 +43,7 @@ describe('changePasswordSchema', () => {
     });
     expect(result.success).toBe(false);
     expect(result.error?.issues.map((i) => i.message)).toContain(
-      'Password must contain an uppercase letter'
+      PASSWORD_MESSAGES.uppercase
     );
   });
 
@@ -54,7 +55,7 @@ describe('changePasswordSchema', () => {
     });
     expect(result.success).toBe(false);
     expect(result.error?.issues.map((i) => i.message)).toContain(
-      'Password must contain a lowercase letter'
+      PASSWORD_MESSAGES.lowercase
     );
   });
 
@@ -66,7 +67,7 @@ describe('changePasswordSchema', () => {
     });
     expect(result.success).toBe(false);
     expect(result.error?.issues.map((i) => i.message)).toContain(
-      'Password must contain a special character'
+      PASSWORD_MESSAGES.special
     );
   });
 
@@ -76,15 +77,18 @@ describe('changePasswordSchema', () => {
       confirmPassword: 'Different123!',
     });
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0]?.message).toBe('Passwords do not match');
+    expect(result.error?.issues[0]?.message).toBe(
+      'Les mots de passe ne correspondent pas'
+    );
     expect(result.error?.issues[0]?.path).toContain('confirmPassword');
   });
 
-  it('accepts currentPassword as any string', () => {
+  it('requires the current password', () => {
     const result = changePasswordSchema.safeParse({
       ...base,
       currentPassword: '',
     });
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toContain('currentPassword');
   });
 });

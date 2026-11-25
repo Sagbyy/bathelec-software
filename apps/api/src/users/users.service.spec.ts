@@ -171,6 +171,7 @@ describe('UsersService', () => {
       expect(result).toEqual(mockUser);
       expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
+        omit: { password: true },
       });
       expect(mockPrismaService.user.findUnique).toHaveBeenCalledTimes(1);
     });
@@ -209,6 +210,7 @@ describe('UsersService', () => {
       expect(result).toBeNull();
       expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
         where: { id: 999 },
+        omit: { password: true },
       });
     });
   });
@@ -256,6 +258,7 @@ describe('UsersService', () => {
           lastName: validLastName,
           role: 'technician',
         },
+        omit: { password: true },
       });
     });
 
@@ -847,9 +850,9 @@ describe('UsersService', () => {
     it('forbids a non-admin from deleting an admin account', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
-      await expect(
-        service.deleteUser(userId, Role.SUPERVISOR)
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.deleteUser(userId, Role.SUPERVISOR)).rejects.toThrow(
+        ForbiddenException
+      );
       expect(mockPrismaService.user.delete).not.toHaveBeenCalled();
     });
 
