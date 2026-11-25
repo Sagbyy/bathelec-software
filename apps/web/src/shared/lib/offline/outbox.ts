@@ -116,7 +116,7 @@ export const createOutbox = <P>({
   const attemptOnce = (entry: OutboxEntry<P>) => {
     const key = entryKey(entry.ownerId, entry.targetId);
     const running = inFlight.get(key);
-    if (running) {
+    if (running !== undefined) {
       return running;
     }
     const pending = attempt(entry).finally(() => inFlight.delete(key));

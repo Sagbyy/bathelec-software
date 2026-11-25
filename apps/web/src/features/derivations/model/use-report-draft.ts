@@ -64,23 +64,24 @@ export const useReportDraft = ({
     }
 
     let cancelled = false;
-    reportDrafts
-      .load(ownerId, derivationId)
-      .catch(() => undefined)
-      .then((draft) => {
-        if (cancelled || initialized.current) return;
-        initialized.current = true;
+    const restore = async () => {
+      const draft = await reportDrafts
+        .load(ownerId, derivationId)
+        .catch(() => undefined);
+      if (cancelled || initialized.current) return;
+      initialized.current = true;
 
-        if (draft && pickReportSource(draft, serverReport) === 'draft') {
-          form.reset(draft.values);
-          savedStep.current = draft.step;
-          onRestoreStep(draft.step);
-          toast.info(DRAFT_RESTORED_MESSAGE);
-        } else if (serverReport) {
-          form.reset(toFormValues(serverReport));
-        }
-        setIsReady(true);
-      });
+      if (draft && pickReportSource(draft, serverReport) === 'draft') {
+        form.reset(draft.values);
+        savedStep.current = draft.step;
+        onRestoreStep(draft.step);
+        toast.info(DRAFT_RESTORED_MESSAGE);
+      } else if (serverReport) {
+        form.reset(toFormValues(serverReport));
+      }
+      setIsReady(true);
+    };
+    void restore();
 
     return () => {
       cancelled = true;

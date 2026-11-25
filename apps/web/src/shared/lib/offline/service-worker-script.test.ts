@@ -108,10 +108,15 @@ const loadWorker = () => {
     return responded ? await responded : undefined;
   };
 
-  const dispatchWithEvent = async (type: string, data?: unknown) => {
+  const dispatchWithEvent = async (
+    type: string,
+    data?: unknown,
+    origin: string = ORIGIN
+  ) => {
     let pending: Promise<unknown> = Promise.resolve();
     listeners.get(type)!({
       data,
+      origin,
       waitUntil: (promise: Promise<unknown>) => {
         pending = promise;
       },
@@ -218,6 +223,16 @@ describe('service worker (ENF-08)', () => {
         .get('bathelec-static-v1')
         ?.has(`${ORIGIN}/_next/static/chunks/form.js`)
     ).toBe(true);
+  });
+
+  it('ignores warm-up messages from another origin', async () => {
+    await worker.dispatchWithEvent(
+      'message',
+      { type: 'WARM_PAGES', urls: ['/dashboard'] },
+      'https://evil.example.test'
+    );
+
+    expect(worker.fetchMock).not.toHaveBeenCalled();
   });
 
   it('drops caches from previous versions on activation', async () => {

@@ -10,7 +10,9 @@ interface ReportSyncStatusProps {
   shellPaths: readonly string[];
 }
 
-export function ReportSyncStatus({ shellPaths }: ReportSyncStatusProps) {
+export function ReportSyncStatus({
+  shellPaths,
+}: Readonly<ReportSyncStatusProps>) {
   const ownerId = useUserStore((state) => state.user?.id);
   const online = useNetworkStatus();
   const queuedReports = useQueuedReports(ownerId);

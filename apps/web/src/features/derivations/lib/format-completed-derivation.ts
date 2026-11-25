@@ -1,17 +1,23 @@
-import { CircuitBreakerType, VoltageType } from '@repo/types';
-import { CompletedDerivation } from '@repo/types';
+import {
+  CircuitBreakerType,
+  VoltageType,
+  type CompletedDerivation,
+} from '@repo/types';
 import type { CircuitBreakerPower } from '@/entities/derivation';
+
+const toIsoDateTime = (dateTime: string | Date | number) => {
+  if (typeof dateTime === 'string') {
+    return dateTime;
+  }
+  return new Date(dateTime).toISOString();
+};
 
 export const formatCompletedDerivation = (
   completedDerivation: CompletedDerivation
 ) => {
-  const dateTime = completedDerivation.generalInfo.dateTime;
-  const formattedDateTime =
-    typeof dateTime === 'string'
-      ? dateTime
-      : dateTime instanceof Date
-        ? dateTime.toISOString()
-        : new Date(dateTime).toISOString();
+  const formattedDateTime = toIsoDateTime(
+    completedDerivation.generalInfo.dateTime
+  );
 
   return {
     clientInfo: completedDerivation.clientInfo,

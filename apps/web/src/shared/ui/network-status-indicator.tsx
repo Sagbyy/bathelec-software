@@ -17,7 +17,7 @@ export function NetworkStatusIndicator({
   online,
   pendingCount,
   rejectedCount,
-}: NetworkStatusIndicatorProps) {
+}: Readonly<NetworkStatusIndicatorProps>) {
   return (
     <div className="flex items-center gap-1" aria-live="polite">
       {online ? (
